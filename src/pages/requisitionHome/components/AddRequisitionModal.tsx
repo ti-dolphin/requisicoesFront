@@ -26,14 +26,17 @@ const style = {
 };
 
 
+interface props{ 
+  isCreating: boolean;
+  setIsCreating: (value: boolean) => void;
+}
 
-export default function NestedModal() {
-  const [open, setOpen] = React.useState(false);
+const NestedModal : React.FC<props> = ({isCreating, setIsCreating}) => {
   const handleOpen = () => {
-    setOpen(true);
+    setIsCreating(true);
   };
   const handleClose = () => {
-    setOpen(false);
+    setIsCreating(false);
   };
 
   return (
@@ -44,7 +47,7 @@ export default function NestedModal() {
       </Button>
       <Modal
         sx={{ border: "none" }}
-        open={open}
+        open={isCreating}
         onClose={handleClose}
         aria-labelledby="parent-modal-title"
         aria-describedby="parent-modal-description"
@@ -67,9 +70,10 @@ export default function NestedModal() {
             <Typography variant="h6" id="parent-modal-title">
               Nova Requisição
             </Typography>
-          <AddRequisitionForm />
+          <AddRequisitionForm setIsCreating = { setIsCreating }/>
         </Box>
       </Modal>
     </div>
   );
 }
+export default NestedModal;

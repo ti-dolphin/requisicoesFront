@@ -21,26 +21,33 @@ import RequisitionItemsTable from "./components/RequisitionItemsTable";
 
 const RequisitionDetail: React.FC = () => {
   const { id } = useParams();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   useEffect(() => {
     async function performAsync() {
       const data = await fetchRequsitionById(Number(id));
-      console.log('data: ',  data);
       if (data) {
         console.log(data);
         const personData = await fetchPersonById(data.ID_RESPONSAVEL);
         const itemsData = await fetchItems(data.ID_REQUISICAO);
+
         if(itemsData) setRequisitionItems(itemsData);
-        if (personData) setPersonData(personData);
-        setRequisitionData(data);
+        if (personData){ 
+          console.log('req items: ', itemsData)
+          setPersonData(personData);
+          setRequisitionData({...data, ['RESPONSAVEL'] : personData?.NOME});
+        }
       }
     }
     performAsync();
-  }, [id]);
+  
+  }, [id, isOpen]);
 
   const [requisitionData, setRequisitionData] = useState<Requisition>();
+ 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [personData, setPersonData] = useState<Person>();
-  const [requisitionItems, setRequisitionItems ] = useState<Item[]>();
-  const [isOpen, setIsOpen] = useState<boolean>();
+  const [requisitionItems, setRequisitionItems ] = useState<Item[]>([]);
+ 
   const handleClose = () => {
     setIsOpen(false);
   };
@@ -50,14 +57,14 @@ const RequisitionDetail: React.FC = () => {
   };
   const fields = [
     { label: "Descrição", key: "DESCRIPTION" },
-    { label: "Responsável", key: "ID_RESPONSAVEL" },
+    { label: "Responsável", key: "RESPONSAVEL" },
     { label: "Projeto", key: "ID_PROJETO" },
   ];
 
   return (
     <Box
       sx={{
-        width: "90%",
+        width: "96%",
         height: "fit-content",
         backgroundColor: "#fafafa",
         margin: "auto",
@@ -71,7 +78,7 @@ const RequisitionDetail: React.FC = () => {
         </div>
       </div>
       <div className="w-full border  p-2">
-        <HorizontalLinearStepper />
+       {requisitionData &&  <HorizontalLinearStepper requisitionData={requisitionData}/>}
       </div>
       <Stack direction="row">
         <Box
@@ -93,11 +100,7 @@ const RequisitionDetail: React.FC = () => {
                     <input
                       className="bg-transparent w-full px-1 focus:outline-none text-slate-600"
                       type="text"
-                      value={String(
-                        item.key === "id_responsavel"
-                          ? personData?.NOME
-                          : requisitionData[item.key as keyof Requisition]
-                      ).toLowerCase()}
+                      value={String(requisitionData[item.key as keyof Requisition]).toLowerCase()}
                       disabled
                     />
                     <EditIcon className="cursor-pointer text-gray-500" />
@@ -111,7 +114,7 @@ const RequisitionDetail: React.FC = () => {
               className="text-blue-400 underline"
               href=""
             >
-              Editar Produtos
+              Adicionar Produtos
             </a>
           </Stack>
           {isOpen && (
@@ -136,7 +139,11 @@ const RequisitionDetail: React.FC = () => {
                       alignItems="center"
                       sx={{ height: "90vh", padding: "none" }}
                     >
-                      <ItemsTable id_requisicao={Number(id)} />
+                      <ItemsTable
+                        requistionItems={requisitionItems}
+                       setRequisitionItems={setRequisitionItems}
+                       setIsCreating={setIsOpen}
+                       id_requisicao={Number(id)} />
                       <Stack
                         sx={{ marginTop: "8rem" }}
                         direction="row"
@@ -151,7 +158,12 @@ const RequisitionDetail: React.FC = () => {
             </>
           )}
         </Box>{" "}
-        <Box sx={{ width: "50%", maxHeight: '600px', border: "0.5px solid #e3e3e3", overflowY:'scroll' }}>
+        <Box sx={{ 
+          width: "50%",
+           maxHeight: '600px',
+              border: "0.5px solid #e3e3e3",
+              overflowY: 'scroll'
+        }}>
           {requisitionItems && (
             <RequisitionItemsTable items={requisitionItems} />
           )}

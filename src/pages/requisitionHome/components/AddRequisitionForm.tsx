@@ -29,12 +29,14 @@ interface ItemstableModalProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   requisitionID: number;
+  setIsCreating: (value : boolean ) => void;
 }
 
 export const ItemstableModal: React.FC<ItemstableModalProps> = ({
   isOpen,
   setIsOpen,
-  requisitionID
+  requisitionID,
+  setIsCreating
 }) => {
   const handleClose = () => {
     setIsOpen(false);
@@ -54,7 +56,7 @@ export const ItemstableModal: React.FC<ItemstableModalProps> = ({
               alignItems="center"
               sx={{ height: "90vh", padding: "none" }}
             >
-              <ItemsTable id_requisicao={requisitionID} />
+              <ItemsTable id_requisicao={requisitionID} setIsCreating={setIsCreating}/>
               <Stack sx={{ marginTop: "8rem" }} direction="row" spacing={2}>
                 <Button onClick={handleClose}>Voltar</Button>
               </Stack>
@@ -63,9 +65,13 @@ export const ItemstableModal: React.FC<ItemstableModalProps> = ({
         </Box>
       </Modal>
     </>
-  );
+  )
 };
-const AddRequisitionForm: React.FC = () => {
+interface props {
+  setIsCreating : (value : boolean) =>void;
+}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const AddRequisitionForm: React.FC<props> = ({setIsCreating}) => {
   useEffect(() => {
     async function performAsync() {
       console.log("performed");
@@ -85,10 +91,10 @@ const AddRequisitionForm: React.FC = () => {
     id_projeto: 0,
     description: "",
   });
-  const [ projects, setProjects ] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [persons, setPersons] = useState<Person[]>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [currentId, setCurrentId ] = useState<number>(0);
+  const [currentId, setCurrentId] = useState<number>(0);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { id, value } = e.target;
@@ -97,37 +103,35 @@ const AddRequisitionForm: React.FC = () => {
       [id]: Number(value)
     });
   };
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { id, value } = e.target;
-      setFields({
-        ...fields,
-        [id]: value,
-      });
-    };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFields({
+      ...fields,
+      [id]: value,
+    });
+  };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(
-      "body: ",
-      JSON.stringify([
-        {
-          ...fields,
-          status: "Cotação",
-        },
-      ])
-    );
-   const response = await postRequisition([
-      { 
-        ...fields,
-        status : 'Cotação'
+    console.log('currentID: ', currentId);
+     if (currentId === 0) {
+       e.preventDefault();
+       const response = await postRequisition([
+         {
+           ...fields,
+           status: 'Cotação'
+         }
+       ]);
+       if (response) {
+         console.log('ID: ', response.data);
+         setCurrentId(Number(response.data));
+       }
+       setIsOpen(true);
+      } else{ 
+        setIsOpen(true);
       }
-    ]);
-    if(response) { 
-      console.log('ID: ', response.data);
-      setCurrentId(Number(response.data));
-    }
-     setIsOpen(true);
+
   };
- 
+
   return (
     <form className="max-w-sm mx-auto mt-5 w-[90%]" onSubmit={handleSubmit}>
       <div className="mb-5">
@@ -191,13 +195,15 @@ const AddRequisitionForm: React.FC = () => {
       <Button type="submit">Seguir</Button>
       {currentId > 0 && (
         <ItemstableModal
+          setIsCreating = { setIsCreating }
           requisitionID={currentId}
           isOpen={isOpen}
           setIsOpen={setIsOpen}
         />
+
       )}
     </form>
   );
 };
 
-export default  AddRequisitionForm;
+export default AddRequisitionForm;

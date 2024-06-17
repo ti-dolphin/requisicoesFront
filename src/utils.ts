@@ -6,6 +6,7 @@ import api from "./api";
   DESCRIPTION: string;
   ID_RESPONSAVEL: number;
   ID_PROJETO:number;
+  RESPONSAVEL : string;
 }
  interface RequisitionPost {
    status: string;
@@ -15,9 +16,9 @@ import api from "./api";
  }
  // eslint-disable-next-line @typescript-eslint/no-unused-vars
  interface RequisitionItemPost{ 
-  quantidade: number;
-  id_requisicao: number;
-  id_produto: number;
+  QUANTIDADE: number;
+  ID_REQUISICAO: number;
+  ID_PRODUTO: number;
  }
  // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
@@ -34,11 +35,11 @@ interface Project{
   ID : number;
 }
 interface Item {
-  id_web_requisicao_items: number;
-  quantidade: number;
-  nome : string;
-  id_requisicao: number;
-  id_produto: number;
+  ID: number;
+  QUANTIDADE: number;
+  NOME : string;
+  ID_REQUISICAO: number;
+  ID_PRODUTO: number;
 }
 
 const postRequistionItem = async (requisitionItems: RequisitionItemPost[], url: string) => { 
@@ -101,6 +102,13 @@ const fetchItems = async (id: number) => {
     console.log(e);
   }
 };
+ const deleteRequisitionItem = async ( productId : number, requisitionId: number) =>{ 
+      try{ 
+        await api.delete(`requisition/requisitionItems/${requisitionId}/${productId}`);
+      }catch(e){
+        console.log(e)
+      }
+ }
 const fetchPersons = async () => {
   try {
     const response = await api.get<Person[]>("/pessoa");
@@ -118,7 +126,20 @@ const fetchPersonById = async (id : number ) => {
      console.log(e);
    }
 }
-
+const updateRequisitionItems = async (items : Item[], requisitonId:number) => { 
+    try{ 
+      await api.put(`/requisition/requisitionItems/${requisitonId}`, items);
+    }catch(e){
+      console.log(e);
+    }
+}
+const updateRequisition = async (requisition: Requisition ) => { 
+  try{ 
+    await api.put(`requisition/${requisition.ID_REQUISICAO}`, requisition);
+  }catch(e){
+    console.log(e);
+  }
+}
 export {
   fecthRequisitions,
   fetchAllProducts,
@@ -128,7 +149,10 @@ export {
   postRequistionItem,
   fetchRequsitionById,
   fetchPersonById,
-  fetchItems
+  fetchItems,
+  deleteRequisitionItem,
+  updateRequisitionItems,
+  updateRequisition
 };   
 export type { Requisition, Product, Person, Project, RequisitionItemPost, Item };
 

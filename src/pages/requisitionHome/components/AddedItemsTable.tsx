@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { addedItemsType } from "./ItemsTable";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
 import { Button, Stack } from "@mui/material";
-import { postRequistionItem } from "../../../utils";
+import { Item, postRequistionItem } from "../../../utils";
 
 interface AddedItemsTableProps {
-  addedItems: addedItemsType[];
+  addedItems: Item[];
   handleOpen: (
     e: React.MouseEvent<HTMLButtonElement>,
-    quantities: addedItemsType[],
+    quantities: Item[],
     nome: string
   ) => void;
   handleDelete :  ( e : React.MouseEvent<HTMLButtonElement>) => void;
+  setIsCreating : ( value : boolean ) => void;
 }
 
 
@@ -20,32 +20,33 @@ const AddedItemsTable: React.FC<AddedItemsTableProps> = ({
   addedItems,
   handleOpen,
   handleDelete,
-
+  setIsCreating
 }) => { 
 
   const handleSave = async ( ) =>  {
-    const requestBody: { quantidade: number; id_produto: number; id_requisicao: number; }[] = [];
+    const requestBody: { QUANTIDADE: number; ID_PRODUTO: number; ID_REQUISICAO: number; }[] = [];
     addedItems.map((item) => { 
-      const { quantidade, id_produto, id_requisicao } = item;
+      const { QUANTIDADE, ID_PRODUTO, ID_REQUISICAO } = item;
       requestBody.push( 
         { 
-          quantidade,
-          id_produto,
-          id_requisicao
+          QUANTIDADE,
+          ID_PRODUTO,
+          ID_REQUISICAO
         }
       );
     });
-    const reqIDParam = requestBody[0].id_requisicao;
+    const reqIDParam = requestBody[0].ID_REQUISICAO;
     const response = await postRequistionItem(
       requestBody,
       `/requisition/requisitionItems/${reqIDParam}`
     );
     if( response ){ 
       console.log('response: ', response);
+      setIsCreating(false);
     }
 }
 
-  const [items, setItems ] = useState<addedItemsType[] | null>();
+  const [items, setItems ] = useState<Item[] | null>();
   useEffect(( ) => { 
     console.log('change');
     setItems(addedItems);
@@ -79,25 +80,25 @@ const AddedItemsTable: React.FC<AddedItemsTableProps> = ({
                     scope="row"
                     className="px-6 py-2  bg-blue-100 font-medium text-blue-900 whitespace-nowrap "
                   >
-                    {item.nome}
+                    {item.NOME}
                   </td>
                   <td
                     scope="row"
                     className="flex text-center bg-blue-100 px-8 py-2 font-medium text-blue-900"
                   >
                     <Stack direction="row" spacing={2}>
-                      <p>{item.quantidade}</p>
+                      <p>{item.QUANTIDADE}</p>
                       <button
-                        id={String(item.id_produto)}
+                        id={String(item.ID_PRODUTO)}
                         onClick={(e) =>
-                          handleOpen(e, addedItems, item.nome ? item.nome : "")
+                          handleOpen(e, addedItems, item.NOME ? item.NOME : "")
                         }
                         className="text-blue-600 underline font-normal"
                       >
                         <EditIcon />
                       </button>
                       <button
-                        id={String(item.id_produto)}
+                        id={String(item.ID_PRODUTO)}
                         key="delete"
                         className="delete text-blue-600 underline font-normal"
                         onClick={(e) => handleDelete(e)}

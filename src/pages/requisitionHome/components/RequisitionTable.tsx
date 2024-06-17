@@ -26,10 +26,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
 import SearchAppBar from "./SearchAppBar";
 import { useState } from "react";
-import { fecthRequisitions } from "../../../utils";
+import { Item, fecthRequisitions, fetchPersons } from "../../../utils";
 import { useEffect } from "react";
 import { Requisition } from "../../../utils";
-import { addedItemsType } from "./ItemsTable";
 
 import { Link } from "react-router-dom";
 
@@ -92,6 +91,12 @@ const headCells: readonly HeadCell[] = [
     disablePadding: false,
     label: "Status",
   },
+  { 
+    id: "ID_RESPONSAVEL",
+    numeric:true,
+    disablePadding: false,
+    label: "RESPONSÁVEL",
+  },
   {
     id: "ID_REQUISICAO",
     numeric: true,
@@ -104,12 +109,8 @@ const headCells: readonly HeadCell[] = [
     disablePadding: false,
     label: "Nº Projeto",
   },
-  {
-    disablePadding: false,
-    id: "ID_REQUISICAO",
-    label: "",
-    numeric: false
-  }
+
+ 
 ];
 interface EnhancedTableProps {
   numSelected: number;
@@ -121,6 +122,7 @@ interface EnhancedTableProps {
   order: Order;
   orderBy: string;
   rowCount: number;
+  
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
@@ -244,7 +246,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 }
 
 //TABLE
-export default function EnhancedTable() {
+export default function EnhancedTable({ isCreating  }) {
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Requisition>("ID_REQUISICAO");
   const [selected, setSelected] = React.useState<readonly number[]>([]);
@@ -256,19 +258,31 @@ export default function EnhancedTable() {
   const [filteredRows, setFilteredRows] = useState<Requisition[]>([]);
 
   useEffect(() => {
-     async function performAsync(){ 
-       console.log('performed')
-       const data = await fecthRequisitions();
-       if(data){ 
-       
-        const rows = data.map((item) => ({
-          ID_REQUISICAO: item.ID_REQUISICAO,
-          ID_PROJETO: item.ID_PROJETO,
-          STATUS: item.STATUS,
-          DESCRIPTION: item.DESCRIPTION,
-          ID_RESPONSAVEL : item.ID_RESPONSAVEL
-        }));
-         console.log('rows: ', rows);
+    async function performAsync() {
+      console.log('performed')
+      const data = await fecthRequisitions();
+      const personsData = await fetchPersons();
+      if (data && personsData) {
+        const rows = data.map((item) => {
+          const personName = personsData.find((person) => (person.CODPESSOA === item.ID_RESPONSAVEL))?.NOME;
+          if (personName) {
+            return {
+              ID_REQUISICAO: item.ID_REQUISICAO,
+              ID_PROJETO: item.ID_PROJETO,
+              STATUS: item.STATUS,
+              DESCRIPTION: item.DESCRIPTION,
+              ID_RESPONSAVEL: item.ID_RESPONSAVEL,
+              RESPONSAVEL: personName
+            }
+          } return {
+            ID_REQUISICAO: item.ID_REQUISICAO,
+            ID_PROJETO: item.ID_PROJETO,
+            STATUS: item.STATUS,
+            DESCRIPTION: item.DESCRIPTION,
+            ID_RESPONSAVEL: item.ID_RESPONSAVEL,
+            RESPONSAVEL: ''
+          }
+        });
         setAllRows(rows);
         setFilteredRows(rows);
        }
@@ -354,8 +368,8 @@ export default function EnhancedTable() {
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
-        <SearchAppBar  handleSearch={handleSearch} addedItems={[]} caller={""} 
-          handleOpen={function (_e: React.MouseEvent<HTMLButtonElement, MouseEvent>, _quantities: addedItemsType[], _nome: string): void {
+        <SearchAppBar  handleSearch={handleSearch} addedItems={[]} caller={""}
+        handleOpen={function (_e: React.MouseEvent<HTMLButtonElement, MouseEvent>, _quantities: Item[], _nome: string): void {
           throw new Error("Function not implemented.");
         } } handleClose={function (_e: React.KeyboardEvent<HTMLInputElement>): void {
           throw new Error("Function not implemented.");
@@ -363,7 +377,9 @@ export default function EnhancedTable() {
           throw new Error("Function not implemented.");
         } } handleDelete={function (_e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
           throw new Error("Function not implemented.");
-        } } currentSelectedItem={undefined} openQuantityInput={false} />
+        } } currentSelectedItem={undefined} openQuantityInput={false} setIsCreating={function (value: boolean): void {
+          throw new Error("Function not implemented.");
+        } } />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -402,6 +418,7 @@ export default function EnhancedTable() {
                           "aria-labelledby": labelId,
                         }}
                       />
+
                     </TableCell>
                     <TableCell
                       component="th"
@@ -412,8 +429,13 @@ export default function EnhancedTable() {
                       {row.DESCRIPTION}
                     </TableCell>
                     <TableCell>{row.STATUS}</TableCell>
+
+                     <TableCell align="right">{row.RESPONSAVEL}</TableCell>
                     <TableCell align="right">{row.ID_REQUISICAO}</TableCell>
                     <TableCell align="right">{row.ID_PROJETO}</TableCell>
+        
+
+
                     <TableCell align="right">
                       <Link to={`requisitionDetail/${row.ID_REQUISICAO}`} className="text-blue-400 underline">Editar </Link>
                     </TableCell>

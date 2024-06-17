@@ -5,15 +5,25 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import { Requisition, updateRequisition } from "../../../utils";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Modal } from "@mui/material";
+import { useState } from "react";
 
 const steps = [
   "Edição",
   "Cotação",
   "Compra",
 ];
-
-export default function HorizontalLinearStepper() {
-  const [activeStep, setActiveStep] = React.useState(0);
+interface props{ 
+  requisitionData : Requisition
+}
+const HorizontalLinearStepper : React.FC<props> = ({ requisitionData }) => {
+   
+  const [requisition, setRequisition ] = useState(requisitionData);
+  // const [isChangeStatusModalOpen, setIsChangeStatusModalOpen] = useState(false);
+  console.log('status: ', requisitionData.STATUS)
+  const [activeStep, setActiveStep] = React.useState(steps.indexOf(requisitionData.STATUS));
   const [skipped, setSkipped] = React.useState(new Set<number>());
 
   const isStepOptional = (step: number) => {
@@ -22,19 +32,32 @@ export default function HorizontalLinearStepper() {
   const isStepSkipped = (step: number) => {
     return skipped.has(step);
   };
-  const handleNext = () => {
-    let newSkipped = skipped;
-    if (isStepSkipped(activeStep)) {
-      newSkipped = new Set(newSkipped.values());
-      newSkipped.delete(activeStep);
-    }
+  const handleNext = async () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    setSkipped(newSkipped);
+    const editedRequisition = {...requisition, ['STATUS'] : steps[activeStep + 1]}
+    try{  
+       await updateRequisition(editedRequisition);
+      setRequisition(editedRequisition);
+    
+    }catch(e){
+      console.log(e);
+    }
+   
+    
   };
-  const handleBack = () => {
+  const handleBack = async () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    const editedRequisition = {...requisition, ['STATUS'] : steps[activeStep - 1]}
+    setRequisition(editedRequisition);
+     try{  
+      await updateRequisition(editedRequisition);
+      setRequisition(editedRequisition);
+    }catch(e){
+      console.log(e);
+    }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleSkip = () => {
     if (!isStepOptional(activeStep)) {
       // You probably want to guard against something like this,
@@ -99,17 +122,31 @@ export default function HorizontalLinearStepper() {
               Voltar
             </Button>
             <Box sx={{ flex: "1 1 auto" }} />
-            {isStepOptional(activeStep) && (
-              <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
-                Skip
-              </Button>
-            )}
+
             <Button onClick={handleNext}>
               {activeStep === steps.length - 1 ? "Finish" : "Avançar"}
             </Button>
+             {/* <Modal
+              open={isChangeStatusModalOpen}
+             >
+              <Box sx={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      width: 400,
+                      bgcolor: 'background.paper',
+                      border: '2px solid #000',
+                      boxShadow: 24,
+                      p: 4,
+                  }}>
+
+              </Box>
+             </Modal> */}
           </Box>
         </React.Fragment>
       )}
     </Box>
   );
 }
+export default HorizontalLinearStepper;
