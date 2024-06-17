@@ -244,9 +244,12 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
     </Toolbar>
   );
 }
-
+interface TableProps { 
+  isCreating: boolean;
+}
 //TABLE
-export default function EnhancedTable({ isCreating  }) {
+export default function EnhancedTable({isCreating} : TableProps) {
+  console.log('isCreating: ', isCreating);
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Requisition>("ID_REQUISICAO");
   const [selected, setSelected] = React.useState<readonly number[]>([]);
@@ -377,7 +380,7 @@ export default function EnhancedTable({ isCreating  }) {
           throw new Error("Function not implemented.");
         } } handleDelete={function (_e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
           throw new Error("Function not implemented.");
-        } } currentSelectedItem={undefined} openQuantityInput={false} setIsCreating={function (value: boolean): void {
+        } } currentSelectedItem={undefined} openQuantityInput={false} setIsCreating={function (): void {
           throw new Error("Function not implemented.");
         } } />
         <TableContainer>

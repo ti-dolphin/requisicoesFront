@@ -41,7 +41,6 @@ export const style = {
 const ItemsTable: React.FC<itemsTableProps> = ({ id_requisicao, setIsCreating }) => {
 
   const [allRows, setAllRows] = useState<Product[]>();
-  const [searchTerm, setSearchTerm] = useState("");
   const [currentSelectedItem, setCurrentSelectedItem] = useState<Item>();
   const [filteredRows, setFilteredRows] = useState<Product[]>([]);
   const [quantities, setQuantities] = useState<Item[]>([]);
@@ -96,7 +95,6 @@ const ItemsTable: React.FC<itemsTableProps> = ({ id_requisicao, setIsCreating })
 
   const handleSearchItem = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchTyping = e.target.value.toUpperCase();
-    setSearchTerm(searchTyping);
     const filteredRows = allRows?.filter((item): boolean =>
       item.NOME.toUpperCase().includes(searchTyping)
     );

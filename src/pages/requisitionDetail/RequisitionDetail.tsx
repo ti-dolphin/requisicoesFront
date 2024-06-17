@@ -6,7 +6,6 @@ import EditIcon from "@mui/icons-material/Edit";
 
 import {
   Item,
-  Person,
   Requisition,
   fetchItems,
   fetchPersonById,
@@ -33,7 +32,7 @@ const RequisitionDetail: React.FC = () => {
         if(itemsData) setRequisitionItems(itemsData);
         if (personData){ 
           console.log('req items: ', itemsData)
-          setPersonData(personData);
+    
           setRequisitionData({...data, ['RESPONSAVEL'] : personData?.NOME});
         }
       }
@@ -45,7 +44,7 @@ const RequisitionDetail: React.FC = () => {
   const [requisitionData, setRequisitionData] = useState<Requisition>();
  
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [personData, setPersonData] = useState<Person>();
+
   const [requisitionItems, setRequisitionItems ] = useState<Item[]>([]);
  
   const handleClose = () => {

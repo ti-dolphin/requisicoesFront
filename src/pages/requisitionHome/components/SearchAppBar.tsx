@@ -68,7 +68,7 @@ interface SearchAppBarProps {
   handleQuantityChange: ( e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement> ) => void;
   handleDelete :  ( e : React.MouseEvent<HTMLButtonElement>) => void;
   currentSelectedItem: Item | undefined;
-  openQuantityInput: boolean;
+  openQuantityInput?: boolean;
   setIsCreating: (value : boolean) => void;
 }
 const motionItemsVariants = {
@@ -86,7 +86,7 @@ interface PositionMenuProps {
   handleQuantityChange: ( e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement> ) => void;
   handleDelete :  ( e : React.MouseEvent<HTMLButtonElement>) => void;
   currentSelectedItem: Item | undefined;
-  openQuantityInput: boolean;
+  openQuantityInput?: boolean;
   motionVariants: typeof motionItemsVariants;
   setIsCreating : (value : boolean ) => void;
 }

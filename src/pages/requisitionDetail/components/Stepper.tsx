@@ -7,7 +7,6 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { Requisition, updateRequisition } from "../../../utils";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Modal } from "@mui/material";
 import { useState } from "react";
 
 const steps = [
@@ -24,7 +23,7 @@ const HorizontalLinearStepper : React.FC<props> = ({ requisitionData }) => {
   // const [isChangeStatusModalOpen, setIsChangeStatusModalOpen] = useState(false);
   console.log('status: ', requisitionData.STATUS)
   const [activeStep, setActiveStep] = React.useState(steps.indexOf(requisitionData.STATUS));
-  const [skipped, setSkipped] = React.useState(new Set<number>());
+  const [skipped] = React.useState(new Set<number>());
 
   const isStepOptional = (step: number) => {
     return step === 1;
@@ -58,20 +57,6 @@ const HorizontalLinearStepper : React.FC<props> = ({ requisitionData }) => {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleSkip = () => {
-    if (!isStepOptional(activeStep)) {
-      // You probably want to guard against something like this,
-      // it should never occur unless someone's actively trying to break something.
-      throw new Error("You can't skip a step that isn't optional.");
-    }
-
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    setSkipped((prevSkipped) => {
-      const newSkipped = new Set(prevSkipped.values());
-      newSkipped.add(activeStep);
-      return newSkipped;
-    });
-  };
 
   const handleReset = () => {
     setActiveStep(0);
