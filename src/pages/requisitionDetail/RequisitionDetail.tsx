@@ -1,58 +1,55 @@
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import HorizontalLinearStepper from "./components/Stepper";
-import { Button, Modal, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 
 import {
   Item,
   Requisition,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   fetchItems,
   fetchPersonById,
   fetchRequsitionById,
 } from "../../utils";
 // import { useLocation } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import ItemsTable, { style } from "../requisitionHome/components/ItemsTable";
-import RequisitionItemsTable from "./components/RequisitionItemsTable";
-
+import RequisitionItemsTable from "../../components/tables/RequisitionItemsTable";
+import Loader from "../../components/Loader";
+import { ProductsTableModal } from "../../components/modals/ProductsTableModal";
 
 
 const RequisitionDetail: React.FC = () => {
   const { id } = useParams();
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  useEffect(() => {
-    async function performAsync() {
-      const data = await fetchRequsitionById(Number(id));
-      if (data) {
-        console.log(data);
-        const personData = await fetchPersonById(data.ID_RESPONSAVEL);
-        const itemsData = await fetchItems(data.ID_REQUISICAO);
+  const [IsAddItemsOpen, setIsAddItemsOpen] = useState<boolean>(false);
+  const [requisitionData, setRequisitionData] = useState<Requisition>();
+  const [refreshToggler, setRefreshToggler] = useState<boolean>(false); //refreshes Data
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [requisitionItems, setRequisitionItems] = useState<Item[]>([]);
+  const fetchData = async () => {
+    const data = await fetchRequsitionById(Number(id));
+    if (data) {
+      console.log(data);
+      const personData = await fetchPersonById(data.ID_RESPONSAVEL);
+      const itemsData = await fetchItems(data.ID_REQUISICAO);
+      if (itemsData) setRequisitionItems(itemsData);
+      if (personData) {
+        // console.log('req items: ', itemsData)
 
-        if(itemsData) setRequisitionItems(itemsData);
-        if (personData){ 
-          console.log('req items: ', itemsData)
-    
-          setRequisitionData({...data, ['RESPONSAVEL'] : personData?.NOME});
-        }
+        setRequisitionData({ ...data, ['RESPONSAVEL']: personData?.NOME });
       }
     }
-    performAsync();
-  
-  }, [id, isOpen]);
+  }
+  useEffect(() => {
 
-  const [requisitionData, setRequisitionData] = useState<Requisition>();
- 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    fetchData();
 
-  const [requisitionItems, setRequisitionItems ] = useState<Item[]>([]);
- 
-  const handleClose = () => {
-    setIsOpen(false);
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, IsAddItemsOpen, refreshToggler]);
+
   const handleOpen = (e: React.MouseEvent) => {
     e.preventDefault();
-    setIsOpen(true);
+    setIsAddItemsOpen(true);
   };
   const fields = [
     { label: "Descrição", key: "DESCRIPTION" },
@@ -69,15 +66,17 @@ const RequisitionDetail: React.FC = () => {
         margin: "auto",
       }}
     >
-      <div className="w-full h-1/2  border">
+      <div className="Header w-full h-1/2  border">
         <div className="h-1/2 w-full bg-[#fafafa]">
           <h1 className="font-semibold px-6 py-4">
             Requisição Materiais Projeto 19487
           </h1>
         </div>
       </div>
-      <div className="w-full border  p-2">
-       {requisitionData &&  <HorizontalLinearStepper requisitionData={requisitionData}/>}
+      <div className="Stepper w-full border  p-2">
+        {requisitionData
+          && <HorizontalLinearStepper requisitionData={requisitionData} />
+        }
       </div>
       <Stack direction="row">
         <Box
@@ -91,7 +90,7 @@ const RequisitionDetail: React.FC = () => {
         >
           <Stack direction="column" spacing={2} sx={{ width: "50%" }}>
             <h1 className="">Detalhes</h1>
-            {requisitionData &&
+            {requisitionData ?
               fields.map((item) => (
                 <>
                   <label htmlFor="">{item.label}</label>
@@ -105,7 +104,7 @@ const RequisitionDetail: React.FC = () => {
                     <EditIcon className="cursor-pointer text-gray-500" />
                   </div>
                 </>
-              ))}
+              )) : <Loader />}
           </Stack>
           <Stack direction="row" spacing={4}>
             <a
@@ -116,55 +115,27 @@ const RequisitionDetail: React.FC = () => {
               Adicionar Produtos
             </a>
           </Stack>
-          {isOpen && (
-            <>
-              <Modal
-                open={isOpen}
-                onClose={handleClose}
-                aria-labelledby="child-modal-title"
-                aria-describedby="child-modal-description"
-              >
-                <Box
-                  sx={{
-                    ...style,
-                    border: "none",
-                    width: "95vw",
-                    height: "95vh",
-                  }}
-                >
-                  <Stack direction="column">
-                    <Stack
-                      direction="column"
-                      alignItems="center"
-                      sx={{ height: "90vh", padding: "none" }}
-                    >
-                      <ItemsTable
-                        requistionItems={requisitionItems}
-                       setRequisitionItems={setRequisitionItems}
-                       setIsCreating={setIsOpen}
-                       id_requisicao={Number(id)} />
-                      <Stack
-                        sx={{ marginTop: "8rem" }}
-                        direction="row"
-                        spacing={2}
-                      >
-                        <Button onClick={handleClose}>Voltar</Button>
-                      </Stack>
-                    </Stack>
-                  </Stack>
-                </Box>
-              </Modal>
-            </>
+          {IsAddItemsOpen && requisitionData && (
+            <ProductsTableModal
+              isOpen={IsAddItemsOpen}
+              setIsOpen={setIsAddItemsOpen}
+              requisitionID={requisitionData.ID_REQUISICAO}
+              setIsCreating={setIsAddItemsOpen}
+            />
           )}
         </Box>{" "}
-        <Box sx={{ 
+
+        <Box sx={{
           width: "50%",
-           maxHeight: '600px',
-              border: "0.5px solid #e3e3e3",
-              overflowY: 'scroll'
+          maxHeight: '600px',
+          border: "0.5px solid #e3e3e3",
+          overflowY: 'scroll'
         }}>
           {requisitionItems && (
-            <RequisitionItemsTable items={requisitionItems} />
+            <RequisitionItemsTable
+              setRefreshToggler={setRefreshToggler}
+              refreshToggler={refreshToggler}
+              items={requisitionItems} />
           )}
         </Box>
       </Stack>

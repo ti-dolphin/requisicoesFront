@@ -2,19 +2,8 @@ import React, { useEffect, useState } from "react";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
 import { Button, Stack } from "@mui/material";
-import { Item, postRequistionItem } from "../../../utils";
-
-interface AddedItemsTableProps {
-  addedItems: Item[];
-  handleOpen: (
-    e: React.MouseEvent<HTMLButtonElement>,
-    quantities: Item[],
-    nome: string
-  ) => void;
-  handleDelete :  ( e : React.MouseEvent<HTMLButtonElement>) => void;
-  setIsCreating : ( value : boolean ) => void;
-}
-
+import { Item, postRequistionItem } from "../../utils";
+import { AddedItemsTableProps } from "../../types";
 
 const AddedItemsTable: React.FC<AddedItemsTableProps> = ({
   addedItems,
@@ -25,7 +14,7 @@ const AddedItemsTable: React.FC<AddedItemsTableProps> = ({
 
   const handleSave = async ( ) =>  {
     const requestBody: { QUANTIDADE: number; ID_PRODUTO: number; ID_REQUISICAO: number; }[] = [];
-    addedItems.map((item) => { 
+    addedItems?.map((item) => { 
       const { QUANTIDADE, ID_PRODUTO, ID_REQUISICAO } = item;
       requestBody.push( 
         { 
@@ -42,7 +31,7 @@ const AddedItemsTable: React.FC<AddedItemsTableProps> = ({
     );
     if( response ){ 
       console.log('response: ', response);
-      setIsCreating(false);
+      setIsCreating && setIsCreating(false);
     }
 }
 
@@ -91,7 +80,7 @@ const AddedItemsTable: React.FC<AddedItemsTableProps> = ({
                       <button
                         id={String(item.ID_PRODUTO)}
                         onClick={(e) =>
-                          handleOpen(e, addedItems, item.NOME ? item.NOME : "")
+                         handleOpen && handleOpen(e,  item.NOME ? item.NOME : "", addedItems)
                         }
                         className="text-blue-600 underline font-normal"
                       >
@@ -101,7 +90,7 @@ const AddedItemsTable: React.FC<AddedItemsTableProps> = ({
                         id={String(item.ID_PRODUTO)}
                         key="delete"
                         className="delete text-blue-600 underline font-normal"
-                        onClick={(e) => handleDelete(e)}
+                        onClick={(e) => handleDelete && handleDelete(e)}
                       >
                         <DeleteForeverIcon />
                       </button>
@@ -112,9 +101,10 @@ const AddedItemsTable: React.FC<AddedItemsTableProps> = ({
           </tbody>
         </table>
       )}
-      {addedItems.length && <Button onClick={handleSave}>Salvar</Button>}
+      {addedItems && <Button onClick={handleSave}>Salvar</Button>}
     </div>
   );
+
 };
 
 export default AddedItemsTable;

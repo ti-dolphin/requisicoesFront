@@ -13,7 +13,6 @@ import TableSortLabel from "@mui/material/TableSortLabel";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
-import Checkbox from "@mui/material/Checkbox";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -24,13 +23,15 @@ import { Stack } from "@mui/material";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
-import SearchAppBar from "./SearchAppBar";
+import SearchAppBar from "../../pages/requisitionHome/components/SearchAppBar";
 import { useState } from "react";
-import { Item, fecthRequisitions, fetchPersons } from "../../../utils";
+import { deleteRequisition, fecthRequisitions, fetchPersons } from "../../utils";
 import { useEffect } from "react";
-import { Requisition } from "../../../utils";
-
+import { Requisition } from "../../utils";
 import { Link } from "react-router-dom";
+import { RequisitionTableProps } from "../../types";
+import Loader from "../Loader";
+import DeleteRequisitionModal from '../modals/warnings/DeleteRequisitionModal';
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -127,11 +128,8 @@ interface EnhancedTableProps {
 
 function EnhancedTableHead(props: EnhancedTableProps) {
   const {
-    onSelectAllClick,
     order,
     orderBy,
-    numSelected,
-    rowCount,
     onRequestSort,
   } = props;
   const createSortHandler =
@@ -143,15 +141,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     <TableHead>
       <TableRow>
         <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              "aria-label": "select all desserts",
-            }}
-          />
+          
         </TableCell>
         {headCells.map((headCell) => (
           <TableCell
@@ -244,12 +234,14 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
     </Toolbar>
   );
 }
-interface TableProps { 
-  isCreating: boolean;
-}
+
 //TABLE
-export default function EnhancedTable({isCreating} : TableProps) {
+export default function EnhancedTable({isCreating} : RequisitionTableProps) {
   console.log('isCreating: ', isCreating);
+
+  const [currentSelectedId, setCurrentSelectedId] = useState<number>(-1);
+  const [RefreshToggler, setRefreshToggler] = useState(false);
+  const [isDeleteRequisitionModalOpen, setIsDeleteRequisitionModalOpen] = useState(false);
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Requisition>("ID_REQUISICAO");
   const [selected, setSelected] = React.useState<readonly number[]>([]);
@@ -259,9 +251,7 @@ export default function EnhancedTable({isCreating} : TableProps) {
   const [_searchTerm, setSearchTerm] = useState("");
   const [allRows, setAllRows] = useState<Requisition[]>([]);
   const [filteredRows, setFilteredRows] = useState<Requisition[]>([]);
-
-  useEffect(() => {
-    async function performAsync() {
+   async function performAsync() {
       console.log('performed')
       const data = await fecthRequisitions();
       const personsData = await fetchPersons();
@@ -290,17 +280,34 @@ export default function EnhancedTable({isCreating} : TableProps) {
         setFilteredRows(rows);
        }
       
-     }
-     performAsync();
-  }, []);
+}
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-    setFilteredRows(
-      allRows.filter((item) =>
-        item.DESCRIPTION.toUpperCase().includes(e.target.value.toUpperCase())
+
+  useEffect(() => {
+     performAsync();
+     console.log('useEffect');
+  }, [isCreating, RefreshToggler]);
+
+  const handleOpenDeleteModal = (id: number) => { 
+      setCurrentSelectedId(id);
+      setIsDeleteRequisitionModalOpen(true);
+  }
+
+  const handleDelete = async (id : number ) => { 
+      await deleteRequisition(id);
+      setRefreshToggler(!RefreshToggler);
+      setIsDeleteRequisitionModalOpen(false);
+  }
+
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if(e.key === 'Enter'){ 
+        setSearchTerm(e.currentTarget.value);
+        setFilteredRows(
+        allRows.filter((item) =>
+        item.DESCRIPTION.toUpperCase().includes(e.currentTarget.value.toUpperCase())
       )
     );
+    }
     console.log('rows: ', allRows);
   };
   const visibleRows = React.useMemo(
@@ -371,18 +378,10 @@ export default function EnhancedTable({isCreating} : TableProps) {
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
-        <SearchAppBar  handleSearch={handleSearch} addedItems={[]} caller={""}
-        handleOpen={function (_e: React.MouseEvent<HTMLButtonElement, MouseEvent>, _quantities: Item[], _nome: string): void {
-          throw new Error("Function not implemented.");
-        } } handleClose={function (_e: React.KeyboardEvent<HTMLInputElement>): void {
-          throw new Error("Function not implemented.");
-        } } handleQuantityChange={function (_e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
-          throw new Error("Function not implemented.");
-        } } handleDelete={function (_e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
-          throw new Error("Function not implemented.");
-        } } currentSelectedItem={undefined} openQuantityInput={false} setIsCreating={function (): void {
-          throw new Error("Function not implemented.");
-        } } />
+        <SearchAppBar
+            caller='requisitionTable'
+            handleSearch={handleSearch}
+        />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -398,7 +397,8 @@ export default function EnhancedTable({isCreating} : TableProps) {
               rowCount={visibleRows.length}
             />
             <TableBody>
-              {visibleRows.map((row, index) => {
+              {
+               visibleRows.length ? (visibleRows.map((row, index) => {
                 const isItemSelected = isSelected(row.ID_REQUISICAO);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -414,13 +414,7 @@ export default function EnhancedTable({isCreating} : TableProps) {
                     sx={{ cursor: "pointer" }}
                   >
                     <TableCell padding="checkbox">
-                      <Checkbox
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{
-                          "aria-labelledby": labelId,
-                        }}
-                      />
+                      
 
                     </TableCell>
                     <TableCell
@@ -437,14 +431,20 @@ export default function EnhancedTable({isCreating} : TableProps) {
                     <TableCell align="right">{row.ID_REQUISICAO}</TableCell>
                     <TableCell align="right">{row.ID_PROJETO}</TableCell>
         
-
-
-                    <TableCell align="right">
+                    <TableCell align="right" sx={{display:'flex', gap: '12px'}}>
+                      <button
+                       id={String(row.ID_REQUISICAO)}
+                       onClick={() => handleOpenDeleteModal(row.ID_REQUISICAO)}
+                       className="hover:bg-red-100 p-[2px]">
+                          <DeleteIcon className="text-red-600"/>
+                       </button>
+                      
                       <Link to={`requisitionDetail/${row.ID_REQUISICAO}`} className="text-blue-400 underline">Editar </Link>
                     </TableCell>
                   </TableRow>
                 );
-              })}
+               }) ) : <Loader />
+              }
               {emptyRows > 0 && (
                 <TableRow
                   style={{
@@ -466,6 +466,13 @@ export default function EnhancedTable({isCreating} : TableProps) {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
+         {isDeleteRequisitionModalOpen &&
+                         <DeleteRequisitionModal 
+                            isDeleteRequisitionModalOpen={isDeleteRequisitionModalOpen}
+                              setIsDeleteRequisitionModalOpen={setIsDeleteRequisitionModalOpen}
+                                handleDelete={handleDelete}
+                                    requisitionId={currentSelectedId}
+                                /> }
       </Paper>
       <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}

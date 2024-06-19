@@ -1,77 +1,19 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Person, Project, fetchAllProjects } from "../../../utils";
 import { fetchPersons, postRequisition } from "../../../utils";
 import { Button } from "@mui/material";
-import ItemsTable from "./ItemsTable";
-import { Modal, Stack, Box } from "@mui/material";
 import React from "react";
+import { AddRequisitionFormProps } from "../../../types";
+import { ProductsTableModal } from "../../../components/modals/ProductsTableModal";
 
-const style = {
-  position: "absolute" as const,
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  borderRadius: '25px',
-  border: "2px solid #000",
-  boxShadow: 24,
-  pt: 2,
-  px: 4,
-  pb: 3,
-};
+
 interface RequisitionFields {
-  id_responsavel: number;
-  id_projeto: number;
-  description: string;
-}
-interface ItemstableModalProps {
-  isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
-  requisitionID: number;
-  setIsCreating: (value : boolean ) => void;
+  ID_RESPONSAVEL: number;
+  ID_PROJETO: number;
+  DESCRIPTION: string;
 }
 
-export const ItemstableModal: React.FC<ItemstableModalProps> = ({
-  isOpen,
-  setIsOpen,
-  requisitionID,
-  setIsCreating
-}) => {
-  const handleClose = () => {
-    setIsOpen(false);
-  };
-  return (
-    <>
-      <Modal
-        open={isOpen}
-        onClose={handleClose}
-        aria-labelledby="child-modal-title"
-        aria-describedby="child-modal-description"
-      >
-        <Box sx={{ ...style, border: "none", width: "95vw", height: "95vh" }}>
-          <Stack direction="column">
-            <Stack
-              direction="column"
-              alignItems="center"
-              sx={{ height: "90vh", padding: "none" }}
-            >
-              <ItemsTable id_requisicao={requisitionID} setIsCreating={setIsCreating}/>
-              <Stack sx={{ marginTop: "8rem" }} direction="row" spacing={2}>
-                <Button onClick={handleClose}>Voltar</Button>
-              </Stack>
-            </Stack>
-          </Stack>
-        </Box>
-      </Modal>
-    </>
-  )
-};
-interface props {
-  setIsCreating : (value : boolean) =>void;
-}
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const AddRequisitionForm: React.FC<props> = ({setIsCreating}) => {
+const AddRequisitionForm: React.FC<AddRequisitionFormProps> = ({setIsCreating}) => {
   useEffect(() => {
     async function performAsync() {
       console.log("performed");
@@ -87,15 +29,15 @@ const AddRequisitionForm: React.FC<props> = ({setIsCreating}) => {
   }, []);
 
   const [fields, setFields] = useState<RequisitionFields>({
-    id_responsavel: 0,
-    id_projeto: 0,
-    description: "",
+    ID_RESPONSAVEL: 0,
+    ID_PROJETO: 0,
+    DESCRIPTION: "",
   });
   const [projects, setProjects] = useState<Project[]>([]);
   const [persons, setPersons] = useState<Person[]>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [currentId, setCurrentId] = useState<number>(0);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  
   const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { id, value } = e.target;
     setFields({
@@ -105,6 +47,10 @@ const AddRequisitionForm: React.FC<props> = ({setIsCreating}) => {
   };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
+    console.log('fields: ', {
+      ...fields,
+      [id]: value,
+    })
     setFields({
       ...fields,
       [id]: value,
@@ -115,17 +61,22 @@ const AddRequisitionForm: React.FC<props> = ({setIsCreating}) => {
     console.log('currentID: ', currentId);
      if (currentId === 0) {
        e.preventDefault();
-       const response = await postRequisition([
-         {
-           ...fields,
-           status: 'Cotação'
-         }
-       ]);
+       console.log({
+            ...fields,
+            ['STATUS'] : 'Edição'
+          }   )
+        const response = await postRequisition([
+          {
+            ...fields,
+            ['STATUS'] : 'Edição'
+          }   
+        ]);
        if (response) {
          console.log('ID: ', response.data);
          setCurrentId(Number(response.data));
        }
        setIsOpen(true);
+       
       } else{ 
         setIsOpen(true);
       }
@@ -142,7 +93,7 @@ const AddRequisitionForm: React.FC<props> = ({setIsCreating}) => {
           Responsável
         </label>
         <select
-          id="id_responsavel"
+          id="ID_RESPONSAVEL"
           className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
           onChange={(e) => handleSelect(e)}
           required
@@ -162,7 +113,7 @@ const AddRequisitionForm: React.FC<props> = ({setIsCreating}) => {
           Projeto
         </label>
         <select
-          id="id_projeto"
+          id="ID_PROJETO"
           className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
           required
           onChange={(e) => handleSelect(e)}
@@ -181,7 +132,7 @@ const AddRequisitionForm: React.FC<props> = ({setIsCreating}) => {
         </label>
         <input
           type="text"
-          id="description"
+          id="DESCRIPTION"
           placeholder="Descrição..."
           className="shadow-sm
            bg-gray-50 border
@@ -194,8 +145,8 @@ const AddRequisitionForm: React.FC<props> = ({setIsCreating}) => {
       </div>
       <Button type="submit">Seguir</Button>
       {currentId > 0 && (
-        <ItemstableModal
-          setIsCreating = { setIsCreating }
+        <ProductsTableModal
+          setIsCreating = {setIsCreating}
           requisitionID={currentId}
           isOpen={isOpen}
           setIsOpen={setIsOpen}

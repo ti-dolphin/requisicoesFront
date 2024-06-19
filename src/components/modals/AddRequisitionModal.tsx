@@ -8,8 +8,9 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import { Typography } from "@mui/material";
-import AddRequisitionForm from "./AddRequisitionForm";
+import AddRequisitionForm from "../../pages/requisitionHome/components/AddRequisitionForm";
 import CloseIcon from "@mui/icons-material/Close";
+import { addRequisitionModalProps } from "../../types";
 
 const style = {
   position: "absolute" as const,
@@ -26,12 +27,7 @@ const style = {
 };
 
 
-interface props{ 
-  isCreating: boolean;
-  setIsCreating: (value: boolean) => void;
-}
-
-const NestedModal : React.FC<props> = ({isCreating, setIsCreating}) => {
+const NestedModal: React.FC<addRequisitionModalProps> = ({ isCreating, setIsCreating }) => {
   const handleOpen = () => {
     setIsCreating(true);
   };
@@ -63,14 +59,13 @@ const NestedModal : React.FC<props> = ({isCreating, setIsCreating}) => {
             border: "1px solid gray",
           }}
         >
-
-            <Button onClick={handleClose} sx={{ position:'absolute', top: '10px', right:'0'}}>
-              <CloseIcon/>
-            </Button>
-            <Typography variant="h6" id="parent-modal-title">
-              Nova Requisição
-            </Typography>
-          <AddRequisitionForm setIsCreating = { setIsCreating }/>
+          <Button onClick={handleClose} sx={{ position: 'absolute', top: '10px', right: '0' }}>
+            <CloseIcon />
+          </Button>
+              <Typography variant="h6" id="parent-modal-title">
+                Nova Requisição
+              </Typography>
+          <AddRequisitionForm setIsCreating={setIsCreating} />
         </Box>
       </Modal>
     </div>

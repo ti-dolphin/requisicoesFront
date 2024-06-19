@@ -9,10 +9,10 @@ import api from "./api";
   RESPONSAVEL : string;
 }
  interface RequisitionPost {
-   status: string;
-   description: string;
-   id_responsavel: number;
-   id_projeto: number;
+   STATUS: string;
+   DESCRIPTION: string;
+   ID_RESPONSAVEL: number;
+   ID_PROJETO: number;
  }
  // eslint-disable-next-line @typescript-eslint/no-unused-vars
  interface RequisitionItemPost{ 
@@ -24,7 +24,7 @@ import api from "./api";
 
  interface Product {
   ID_PRODUTO: number;
-  CODIGO: string;
+  codigo: string;
   NOME: string;
 }
 interface Person{ 
@@ -68,18 +68,46 @@ const fetchAllProjects = async ( ) => {
     console.log(e);
   }
 }
+const deleteRequisition = async (id:number) => { 
+   try{ 
+      await api.delete(`/requisition/${id}`);
+   }catch(e){ 
+      console.log(e);
+   }
+}
 
-const fetchAllProducts = async () => {
-  try {
-    const response = await api.get<Product[]>("/products");
-    return response.data;
-  } catch (e) {
-    console.log(e);
+const fetchTenThousandProducts = async () => {
+  let offSet = -10000;
+  const qtdRequests = 1;
+  let data: Product[] = [];
+  for(let i = 0; i < qtdRequests; i++){
+        const chunk = await api.get<Product[]>(`/products`, { 
+        params : { 
+          limit: 10000,
+          offSet : offSet += 10000
+        }
+      })
+      if(chunk.data) data = [...data, ...chunk.data];
   }
-};
+
+  return data;
+}
+const searchProducts = async (name : string ) =>  { 
+    try{ 
+      const response = await api.get<Product[]>('/products', { 
+        params: {  
+          search : name
+        }
+      });
+      return response;
+    }catch(e){ 
+      console.log(e);
+    }
+}
+
 const fecthRequisitions = async () => {
   try {
-    const response = await api.get<Requisition[]>("/requisition");
+    const response = await api.get<Requisition[]>("/requisition/");
     return response.data;
   } catch (e) {
     console.log(e);
@@ -142,7 +170,7 @@ const updateRequisition = async (requisition: Requisition ) => {
 }
 export {
   fecthRequisitions,
-  fetchAllProducts,
+  fetchTenThousandProducts,
   fetchPersons,
   fetchAllProjects,
   postRequisition,
@@ -152,7 +180,9 @@ export {
   fetchItems,
   deleteRequisitionItem,
   updateRequisitionItems,
-  updateRequisition
+  updateRequisition,
+  deleteRequisition,
+  searchProducts
 };   
 export type { Requisition, Product, Person, Project, RequisitionItemPost, Item };
 

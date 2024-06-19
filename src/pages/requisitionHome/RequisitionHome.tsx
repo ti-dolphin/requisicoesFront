@@ -1,11 +1,11 @@
-import RequisitionTable from './components/RequisitionTable';
+import RequisitionTable from '../../components/tables/RequisitionTable';
 import '../css/RequisitionHome.scss';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import { Typography } from '@mui/material';
 import Stack from '@mui/material/Stack';
-import AddRequisitionModal from './components/AddRequisitionModal';
+import AddRequisitionModal from '../../components/modals/AddRequisitionModal';
 import { useState } from 'react';
 
 
