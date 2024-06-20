@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import HorizontalLinearStepper from "./components/Stepper";
-import { Stack } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-
+import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
 import {
   Item,
   Requisition,
@@ -13,7 +13,7 @@ import {
   fetchRequsitionById,
 } from "../../utils";
 // import { useLocation } from "react-router-dom";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import RequisitionItemsTable from "../../components/tables/RequisitionItemsTable";
 import Loader from "../../components/Loader";
 import { ProductsTableModal } from "../../components/modals/ProductsTableModal";
@@ -68,8 +68,10 @@ const RequisitionDetail: React.FC = () => {
     >
       <div className="Header w-full h-1/2  border">
         <div className="h-1/2 w-full bg-[#fafafa]">
+          <Button><Link to="/"><ArrowCircleLeftIcon /></Link></Button>
+         
           <h1 className="font-semibold px-6 py-4">
-            Requisição Materiais Projeto 19487
+            Requisição de Materiais do projeto {requisitionData?.DESCRICAO}
           </h1>
         </div>
       </div>
@@ -127,9 +129,9 @@ const RequisitionDetail: React.FC = () => {
 
         <Box sx={{
           width: "50%",
-          maxHeight: '600px',
+          maxHeight: '400px',
           border: "0.5px solid #e3e3e3",
-          overflowY: 'scroll'
+          overflowY: 'auto'
         }}>
           {requisitionItems && (
             <RequisitionItemsTable

@@ -7,7 +7,7 @@ import { Button, Stack } from '@mui/material';
 
 
 const style = {
-  position: 'absolute' as const,
+  position: 'absolute',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -20,7 +20,8 @@ const style = {
   bgcolor: 'background.paper',
   border: 'none',
   boxShadow: 24,
-  padding: 2
+  padding: 2,
+  zIndex: 10
 };
 
 const DeleteRequisitionItemModal : React.FC<DeleteRequisitionItemModalProps> = ({
@@ -33,7 +34,6 @@ const DeleteRequisitionItemModal : React.FC<DeleteRequisitionItemModalProps> = (
   const handleClose = () => setIsDeleteRequisitionItemModalOpen(false);
 
   return (
-    <div>
       <Modal
         open={isDeleteRequisitionItemModalOpen}
         onClose={handleClose}
@@ -55,7 +55,6 @@ const DeleteRequisitionItemModal : React.FC<DeleteRequisitionItemModalProps> = (
           </Stack>
         </Box>
       </Modal>
-    </div>
   );
 }
 export default DeleteRequisitionItemModal;

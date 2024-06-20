@@ -17,7 +17,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({ items, re
   const [editMode, setEditMode] = useState<boolean>(false);
   const [editModeStyle, setEditModeStyle] = useState('');
   const [isDeleteRequisitionItemModalOpen, setIsDeleteRequisitionItemModalOpen] = useState<boolean>(false);
-
+  const [itemBeingDeleted, setItemBeingDeleted ] = useState<Item>();
   useEffect(() => {
     setRequisitionItems(items);
     setItemsBeingEdited(items);
@@ -67,25 +67,25 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({ items, re
   }
   return (
     // <div  className="border w-full p-2 overflow-auto overflow-y-scroll border-blue-100 flex flex-col items-center">
-    <div className="relative overflow-x-auto overflow-y-auto">
-      <table className="w-full text-sm text-left rtl:text-right text-gray-500 ">
+    <div className="realative">
+      <table className="text-sm w-full text-left rtl:text-right text-gray-500 ">
         <thead className="text-xs text-white uppercase bg-gray-50 ">
-          <tr className='bg-blue-900'>
+          <tr className=' border border-black'>
             {columns.map((columnName) => (
-              <th className="px-6 py-3">{columnName}</th>
+              <th className="px-4 w-1/2 py-3 border text-black"><h1 className='text-center'>{columnName}</h1></th>
             ))}
           </tr>
         </thead>
-        <tbody>
+        <tbody className=''>
           {requisitionItems.map((item) => (
-            <tr className="bg-white border-b ">
+            <tr className="bg-white border ">
               <td
                 scope="row"
-                className="px-4 py-2  text-sm text-gray-900 whitespace-nowrap"
+                className="text-sm px-4 py-2 text-gray-900 whitespace-nowrap border"
               >
-                {item.NOME}
+                <p className='overflow-x-auto max-w-[350px]'>{item.NOME}</p>
               </td>
-              <td className="px-6 py-2 flex gap-1 justify-center">
+              <td className="px-4 py-2 flex gap-1 items-center justify-center">
                 <input
                   onChange={(e) => handleChange(e, item)}
                   className={`${editModeStyle} w-[6rem] bg-blue-100 rounded-md p-1`} type="text" disabled={editMode ? false : true}
@@ -102,28 +102,30 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({ items, re
                   id={String(item.ID_PRODUTO)}
                   className="edit text-red-700 hover:bg-slate-300 rounded-sm p-[0.5] underline font-normal"
                   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                  onClick={() => setIsDeleteRequisitionItemModalOpen(true)}
+                  onClick={() => { 
+                    setIsDeleteRequisitionItemModalOpen(true);
+                    setItemBeingDeleted(item);
+                   }}
                 >
                   <DeleteForeverIcon />
                 </button>
               </td>
-              { 
-              isDeleteRequisitionItemModalOpen && <DeleteRequisitionItemModal
-                  isDeleteRequisitionItemModalOpen={isDeleteRequisitionItemModalOpen}
-                  setIsDeleteRequisitionItemModalOpen={setIsDeleteRequisitionItemModalOpen}
-                  handleDelete={handleDelete}
-                  item={item}
-              />
-            }
             </tr>
           ))}
         </tbody>
-        
       </table>
       {editMode &&
         <Button
           onClick={() => handleSave()}
           sx={{ padding: '1rem', margin: '2rem' }}>SALVAR</Button>}
+      {
+        isDeleteRequisitionItemModalOpen && itemBeingDeleted && <DeleteRequisitionItemModal
+          isDeleteRequisitionItemModalOpen={isDeleteRequisitionItemModalOpen}
+          setIsDeleteRequisitionItemModalOpen={setIsDeleteRequisitionItemModalOpen}
+          handleDelete={handleDelete}
+          item={itemBeingDeleted}
+        />
+      } 
     </div>
     // </div>
   );

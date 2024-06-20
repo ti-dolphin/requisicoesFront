@@ -10,9 +10,12 @@ import { Requisition, updateRequisition } from "../../../utils";
 import { useState } from "react";
 
 const steps = [
-  "Edição",
-  "Cotação",
-  "Compra",
+  "Em edição",
+  "Requisitado",
+  "Em cotação",
+  "Cotado",
+  "Comprar",
+  "Concluído"
 ];
 interface props{ 
   requisitionData : Requisition
@@ -26,7 +29,7 @@ const HorizontalLinearStepper : React.FC<props> = ({ requisitionData }) => {
   const [skipped] = React.useState(new Set<number>());
 
   const isStepOptional = (step: number) => {
-    return step === 1;
+    return step === -1;
   };
   const isStepSkipped = (step: number) => {
     return skipped.has(step);
@@ -58,9 +61,6 @@ const HorizontalLinearStepper : React.FC<props> = ({ requisitionData }) => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
-  const handleReset = () => {
-    setActiveStep(0);
-  };
 
   return (
     <Box sx={{ width: "100%", paddingX: '1rem' }}>
@@ -88,11 +88,11 @@ const HorizontalLinearStepper : React.FC<props> = ({ requisitionData }) => {
       {activeStep === steps.length ? (
         <React.Fragment>
           <Typography sx={{ mt: 2, mb: 1 }}>
-            All steps completed - you&apos;re finished
+            Requisição enviada para compra!
           </Typography>
           <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
             <Box sx={{ flex: "1 1 auto" }} />
-            <Button onClick={handleReset}>Reset</Button>
+            
           </Box>
         </React.Fragment>
       ) : (
@@ -109,7 +109,7 @@ const HorizontalLinearStepper : React.FC<props> = ({ requisitionData }) => {
             <Box sx={{ flex: "1 1 auto" }} />
 
             <Button onClick={handleNext}>
-              {activeStep === steps.length - 1 ? "Finish" : "Avançar"}
+              {activeStep === steps.length - 1 ? "Enviar para o compras" : "Avançar"}
             </Button>
              {/* <Modal
               open={isChangeStatusModalOpen}
