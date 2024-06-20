@@ -44,6 +44,12 @@ export const motionItemsVariants = {
   closed: { opacity: 0, x: "-100%" },
 };
 
+export interface DeleteRequisitionItemModalProps{ 
+  isDeleteRequisitionItemModalOpen : boolean;
+      setIsDeleteRequisitionItemModalOpen : (value: boolean) => void;
+      handleDelete : (item : Item) => void;
+      item : Item;
+}
 export interface SearchAppBarProps {
   addedItems?: Item[];
   caller: string;

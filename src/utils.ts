@@ -6,6 +6,7 @@ import api from "./api";
   DESCRIPTION: string;
   ID_RESPONSAVEL: number;
   ID_PROJETO:number;
+  DESCRICAO: string;
   RESPONSAVEL : string;
 }
  interface RequisitionPost {
@@ -23,7 +24,7 @@ import api from "./api";
  // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
  interface Product {
-  ID_PRODUTO: number;
+  ID: number;
   codigo: string;
   NOME: string;
 }

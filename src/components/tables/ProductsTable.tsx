@@ -10,20 +10,18 @@ import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Typography from "@mui/material/Typography";
 import { Button, Stack } from "@mui/material";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
 import { ProductsTableProps } from "../../types";
 
-
-
 const findProduct = (products: Item[] | undefined, id: number) => {
- if(products){ 
-   const product = products.find((product) => product.ID_PRODUTO === id);
-  if (product) return product;
-  return false;
- }else return null;
+  if (products) {
+    const product = products.find((product) => product.ID_PRODUTO === id);
+    if (product) return product;
+    return false;
+  } else return null;
 };
 
-
+// eslint-disable-next-line react-refresh/only-export-components
 export const style = {
   position: "absolute",
   borderRadius: "25px",
@@ -36,48 +34,49 @@ export const style = {
   boxShadow: 24,
   p: 4,
 };
-const ProductsTable: React.FC<ProductsTableProps> = ({ ID_REQUISICAO, setIsCreating }) => {
-
+const ProductsTable: React.FC<ProductsTableProps> = ({
+  ID_REQUISICAO,
+  setIsCreating,
+}) => {
   const [currentSelectedItem, setCurrentSelectedItem] = useState<Item>();
   const [filteredRows, setFilteredRows] = useState<Product[]>([]);
   const [quantities, setQuantities] = useState<Item[]>([]);
   const [openQuantityInput, setOpenQuantityInput] = useState(false);
 
-  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement>) => {
+  const handleQuantityChange = (
+    e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement>
+  ) => {
     const { id, value } = e.currentTarget;
-    console.log('id produto: ', id);
+    console.log("id produto: ", id);
     const product = findProduct(quantities, Number(id));
 
     if (product) {
       const updatedQuantities = [...quantities];
       const indexOfProduct = updatedQuantities.indexOf(product);
-      if (Number(value) > 0){ 
-        updatedQuantities[indexOfProduct].QUANTIDADE = Number(value);    
-      }
-      else updatedQuantities.splice(indexOfProduct, 1);
+      if (Number(value) > 0) {
+        updatedQuantities[indexOfProduct].QUANTIDADE = Number(value);
+      } else updatedQuantities.splice(indexOfProduct, 1);
       setQuantities(updatedQuantities);
-
     } else {
       const updatedQuantities = quantities;
-      if (Number(value) > 0 && currentSelectedItem ){ 
-          const addedItem = {
+      if (Number(value) > 0 && currentSelectedItem) {
+        const addedItem = {
           ID_PRODUTO: Number(id),
           QUANTIDADE: Number(value),
           NOME: currentSelectedItem?.NOME,
           ID_REQUISICAO: ID_REQUISICAO,
-          ID: 0
-        }
+          ID: 0,
+        };
         updatedQuantities.push(addedItem);
       }
-       
-      setQuantities(updatedQuantities);
 
+      setQuantities(updatedQuantities);
     }
   };
 
   const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
     deleteItem(e.currentTarget.id);
-  }
+  };
 
   const deleteItem = (id: string) => {
     const product = findProduct(quantities, Number(id));
@@ -87,27 +86,16 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ ID_REQUISICAO, setIsCreat
       updatedQuantities.splice(indexOfProduct, 1);
       setQuantities(updatedQuantities);
     }
-  }
+  };
 
   const handleSearchItem = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-
-    console.log('handleSearchItem');
-    if(e.key === 'Enter' && e.currentTarget.value) {
-       const { value } = e.currentTarget;
-       const searchResults = await searchProducts(value.toUpperCase());
-       console.log(searchResults);
-       if(searchResults) setFilteredRows([...searchResults.data]);
-   }
-   //else{ 
-  //   const { value } = e.currentTarget;
-  //     setFilteredRows(
-  //      allRows ?
-  //      allRows.filter(
-  //     (product) => (product.NOME.includes(value.toUpperCase())) )
-  //      : []
-  //   );
-  // }
-     
+    console.log("handleSearchItem");
+    if (e.key === "Enter" && e.currentTarget.value) {
+      const { value } = e.currentTarget;
+      const searchResults = await searchProducts(value.toUpperCase());
+      console.log(searchResults);
+      if (searchResults) setFilteredRows([...searchResults.data]);
+    }
   };
 
   const handleOpen = (
@@ -120,51 +108,53 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ ID_REQUISICAO, setIsCreat
     const item = findProduct(quantities, Number(id));
 
     if (item) {
-      console.log('currentSelected ', { 
-          ID_REQUISICAO: ID_REQUISICAO,
-          ID_PRODUTO: Number(id),
-          NOME: nome,
-          QUANTIDADE: item.QUANTIDADE,
-          ID: 0
-      })
-      setCurrentSelectedItem({ 
-          ID_REQUISICAO: ID_REQUISICAO,
-          ID_PRODUTO: Number(id),
-          NOME: nome,
-          QUANTIDADE: item.QUANTIDADE,
-          ID: 0
+      console.log("currentSelected ", {
+        ID_REQUISICAO: ID_REQUISICAO,
+        ID_PRODUTO: Number(id),
+        NOME: nome,
+        QUANTIDADE: item.QUANTIDADE,
+        ID: 0,
       });
-
+      setCurrentSelectedItem({
+        ID_REQUISICAO: ID_REQUISICAO,
+        ID_PRODUTO: Number(id),
+        NOME: nome,
+        QUANTIDADE: item.QUANTIDADE,
+        ID: 0,
+      });
     } else {
-      console.log('currentSelected ', {
+      console.log("currentSelected ", {
         ID_REQUISICAO: ID_REQUISICAO,
         ID_PRODUTO: Number(id),
         NOME: nome,
         QUANTIDADE: 0,
-        ID: 0
-      })
+        ID: 0,
+      });
       setCurrentSelectedItem({
         ID_REQUISICAO: ID_REQUISICAO,
         ID_PRODUTO: Number(id),
         NOME: nome,
         QUANTIDADE: 0,
-        ID: 0
+        ID: 0,
       });
-
     }
   };
+
   const handleClose = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       setOpenQuantityInput(false);
-
     }
   };
-  
+
   const Row: React.FC<ListChildComponentProps> = ({ data, index, style }) => (
     <tr
-      key={data[index].ID_PRODUTO}
+      key={data[index].ID}
       style={style}
-      className="odd:bg-white flex gap-1 justify-around even:bg-gray-100 p-0  text-xs"
+      className={
+        currentSelectedItem?.ID_PRODUTO === data[index].ID
+          ? `border border-cyan-800 odd:bg-white flex gap-1 justify-around even:bg-gray-100 p-0  text-xs`
+          : `border odd:bg-white flex gap-1 justify-around even:bg-gray-100 p-0  text-xs`
+      }
     >
       <td
         scope="row"
@@ -179,8 +169,8 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ ID_REQUISICAO, setIsCreat
         {data[index].codigo}
         <button
           onClick={(e) => handleOpen(e, data[index].NOME, quantities)}
-          id={data[index].ID_PRODUTO}
-          className="absolute right-1 py-1 text-blue-600 underline"
+          id={data[index].ID}
+          className="border-red-400 border-1 absolute right-1 py-1 text-blue-600 underline"
         >
           adicionar
         </button>
@@ -217,13 +207,18 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ ID_REQUISICAO, setIsCreat
       >
         <Fade in={openQuantityInput}>
           <Box sx={style}>
-            <Button onClick={() => setOpenQuantityInput(false)} sx={{ position: 'absolute', right: '1rem', top: '1rem' }}><CloseIcon /></Button>
+            <Button
+              onClick={() => setOpenQuantityInput(false)}
+              sx={{ position: "absolute", right: "1rem", top: "1rem" }}
+            >
+              <CloseIcon />
+            </Button>
             <Stack direction="column" spacing={2}>
               <Typography
                 id="transition-modal-title"
                 variant="h6"
                 component="h2"
-                sx={{ color: '#233142' }}
+                sx={{ color: "#233142" }}
               >
                 Insira a quantidade desejada
               </Typography>
@@ -250,9 +245,8 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ ID_REQUISICAO, setIsCreat
           </tr>
         </thead>
         <tbody>
-        { 
-            filteredRows.length &&
-             <AutoSizer className="absolute left-0">
+          {filteredRows.length ? (
+            <AutoSizer className="absolute left-0">
               {({ height, width }) => (
                 <List
                   className="List"
@@ -265,8 +259,12 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ ID_REQUISICAO, setIsCreat
                   {Row}
                 </List>
               )}
-          </AutoSizer>
-        }
+            </AutoSizer>
+          ) : (
+            <h2 className=" text-center text-lg p-4">
+              Busque os Produtos Desejados
+            </h2>
+          )}
         </tbody>
       </table>
     </div>

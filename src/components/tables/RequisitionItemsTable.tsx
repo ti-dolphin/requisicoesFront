@@ -4,22 +4,25 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from "@mui/icons-material/Edit";
 import { Button } from '@mui/material';
 import { requisitionItemsTableProps } from '../../types';
+import DeleteRequisitionItemModal from '../modals/warnings/DeleteRequisitionITemModal';
 
 
 
 
-const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({ items, refreshToggler, setRefreshToggler }) => {
+const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({ items, refreshToggler }) => {
 
   const [requisitionItems, setRequisitionItems] = useState<Item[]>([]);
   const [itemsBeingEdited, setItemsBeingEdited] = useState<Item[]>([]);
   const columns = ['Produto', 'Quantidade'];
   const [editMode, setEditMode] = useState<boolean>(false);
   const [editModeStyle, setEditModeStyle] = useState('');
+  const [isDeleteRequisitionItemModalOpen, setIsDeleteRequisitionItemModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     setRequisitionItems(items);
     setItemsBeingEdited(items);
   }, [items, refreshToggler]);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, item: Item) => {
     const { value } = e.target;
@@ -37,7 +40,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({ items, re
     try {
       const requisitionID = Number(itemsBeingEdited[0].ID_REQUISICAO);
       await updateRequisitionItems(itemsBeingEdited, requisitionID);
-      setRefreshToggler(!refreshToggler);
+      setRequisitionItems(itemsBeingEdited);
     } catch (e) {
       console.log(e);
     }
@@ -56,6 +59,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({ items, re
       await deleteRequisitionItem(Number(requisitionItem.ID_PRODUTO), requisitionItem.ID_REQUISICAO);
       items.splice(items.indexOf(requisitionItem), 1);
       setRequisitionItems(items);
+      setIsDeleteRequisitionItemModalOpen(false);
     } catch (e) {
       console.log(e);
     }
@@ -98,14 +102,23 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({ items, re
                   id={String(item.ID_PRODUTO)}
                   className="edit text-red-700 hover:bg-slate-300 rounded-sm p-[0.5] underline font-normal"
                   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                  onClick={(_e) => handleDelete(item)}
+                  onClick={() => setIsDeleteRequisitionItemModalOpen(true)}
                 >
                   <DeleteForeverIcon />
                 </button>
               </td>
+              { 
+              isDeleteRequisitionItemModalOpen && <DeleteRequisitionItemModal
+                  isDeleteRequisitionItemModalOpen={isDeleteRequisitionItemModalOpen}
+                  setIsDeleteRequisitionItemModalOpen={setIsDeleteRequisitionItemModalOpen}
+                  handleDelete={handleDelete}
+                  item={item}
+              />
+            }
             </tr>
           ))}
         </tbody>
+        
       </table>
       {editMode &&
         <Button
