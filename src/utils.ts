@@ -26,7 +26,7 @@ import api from "./api";
  interface Product {
   ID: number;
   codigo: string;
-  NOME: string;
+  nome_fantasia: string;
 }
 interface Person{ 
   NOME: string;
@@ -38,7 +38,7 @@ interface Project{
 interface Item {
   ID: number;
   QUANTIDADE: number;
-  NOME : string;
+  nome_fantasia : string;
   ID_REQUISICAO: number;
   ID_PRODUTO: number;
 }

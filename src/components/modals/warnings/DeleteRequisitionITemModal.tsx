@@ -42,7 +42,7 @@ const DeleteRequisitionItemModal : React.FC<DeleteRequisitionItemModalProps> = (
       >
         <Box sx={{...style, gap:'2rem'}}>
           <Typography id="modal-modal-title"  component="h2" align='center'>
-            Tem certeza que deseja excluir o item "{item.NOME}" ?
+            Tem certeza que deseja excluir o item "{item.nome_fantasia}" ?
           </Typography>
           <Stack direction="row" spacing={6}>
                   <Button

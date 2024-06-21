@@ -5,3 +5,35 @@
 body{
     padding: 1rem;
 }
+body::-webkit-scrollbar {
+  width: 8px;               /* width of the entire scrollbar */
+}
+
+body::-webkit-scrollbar-track {
+       /* color of the tracking area */
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: #bdbdbd;    /* color of the scroll thumb */
+  border-radius: 20px;       /* roundness of the scroll thumb */
+    /* creates padding around scroll thumb */
+}
+div::-webkit-scrollbar{ 
+     width: 6px;
+     border-radius: 20px; 
+}
+div::-webkit-scrollbar-thumb {
+  background-color: #bbe4e9;    /* color of the scroll thumb */
+  border-radius: 20px;       /* roundness of the scroll thumb */
+    /* creates padding around scroll thumb */
+}
+p::-webkit-scrollbar{ 
+     border-radius: 20px;
+     height: 7px;
+  
+}
+p::-webkit-scrollbar-thumb { 
+    background-color: #bbe4e9;
+    cursor: pointer;
+    border: 0.5px solid rgb(174, 174, 174);
+}

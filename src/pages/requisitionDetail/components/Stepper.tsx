@@ -24,8 +24,8 @@ const HorizontalLinearStepper : React.FC<props> = ({ requisitionData }) => {
    
   const [requisition, setRequisition ] = useState(requisitionData);
   // const [isChangeStatusModalOpen, setIsChangeStatusModalOpen] = useState(false);
-  console.log('status: ', requisitionData.STATUS)
   const [activeStep, setActiveStep] = React.useState(steps.indexOf(requisitionData.STATUS));
+  console.log('active Step: ', activeStep)
   const [skipped] = React.useState(new Set<number>());
 
   const isStepOptional = (step: number) => {
@@ -36,20 +36,24 @@ const HorizontalLinearStepper : React.FC<props> = ({ requisitionData }) => {
   };
   const handleNext = async () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    const editedRequisition = {...requisition, ['STATUS'] : steps[activeStep + 1]}
-    try{  
-       await updateRequisition(editedRequisition);
-      setRequisition(editedRequisition);
-    
-    }catch(e){
-      console.log(e);
+    const nextStep = activeStep + 1;
+    if (nextStep < steps.length){ 
+      const editedRequisition = { ...requisition, ['STATUS']: steps[activeStep + 1] }
+      console.log('editedRequisition: ', editedRequisition);
+      try {
+        await updateRequisition(editedRequisition);
+        setRequisition(editedRequisition);
+
+      } catch (e) {
+        console.log(e);
+      }
     }
-   
-    
   };
+
   const handleBack = async () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
     const editedRequisition = {...requisition, ['STATUS'] : steps[activeStep - 1]}
+    console.log('editedRequisition: ', editedRequisition);
     setRequisition(editedRequisition);
      try{  
       await updateRequisition(editedRequisition);
@@ -88,7 +92,7 @@ const HorizontalLinearStepper : React.FC<props> = ({ requisitionData }) => {
       {activeStep === steps.length ? (
         <React.Fragment>
           <Typography sx={{ mt: 2, mb: 1 }}>
-            Requisição enviada para compra!
+            Requisição tratada!
           </Typography>
           <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
             <Box sx={{ flex: "1 1 auto" }} />
@@ -108,8 +112,8 @@ const HorizontalLinearStepper : React.FC<props> = ({ requisitionData }) => {
             </Button>
             <Box sx={{ flex: "1 1 auto" }} />
 
-            <Button onClick={handleNext}>
-              {activeStep === steps.length - 1 ? "Enviar para o compras" : "Avançar"}
+            <Button onClick={  handleNext }>
+              {activeStep === steps.length - 1 ? "Finalizar" : "Avançar"}
             </Button>
              {/* <Modal
               open={isChangeStatusModalOpen}

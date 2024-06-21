@@ -63,7 +63,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
         const addedItem = {
           ID_PRODUTO: Number(id),
           QUANTIDADE: Number(value),
-          NOME: currentSelectedItem?.NOME,
+          nome_fantasia: currentSelectedItem?.nome_fantasia,
           ID_REQUISICAO: ID_REQUISICAO,
           ID: 0,
         };
@@ -111,14 +111,14 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
       console.log("currentSelected ", {
         ID_REQUISICAO: ID_REQUISICAO,
         ID_PRODUTO: Number(id),
-        NOME: nome,
+        nome_fantasia: nome,
         QUANTIDADE: item.QUANTIDADE,
         ID: 0,
       });
       setCurrentSelectedItem({
         ID_REQUISICAO: ID_REQUISICAO,
         ID_PRODUTO: Number(id),
-        NOME: nome,
+        nome_fantasia: nome,
         QUANTIDADE: item.QUANTIDADE,
         ID: 0,
       });
@@ -126,14 +126,14 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
       console.log("currentSelected ", {
         ID_REQUISICAO: ID_REQUISICAO,
         ID_PRODUTO: Number(id),
-        NOME: nome,
+        nome_fantasia: nome,
         QUANTIDADE: 0,
         ID: 0,
       });
       setCurrentSelectedItem({
         ID_REQUISICAO: ID_REQUISICAO,
         ID_PRODUTO: Number(id),
-        NOME: nome,
+        nome_fantasia: nome,
         QUANTIDADE: 0,
         ID: 0,
       });
@@ -160,7 +160,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
         scope="row"
         className="w-1/3  py-2 text-center font-normal text-[0.9rem] text-gray-900 whitespace-nowrap"
       >
-        {data[index].NOME}
+        {data[index].nome_fantasia}
       </td>
       <td
         scope="row"
@@ -168,7 +168,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
       >
         {data[index].codigo}
         <button
-          onClick={(e) => handleOpen(e, data[index].NOME, quantities)}
+          onClick={(e) => handleOpen(e, data[index].nome_fantasia, quantities)}
           id={data[index].ID}
           className="border-red-400 border-1 absolute right-1 py-1 text-blue-600 underline"
         >

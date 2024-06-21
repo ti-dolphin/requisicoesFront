@@ -69,7 +69,7 @@ const AddedItemsTable: React.FC<AddedItemsTableProps> = ({
                     scope="row"
                     className="px-6 py-2  bg-blue-100 font-medium text-blue-900 whitespace-nowrap "
                   >
-                    {item.NOME}
+                    {item.nome_fantasia}
                   </td>
                   <td
                     scope="row"
@@ -80,7 +80,7 @@ const AddedItemsTable: React.FC<AddedItemsTableProps> = ({
                       <button
                         id={String(item.ID_PRODUTO)}
                         onClick={(e) =>
-                         handleOpen && handleOpen(e,  item.NOME ? item.NOME : "", addedItems)
+                         handleOpen && handleOpen(e,  item.nome_fantasia ? item.nome_fantasia : "", addedItems)
                         }
                         className="text-blue-600 underline font-normal"
                       >

@@ -71,7 +71,7 @@ const RequisitionDetail: React.FC = () => {
           <Button><Link to="/"><ArrowCircleLeftIcon /></Link></Button>
          
           <h1 className="font-semibold px-6 py-4">
-            Requisição de Materiais do projeto {requisitionData?.DESCRICAO}
+            {requisitionData?.DESCRIPTION} {requisitionData?.DESCRICAO}
           </h1>
         </div>
       </div>

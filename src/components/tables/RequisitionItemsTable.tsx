@@ -27,14 +27,13 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({ items, re
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, item: Item) => {
     const { value } = e.target;
     const currentItems = itemsBeingEdited.map(item => ({ ...item }));
-    const editedItem = currentItems.find(value => (value.NOME.includes(item.NOME)));
+    const editedItem = currentItems.find(value => (value.nome_fantasia.includes(item.nome_fantasia)));
     if (editedItem) {
       editedItem.QUANTIDADE = Number(value);
       console.log('new items: ', [...currentItems]);
     }
     setItemsBeingEdited([...currentItems]);
   }
-
 
   const handleSave = async () => {
     try {
@@ -53,6 +52,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({ items, re
     setEditMode(true);
     setEditModeStyle('border border-blue-500 ');
   }
+
   const handleDelete = async (requisitionItem: Item) => {
     const items = [...requisitionItems]
     try {
@@ -65,6 +65,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({ items, re
     }
 
   }
+  
   return (
     // <div  className="border w-full p-2 overflow-auto overflow-y-scroll border-blue-100 flex flex-col items-center">
     <div className="realative">
@@ -83,7 +84,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({ items, re
                 scope="row"
                 className="text-sm px-4 py-2 text-gray-900 whitespace-nowrap border"
               >
-                <p className='overflow-x-auto max-w-[350px]'>{item.NOME}</p>
+                <p className='overflow-x-auto max-w-[350px]'>{item.nome_fantasia}</p>
               </td>
               <td className="px-4 py-2 flex gap-1 items-center justify-center">
                 <input
