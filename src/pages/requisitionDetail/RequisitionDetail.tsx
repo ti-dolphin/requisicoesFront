@@ -109,13 +109,13 @@ const RequisitionDetail: React.FC = () => {
                 </>
               )) : <Loader />}
           </Stack>
-          <Stack direction="row" spacing={4}>
+          <Stack direction="row" spacing={1}>
             <a
               onClick={(e) => handleOpen(e)}
               className="text-blue-400 underline"
               href=""
             >
-              Adicionar Produtos
+              Adicionar Materiais / Serviços
             </a>
           </Stack>
           {IsAddItemsOpen && requisitionData && (
@@ -129,7 +129,7 @@ const RequisitionDetail: React.FC = () => {
         </Box>{" "}
 
         <Box sx={{
-          width: "50%",
+          width: "60%",
           maxHeight: '400px',
           border: "0.5px solid #e3e3e3",
           overflowY: 'auto'

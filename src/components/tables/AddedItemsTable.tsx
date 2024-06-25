@@ -1,39 +1,12 @@
 import React, { useEffect, useState } from "react";
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import EditIcon from '@mui/icons-material/Edit';
-import { Button, Stack } from "@mui/material";
-import { Item, postRequistionItem } from "../../utils";
+import { Stack } from "@mui/material";
+import { Item } from "../../utils";
 import { AddedItemsTableProps } from "../../types";
 
 const AddedItemsTable: React.FC<AddedItemsTableProps> = ({
-  addedItems,
-  handleOpen,
-  handleDelete,
-  setIsCreating
+  addedItems
 }) => { 
 
-  const handleSave = async ( ) =>  {
-    const requestBody: { QUANTIDADE: number; ID_PRODUTO: number; ID_REQUISICAO: number; }[] = [];
-    addedItems?.map((item) => { 
-      const { QUANTIDADE, ID_PRODUTO, ID_REQUISICAO } = item;
-      requestBody.push( 
-        { 
-          QUANTIDADE,
-          ID_PRODUTO,
-          ID_REQUISICAO
-        }
-      );
-    });
-    const reqIDParam = requestBody[0].ID_REQUISICAO;
-    const response = await postRequistionItem(
-      requestBody,
-      `/requisition/requisitionItems/${reqIDParam}`
-    );
-    if( response ){ 
-      console.log('response: ', response);
-      setIsCreating && setIsCreating(false);
-    }
-}
 
   const [items, setItems ] = useState<Item[] | null>();
   useEffect(( ) => { 
@@ -49,13 +22,13 @@ const AddedItemsTable: React.FC<AddedItemsTableProps> = ({
             <tr className="border">
               <th
                 scope="col"
-                className="border font-semibold  text-[1rem]  border-gray-300 px-6 py-3"
+                className="border font-semibold capitalize  text-[1rem]  border-gray-300 px-6 py-3"
               >
-                Nome
+                Material / Serviço
               </th>
               <th
                 scope="col"
-                className="border font-semibold  text-[1rem] border-gray-300  px-6 py-3"
+                className="border font-semibold capitalize  text-[1rem] border-gray-300  px-6 py-3"
               >
                 Quantidade
               </th>
@@ -77,23 +50,6 @@ const AddedItemsTable: React.FC<AddedItemsTableProps> = ({
                   >
                     <Stack direction="row" spacing={2}>
                       <p>{item.QUANTIDADE}</p>
-                      <button
-                        id={String(item.ID_PRODUTO)}
-                        onClick={(e) =>
-                         handleOpen && handleOpen(e,  item.nome_fantasia ? item.nome_fantasia : "", addedItems)
-                        }
-                        className="text-blue-600 underline font-normal"
-                      >
-                        <EditIcon />
-                      </button>
-                      <button
-                        id={String(item.ID_PRODUTO)}
-                        key="delete"
-                        className="delete text-blue-600 underline font-normal"
-                        onClick={(e) => handleDelete && handleDelete(e)}
-                      >
-                        <DeleteForeverIcon />
-                      </button>
                     </Stack>
                   </td>
                 </tr>
@@ -101,7 +57,6 @@ const AddedItemsTable: React.FC<AddedItemsTableProps> = ({
           </tbody>
         </table>
       )}
-      {addedItems && <Button onClick={handleSave}>Salvar</Button>}
     </div>
   );
 

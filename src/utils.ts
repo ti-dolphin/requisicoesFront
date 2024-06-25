@@ -69,6 +69,7 @@ const fetchAllProjects = async ( ) => {
     console.log(e);
   }
 }
+
 const deleteRequisition = async (id:number) => { 
    try{ 
       await api.delete(`/requisition/${id}`);
@@ -93,6 +94,7 @@ const fetchTenThousandProducts = async () => {
 
   return data;
 }
+
 const searchProducts = async (name : string ) =>  { 
     try{ 
       const response = await api.get<Product[]>('/products', { 
@@ -114,6 +116,7 @@ const fecthRequisitions = async () => {
     console.log(e);
   }
 };
+
 const fetchRequsitionById = async (id : number ) => { 
     try {
       const response = await api.get<Requisition>(`requisition/${id}`);
@@ -122,6 +125,7 @@ const fetchRequsitionById = async (id : number ) => {
       console.log(e);
     }
 }
+
 const fetchItems = async (id: number) => {
   try {
     ///requisition/requisitionItems/requisitionId
@@ -131,6 +135,7 @@ const fetchItems = async (id: number) => {
     console.log(e);
   }
 };
+
  const deleteRequisitionItem = async ( productId : number, requisitionId: number) =>{ 
       try{ 
         await api.delete(`requisition/requisitionItems/${requisitionId}/${productId}`);
@@ -138,6 +143,7 @@ const fetchItems = async (id: number) => {
         console.log(e)
       }
  }
+
 const fetchPersons = async () => {
   try {
     const response = await api.get<Person[]>("/pessoa");
@@ -155,6 +161,7 @@ const fetchPersonById = async (id : number ) => {
      console.log(e);
    }
 }
+
 const updateRequisitionItems = async (items : Item[], requisitonId:number) => { 
     try{ 
       await api.put(`/requisition/requisitionItems/${requisitonId}`, items);
@@ -162,6 +169,7 @@ const updateRequisitionItems = async (items : Item[], requisitonId:number) => {
       console.log(e);
     }
 }
+
 const updateRequisition = async (requisition: Requisition ) => { 
   try{ 
     await api.put(`requisition/${requisition.ID_REQUISICAO}`, requisition);
@@ -169,6 +177,7 @@ const updateRequisition = async (requisition: Requisition ) => {
     console.log(e);
   }
 }
+
 export {
   fecthRequisitions,
   fetchTenThousandProducts,

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
-import { Item, Product, searchProducts } from "../../utils";
+import { Item, Product, postRequistionItem, searchProducts } from "../../utils";
 import SearchAppBar from "../../pages/requisitionHome/components/SearchAppBar";
 import { FixedSizeList as List, ListChildComponentProps } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -43,36 +43,49 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
   const [quantities, setQuantities] = useState<Item[]>([]);
   const [openQuantityInput, setOpenQuantityInput] = useState(false);
 
-  const handleQuantityChange = (
-    e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement>
+  const handleAddItem =  (
+    e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement>
   ) => {
-    const { id, value } = e.currentTarget;
-    console.log("id produto: ", id);
-    const product = findProduct(quantities, Number(id));
+    if('key' in e && e.key === 'Enter'){ 
+            const { id, value } = e.currentTarget;
+            if (findProduct(quantities, Number(id))) { //just change the repeated product
+              window.alert('Produto já adicionado');
+              return;
+            }
+            performPostItemCallout(id, value);
+    }
+  };
 
-    if (product) {
-      const updatedQuantities = [...quantities];
-      const indexOfProduct = updatedQuantities.indexOf(product);
-      if (Number(value) > 0) {
-        updatedQuantities[indexOfProduct].QUANTIDADE = Number(value);
-      } else updatedQuantities.splice(indexOfProduct, 1);
-      setQuantities(updatedQuantities);
-    } else {
-      const updatedQuantities = quantities;
-      if (Number(value) > 0 && currentSelectedItem) {
+  const performPostItemCallout = async (id : string, value : string) => { 
+        const updatedQuantities = [...quantities];
         const addedItem = {
           ID_PRODUTO: Number(id),
           QUANTIDADE: Number(value),
-          nome_fantasia: currentSelectedItem?.nome_fantasia,
+          nome_fantasia: currentSelectedItem ? currentSelectedItem.nome_fantasia : '',
           ID_REQUISICAO: ID_REQUISICAO,
           ID: 0,
         };
-        updatedQuantities.push(addedItem);
-      }
-
-      setQuantities(updatedQuantities);
-    }
-  };
+        const requestBody = [];
+        requestBody.push(
+          {
+            QUANTIDADE: addedItem.QUANTIDADE,
+            ID_PRODUTO: addedItem.ID_PRODUTO,
+            ID_REQUISICAO: addedItem.ID_REQUISICAO
+          }
+        );
+        console.log('reqBody: ', requestBody);
+        const reqIDParam = ID_REQUISICAO;
+        const response = await postRequistionItem(
+          requestBody,
+          `/requisition/requisitionItems/${reqIDParam}`
+        );
+        if (response) {
+          updatedQuantities.push(addedItem);
+          setQuantities(updatedQuantities);
+          setOpenQuantityInput(false);
+        }
+        else window.alert('Erro ao adicionar item');
+  }
 
   const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
     deleteItem(e.currentTarget.id);
@@ -182,7 +195,6 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
     <div className="h-[600px] border w-full relative mx-auto">
       <SearchAppBar
         openQuantityInput={openQuantityInput}
-        handleQuantityChange={handleQuantityChange}
         handleDelete={handleDelete}
         handleClose={handleClose}
         handleSearch={handleSearchItem}
@@ -224,10 +236,9 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
               </Typography>
               <input
                 type="text"
-                onChange={handleQuantityChange}
+                onKeyDown={handleAddItem}
                 id={String(currentSelectedItem?.ID_PRODUTO)}
                 className="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500"
-                onKeyDown={handleClose}
               />
             </Stack>
           </Box>
@@ -237,7 +248,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
         <thead className="text-xs text-white uppercase bg-gray-900 ">
           <tr className="flex justify-around">
             <th scope="col" className="py-2">
-              Produto
+              Material / Serviço
             </th>
             <th scope="col" className="py-2">
               Código TOTVS
@@ -262,7 +273,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
             </AutoSizer>
           ) : (
             <h2 className=" text-center text-lg p-4">
-              Busque os Produtos Desejados
+              Busque os Materiais / Serviços Desejados
             </h2>
           )}
         </tbody>

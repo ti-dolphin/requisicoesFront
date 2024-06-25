@@ -13,7 +13,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({ items, re
 
   const [requisitionItems, setRequisitionItems] = useState<Item[]>([]);
   const [itemsBeingEdited, setItemsBeingEdited] = useState<Item[]>([]);
-  const columns = ['Produto', 'Quantidade'];
+  const columns = ['Materiais / Serviços', 'Quantidade'];
   const [editMode, setEditMode] = useState<boolean>(false);
   const [editModeStyle, setEditModeStyle] = useState('');
   const [isDeleteRequisitionItemModalOpen, setIsDeleteRequisitionItemModalOpen] = useState<boolean>(false);

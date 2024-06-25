@@ -304,6 +304,7 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
           searchTerm.toUpperCase()
         )
         || item.ID_REQUISICAO === Number(searchTerm)
+        || item.RESPONSAVEL.toUpperCase().includes(searchTerm.toUpperCase())
     );
     console.log('filter: ', filter);
     console.log(filter.length);
@@ -319,6 +320,7 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
       ),
     [order, orderBy, page, rowsPerPage, filteredRows]
   );
+
   const handleRequestSort = (
     _event: React.MouseEvent<unknown>,
     property: keyof Requisition
