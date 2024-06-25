@@ -85,7 +85,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({ items, re
                 scope="row"
                 className="text-sm px-4 py-2 text-gray-900 whitespace-nowrap border"
               >
-                <p className='overflow-x-auto  max-w-[600px]'>{item.nome_fantasia}</p>
+                <p className='overflow-x-auto  max-w-[450px]'>{item.nome_fantasia}</p>
               </td>
               <td className="px-4 py-2 flex gap-1 items-center justify-center">
                 <input

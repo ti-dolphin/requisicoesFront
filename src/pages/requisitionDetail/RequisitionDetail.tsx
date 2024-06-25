@@ -129,7 +129,7 @@ const RequisitionDetail: React.FC = () => {
         </Box>{" "}
 
         <Box sx={{
-          width: "60%",
+          width: "66%",
           maxHeight: '400px',
           border: "0.5px solid #e3e3e3",
           overflowY: 'auto'
