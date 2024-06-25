@@ -33,9 +33,10 @@ import {
 import { useEffect } from "react";
 import { Requisition } from "../../utils";
 import { Link } from "react-router-dom";
-import { RequisitionTableProps } from "../../types";
+import { EnhancedTableProps, Order, RequisitionTableProps } from "../../types";
 import Loader from "../Loader";
 import DeleteRequisitionModal from "../modals/warnings/DeleteRequisitionModal";
+import Filter from "./Filter";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -46,7 +47,6 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   }
   return 0;
 }
-type Order = "asc" | "desc";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getComparator<Key extends keyof any>(
   order: Order,
@@ -59,6 +59,7 @@ function getComparator<Key extends keyof any>(
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
+
 function stableSort<T>(
   array: readonly T[],
   comparator: (a: T, b: T) => number
@@ -83,6 +84,7 @@ interface HeadCell {
   label: string;
   numeric: boolean;
 }
+
 const headCells: readonly HeadCell[] = [
   {
     id: "DESCRIPTION",
@@ -115,17 +117,10 @@ const headCells: readonly HeadCell[] = [
     label: "Projeto",
   },
 ];
-interface EnhancedTableProps {
+interface EnhancedTableToolbarProps {
   numSelected: number;
-  onRequestSort: (
-    event: React.MouseEvent<unknown>,
-    property: keyof Requisition
-  ) => void;
-  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  order: Order;
-  orderBy: string;
-  rowCount: number;
 }
+
 
 function EnhancedTableHead(props: EnhancedTableProps) {
   const { order, orderBy, onRequestSort } = props;
@@ -148,9 +143,9 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             <TableSortLabel
               active={orderBy === headCell.id}
               direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
+              onClick={ headCell.label !== 'Status' ? createSortHandler(headCell.id) : undefined}
             >
-              {headCell.label}
+              {headCell.label === 'Status' ? <Filter  handleSearch = {props.handleSearch}/> : headCell.label}
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
                   {order === "desc" ? "sorted descending" : "sorted ascending"}
@@ -162,10 +157,6 @@ function EnhancedTableHead(props: EnhancedTableProps) {
       </TableRow>
     </TableHead>
   );
-}
-
-interface EnhancedTableToolbarProps {
-  numSelected: number;
 }
 
 // @typescript-eslint/no-unused-vars
@@ -235,16 +226,13 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
 
   const [currentSelectedId, setCurrentSelectedId] = useState<number>(-1);
   const [RefreshToggler, setRefreshToggler] = useState(false);
-  const [isDeleteRequisitionModalOpen, setIsDeleteRequisitionModalOpen] =
-    useState(false);
+  const [isDeleteRequisitionModalOpen, setIsDeleteRequisitionModalOpen] =useState(false);
   const [order, setOrder] = React.useState<Order>("asc");
-  const [orderBy, setOrderBy] =
-  React.useState<keyof Requisition>("ID_REQUISICAO");
+  const [orderBy, setOrderBy] = React.useState<keyof Requisition>("ID_REQUISICAO");
   const [selected, setSelected] = React.useState<readonly number[]>([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(true);
   const [rowsPerPage, setRowsPerPage] = React.useState(50);
-  const [_searchTerm, setSearchTerm] = useState("");
   const [allRows, setAllRows] = useState<Requisition[]>([]);
   const [filteredRows, setFilteredRows] = useState<Requisition[]>([]);
 
@@ -291,24 +279,35 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
     setIsDeleteRequisitionModalOpen(false);
   };
 
-  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    console.log("search");
-
-    if (e.key === "Enter") {
-      setSearchTerm(e.currentTarget.value);
-      setFilteredRows(
-        allRows.filter(
-          (item) =>
-             item.DESCRIPTION.toUpperCase().includes(
-               e.currentTarget.value.toUpperCase()
-             ) ||
-            item.DESCRICAO.toUpperCase().includes(
-              e.currentTarget.value.toUpperCase()
-            )
-        )
-      );
-     
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement, MouseEvent> ) => {
+    setPage(0);
+    
+    let searchTerm: string = '';
+    // Verifica se o evento é um evento de teclado
+    if ('key' in e && e.key === 'Enter') {
+      searchTerm = (e.currentTarget as HTMLInputElement).value;
     }
+    // Verifica se o evento é um evento de clique
+    else if ('type' in e && e.type === 'click') {
+      searchTerm = (e.currentTarget as HTMLLIElement).textContent || '';
+    }
+
+    const filter = allRows.filter(
+      (item) =>
+        item.DESCRIPTION.toUpperCase().includes(
+          searchTerm.toUpperCase()
+        ) ||
+        item.DESCRICAO.toUpperCase().includes(
+          searchTerm.toUpperCase()
+        ) ||
+        item.STATUS.toUpperCase().includes(
+          searchTerm.toUpperCase()
+        )
+        || item.ID_REQUISICAO === Number(searchTerm)
+    );
+    console.log('filter: ', filter);
+    console.log(filter.length);
+    if(filter.length || searchTerm === 'Todos') setFilteredRows(searchTerm === 'Todos' ? [...allRows] : filter);
 
   };
 
@@ -394,6 +393,7 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={visibleRows.length}
+              handleSearch ={ handleSearch }
             />
             <TableBody>
               {visibleRows.length ? (
@@ -423,39 +423,38 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
                       </TableCell>
                       <TableCell>{row.STATUS}</TableCell>
 
-                      <TableCell align="right">{row.RESPONSAVEL}</TableCell>
+                      <TableCell align="right" sx={{textTransform: 'lowercase'}}>{row.RESPONSAVEL}</TableCell>
                       <TableCell align="center">{row.ID_REQUISICAO}</TableCell>
                       <TableCell
                         sx={{
-                          overflowX: "hidden",
                           fontSize: "12px",
                           textTransform: "capitalize",
                         }}
                         align="right"
                       >
-                        {row.DESCRICAO}
+                        <p className="lg:text-sm xl:text-sm ">{row.DESCRICAO}</p>
                       </TableCell>
 
                       <TableCell
                         align="right"
-                        sx={{ display: "flex", gap: "12px" }}
                       >
-                        <button
-                          id={String(row.ID_REQUISICAO)}
-                          onClick={() =>
-                            handleOpenDeleteModal(row.ID_REQUISICAO)
-                          }
-                          className="hover:bg-red-100 p-[2px]"
-                        >
-                          <DeleteIcon className="text-red-600" />
-                        </button>
-
-                        <Link
-                          to={`requisitionDetail/${row.ID_REQUISICAO}`}
-                          className="text-blue-400 underline"
-                        >
-                          Editar{" "}
-                        </Link>
+                       <Stack direction="row" spacing={2}>
+                              <Link
+                                to={`requisitionDetail/${row.ID_REQUISICAO}`}
+                                className="text-blue-400 underline"
+                              >
+                                Editar{" "}
+                              </Link>
+                              <button
+                                id={String(row.ID_REQUISICAO)}
+                                onClick={() =>
+                                  handleOpenDeleteModal(row.ID_REQUISICAO)
+                                }
+                                className="hover:bg-red-100 p-[2px]"
+                              >
+                                <DeleteIcon className="text-red-600" />
+                              </button>
+                       </Stack>
                       </TableCell>
                     </TableRow>
                   );

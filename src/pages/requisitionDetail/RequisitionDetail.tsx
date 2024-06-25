@@ -37,6 +37,7 @@ const RequisitionDetail: React.FC = () => {
         // console.log('req items: ', itemsData)
 
         setRequisitionData({ ...data, ['RESPONSAVEL']: personData?.NOME });
+        console.log('requisitionData: ', data);
       }
     }
   }
@@ -71,7 +72,7 @@ const RequisitionDetail: React.FC = () => {
           <Button><Link to="/"><ArrowCircleLeftIcon /></Link></Button>
          
           <h1 className="font-semibold px-6 py-4">
-            {requisitionData?.DESCRIPTION} {requisitionData?.DESCRICAO}
+           Nº {requisitionData?.ID_REQUISICAO} | {requisitionData?.DESCRIPTION} | Projeto {requisitionData?.DESCRICAO}
           </h1>
         </div>
       </div>

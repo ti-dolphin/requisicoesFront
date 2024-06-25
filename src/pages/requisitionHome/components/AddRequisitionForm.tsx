@@ -45,6 +45,7 @@ const AddRequisitionForm: React.FC<AddRequisitionFormProps> = ({setIsCreating}) 
       [id]: Number(value)
     });
   };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     console.log('fields: ', {
@@ -56,19 +57,19 @@ const AddRequisitionForm: React.FC<AddRequisitionFormProps> = ({setIsCreating}) 
       [id]: value,
     });
   };
+  
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log('currentID: ', currentId);
      if (currentId === 0) {
-       e.preventDefault();
        console.log({
             ...fields,
-            ['STATUS'] : 'Edição'
+            ['STATUS'] : 'Em edição'
           }   )
         const response = await postRequisition([
           {
             ...fields,
-            ['STATUS'] : 'Edição'
+            ['STATUS']: 'Em edição'
           }   
         ]);
        if (response) {
@@ -98,6 +99,7 @@ const AddRequisitionForm: React.FC<AddRequisitionFormProps> = ({setIsCreating}) 
           onChange={(e) => handleSelect(e)}
           required
         >
+          <option value=""></option>
           {persons.map((person) => (
             <option value={person.CODPESSOA} id={String(person.CODPESSOA)}>
               {person.NOME}
@@ -118,6 +120,7 @@ const AddRequisitionForm: React.FC<AddRequisitionFormProps> = ({setIsCreating}) 
           required
           onChange={(e) => handleSelect(e)}
         >
+          <option value=""></option>
           {projects.map((project) => (
             <option value={project.ID}>{project.ID}</option>
           ))}

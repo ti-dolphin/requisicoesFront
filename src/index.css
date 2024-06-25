@@ -23,17 +23,18 @@ div::-webkit-scrollbar{
      border-radius: 20px; 
 }
 div::-webkit-scrollbar-thumb {
-  background-color: #bbe4e9;    /* color of the scroll thumb */
-  border-radius: 20px;       /* roundness of the scroll thumb */
+  background-color: #280dfb;    /* color of the scroll thumb */
+  border-radius: 20px;
+  height: 8px;      /* roundness of the scroll thumb */
     /* creates padding around scroll thumb */
 }
 p::-webkit-scrollbar{ 
      border-radius: 20px;
      height: 7px;
-  
+    
 }
 p::-webkit-scrollbar-thumb { 
-    background-color: #bbe4e9;
+    background-color: #0008fb; 
     cursor: pointer;
     border: 0.5px solid rgb(174, 174, 174);
 }

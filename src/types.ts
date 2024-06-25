@@ -1,7 +1,7 @@
 
 
 import { Dispatch, SetStateAction } from "react";
-import { Item } from "./utils";
+import { Item, Requisition } from "./utils";
 
 export interface addRequisitionModalProps {
   isCreating: boolean;
@@ -19,6 +19,7 @@ export interface DeleteRequisitionModalProps{
     requisitionId : number;
 }
 
+export type Order = "asc" | "desc";
 export interface ProductsTableModalProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
@@ -44,6 +45,18 @@ export const motionItemsVariants = {
   closed: { opacity: 0, x: "-100%" },
 };
 
+export interface EnhancedTableProps {
+  numSelected: number;
+  onRequestSort: (
+    event: React.MouseEvent<unknown>,
+    property: keyof Requisition
+  ) => void;
+  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  order: Order;
+  orderBy: string;
+  rowCount: number;
+  handleSearch: (e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement, MouseEvent>) => void;
+}
 export interface DeleteRequisitionItemModalProps{ 
   isDeleteRequisitionItemModalOpen : boolean;
       setIsDeleteRequisitionItemModalOpen : (value: boolean) => void;

@@ -15,9 +15,10 @@ const RequisitionHome = () => {
   return (
     <>
       <Card variant="outlined" sx={{ maxWidth: "90vw", padding:'0.5rem', marginX:'auto' }}>
-        <Box sx={{ p: 2, display:'flex',justifyContent:'space-around' }}>
-          <Stack spacing={1}>
-            <Typography variant="h6">Requisições de materiais e serviços</Typography>
+        <Box sx={{ p: 2, display:'flex',justifyContent:'space-between' }}>
+          <Stack spacing={2} direction="row" alignItems='center' sx={{ backgroundColor: '#e7eaf6', borderRadius: '5px'}}>
+            <img src="/src/assets/logodolphin.jpg" alt="logo Dolphin" width={'140px'}/>
+            <Typography variant="h6" sx={{ color: '#34495e'}}>Requisições de materiais e serviços</Typography>
             <Typography sx={{ color: "gray" }}></Typography>
             
           </Stack>

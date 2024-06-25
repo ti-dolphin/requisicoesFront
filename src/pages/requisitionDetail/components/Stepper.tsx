@@ -23,8 +23,11 @@ interface props{
 const HorizontalLinearStepper : React.FC<props> = ({ requisitionData }) => {
    
   const [requisition, setRequisition ] = useState(requisitionData);
-  // const [isChangeStatusModalOpen, setIsChangeStatusModalOpen] = useState(false);
-  const [activeStep, setActiveStep] = React.useState(steps.indexOf(requisitionData.STATUS));
+
+  const [activeStep, setActiveStep] = useState(
+     steps.indexOf(requisitionData.STATUS) === steps.length - 1 ?
+     steps.length : steps.indexOf(requisitionData.STATUS)
+  );
   console.log('active Step: ', activeStep)
   const [skipped] = React.useState(new Set<number>());
 
@@ -88,7 +91,7 @@ const HorizontalLinearStepper : React.FC<props> = ({ requisitionData }) => {
             </Step>
           );
         })}
-      </Stepper>
+      </Stepper>            
       {activeStep === steps.length ? (
         <React.Fragment>
           <Typography sx={{ mt: 2, mb: 1 }}>
