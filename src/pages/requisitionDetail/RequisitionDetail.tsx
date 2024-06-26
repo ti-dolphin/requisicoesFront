@@ -146,7 +146,7 @@ const RequisitionDetail: React.FC = () => {
                         fieldsBeingEdited && (
                           item.key === 'LAST_UPDATE_ON' || item.key === 'CREATED_ON'? 
                             new Date(`${fieldsBeingEdited[item.key as keyof Requisition]}`).toLocaleString() :
-                            fieldsBeingEdited[item.key as keyof Requisition]
+                                     fieldsBeingEdited[item.key as keyof Requisition]
                         ) 
                       } 
 

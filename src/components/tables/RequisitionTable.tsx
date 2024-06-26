@@ -61,11 +61,11 @@ function getComparator<Key extends keyof any>(
 }
 
 function stableSort<T>(
-  array: readonly T[],
-  comparator: (a: T, b: T) => number
+    array: readonly T[],
+    comparator: (a: T, b: T) => number
 ) {
-  const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-  stabilizedThis.sort((a, b) => {
+    const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
+    stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) {
       return order;
@@ -237,29 +237,30 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
   const [filteredRows, setFilteredRows] = useState<Requisition[]>([]);
 
   async function performAsync() {
-    console.log("performed");
+
     const data = await fecthRequisitions();
     const personsData = await fetchPersons();
     if (data && personsData) {
+      console.log('data: ', data);
       const rows = data.map((item) => {
         const personName = personsData.find(
           (person) => person.CODPESSOA === item.ID_RESPONSAVEL
-        )?.NOME;
-        if (personName) {
-          return {
-            ...item,
-            RESPONSAVEL: personName,
-            DESCRICAO: item.DESCRICAO ? item.DESCRICAO : ""
-          };
-        }
+            )?.NOME;
+            if (personName) {
+              return {
+                ...item,
+                RESPONSAVEL: personName,
+                DESCRICAO: item.DESCRICAO ? item.DESCRICAO : ""
+              };
+            }
         return {
           ...item,
           RESPONSAVEL: "",
           DESCRICAO: item.DESCRICAO ? item.DESCRICAO : '',
         };
       });
-      setAllRows(rows);
-      setFilteredRows(rows);
+        setAllRows(rows);
+        setFilteredRows(rows);
     }
   }
 
@@ -306,19 +307,23 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
         || item.ID_REQUISICAO === Number(searchTerm)
         || item.RESPONSAVEL.toUpperCase().includes(searchTerm.toUpperCase())
     );
-    console.log('filter: ', filter);
-    console.log(filter.length);
-    if(filter.length || searchTerm === 'Todos') setFilteredRows(searchTerm === 'Todos' ? [...allRows] : filter);
+ 
+    if(filter.length || searchTerm === 'Todos')
+       setFilteredRows(searchTerm === 'Todos' ? [...allRows] : filter);
 
   };
 
   const visibleRows = React.useMemo(
     () =>
-      stableSort(filteredRows, getComparator(order, orderBy)).slice(
-        page * rowsPerPage,
-        page * rowsPerPage + rowsPerPage
-      ),
+      stableSort(
+          filteredRows, 
+            getComparator(order, orderBy)).slice(
+                            page * rowsPerPage,
+                            page * rowsPerPage + rowsPerPage
+    ),
+
     [order, orderBy, page, rowsPerPage, filteredRows]
+
   );
 
   const handleRequestSort = (
@@ -400,13 +405,13 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
             <TableBody>
               {visibleRows.length ? (
                 visibleRows.map((row, index) => {
-                  const isItemSelected = isSelected(row.ID_REQUISICAO);
+                  const isItemSelected = isSelected(Number(row.ID_REQUISICAO));
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.ID_REQUISICAO)}
+                      onClick={(event) => handleClick(event, Number(row.ID_REQUISICAO))}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
@@ -450,7 +455,7 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
                               <button
                                 id={String(row.ID_REQUISICAO)}
                                 onClick={() =>
-                                  handleOpenDeleteModal(row.ID_REQUISICAO)
+                                  handleOpenDeleteModal(Number(row.ID_REQUISICAO))
                                 }
                                 className="hover:bg-red-100 p-[2px]"
                               >
