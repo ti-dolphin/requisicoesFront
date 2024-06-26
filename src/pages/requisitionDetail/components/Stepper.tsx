@@ -18,9 +18,12 @@ const steps = [
   "Concluído"
 ];
 interface props{ 
-  requisitionData : Requisition
+  requisitionData : Requisition,
+  setRequisitionData: (requisition: Requisition) => void;
+  setRefreshToggler: (value: boolean ) => void;
+  refreshToggler: boolean;
 }
-const HorizontalLinearStepper : React.FC<props> = ({ requisitionData }) => {
+const HorizontalLinearStepper: React.FC<props> = ({ requisitionData, setRequisitionData, setRefreshToggler, refreshToggler }) => {
    
   const [requisition, setRequisition ] = useState(requisitionData);
 
@@ -46,7 +49,8 @@ const HorizontalLinearStepper : React.FC<props> = ({ requisitionData }) => {
       try {
         await updateRequisition(editedRequisition);
         setRequisition(editedRequisition);
-
+        setRequisitionData(editedRequisition);
+        setRefreshToggler(!refreshToggler);
       } catch (e) {
         console.log(e);
       }

@@ -38,7 +38,7 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
         <Box sx={{ ...style, border: "1px solid black", width: "95vw", height: "98vh" }}>
           <Button
             sx={{color: 'red', position: 'absolute', right: '2rem', top: '1rem', zIndex: 2}}
-            onClick={handleClose}><CloseIcon  />
+            onClick={() => setIsCreating(false)}><CloseIcon  />
             </Button>
           <Stack direction="column">
               <ProductsTable ID_REQUISICAO={requisitionID} setIsCreating={setIsCreating}/>

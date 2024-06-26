@@ -7,7 +7,7 @@ import { Typography } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import AddRequisitionModal from '../../components/modals/AddRequisitionModal';
 import { useState } from 'react';
-
+import logoUrl from '../../assets/logodolphin.jpg'
 
 const RequisitionHome = () => {
 
@@ -16,8 +16,8 @@ const RequisitionHome = () => {
     <>
       <Card variant="outlined" sx={{ maxWidth: "90vw", padding:'0.5rem', marginX:'auto' }}>
         <Box sx={{ p: 2, display:'flex',justifyContent:'space-between' }}>
-          <Stack spacing={2} direction="row" alignItems='center' sx={{ backgroundColor: '#e7eaf6', borderRadius: '5px'}}>
-            <img src="/src/assets/logodolphin.jpg" alt="logo Dolphin" width={'140px'}/>
+          <Stack spacing={2} direction="row" alignItems='center'>
+            <img src={logoUrl} alt="logo Dolphin" width={'140px'}/>
             <Typography variant="h6" sx={{ color: '#34495e'}}>Requisições de materiais e serviços</Typography>
             <Typography sx={{ color: "gray" }}></Typography>
             

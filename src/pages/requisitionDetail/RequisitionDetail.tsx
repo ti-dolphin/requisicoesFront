@@ -11,6 +11,7 @@ import {
   fetchItems,
   fetchPersonById,
   fetchRequsitionById,
+  updateRequisition,
 } from "../../utils";
 // import { useLocation } from "react-router-dom";
 import { Link, useParams } from "react-router-dom";
@@ -26,6 +27,9 @@ const RequisitionDetail: React.FC = () => {
   const [refreshToggler, setRefreshToggler] = useState<boolean>(false); //refreshes Data
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [requisitionItems, setRequisitionItems] = useState<Item[]>([]);
+  const [disabled, setDisabled ] = useState<boolean>(true);
+  const [fieldsBeingEdited, setFieldsBeingEdited] = useState<Requisition>();
+
   const fetchData = async () => {
     const data = await fetchRequsitionById(Number(id));
     if (data) {
@@ -37,14 +41,14 @@ const RequisitionDetail: React.FC = () => {
         // console.log('req items: ', itemsData)
 
         setRequisitionData({ ...data, ['RESPONSAVEL']: personData?.NOME });
+        setFieldsBeingEdited({ ...data, ['RESPONSAVEL']: personData?.NOME })
         console.log('requisitionData: ', data);
       }
     }
   }
+
   useEffect(() => {
-
     fetchData();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, IsAddItemsOpen, refreshToggler]);
 
@@ -52,11 +56,32 @@ const RequisitionDetail: React.FC = () => {
     e.preventDefault();
     setIsAddItemsOpen(true);
   };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    fieldsBeingEdited && setFieldsBeingEdited(
+      { 
+        ...fieldsBeingEdited,
+        DESCRIPTION : value
+      }
+    )
+  }
+
+  const handleSave = (e: React.KeyboardEvent<HTMLInputElement>) => {
+     if(e.key === 'Enter'){ 
+        setDisabled(true);
+        // console.log('fieldsBeingEdite: ', fieldsBeingEdited);
+       fieldsBeingEdited && updateRequisition(fieldsBeingEdited);
+     }
+  }
+
   const fields = [
     { label: "Descrição", key: "DESCRIPTION" },
     { label: "Responsável", key: "RESPONSAVEL" },
-    { label: "Projeto", key: "ID_PROJETO" },
+    { label: "Projeto", key: "DESCRICAO" },
   ];
+
+ 
 
   return (
     <Box
@@ -78,7 +103,12 @@ const RequisitionDetail: React.FC = () => {
       </div>
       <div className="Stepper w-full border  p-2">
         {requisitionData
-          && <HorizontalLinearStepper requisitionData={requisitionData} />
+          && <HorizontalLinearStepper 
+            requisitionData={requisitionData}
+               setRequisitionData={setRequisitionData}
+                 setRefreshToggler={setRefreshToggler}
+                    refreshToggler={refreshToggler}
+                    />
         }
       </div>
       <Stack direction="row">
@@ -97,27 +127,35 @@ const RequisitionDetail: React.FC = () => {
               fields.map((item) => (
                 <>
                   <label htmlFor="">{item.label}</label>
-                  <div className="py-1 w-[90%] border flex justify-between px-1 border-gray-400">
+                  <div 
+                    className={`py-1 px-2 rounded-md  w-[90%] flex justify-between border-2 bg-white 
+                                  ${ item.key === 'DESCRIPTION' && !disabled ? 'border border-blue-500' : ''}`}>
                     <input
-                      className="bg-transparent w-full px-1 focus:outline-none text-slate-600"
+                      className="bg-transparent w-full px-1 focus:outline-none"
                       type="text"
-                      value={String(requisitionData[item.key as keyof Requisition]).toLowerCase()}
-                      disabled
+                      value={fieldsBeingEdited && fieldsBeingEdited[item.key as keyof Requisition]}
+                      onChange={handleChange}
+                      onKeyDown={(e) => handleSave(e)}
+                      disabled={item.key === 'DESCRIPTION' ? disabled : true}
+                      autoFocus={disabled}
                     />
-                    <EditIcon className="cursor-pointer text-gray-500" />
+                    { 
+                      item.key === 'DESCRIPTION' &&
+                      <EditIcon onClick={() => setDisabled(!disabled)} className="cursor-pointer hover:text-blue-400 text-blue-700" />
+                    }
                   </div>
                 </>
               )) : <Loader />}
           </Stack>
-          <Stack direction="row" spacing={1}>
+
             <a
               onClick={(e) => handleOpen(e)}
-              className="text-blue-400 underline"
+              className="text-blue-700 hover:text-blue-400 h-[30px] underline "
               href=""
             >
               Adicionar Materiais / Serviços
             </a>
-          </Stack>
+      
           {IsAddItemsOpen && requisitionData && (
             <ProductsTableModal
               isOpen={IsAddItemsOpen}
@@ -132,7 +170,9 @@ const RequisitionDetail: React.FC = () => {
           width: "66%",
           maxHeight: '400px',
           border: "0.5px solid #e3e3e3",
-          overflowY: 'auto'
+          overflowY: 'auto',
+          display: 'flex',
+          justifyContent: 'center'
         }}>
           {requisitionItems && (
             <RequisitionItemsTable

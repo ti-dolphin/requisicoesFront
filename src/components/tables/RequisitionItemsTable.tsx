@@ -68,13 +68,13 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({ items, re
   
   return (
     // <div  className="border w-full p-2 overflow-auto overflow-y-scroll border-blue-100 flex flex-col items-center">
-    <div className="realative">
+    <div className="realative w-full">
       <table className="text-sm w-full text-left rtl:text-right text-gray-500 ">
         <thead className="text-xs text-white uppercase bg-gray-50 ">
           <tr className='border border-black'>
             {columns.map((columnName) => (
               columnName === 'Quantidade' ? <th className="px-4 w-1/4 py-3 border text-black"><h1 className='text-center'>{columnName}</h1></th>
-                : <th className="px-4 w-1/2 py-3 border text-black"><h1 className='text-center'>{columnName}</h1></th>
+                : <th className="px-4  py-3 border text-black"><h1 className='text-center'>{columnName}</h1></th>
             ))}
           </tr>
         </thead>
@@ -85,7 +85,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({ items, re
                 scope="row"
                 className="text-sm px-4 py-2 text-gray-900 whitespace-nowrap border"
               >
-                <p className='overflow-x-auto  max-w-[450px]'>{item.nome_fantasia}</p>
+                <p className='overflow-x-auto  max-w-[500px]'>{item.nome_fantasia}</p>
               </td>
               <td className="px-4 py-2 flex gap-1 items-center justify-center">
                 <input
