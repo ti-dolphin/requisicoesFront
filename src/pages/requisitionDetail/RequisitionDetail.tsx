@@ -38,8 +38,6 @@ const RequisitionDetail: React.FC = () => {
       const itemsData = await fetchItems(data.ID_REQUISICAO);
       if (itemsData) setRequisitionItems(itemsData);
       if (personData) {
-        // console.log('req items: ', itemsData)
-
         setRequisitionData({ ...data, ['RESPONSAVEL']: personData?.NOME });
         setFieldsBeingEdited({ ...data, ['RESPONSAVEL']: personData?.NOME })
         console.log('requisitionData: ', data);
@@ -79,6 +77,8 @@ const RequisitionDetail: React.FC = () => {
     { label: "Descrição", key: "DESCRIPTION" },
     { label: "Responsável", key: "RESPONSAVEL" },
     { label: "Projeto", key: "DESCRICAO" },
+    { label: "Ultima atualização", key: 'LAST_UPDATE_ON'},
+    { label: "Data de Criação", key: 'CREATED_ON'}
   ];
 
  
@@ -95,7 +95,6 @@ const RequisitionDetail: React.FC = () => {
       <div className="Header w-full h-1/2  border">
         <div className="h-1/2 w-full bg-[#fafafa]">
           <Button><Link to="/"><ArrowCircleLeftIcon /></Link></Button>
-         
           <h1 className="font-semibold px-6 py-4">
            Nº {requisitionData?.ID_REQUISICAO} | {requisitionData?.DESCRIPTION} | Projeto {requisitionData?.DESCRICAO}
           </h1>
@@ -111,17 +110,27 @@ const RequisitionDetail: React.FC = () => {
                     />
         }
       </div>
+      <div className="w-full border border-1 px-8 flex justify-end items-center h-[50px] ">
+        <a
+          onClick={(e) => handleOpen(e)}
+          className="text-blue-700 hover:text-blue-400 h-[30px] underline "
+          href=""
+        >
+          Adicionar Materiais / Serviços
+        </a>
+      </div>
       <Stack direction="row">
         <Box
           sx={{
-            padding: "1rem",
+            padding: "0.5rem",
             border: "1px solid #e3e3e3",
             width: "50%",
             display: "flex",
             justifyContent: "space-around",
+            alignItems: 'flex-start'
           }}
         >
-          <Stack direction="column" spacing={2} sx={{ width: "50%" }}>
+          <Stack direction="column" spacing={2} sx={{ width: "100%",  padding: '1rem' }}>
             <h1 className="">Detalhes</h1>
             {requisitionData ?
               fields.map((item) => (
@@ -133,7 +142,14 @@ const RequisitionDetail: React.FC = () => {
                     <input
                       className="bg-transparent w-full px-1 focus:outline-none"
                       type="text"
-                      value={fieldsBeingEdited && fieldsBeingEdited[item.key as keyof Requisition]}
+                      value={
+                        fieldsBeingEdited && (
+                          item.key === 'LAST_UPDATE_ON' || item.key === 'CREATED_ON'? 
+                            new Date(`${fieldsBeingEdited[item.key as keyof Requisition]}`).toLocaleString() :
+                            fieldsBeingEdited[item.key as keyof Requisition]
+                        ) 
+                      } 
+
                       onChange={handleChange}
                       onKeyDown={(e) => handleSave(e)}
                       disabled={item.key === 'DESCRIPTION' ? disabled : true}
@@ -148,13 +164,7 @@ const RequisitionDetail: React.FC = () => {
               )) : <Loader />}
           </Stack>
 
-            <a
-              onClick={(e) => handleOpen(e)}
-              className="text-blue-700 hover:text-blue-400 h-[30px] underline "
-              href=""
-            >
-              Adicionar Materiais / Serviços
-            </a>
+            
       
           {IsAddItemsOpen && requisitionData && (
             <ProductsTableModal

@@ -8,6 +8,8 @@ import api from "./api";
   ID_PROJETO:number;
   DESCRICAO: string;
   RESPONSAVEL : string;
+  LAST_UPDATE_ON : string | undefined;
+  CREATED_ON: string | undefined;
 }
  interface RequisitionPost {
    STATUS: string;
