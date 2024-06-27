@@ -83,6 +83,16 @@ const RequisitionDetail: React.FC = () => {
 
  
 
+  const dateRenderer = (value: string | number) => {
+     if(typeof value === 'string'){ 
+       const date = value.substring(0, 10).replace(/-/g, '/');
+       const time = value.substring(11, 19);
+       const formatted = `${date}, ${time}`;
+       return formatted;
+     }
+    
+  }
+
   return (
     <Box
       sx={{
@@ -145,7 +155,7 @@ const RequisitionDetail: React.FC = () => {
                       value={
                         fieldsBeingEdited && (
                           item.key === 'LAST_UPDATE_ON' || item.key === 'CREATED_ON'? 
-                            new Date(`${fieldsBeingEdited[item.key as keyof Requisition]}`).toLocaleString() :
+                            dateRenderer(fieldsBeingEdited[item.key as keyof Requisition]) :
                                      fieldsBeingEdited[item.key as keyof Requisition]
                         ) 
                       } 
