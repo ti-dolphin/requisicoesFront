@@ -269,6 +269,15 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
     console.log("useEffect");
   }, [isCreating, RefreshToggler]);
 
+  useEffect(() => {
+    console.log('useEffect interval')
+    const interval = setInterval(() => {
+      console.log('refresh');
+      setRefreshToggler(!RefreshToggler);
+    },  50000);
+    return () => clearInterval(interval);
+  }, [RefreshToggler]);
+
   const handleOpenDeleteModal = (id: number) => {
     setCurrentSelectedId(id);
     setIsDeleteRequisitionModalOpen(true);
@@ -482,6 +491,7 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
           </Table>
         </TableContainer>
         <TablePagination
+          
           rowsPerPageOptions={[25, 40, 50]}
           component="div"
           count={filteredRows.length}
@@ -501,7 +511,7 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
       </Paper>
       <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
+        label="Linhas Finas"
       />
     </Box>
   );
