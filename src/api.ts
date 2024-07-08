@@ -3,7 +3,7 @@ import axios from 'axios';
 //http://localhost:3000
 //qa: qabackend-ti-dolphins-projects.vercel.app
 const api = axios.create({
-  baseURL: "http://localhost:3000", // Substitua pela URL do seu backend
+  baseURL: "qabackend-ti-dolphins-projects.vercel.app", // Substitua pela URL do seu backend
   headers: {
     Accept: "*/*",
     "Content-Type": "application/json",
