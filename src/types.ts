@@ -1,7 +1,66 @@
 
 
 import { Dispatch, SetStateAction } from "react";
-import { Item, Requisition } from "./utils";
+
+export interface Requisition {
+  ID_REQUISICAO: number;
+  STATUS: string;
+  DESCRIPTION: string;
+  ID_RESPONSAVEL: number;
+  ID_PROJETO: number;
+  DESCRICAO: string;
+  RESPONSAVEL: string;
+  LAST_UPDATE_ON: string | number;
+  CREATED_ON: string | number;
+}
+export interface RequisitionPost {
+  STATUS: string;
+  DESCRIPTION: string;
+  ID_RESPONSAVEL: number;
+  ID_PROJETO: number;
+}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export interface RequisitionItemPost {
+  QUANTIDADE: number;
+  ID_REQUISICAO: number;
+  ID_PRODUTO: number;
+}
+
+export interface anexoRequisicao {
+  id: number;
+  nome_arquivo: string;
+  arquivo: string;
+  id_requisicao: number;
+}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+export interface Product {
+  ID: number;
+  codigo: string;
+  nome_fantasia: string;
+}
+export interface Person {
+  NOME: string;
+  CODPESSOA: number;
+}
+export interface Project {
+  ID: number;
+}
+export interface Item {
+  ID: number;
+  QUANTIDADE: number;
+  nome_fantasia: string;
+  ID_REQUISICAO: number;
+  ID_PRODUTO: number;
+}
+
+
+
+export interface inputFileProps {
+  ID_REQUISICAO: number;
+  setRefreshToggler: (value: boolean) => void;
+  refreshToggler : boolean;
+}
 
 export interface addRequisitionModalProps {
   isCreating: boolean;

@@ -18,6 +18,7 @@ import { Link, useParams } from "react-router-dom";
 import RequisitionItemsTable from "../../components/tables/RequisitionItemsTable";
 import Loader from "../../components/Loader";
 import { ProductsTableModal } from "../../components/modals/ProductsTableModal";
+import OpenFileModal from "../../components/modals/OpenFileModal";
 
 
 const RequisitionDetail: React.FC = () => {
@@ -120,7 +121,7 @@ const RequisitionDetail: React.FC = () => {
                     />
         }
       </div>
-      <div className="w-full border border-1 px-8 flex justify-end items-center h-[50px] ">
+      <div className="w-full border border-1 px-8 flex justify-end items-center gap-8 h-[50px] ">
         <a
           onClick={(e) => handleOpen(e)}
           className="text-blue-700 hover:text-blue-400 h-[30px] underline "
@@ -128,6 +129,7 @@ const RequisitionDetail: React.FC = () => {
         >
           Adicionar Materiais / Serviços
         </a>
+        <OpenFileModal ID_REQUISICAO={Number(id)}/>
       </div>
       <Stack direction="row">
         <Box
