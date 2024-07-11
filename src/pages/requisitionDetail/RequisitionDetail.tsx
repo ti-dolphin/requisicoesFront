@@ -39,6 +39,7 @@ const RequisitionDetail: React.FC = () => {
       const itemsData = await fetchItems(data.ID_REQUISICAO);
       if (itemsData) setRequisitionItems(itemsData);
       if (personData) {
+        console.log('items: ', itemsData);
         setRequisitionData({ ...data, ['RESPONSAVEL']: personData?.NOME });
         setFieldsBeingEdited({ ...data, ['RESPONSAVEL']: personData?.NOME })
         console.log('requisitionData: ', data);
@@ -51,6 +52,11 @@ const RequisitionDetail: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, IsAddItemsOpen, refreshToggler]);
 
+  useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, IsAddItemsOpen]);
+  
   const handleOpen = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsAddItemsOpen(true);
@@ -81,8 +87,6 @@ const RequisitionDetail: React.FC = () => {
     { label: "Ultima atualização", key: 'LAST_UPDATE_ON'},
     { label: "Data de Criação", key: 'CREATED_ON'}
   ];
-
- 
 
   const dateRenderer = (value: string | number) => {
      if(typeof value === 'string'){ 

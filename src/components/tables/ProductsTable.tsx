@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState } from "react";
-import { Item, Product, postRequistionItem, searchProducts } from "../../utils";
+import React, { useEffect, useState } from "react";
+import { Item, Product, fetchItems, postRequistionItem, searchProducts } from "../../utils";
 import SearchAppBar from "../../pages/requisitionHome/components/SearchAppBar";
 import { FixedSizeList as List, ListChildComponentProps } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -13,13 +13,6 @@ import { Button, Stack } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { ProductsTableProps } from "../../types";
 
-const findProduct = (products: Item[] | undefined, id: number) => {
-  if (products) {
-    const product = products.find((product) => product.ID_PRODUTO === id);
-    if (product) return product;
-    return false;
-  } else return null;
-};
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const style = {
@@ -34,70 +27,31 @@ export const style = {
   boxShadow: 24,
   p: 4,
 };
+
 const ProductsTable: React.FC<ProductsTableProps> = ({
   ID_REQUISICAO,
-  setIsCreating,
 }) => {
-  const [currentSelectedItem, setCurrentSelectedItem] = useState<Item>();
+  const [currentSelectedItem, setCurrentSelectedItem] = useState<Product>();
   const [filteredRows, setFilteredRows] = useState<Product[]>([]);
-  const [quantities, setQuantities] = useState<Item[]>([]);
   const [openQuantityInput, setOpenQuantityInput] = useState(false);
+  const [refreshToggler, setRefreshToggler ] = useState<boolean>(false);
+  const [addedItems, setAddedItems ] = useState<Item[]>([]);
+
+  const fetchData = async ( ) => { 
+    const itemsData = await fetchItems(ID_REQUISICAO);
+    if(itemsData) setAddedItems([...itemsData]);
+  }
+  
+  useEffect(() => { 
+    fetchData();
+  }, [refreshToggler])
 
   const handleAddItem =  (
     e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement>
   ) => {
     if('key' in e && e.key === 'Enter'){ 
             const { id, value } = e.currentTarget;
-            if (findProduct(quantities, Number(id))) { //just change the repeated product
-              window.alert('Produto já adicionado');
-              return;
-            }
             performPostItemCallout(id, value);
-    }
-  };
-
-  const performPostItemCallout = async (id : string, value : string) => { 
-        const updatedQuantities = [...quantities];
-        const addedItem = {
-          ID_PRODUTO: Number(id),
-          QUANTIDADE: Number(value),
-          nome_fantasia: currentSelectedItem ? currentSelectedItem.nome_fantasia : '',
-          ID_REQUISICAO: ID_REQUISICAO,
-          ID: 0,
-        };
-        const requestBody = [];
-        requestBody.push(
-          {
-            QUANTIDADE: addedItem.QUANTIDADE,
-            ID_PRODUTO: addedItem.ID_PRODUTO,
-            ID_REQUISICAO: addedItem.ID_REQUISICAO
-          }
-        );
-        console.log('reqBody: ', requestBody);
-        const reqIDParam = ID_REQUISICAO;
-        const response = await postRequistionItem(
-          requestBody,
-          `/requisition/requisitionItems/${reqIDParam}`
-        );
-        if (response) {
-          updatedQuantities.push(addedItem);
-          setQuantities(updatedQuantities);
-          setOpenQuantityInput(false);
-        }
-        else window.alert('Erro ao adicionar item');
-  }
-
-  const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
-    deleteItem(e.currentTarget.id);
-  };
-
-  const deleteItem = (id: string) => {
-    const product = findProduct(quantities, Number(id));
-    if (product) {
-      const updatedQuantities = [...quantities];
-      const indexOfProduct = updatedQuantities.indexOf(product);
-      updatedQuantities.splice(indexOfProduct, 1);
-      setQuantities(updatedQuantities);
     }
   };
 
@@ -111,46 +65,34 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
     }
   };
 
+  const performPostItemCallout = async (id: string, value: string) => {
+    const requestBody = [];
+    requestBody.push(
+      {
+        QUANTIDADE: Number(value),
+        ID_PRODUTO: Number(id),
+        ID_REQUISICAO: ID_REQUISICAO
+      }
+    );
+    const reqIDParam = ID_REQUISICAO;
+    const response = await postRequistionItem(
+      requestBody,
+      `/requisition/requisitionItems/${reqIDParam}`
+    );
+    if(response){ 
+      setOpenQuantityInput(false);
+      setRefreshToggler(!refreshToggler);
+    }
+  }
+
   const handleOpen = (
-    e: React.MouseEvent<HTMLButtonElement>,
-    nome: string,
-    quantities?: Item[]
+    _e: React.MouseEvent<HTMLButtonElement>,
+    item: Product
   ) => {
     setOpenQuantityInput(true);
-    const { id } = e.currentTarget;
-    const item = findProduct(quantities, Number(id));
-
-    if (item) {
-      console.log("currentSelected ", {
-        ID_REQUISICAO: ID_REQUISICAO,
-        ID_PRODUTO: Number(id),
-        nome_fantasia: nome,
-        QUANTIDADE: item.QUANTIDADE,
-        ID: 0,
-      });
-      setCurrentSelectedItem({
-        ID_REQUISICAO: ID_REQUISICAO,
-        ID_PRODUTO: Number(id),
-        nome_fantasia: nome,
-        QUANTIDADE: item.QUANTIDADE,
-        ID: 0,
-      });
-    } else {
-      console.log("currentSelected ", {
-        ID_REQUISICAO: ID_REQUISICAO,
-        ID_PRODUTO: Number(id),
-        nome_fantasia: nome,
-        QUANTIDADE: 0,
-        ID: 0,
-      });
-      setCurrentSelectedItem({
-        ID_REQUISICAO: ID_REQUISICAO,
-        ID_PRODUTO: Number(id),
-        nome_fantasia: nome,
-        QUANTIDADE: 0,
-        ID: 0,
-      });
-    }
+    setCurrentSelectedItem({
+      ...item
+    });
   };
 
   const handleClose = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -164,7 +106,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
       key={data[index].ID}
       style={style}
       className={
-        currentSelectedItem?.ID_PRODUTO === data[index].ID
+        currentSelectedItem?.ID === data[index].ID
           ? `border border-cyan-800 odd:bg-white flex gap-1 justify-around even:bg-gray-100 p-0  text-xs`
           : `border odd:bg-white flex gap-1 justify-around even:bg-gray-100 p-0  text-xs`
       }
@@ -181,7 +123,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
       >
         {data[index].codigo}
         <button
-          onClick={(e) => handleOpen(e, data[index].nome_fantasia, quantities)}
+          onClick={(e) => handleOpen(e, data[index])}
           id={data[index].ID}
           className="border-red-400 border-1 absolute right-1 py-1 text-blue-600 underline"
         >
@@ -194,15 +136,10 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
   return (
     <div className="h-[600px] border w-full relative mx-auto">
       <SearchAppBar
-        openQuantityInput={openQuantityInput}
-        handleDelete={handleDelete}
-        handleClose={handleClose}
+        addedItems={addedItems}
         handleSearch={handleSearchItem}
-        handleOpen={handleOpen}
-        addedItems={quantities}
-        currentSelectedItem={currentSelectedItem}
-        setIsCreating={setIsCreating}
-        caller="ItemsTable"
+        caller="ItemsTable" refreshToggler={false}
+        setRefreshTooggler={setRefreshToggler}
       />
       <Modal
         aria-labelledby="transition-modal-title"
@@ -237,13 +174,14 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
               <input
                 type="text"
                 onKeyDown={handleAddItem}
-                id={String(currentSelectedItem?.ID_PRODUTO)}
+                id={String(currentSelectedItem?.ID)}
                 className="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500"
               />
             </Stack>
           </Box>
         </Fade>
       </Modal>
+
       <table className="w-full h-full table-fixed shadow-sm">
         <thead className="text-xs text-white uppercase bg-gray-900 ">
           <tr className="flex justify-around">
@@ -281,4 +219,5 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
     </div>
   );
 };
+
 export default ProductsTable;

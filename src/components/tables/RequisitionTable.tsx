@@ -102,7 +102,7 @@ const headCells: readonly HeadCell[] = [
     id: "ID_RESPONSAVEL",
     numeric: true,
     disablePadding: false,
-    label: "Reponsável",
+    label: "Responsável",
   },
   {
     id: "ID_REQUISICAO",
@@ -395,7 +395,9 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
-        <SearchAppBar caller="requisitionTable" handleSearch={handleSearch} />
+        <SearchAppBar caller="requisitionTable" handleSearch={handleSearch}
+           refreshToggler={RefreshToggler}
+             setRefreshTooggler={setRefreshToggler } />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}

@@ -1,20 +1,14 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { AddedItemsModalProps } from "../../types";
-import AddedItemsTable from "../tables/AddedItemsTable";
-import { Backdrop, Button, Box, Fade, Modal, Stack, Typography } from "@mui/material";
 import { useState } from "react";
-import { style } from "../tables/ProductsTable";
+import RequisitionItemsTable from "../tables/RequisitionItemsTable";
 import CloseIcon from '@mui/icons-material/Close';
-
+import { Stack } from "@mui/material";
 const AddedItemsModal: React.FC<AddedItemsModalProps> = ({
-  addedItems,
-  handleOpen,
-  handleClose,
-  handleQuantityChange,
-  handleDelete,
-  currentSelectedItem,
   motionVariants,
-  setIsCreating
+  addedItems,
+  refreshToggler,
+  setRefreshToggler
 }) => {
 
   const [isOpen, setIsOpen] = useState(false);
@@ -41,43 +35,16 @@ const AddedItemsModal: React.FC<AddedItemsModalProps> = ({
             variants={motionVariants}
             className="rounded-xl p-4 flex flex-row absolute bg-[#f8f8f8] border shadow-lg top-[5rem]  h-[80vh] w-[60vw] z-20"
           > 
-            <Button onClick={() => setIsOpen(false)} sx={{position:'absolute', top:'0.5rem', left:'0.5rem', margin:''}}><CloseIcon /></Button>
-            <AddedItemsTable setIsCreating={setIsCreating} handleDelete={handleDelete} addedItems={addedItems} handleOpen={handleOpen}/>
-            <Modal
-              aria-labelledby="transition-modal-title"
-              aria-describedby="transition-modal-description"
-              open={false}
-              onClose={handleClose}
-              closeAfterTransition
-              slots={{ backdrop: Backdrop }}
-              slotProps={{
-                backdrop: {
-                  timeout: 500,
-                },
-              }}
-            >
-              <Fade in={false}>
-                <Box sx={{...style, overflowY:'scroll'}}>
-                  <Stack direction="column" spacing={2}>
-                    <Typography
-                      id="transition-modal-title"
-                      variant="h6"
-                      component="h2"
-                    >
-                      Insira a quantidade desejada
-                    </Typography>
-                    <input
-                      type="text"
-                      autoFocus
-                      onChange={handleQuantityChange}
-                      id={String(currentSelectedItem?.ID_PRODUTO)}
-                      className="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500"
-                      onKeyDown={handleClose}
-                    />
-                  </Stack>
-                </Box>
-              </Fade>
-            </Modal>
+            <Stack direction="column" spacing={4} sx={{width: '90%'}}>
+              <button onClick={() => setIsOpen(false)}> 
+                <CloseIcon
+                 sx={{ color: 'red', position: 'absolute', top: '0.5rem', left: '10px' }} /></button>
+                  {addedItems &&
+                    <RequisitionItemsTable
+                      items={addedItems}
+                      refreshToggler={refreshToggler}
+                      setRefreshToggler={setRefreshToggler} />}
+            </Stack>
           </motion.div>
         )}
       </AnimatePresence>

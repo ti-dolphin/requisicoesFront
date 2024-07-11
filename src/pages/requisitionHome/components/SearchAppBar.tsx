@@ -31,6 +31,7 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "center",
 }));
+
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
   width: "100%",
@@ -49,16 +50,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const SearchAppBar: React.FC<SearchAppBarProps> = ({
-  addedItems,
   caller,
   handleSearch,
-  handleOpen,
-  handleClose,
-  handleDelete,
-  openQuantityInput,
-  handleQuantityChange,
-  currentSelectedItem,
-  setIsCreating
+  addedItems,
+  refreshToggler,
+  setRefreshTooggler
 }) => {
   return (
     <Box sx={{ flexGrow: 1, width: "100%" }}>
@@ -66,16 +62,8 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
         <Toolbar sx={{marginX:'auto'}}>
           {caller == "ItemsTable" && (
             <AddedItemsModal
-              handleOpen={handleOpen}
-              addedItems={addedItems}
-              handleClose={handleClose}
-              openQuantityInput={openQuantityInput}
-              handleQuantityChange={handleQuantityChange}
-              currentSelectedItem={currentSelectedItem}
               motionVariants={motionItemsVariants}
-              handleDelete={handleDelete}
-              setIsCreating={setIsCreating}
-            />
+              addedItems={addedItems} refreshToggler={refreshToggler} setRefreshToggler={setRefreshTooggler}  />
           )}
           <Search>
             <SearchIconWrapper>

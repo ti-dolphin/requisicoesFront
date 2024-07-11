@@ -5,24 +5,22 @@ import EditIcon from "@mui/icons-material/Edit";
 import { Button } from '@mui/material';
 import { requisitionItemsTableProps } from '../../types';
 import DeleteRequisitionItemModal from '../modals/warnings/DeleteRequisitionITemModal';
-
-
-
+import ItemObservationModal from '../modals/ItemObservation';
 
 const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({ items, refreshToggler }) => {
 
   const [requisitionItems, setRequisitionItems] = useState<Item[]>([]);
   const [itemsBeingEdited, setItemsBeingEdited] = useState<Item[]>([]);
-  const columns = ['Materiais / Serviços', 'Quantidade'];
+  const columns = ['Materiais / Serviços', 'Codigo', 'Quantidade',];
   const [editMode, setEditMode] = useState<boolean>(false);
   const [editModeStyle, setEditModeStyle] = useState('');
   const [isDeleteRequisitionItemModalOpen, setIsDeleteRequisitionItemModalOpen] = useState<boolean>(false);
-  const [itemBeingDeleted, setItemBeingDeleted ] = useState<Item>();
+  const [itemBeingDeleted, setItemBeingDeleted] = useState<Item>();
+  const [isObservationModalOpen, setIsObservationModalOpen ] = useState<boolean>(false);
   useEffect(() => {
     setRequisitionItems(items);
     setItemsBeingEdited(items);
   }, [items, refreshToggler]);
-
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, item: Item) => {
     const { value } = e.target;
@@ -65,7 +63,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({ items, re
     }
 
   }
-  
+
   return (
     // <div  className="border w-full p-2 overflow-auto overflow-y-scroll border-blue-100 flex flex-col items-center">
     <div className="realative w-full">
@@ -80,42 +78,71 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({ items, re
         </thead>
         <tbody className=''>
           {requisitionItems.map((item) => (
-            <tr className="bg-white border ">
-              <td
-                scope="row"
-                className="text-sm px-4 py-2 text-gray-900 whitespace-nowrap border"
-              >
-                <p className='overflow-x-auto  max-w-[500px]'>{item.nome_fantasia}</p>
-              </td>
-              <td className="px-4 py-2 flex gap-1 items-center justify-center">
-                <input
-                  onChange={(e) => handleChange(e, item)}
-                  className={`${editModeStyle} w-[6rem] bg-blue-100 rounded-md p-1`} type="text" disabled={editMode ? false : true}
-                  value={editMode ? itemsBeingEdited.find((value) => (value === item))?.QUANTIDADE : item.QUANTIDADE}
-                />
-                <button
-                  id={String(item.ID_PRODUTO)}
-                  className="delete hover:bg-slate-300 rounded-sm p-[0.5]"
-                  onClick={() => handleActivateInput()}
-                >
-                  <EditIcon className="cursor-pointer text-blue-600" />
-                </button>
-                <button
-                  id={String(item.ID_PRODUTO)}
-                  className="edit text-red-700 hover:bg-slate-300 rounded-sm p-[0.5] underline font-normal"
-                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                  onClick={() => { 
-                    setIsDeleteRequisitionItemModalOpen(true);
-                    setItemBeingDeleted(item);
-                   }}
-                >
-                  <DeleteForeverIcon />
-                </button>
-              </td>
-            </tr>
-          ))}
+           <>
+                  <tr className="bg-white border ">
+                    <td
+                      scope="row"
+                      className="text-sm px-4 py-2 text-gray-900 whitespace-nowrap border"
+                    >
+                      <p className='overflow-x-auto  max-w-[500px]'>{item.nome_fantasia}</p>
+                      <button
+                          onClick={() => { 
+                              setIsObservationModalOpen(true)
+                              setItemsBeingEdited([item]);
+                          }
+
+                          }
+                      className='text-blue-700 hover:text-blue-600 hover:underline max-w-[300px] lg:max-w-[350px] overflow-hidden'
+                    >{item.OBSERVACAO ? item.OBSERVACAO  : 'observação'}
+                    </button>
+                    <span className='text-blue-700 hover:underline'>...</span>
+                    </td>
+                    <td
+                      scope="row"
+                      className="text-sm px-4 py-2 text-gray-900 whitespace-nowrap border"
+                    >
+                      <p className='overflow-x-auto  max-w-[500px]'>{item.codigo}</p>
+                    </td>
+
+                    <td className="px-4 py-2 flex gap-1 items-center justify-center">
+                      <input
+                        onChange={(e) => handleChange(e, item)}
+                        className={`${editModeStyle} w-[6rem] bg-blue-100 rounded-md p-1`} type="text" disabled={editMode ? false : true}
+                        value={editMode ? itemsBeingEdited.find((value) => (value === item))?.QUANTIDADE : item.QUANTIDADE}
+                      />
+                      <button
+                        id={String(item.ID_PRODUTO)}
+                        className="delete hover:bg-slate-300 rounded-sm p-[0.5]"
+                        onClick={() => handleActivateInput()}
+                      >
+                        <EditIcon className="cursor-pointer text-blue-600" />
+                      </button>
+                      <button
+                        id={String(item.ID_PRODUTO)}
+                        className="edit text-red-700 hover:bg-slate-300 rounded-sm p-[0.5] underline font-normal"
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        onClick={() => {
+                          setIsDeleteRequisitionItemModalOpen(true);
+                          setItemBeingDeleted(item);
+                        }}
+                      >
+                        <DeleteForeverIcon />
+                      </button>
+                    </td>
+                  </tr>
+           </>
+              ))
+          }
         </tbody>
       </table>
+      {
+        isObservationModalOpen &&
+        <ItemObservationModal
+          items={itemsBeingEdited}
+          observation={itemsBeingEdited[0].OBSERVACAO}
+          setIsObservationModalOpen={setIsObservationModalOpen}
+          isObservationModalOpen={isObservationModalOpen}         />
+      }
       {editMode &&
         <Button
           onClick={() => handleSave()}
@@ -127,7 +154,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({ items, re
           handleDelete={handleDelete}
           item={itemBeingDeleted}
         />
-      } 
+      }
     </div>
     // </div>
   );

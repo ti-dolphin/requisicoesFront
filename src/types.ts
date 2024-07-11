@@ -50,8 +50,10 @@ export interface Item {
   ID: number;
   QUANTIDADE: number;
   nome_fantasia: string;
+  codigo : string | undefined;
   ID_REQUISICAO: number;
   ID_PRODUTO: number;
+  OBSERVACAO : string | undefined
 }
 
 
@@ -79,6 +81,13 @@ export interface DeleteRequisitionModalProps{
 }
 
 export type Order = "asc" | "desc";
+
+export interface ItemObservationModalProps {
+  items : Item[];
+  observation: string | undefined;
+  isObservationModalOpen: boolean;
+  setIsObservationModalOpen: (value: boolean) => void;
+}
 export interface ProductsTableModalProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
@@ -126,17 +135,18 @@ export interface SearchAppBarProps {
   addedItems?: Item[];
   caller: string;
   handleSearch: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  handleOpen?: (
-    e: React.MouseEvent<HTMLButtonElement>,
-    nome: string,
-    quantities?: Item[],
-  ) => void;
+  handleOpen?: (_e: React.MouseEvent<HTMLButtonElement>, item: Product) => void;
   handleClose?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  handleQuantityChange?: ( e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement> ) => void;
-  handleDelete? :  ( e : React.MouseEvent<HTMLButtonElement>) => void;
+  handleQuantityChange?: (
+    e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement>
+  ) => void;
+  handleDelete?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   currentSelectedItem?: Item | undefined;
   openQuantityInput?: boolean;
-  setIsCreating?: (value : boolean) => void;
+  setIsCreating?: (value: boolean) => void;
+  refreshToggler : boolean;
+
+  setRefreshTooggler : (value : boolean) => void;
 }
 
 export interface AddedItemsModalProps {
@@ -144,15 +154,18 @@ export interface AddedItemsModalProps {
   handleOpen?: (
     e: React.MouseEvent<HTMLButtonElement>,
     nome: string,
-    quantities?: Item[],
+    quantities?: Item[]
   ) => void;
+  refreshToggler : boolean;
+  setRefreshToggler : (value: boolean ) => void;
   handleClose?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  handleQuantityChange?: ( e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement> ) => void;
-  handleDelete? :  ( e : React.MouseEvent<HTMLButtonElement>) => void;
-  currentSelectedItem: Item | undefined;
+  handleQuantityChange?: (
+    e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement>
+  ) => void;
+  handleDelete?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   openQuantityInput?: boolean;
   motionVariants: typeof motionItemsVariants;
-  setIsCreating? : (value : boolean ) => void;
+  setIsCreating?: (value: boolean) => void;
 }
 
 export interface requisitionItemsTableProps { 

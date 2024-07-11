@@ -1,9 +1,9 @@
 import axios from 'axios';
 //PROD: https://requisicoes-backend.vercel.app
-//http://localhost:3000
-//qa: qabackend-ti-dolphins-projects.vercel.app
+//http://localhost:3002
+//currentProd : http://35.198.25.52
 const api = axios.create({
-  baseURL: "https://qabackend-ti-dolphins-projects.vercel.app/", // Substitua pela URL do seu backend
+  baseURL: "http://35.198.25.52", // Substitua pela URL do seu backend
   headers: {
     Accept: "*/*",
     "Content-Type": "application/json",

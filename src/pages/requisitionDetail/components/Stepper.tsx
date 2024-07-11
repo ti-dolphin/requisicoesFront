@@ -65,6 +65,9 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData, setRequisit
      try{  
       await updateRequisition(editedRequisition);
       setRequisition(editedRequisition);
+      setRequisitionData(editedRequisition);
+      setRefreshToggler(!refreshToggler);
+
     }catch(e){
       console.log(e);
     }
