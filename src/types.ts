@@ -3,6 +3,7 @@
 import { Dispatch, SetStateAction } from "react";
 
 export interface Requisition {
+  OBSERVACAO: string;
   ID_REQUISICAO: number;
   STATUS: string;
   DESCRIPTION: string;
@@ -47,7 +48,9 @@ export interface Project {
   ID: number;
 }
 export interface Item {
+  OC?: number;
   ID: number;
+  ATIVO? : number;
   QUANTIDADE: number;
   nome_fantasia: string;
   codigo : string | undefined;

@@ -26,7 +26,6 @@ const RequisitionDetail: React.FC = () => {
   const [IsAddItemsOpen, setIsAddItemsOpen] = useState<boolean>(false);
   const [requisitionData, setRequisitionData] = useState<Requisition>();
   const [refreshToggler, setRefreshToggler] = useState<boolean>(false); //refreshes Data
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [requisitionItems, setRequisitionItems] = useState<Item[]>([]);
   const [disabled, setDisabled ] = useState<boolean>(true);
   const [fieldsBeingEdited, setFieldsBeingEdited] = useState<Requisition>();
@@ -63,11 +62,15 @@ const RequisitionDetail: React.FC = () => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
+    const { value, id } = e.target;
+    console.log('fieldsbeingEdited: ', {
+      ...fieldsBeingEdited,
+      [id]: value,
+    });
     fieldsBeingEdited && setFieldsBeingEdited(
       { 
         ...fieldsBeingEdited,
-        DESCRIPTION : value
+        [id] : value,
       }
     )
   }
@@ -84,6 +87,7 @@ const RequisitionDetail: React.FC = () => {
     { label: "Descrição", key: "DESCRIPTION" },
     { label: "Responsável", key: "RESPONSAVEL" },
     { label: "Projeto", key: "DESCRICAO" },
+    { label: "Observação", key: "OBSERVACAO" },
     { label: "Ultima atualização", key: 'LAST_UPDATE_ON'},
     { label: "Data de Criação", key: 'CREATED_ON'}
   ];
@@ -135,12 +139,14 @@ const RequisitionDetail: React.FC = () => {
         </a>
         <OpenFileModal ID_REQUISICAO={Number(id)}/>
       </div>
-      <Stack direction="row">
+      <Stack  direction="row">
         <Box
           sx={{
             padding: "0.5rem",
             border: "1px solid #e3e3e3",
-            width: "50%",
+            maxHeight: '60vh',
+            overflowY: 'auto',
+            width: "40%",
             display: "flex",
             justifyContent: "space-around",
             alignItems: 'flex-start'
@@ -150,38 +156,45 @@ const RequisitionDetail: React.FC = () => {
             <h1 className="">Detalhes</h1>
             {requisitionData ?
               fields.map((item) => (
-                <>
+                <Stack direction="column" spacing={0.5}>
                   <label htmlFor="">{item.label}</label>
                   <div 
-                    className={`py-1 px-2 rounded-md  w-[90%] flex justify-between border-2 bg-white 
-                                  ${ item.key === 'DESCRIPTION' && !disabled ? 'border border-blue-500' : ''}`}>
-                    <input
-                      className="bg-transparent w-full px-1 focus:outline-none"
-                      type="text"
-                      value={
-                        fieldsBeingEdited && (
-                          item.key === 'LAST_UPDATE_ON' || item.key === 'CREATED_ON'? 
-                            dateRenderer(fieldsBeingEdited[item.key as keyof Requisition]) :
-                                     fieldsBeingEdited[item.key as keyof Requisition]
-                        ) 
-                      } 
+                          className={`py-1 px-2 rounded-md  w-[90%] flex justify-between border-2 bg-white 
+                                      ${(item.key === 'DESCRIPTION' || item.key === 'OBSERVACAO')
+                                      && !disabled ? 'border border-blue-500' : ''}`}>
+                           <input
+                              id={item.key}
+                              className="bg-transparent w-full px-1 text-xs focus:outline-none"
+                              type="text"
+                              value={
+                                fieldsBeingEdited && (
+                                  item.key === 'LAST_UPDATE_ON' || item.key === 'CREATED_ON'? 
+                                    dateRenderer(
+                                        fieldsBeingEdited[item.key as keyof Requisition] ) :
+                                        fieldsBeingEdited[item.key as keyof Requisition]
+                                ) 
+                              } 
 
-                      onChange={handleChange}
-                      onKeyDown={(e) => handleSave(e)}
-                      disabled={item.key === 'DESCRIPTION' ? disabled : true}
-                      autoFocus={disabled}
-                    />
-                    { 
-                      item.key === 'DESCRIPTION' &&
-                      <EditIcon onClick={() => setDisabled(!disabled)} className="cursor-pointer hover:text-blue-400 text-blue-700" />
-                    }
+                              onChange={handleChange}
+                              onKeyDown={(e) => handleSave(e)}
+                              disabled={item.key === 'DESCRIPTION' || item.key === 'OBSERVACAO' ? disabled : true}
+                              autoFocus={disabled} />
+                            { 
+                              (item.key === 'DESCRIPTION' || item.key === 'OBSERVACAO') &&
+                              <EditIcon 
+                                onClick={() => 
+                                  setDisabled(!disabled)
+                                }
+                                  className="cursor-pointer hover:text-blue-400 text-blue-700" />
+                            }
                   </div>
-                </>
+
+                </Stack>
               )) : <Loader />}
           </Stack>
 
             
-      
+
           {IsAddItemsOpen && requisitionData && (
             <ProductsTableModal
               isOpen={IsAddItemsOpen}
@@ -193,7 +206,7 @@ const RequisitionDetail: React.FC = () => {
         </Box>{" "}
 
         <Box sx={{
-          width: "66%",
+          width: "100%",
           maxHeight: '400px',
           border: "0.5px solid #e3e3e3",
           overflowY: 'auto',
