@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import * as React from "react";
 import { alpha } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
@@ -33,10 +32,11 @@ import {
 import { useEffect } from "react";
 import { Requisition } from "../../utils";
 import { Link } from "react-router-dom";
-import { EnhancedTableProps, Order, RequisitionTableProps } from "../../types";
+import { EnhancedTableProps, EnhancedTableToolbarProps, HeadCell, Order, RequisitionTableProps } from "../../types";
 import Loader from "../Loader";
 import DeleteRequisitionModal from "../modals/warnings/DeleteRequisitionModal";
 import Filter from "./Filter";
+import React from "react";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -59,7 +59,6 @@ function getComparator<Key extends keyof any>(
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
-
 function stableSort<T>(
     array: readonly T[],
     comparator: (a: T, b: T) => number
@@ -73,16 +72,6 @@ function stableSort<T>(
     return a[1] - b[1];
   });
   return stabilizedThis.map((el) => el[0]);
-}
-
-//DATA
-
-//DATA
-interface HeadCell {
-  disablePadding: boolean;
-  id: keyof Requisition;
-  label: string;
-  numeric: boolean;
 }
 
 const headCells: readonly HeadCell[] = [
@@ -117,56 +106,17 @@ const headCells: readonly HeadCell[] = [
     label: "Projeto",
   },
 ];
-interface EnhancedTableToolbarProps {
-  numSelected: number;
-}
 
+//HELPER COMPONENTS
 
-function EnhancedTableHead(props: EnhancedTableProps) {
-  const { order, orderBy, onRequestSort } = props;
-  const createSortHandler =
-    (property: keyof Requisition) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
-    };
-
-  return (
-    <TableHead>
-      <TableRow>
-        <TableCell padding="checkbox"></TableCell>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
-            padding={headCell.disablePadding ? "none" : "normal"}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={ headCell.label !== 'Status' ? createSortHandler(headCell.id) : undefined}
-            >
-              {headCell.label === 'Status' ? <Filter  handleSearch = {props.handleSearch}/> : headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
-                </Box>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-}
-
-// @typescript-eslint/no-unused-vars
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-//@ts-expect-error
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const { numSelected } = props;
+
   return (
     <Toolbar
       sx={{
+        display: 'none',
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
         ...(numSelected > 0 && {
@@ -179,6 +129,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
       }}
     >
       <Stack>
+           
         <OutlinedInput
           sx={{ height: "30px", marginX: "1rem" }}
           id="outlined-adornment-weight"
@@ -217,11 +168,49 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           </Tooltip>
         )}
       </Stack>
+      
     </Toolbar>
   );
 }
 
-//TABLE
+function EnhancedTableHead(props: EnhancedTableProps) {
+  const { order, orderBy, onRequestSort } = props;
+  const createSortHandler =
+    (property: keyof Requisition) => (event: React.MouseEvent<unknown>) => {
+      onRequestSort(event, property);
+    };
+
+  return (
+    <TableHead>
+      <TableRow>
+        <TableCell padding="checkbox"></TableCell>
+        {headCells.map((headCell) => (
+          <TableCell
+            key={headCell.id}
+            align={headCell.numeric ? "right" : "left"}
+            padding={headCell.disablePadding ? "none" : "normal"}
+            sortDirection={orderBy === headCell.id ? order : false}
+          >
+            <TableSortLabel
+              active={orderBy === headCell.id}
+              direction={orderBy === headCell.id ? order : "asc"}
+              onClick={headCell.label !== 'Status' ? createSortHandler(headCell.id) : undefined}
+            >
+              {headCell.label === 'Status' ? <Filter handleSearch={props.handleSearch} /> : headCell.label}
+              {orderBy === headCell.id ? (
+                <Box component="span" sx={visuallyHidden}>
+                  {order === "desc" ? "sorted descending" : "sorted ascending"}
+                </Box>
+              ) : null}
+            </TableSortLabel>
+          </TableCell>
+        ))}
+      </TableRow>
+    </TableHead>
+  );
+}
+
+//REQUISITIONS TABLE 
 export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
 
   const [currentSelectedId, setCurrentSelectedId] = useState<number>(-1);
@@ -235,6 +224,7 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
   const [rowsPerPage, setRowsPerPage] = React.useState(50);
   const [allRows, setAllRows] = useState<Requisition[]>([]);
   const [filteredRows, setFilteredRows] = useState<Requisition[]>([]);
+  const [currentKanbanFilter, setCurrentKanbanFilter] = useState('');
 
   async function performAsync() {
 
@@ -288,6 +278,40 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
     setRefreshToggler(!RefreshToggler);
     setIsDeleteRequisitionModalOpen(false);
   };
+
+  const handleChangeKanbanFilter =  (e: React.MouseEvent<HTMLButtonElement> ) => { 
+    const { id } = e.currentTarget;
+    let searchTerm = '';
+    switch (id){ 
+      case 'Backlog': { 
+        searchTerm = 'Em edição'
+        setCurrentKanbanFilter('Backlog')
+        break;
+      }
+      case 'A Fazer': { 
+        searchTerm = 'Requisitado';
+        setCurrentKanbanFilter('A Fazer')
+        break;
+
+      }
+      case 'Fazendo' : { 
+        searchTerm = 'Em cotação';
+        setCurrentKanbanFilter('Fazendo')
+        break;
+      }
+      case 'Concluído': {
+        searchTerm = 'Concluído';
+        setCurrentKanbanFilter('Concluído')
+        break;
+      }
+    }
+    console.log('searchTerm: ', searchTerm);
+    const filter = allRows.filter((item) =>
+      item.STATUS.toUpperCase().includes(
+        searchTerm.toUpperCase())
+    )
+    setFilteredRows(filter);
+  } 
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement, MouseEvent> ) => {
     setPage(0);
@@ -395,9 +419,14 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
-        <SearchAppBar caller="requisitionTable" handleSearch={handleSearch}
-           refreshToggler={RefreshToggler}
-             setRefreshTooggler={setRefreshToggler } />
+        <SearchAppBar
+          currentKanbanFilter={currentKanbanFilter}
+          setCurrentKanbanFilter={setCurrentKanbanFilter}
+          handleChangeKanbanFilter={handleChangeKanbanFilter}
+            caller="requisitionTable"
+            handleSearch={handleSearch}
+            refreshToggler={RefreshToggler}
+              setRefreshTooggler={setRefreshToggler } />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -414,7 +443,7 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
               handleSearch ={ handleSearch }
             />
             <TableBody>
-              {visibleRows.length ? (
+              {visibleRows.length || allRows.length ? (
                 visibleRows.map((row, index) => {
                   const isItemSelected = isSelected(Number(row.ID_REQUISICAO));
                   const labelId = `enhanced-table-checkbox-${index}`;
@@ -515,6 +544,7 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
         control={<Switch checked={dense} onChange={handleChangeDense} />}
         label="Linhas Finas"
       />
+    <EnhancedTableToolbar  numSelected={0}/>
     </Box>
   );
 }

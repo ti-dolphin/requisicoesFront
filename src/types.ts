@@ -55,11 +55,36 @@ export interface Item {
   ID_PRODUTO: number;
   OBSERVACAO : string | undefined
 }
+export interface ItemFile{ 
+  id: number;
+  id_item : number;
+  nome_arquivo: string;
+  arquivo: string;
+}
+
+export interface InteractiveListProps {
+  files: anexoRequisicao[] | ItemFile[];
+  setRefreshToggler: (value: boolean) => void;
+  refreshToggler: boolean;
+}
+export interface OpenFileModalProps {
+  ID_REQUISICAO: number;
+}
+export interface EnhancedTableToolbarProps {
+  numSelected: number;
+}
+export interface HeadCell {
+  disablePadding: boolean;
+  id: keyof Requisition;
+  label: string;
+  numeric: boolean;
+}
 
 
 
 export interface inputFileProps {
-  ID_REQUISICAO: number;
+  caller? : string;
+  id: number;
   setRefreshToggler: (value: boolean) => void;
   refreshToggler : boolean;
 }
@@ -132,6 +157,9 @@ export interface DeleteRequisitionItemModalProps{
       item : Item;
 }
 export interface SearchAppBarProps {
+  currentKanbanFilter? : string | undefined;
+  setCurrentKanbanFilter? : (value : string ) => void | undefined;
+  handleChangeKanbanFilter? : (e : React.MouseEvent<HTMLButtonElement>) => void | undefined; 
   addedItems?: Item[];
   caller: string;
   handleSearch: (e: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -144,9 +172,9 @@ export interface SearchAppBarProps {
   currentSelectedItem?: Item | undefined;
   openQuantityInput?: boolean;
   setIsCreating?: (value: boolean) => void;
-  refreshToggler : boolean;
+  refreshToggler: boolean;
 
-  setRefreshTooggler : (value : boolean) => void;
+  setRefreshTooggler: (value: boolean) => void;
 }
 
 export interface AddedItemsModalProps {

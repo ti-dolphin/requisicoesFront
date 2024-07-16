@@ -2,6 +2,7 @@ import { AxiosRequestConfig } from "axios";
 import api from "./api";
 import {
   Item,
+  ItemFile,
   Person,
   Product,
   Project,
@@ -18,7 +19,36 @@ const fetchRequisitionFiles = async (requisitionID: number) => {
     console.log(e);
   }
 };
-
+const fetchItemFiles = async (itemID : number ) => { 
+  try{ 
+    return await api.get<ItemFile[]>(`itemFiles/${itemID}`);
+  }catch(e){ 
+    console.log(e);
+  }
+};
+const postItemFile = async (id: number, formData : FormData) => {
+  const config: AxiosRequestConfig = {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+    data: formData,
+  };
+  try {
+    console.log('POST ITEM');
+    const response = await api.post(`itemFiles/${id}`, formData, config);
+    return response;
+  } catch (e) {
+    console.log(e);
+  }
+};
+const deleteItemFile = async ( id : number ) => { 
+  try {
+    const response = await api.delete(`itemFiles/${id}`);
+    return response.status;
+  }catch(e){ 
+    console.log(e);
+  }
+}
 const deleteRequisitionFile = async (fileID : number ) => { 
   try{ 
     const response = await api.delete(`requisitionFiles/${fileID}`);
@@ -43,7 +73,7 @@ const postRequisitionFile = async (
     data: formData,
   };
   try {
-    console.log("formData: ", formData);
+ 
     const response = await api.post(
       `requisitionFiles/${requisitionID}`,
       formData,
@@ -235,6 +265,9 @@ export {
   postRequisitionFile,
   getRequisitionFiles,
   deleteRequisitionFile,
+  fetchItemFiles,
+  postItemFile,
+  deleteItemFile,
 };
 export type {
   Requisition,

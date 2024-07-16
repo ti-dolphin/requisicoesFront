@@ -1,7 +1,7 @@
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
-import { postRequisitionFile } from '../../../utils';
+import { postItemFile, postRequisitionFile } from '../../../utils';
 import { inputFileProps } from '../../../types';
 
 const VisuallyHiddenInput = styled('input')({
@@ -17,16 +17,24 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 
-const InputFile = ({ ID_REQUISICAO, setRefreshToggler, refreshToggler } : inputFileProps) => {
+const InputFile = ({ id, caller, setRefreshToggler, refreshToggler } : inputFileProps) => {
 
     const handleChange = async (e :React.ChangeEvent<HTMLInputElement> ) =>  {
        if(e.target.files){ 
             const file = e.target.files[0];
             const formData = new FormData();
             formData.append('file', file);
-            const response = await postRequisitionFile(ID_REQUISICAO, formData);
-            if (response === 200) setRefreshToggler(!refreshToggler);
-            return;
+
+            if(caller === 'ItemFilesModal'){ 
+                const response = await postItemFile(id, formData);
+                if (response?.status === 200) 
+                setRefreshToggler(!refreshToggler);
+                return;
+            }
+           console.log('POST INPUTFILE')
+           const response = await postRequisitionFile(id, formData);
+           if (response === 200) setRefreshToggler(!refreshToggler);
+           return;
        }
         
     }
@@ -45,3 +53,6 @@ const InputFile = ({ ID_REQUISICAO, setRefreshToggler, refreshToggler } : inputF
 }
 
  export default InputFile
+
+
+

@@ -7,7 +7,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import React from "react";
 import { SearchAppBarProps, motionItemsVariants } from "../../../types";
 import AddedItemsModal from "../../../components/modals/AddedItemsModal";
-
+import { Chip, Stack } from "@mui/material";
+//HELPER Components
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -22,6 +23,7 @@ const Search = styled("div")(({ theme }) => ({
     width: "auto",
   },
 }));
+
 const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
   height: "100%",
@@ -49,22 +51,63 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+//MAIN COMPONENT
 const SearchAppBar: React.FC<SearchAppBarProps> = ({
   caller,
+  handleChangeKanbanFilter,
+  currentKanbanFilter,
   handleSearch,
   addedItems,
   refreshToggler,
   setRefreshTooggler
 }) => {
+
   return (
     <Box sx={{ flexGrow: 1, width: "100%" }}>
       <AppBar sx={{ backgroundColor: "#00204a" }} position="static">
+        
         <Toolbar sx={{marginX:'auto'}}>
           {caller == "ItemsTable" && (
             <AddedItemsModal
               motionVariants={motionItemsVariants}
               addedItems={addedItems} refreshToggler={refreshToggler} setRefreshToggler={setRefreshTooggler}  />
           )}
+          { 
+            caller !== 'ItemsTable' && ( 
+              <Stack direction="row" spacing={1}>
+                <button
+                  onClick={handleChangeKanbanFilter}
+                  id="Backlog">
+                  <Chip
+                    color={currentKanbanFilter === 'Backlog' ? 'success' : 'primary'}
+                    label="Backlog" />
+                </button>
+                <button
+                  onClick={handleChangeKanbanFilter}
+                  id="A Fazer">
+                  <Chip
+                    color={currentKanbanFilter === 'A Fazer' ? 'success' : 'primary'}
+                    label="A Fazer" />
+                </button>
+                <button
+                  onClick={handleChangeKanbanFilter}
+                  id="Fazendo">
+                  <Chip
+                    color={currentKanbanFilter === 'Fazendo' ? 'success' : 'primary'}
+                    label="Fazendo" />
+                </button>
+                <button
+                  onClick={handleChangeKanbanFilter}
+                  id="Concluído">
+                  <Chip
+                    color={currentKanbanFilter === 'Concluído' ? 'success' : 'primary'}
+                    label="Concluído" />
+                </button>
+              </Stack>
+            )
+          }
+         
+
           <Search>
             <SearchIconWrapper>
               <SearchIcon />

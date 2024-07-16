@@ -1,5 +1,4 @@
 
-import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import * as React from 'react';
@@ -16,11 +15,10 @@ import FolderIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
 import InputFile from '../../pages/requisitionDetail/components/InputFile';
 import { Stack } from '@mui/material';
-import { deleteRequisitionFile, getRequisitionFiles } from '../../utils';
-import { anexoRequisicao, InteractiveListProps } from '../../types';
+import { deleteItemFile, fetchItemFiles } from '../../utils';
+import { InteractiveListProps, ItemFile } from '../../types';
 import { useState } from 'react';
 import DeleteRequisitionFileModal from './warnings/DeleteRequisitionFileModal';
-import { OpenFileModalProps } from '../../types';
 
 const style = {
     position: 'absolute',
@@ -36,40 +34,42 @@ const style = {
     boxShadow: 24,
     p: 4,
 };
-
+interface ItemFilesModalProps{ 
+    itemID : number;
+}
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const OpenFileModal = ({ ID_REQUISICAO }: OpenFileModalProps) => {
+const ItemFilesModal = ({ itemID }: ItemFilesModalProps) => {
 
-    const [requisitionFiles, setRequisitionFiles] = useState<anexoRequisicao[]>([]);
+    const [ItemFiles, setItemFiles] = useState<ItemFile[]>([]);
     const [open, setOpen] = React.useState(false);
-    const [refreshToggler, setRefreshToggler ] = useState(false);
+    const [refreshToggler, setRefreshToggler] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const fetchRequisitionFiles = async () => {
-        console.log('fetchRequisitionFiles');
-        const data = await getRequisitionFiles(ID_REQUISICAO);
-        if (data) {
-            console.log('data: ', data);
-            setRequisitionFiles(data);
-            return; 
-        } setRequisitionFiles([]);
+    const getItemFiles = async () => {
+         console.log('fetchItemFiles');
+         const response = await fetchItemFiles(itemID);
+         if (response) {
+             console.log('response: ', response);
+             setItemFiles(response.data);
+             return;
+         } setItemFiles([]);
     }
 
     React.useEffect(() => {
         console.log('useEffect');
-        fetchRequisitionFiles();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        getItemFiles();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [refreshToggler]);
 
-
-
     return (
-        <div>
-            <Button variant='outlined' onClick={handleOpen}>Anexos   <AttachFileIcon /></Button>
-            <Modal
+        <>
+            <button
+                 onClick={handleOpen}
+                className='cursor-pointer text-blue-800 hover:text-blue-500'><AttachFileIcon sx={{ rotate: '45deg' }} /></button>
+                <Modal
                 open={open}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
@@ -77,27 +77,27 @@ const OpenFileModal = ({ ID_REQUISICAO }: OpenFileModalProps) => {
             >
                 <Box sx={style}>
                     <Stack direction="column" spacing={2}>
-                        <Typography textAlign="center" id="modal-modal-title" variant="h6" component="h2">
-                            Anexos da Requisição
+                        <Typography textAlign="center" id="modal-modal-title"  component="h2">
+                            Anexos do Item
                         </Typography>
-                        <InputFile 
-                            id={ID_REQUISICAO}
-                             setRefreshToggler = {setRefreshToggler} 
-                                refreshToggler={refreshToggler} /> 
+
+                        <InputFile
+                            id={itemID}
+                            setRefreshToggler={setRefreshToggler}
+                            refreshToggler={refreshToggler} caller='ItemFilesModal' />
                         {
-                            requisitionFiles.length > 0 &&
-                            <InteractiveList 
-                                files={requisitionFiles}
+                            ItemFiles.length > 0 &&
+                            <InteractiveList
                                 refreshToggler={refreshToggler}
-                                 setRefreshToggler={setRefreshToggler}
-                                 />
+                                setRefreshToggler={setRefreshToggler}
+                                files={ItemFiles} />
 
                         }
                     </Stack>
 
                 </Box>
             </Modal>
-        </div>
+        </>
     );
 }
 
@@ -106,15 +106,15 @@ const OpenFileModal = ({ ID_REQUISICAO }: OpenFileModalProps) => {
 function InteractiveList({ files, setRefreshToggler, refreshToggler }: InteractiveListProps) {
 
     const [dense] = React.useState(false);
-    const [isDeleteRequisitionFileModalOpen, setIsDeleteRequisitionFileModalOpen ] = useState<boolean>(false);
-    const [currentFileIdBeingDeleted, setCurrentFileIdbeingDeleted ] = useState<number>(0);
-    const handleDelete = async (id: number ) => {
-        const responseStatus = await deleteRequisitionFile(id);
-        if(responseStatus === 200){ 
+    const [isDeleteRequisitionFileModalOpen, setIsDeleteRequisitionFileModalOpen] = useState<boolean>(false);
+    const [currentFileIdBeingDeleted, setCurrentFileIdbeingDeleted] = useState<number>(0);
+    const handleDelete = async (id: number) => {
+        const responseStatus = await deleteItemFile(id);
+        if (responseStatus === 200) {
             setIsDeleteRequisitionFileModalOpen(false);
             setRefreshToggler(!refreshToggler);
             return;
-        } 
+        }
     }
 
     return (
@@ -123,11 +123,12 @@ function InteractiveList({ files, setRefreshToggler, refreshToggler }: Interacti
                 <Demo>
                     <List dense={dense}>
                         {files.map((item) => (
-                                <ListItem
+                            <ListItem
                                 secondaryAction={<IconButton
                                     onClick={() => {
                                         setCurrentFileIdbeingDeleted(item.id);
-                                         setIsDeleteRequisitionFileModalOpen(!isDeleteRequisitionFileModalOpen) }}
+                                        setIsDeleteRequisitionFileModalOpen(!isDeleteRequisitionFileModalOpen)
+                                    }}
                                     edge="end" aria-label="delete">
                                     <DeleteIcon />
                                 </IconButton>}
@@ -152,9 +153,9 @@ function InteractiveList({ files, setRefreshToggler, refreshToggler }: Interacti
                                 >
                                     {item.nome_arquivo}
                                 </a>
-                                </ListItem>             
+                            </ListItem>
                         ))
-                    }
+                        }
                     </List>
                 </Demo>
             </Grid>
@@ -174,4 +175,4 @@ const Demo = styled('div')(({ theme }) => ({
 
 
 
-export default OpenFileModal
+export default ItemFilesModal;

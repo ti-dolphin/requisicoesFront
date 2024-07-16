@@ -6,6 +6,7 @@ import { Button } from '@mui/material';
 import { requisitionItemsTableProps } from '../../types';
 import DeleteRequisitionItemModal from '../modals/warnings/DeleteRequisitionITemModal';
 import ItemObservationModal from '../modals/ItemObservation';
+import ItemFilesModal from '../modals/ItemFilesModal';
 
 const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({ items, refreshToggler }) => {
 
@@ -84,18 +85,20 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({ items, re
                       scope="row"
                       className="text-sm px-4 py-2 text-gray-900 whitespace-nowrap border"
                     >
-                      <p className='overflow-x-auto  max-w-[500px]'>{item.nome_fantasia}</p>
-                      <button
-                          onClick={() => { 
-                              setIsObservationModalOpen(true)
-                              setItemsBeingEdited([item]);
-                          }
+                              <p className='overflow-x-auto  max-w-[500px]'>{item.nome_fantasia}</p>
+                              <button
+                                  onClick={() => { 
+                                      setIsObservationModalOpen(true)
+                                      setItemsBeingEdited([item]);
+                                  }
 
-                          }
-                      className='text-blue-700 hover:text-blue-600 hover:underline max-w-[300px] lg:max-w-[350px] overflow-hidden'
-                    >{item.OBSERVACAO ? item.OBSERVACAO  : 'observação'}
-                    </button>
-                    <span className='text-blue-700 hover:underline'>...</span>
+                                  }
+                              className='text-blue-700 hover:text-blue-600 hover:underline max-w-[300px] lg:max-w-[350px] overflow-hidden'
+                            >{item.OBSERVACAO ? item.OBSERVACAO  : 'observação'}
+                              </button>
+                              <span className='text-blue-700 hover:underline'>...</span>
+                              <ItemFilesModal itemID = {item.ID}/>
+
                     </td>
                     <td
                       scope="row"

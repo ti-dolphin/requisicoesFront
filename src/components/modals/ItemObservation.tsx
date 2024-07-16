@@ -67,7 +67,7 @@ export default function ItemObservationModal({
                             autoFocus={editMode}
                             className={
                                 editMode ? `border-blue-500 ` + `w-[90%] p-2 outline-none h-[200px] flex flex-wrap text-center border rounded-md`
-                                    : `w-[90%] p-2 outline-none h-[200px] flex flex-wrap text-center border rounded-md p-1`
+                                    : `w-[90%]  outline-none h-[200px] flex flex-wrap text-center border rounded-md p-1`
                             }
                         />
                         <button

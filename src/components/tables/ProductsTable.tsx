@@ -44,6 +44,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
   
   useEffect(() => { 
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshToggler])
 
   const handleAddItem =  (
@@ -138,9 +139,10 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
       <SearchAppBar
         addedItems={addedItems}
         handleSearch={handleSearchItem}
-        caller="ItemsTable" refreshToggler={false}
+        caller="ItemsTable" 
+        refreshToggler={false}
         setRefreshTooggler={setRefreshToggler}
-      />
+        />
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
