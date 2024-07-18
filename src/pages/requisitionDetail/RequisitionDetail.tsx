@@ -4,6 +4,7 @@ import HorizontalLinearStepper from "./components/Stepper";
 import { Badge, BadgeProps, Button, IconButton, Stack, styled } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
+import SaveIcon from '@mui/icons-material/Save';
 import {
   Item,
   Requisition,
@@ -21,17 +22,22 @@ import { ProductsTableModal } from "../../components/modals/ProductsTableModal";
 import OpenFileModal from "../../components/modals/OpenFileModal";
 import AssignmentIcon from '@mui/icons-material/Assignment';
 
+interface Field { 
+  key : string;
+  label : string;
+}
 const RequisitionDetail: React.FC = () => {
   const { id } = useParams();
   const [IsAddItemsOpen, setIsAddItemsOpen] = useState<boolean>(false);
   const [requisitionData, setRequisitionData] = useState<Requisition>();
   const [refreshToggler, setRefreshToggler] = useState<boolean>(false); //refreshes Data
   const [requisitionItems, setRequisitionItems] = useState<Item[]>([]);
-  const [disabled, setDisabled ] = useState<boolean>(true);
+  const [editMode, setEditMode] = useState<{ isEditing: boolean, field: Field }>({isEditing : false, field  : { label: '', key: ''}});
   const [fieldsBeingEdited, setFieldsBeingEdited] = useState<Requisition>();
 
   const fetchData = async () => {
     const data = await fetchRequsitionById(Number(id));
+    console.log('fetchData')
     if (data) {
       console.log(data);
       const personData = await fetchPersonById(data.ID_RESPONSAVEL);
@@ -43,7 +49,7 @@ const RequisitionDetail: React.FC = () => {
       }
     }
   }
-  
+
   useEffect(() => {
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -53,7 +59,7 @@ const RequisitionDetail: React.FC = () => {
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, IsAddItemsOpen]);
-  
+
   const handleOpen = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsAddItemsOpen(true);
@@ -62,18 +68,21 @@ const RequisitionDetail: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, id } = e.target;
     fieldsBeingEdited && setFieldsBeingEdited(
-      { 
+      {
         ...fieldsBeingEdited,
-        [id] : value,
+        [id]: value,
       }
     )
   }
+  const handleChangeEditMode = (item : Field ) =>  {
+    console.log('editMode: ', { isEditing: true, field: item });
+    setEditMode({ isEditing: true, field: item })
+  }
 
-  const handleSave = (e: React.KeyboardEvent<HTMLInputElement>) => {
-     if(e.key === 'Enter'){ 
-        setDisabled(true);
-       fieldsBeingEdited && updateRequisition(fieldsBeingEdited);
-     }
+  const handleSave = () => {
+      setEditMode({...editMode, isEditing : false });
+      fieldsBeingEdited && updateRequisition(fieldsBeingEdited);
+      setRefreshToggler(!refreshToggler);
   }
 
   const fields = [
@@ -81,8 +90,8 @@ const RequisitionDetail: React.FC = () => {
     { label: "Responsável", key: "RESPONSAVEL" },
     { label: "Projeto", key: "DESCRICAO" },
     { label: "Observação", key: "OBSERVACAO" },
-    { label: "Ultima atualização", key: 'LAST_UPDATE_ON'},
-    { label: "Data de Criação", key: 'CREATED_ON'}
+    { label: "Ultima atualização", key: 'LAST_UPDATE_ON' },
+    { label: "Data de Criação", key: 'CREATED_ON' }
   ];
   const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
     '& .MuiBadge-badge': {
@@ -90,20 +99,21 @@ const RequisitionDetail: React.FC = () => {
     },
   }));
   const dateRenderer = (value: string | number) => {
-     if(typeof value === 'string'){ 
-       const date = value.substring(0, 10).replace(/-/g, '/');
-       const time = value.substring(11, 19);
-       const formatted = `${date}, ${time}`;
-       return formatted;
-     }
-    
+    if (typeof value === 'string') {
+      const date = value.substring(0, 10).replace(/-/g, '/');
+      const time = value.substring(11, 19);
+      const formatted = `${date}, ${time}`;
+      return formatted;
+    }
+
   }
 
   return (
     <Box
       sx={{
-        width: "96%",
-        height: "fit-content",
+        width: "100%",
+        border: '1px solid #d3d6db',
+        height: "100%",
         backgroundColor: "#fafafa",
         margin: "auto",
       }}
@@ -112,26 +122,28 @@ const RequisitionDetail: React.FC = () => {
         <div className="h-1/2 w-full bg-[#fafafa]">
           <Button><Link to="/"><ArrowCircleLeftIcon /></Link></Button>
           <h1 className="font-semibold px-6 py-4">
-           Nº {requisitionData?.ID_REQUISICAO} | {requisitionData?.DESCRIPTION} | Projeto {requisitionData?.DESCRICAO}
+            Nº {requisitionData?.ID_REQUISICAO} | {requisitionData?.DESCRIPTION} | Projeto {requisitionData?.DESCRICAO}
           </h1>
         </div>
       </div>
       <div className="Stepper w-full border  p-2">
         {requisitionData
-          && <HorizontalLinearStepper 
+          && <HorizontalLinearStepper
             requisitionData={requisitionData}
-               setRequisitionData={setRequisitionData}
-                 setRefreshToggler={setRefreshToggler}
-                    refreshToggler={refreshToggler}
-                    />
+            setRequisitionData={setRequisitionData}
+            setRefreshToggler={setRefreshToggler}
+            refreshToggler={refreshToggler}
+          />
         }
       </div>
       <div className="w-full border border-1 px-8 flex justify-end items-center gap-8 h-[50px] ">
         <IconButton
-          sx={{ border: 'none',
-               height: '30px',
-                 borderRadius: '0px',
-                  display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+          sx={{
+            border: 'none',
+            height: '30px',
+            borderRadius: '0px',
+            display: 'flex', alignItems: 'center', gap: '0.5rem'
+          }}
           onClick={handleOpen}>
           <a className='text-[16px] text-blue-700 hover:text-blue-400 underline'>Materiais/ Serviços</a>
           <StyledBadge badgeContent={requisitionItems.length} color="secondary">
@@ -139,14 +151,14 @@ const RequisitionDetail: React.FC = () => {
           </StyledBadge>
         </IconButton>
         <OpenFileModal
-         ID_REQUISICAO={Number(id)}
-         />
+          ID_REQUISICAO={Number(id)}
+        />
       </div>
-      <Stack  direction="row">
+      <Stack direction="row">
         <Box
           sx={{
             padding: "0.5rem",
-            border: "1px solid #e3e3e3",
+            border: "1px solid #d3d6db ",
             maxHeight: '60vh',
             overflowY: 'auto',
             width: "40%",
@@ -155,48 +167,64 @@ const RequisitionDetail: React.FC = () => {
             alignItems: 'flex-start'
           }}
         >
-          <Stack direction="column" spacing={2} sx={{ width: "100%",  padding: '1rem' }}>
+          <Stack direction="column"
+            alignItems="center"
+             spacing={2}
+               sx={{ width: "100%", padding: '1rem' }}>
             <h1 className="">Detalhes</h1>
             {requisitionData ?
               fields.map((item) => (
-                <Stack direction="column" spacing={0.5}>
-                  <label htmlFor="">{item.label}</label>
-                  <div 
-                          className={`py-1 px-2 rounded-md  w-[90%] flex justify-between border-2 bg-white 
-                                      ${(item.key === 'DESCRIPTION' || item.key === 'OBSERVACAO')
-                                      && !disabled ? 'border border-blue-500' : ''}`}>
-                           <input
-                              id={item.key}
-                              className="bg-transparent w-full px-1 text-xs focus:outline-none"
-                              type="text"
-                              value={
-                                fieldsBeingEdited && (
-                                  item.key === 'LAST_UPDATE_ON' || item.key === 'CREATED_ON'? 
-                                    dateRenderer(
-                                        fieldsBeingEdited[item.key as keyof Requisition] ) :
-                                        fieldsBeingEdited[item.key as keyof Requisition]
-                                ) 
-                              } 
-
-                              onChange={handleChange}
-                              onKeyDown={(e) => handleSave(e)}
-                              disabled={item.key === 'DESCRIPTION' || item.key === 'OBSERVACAO' ? disabled : true}
-                              autoFocus={disabled} />
-                            { 
-                              (item.key === 'DESCRIPTION' || item.key === 'OBSERVACAO') &&
-                              <EditIcon 
-                                onClick={() => 
-                                  setDisabled(!disabled)
-                                }
-                                  className="cursor-pointer hover:text-blue-400 text-blue-700" />
-                            }
-                  </div>
+                <Stack sx={{ width: '100%'}} direction="column" spacing={0.5}>
+                  <label>{item.label}</label>
+                  <Stack  
+                      direction="row"
+                      spacing={1}
+                      key={item.key}
+                      sx={editMode.isEditing && editMode.field.key === item.key ?
+                         { border: '1px solid blue', padding: '4px', borderRadius: '4px' } :
+                         { border: '1px solid #d3d6db',  padding: '4px', borderRadius: '4px' }}
+                          >
+                        <input
+                          id={item.key}
+                          className="w-full bg-transparent text-xs focus:outline-none"
+                          type="text"
+                          disabled={!editMode.isEditing}
+                          value={
+                              fieldsBeingEdited && (
+                              item.key === 'LAST_UPDATE_ON' || item.key === 'CREATED_ON' ?
+                                dateRenderer(
+                                  fieldsBeingEdited[item.key as keyof Requisition]) :
+                                  fieldsBeingEdited[item.key as keyof Requisition]
+                            )
+                          }
+                          onChange={handleChange}
+                          autoFocus={editMode.isEditing}
+                          />
+                    {
+                      (item.key === 'DESCRIPTION' || item.key === 'OBSERVACAO') &&
+                        <button
+                            onClick={() => handleChangeEditMode(item)}>
+                            <EditIcon color="primary"
+                            className="cursor-pointer hover:text-blue-400" />
+                        </button>
+                        
+                      }
+                      {editMode.isEditing && editMode.field.key === item.key &&
+                       <button
+                        onClick={handleSave}
+                       >
+                       <SaveIcon className="hover:text-blue-400"  color="primary"/>
+                       </button>  } 
+                  </Stack>
 
                 </Stack>
-              )) : <Loader />}
+              )) : <Loader />
+           
+              }
+              
           </Stack>
 
-            
+
 
           {IsAddItemsOpen && requisitionData && (
             <ProductsTableModal

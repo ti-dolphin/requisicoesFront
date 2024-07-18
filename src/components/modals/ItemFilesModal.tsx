@@ -14,11 +14,12 @@ import Typography from '@mui/material/Typography';
 import FolderIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
 import InputFile from '../../pages/requisitionDetail/components/InputFile';
-import { Button, Stack } from '@mui/material';
+import { Badge, BadgeProps, Button, Stack } from '@mui/material';
 import { deleteItemFile, fetchItemFiles, postItemLinkFile } from '../../utils';
 import { InteractiveListProps, ItemFile } from '../../types';
 import { useState } from 'react';
 import DeleteRequisitionFileModal from './warnings/DeleteRequisitionFileModal';
+import CloseIcon from '@mui/icons-material/Close';
 
 const style = {
     position: 'absolute',
@@ -94,12 +95,23 @@ const ItemFilesModal = ({ itemID }: ItemFilesModalProps) => {
         getItemFiles();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [refreshToggler]);
+    const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
+        '& .MuiBadge-badge': {
+            ...theme
+        },
+    }));
 
     return (
-        <>
+        <div>
             <button
                 onClick={handleOpen}
-                className='cursor-pointer text-blue-800 hover:text-blue-500'><AttachFileIcon sx={{ rotate: '45deg' }} /></button>
+                className='cursor-pointer  text-blue-800 hover:text-blue-500'>
+                <Stack alignItems="center" direction="row" spacing={1.5}>
+                    <AttachFileIcon sx={{ rotate: '45deg' }} />
+                    <StyledBadge badgeContent={ItemFiles.length} color="secondary">
+                    </StyledBadge>
+                </Stack>
+            </button>
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -107,6 +119,13 @@ const ItemFilesModal = ({ itemID }: ItemFilesModalProps) => {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
+                    <button
+                        onClick={handleClose}
+                        style={{
+                            color: 'red',
+                            position: 'absolute', right: '1rem', top: '1rem'
+                        }}><CloseIcon />
+                    </button>
                     <Stack direction="column" spacing={2}>
                         <Typography color="primary" textAlign="center" id="modal-modal-title" component="h2">
                             Anexos do Item
@@ -155,7 +174,7 @@ const ItemFilesModal = ({ itemID }: ItemFilesModalProps) => {
 
                 </Box>
             </Modal>
-        </>
+        </div>
     );
 }
 

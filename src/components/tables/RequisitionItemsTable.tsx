@@ -6,7 +6,7 @@ import {
 } from "../../utils";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import EditIcon from "@mui/icons-material/Edit";
-import { Button, Switch } from "@mui/material";
+import { Button, Stack, Switch } from "@mui/material";
 import { requisitionItemsTableProps } from "../../types";
 import DeleteRequisitionItemModal from "../modals/warnings/DeleteRequisitionITemModal";
 import ItemObservationModal from "../modals/ItemObservation";
@@ -132,19 +132,24 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
                   <p className="overflow-x-auto  max-w-[500px]">
                     {item.nome_fantasia}
                   </p>
-                  <button
-                    onClick={() => {
-                      setIsObservationModalOpen(true);
-                      setItemsBeingEdited([item]);
-                    }}
-                    className="text-blue-700 hover:text-blue-600 hover:underline max-w-[300px] lg:max-w-[350px] overflow-hidden"
-                  >
-                    {( item.OBSERVACAO && item.OBSERVACAO !== 'null' )
-                      ? item.OBSERVACAO
-                      : "observação"}
-                  </button>
-                  <span className="text-blue-700 hover:underline">...</span>
-                  <ItemFilesModal itemID={item.ID} />
+                  
+                  <Stack direction="row"
+                  spacing={1}
+                   sx={{flexWrap: 'nowrap'}}>
+                    <button
+                      onClick={() => {
+                        setIsObservationModalOpen(true);
+                        setItemsBeingEdited([item]);
+                      }}
+                      className="text-blue-700 hover:text-blue-600 hover:underline max-w-[300px] lg:max-w-[350px] overflow-hidden"
+                    >
+                      {(item.OBSERVACAO && item.OBSERVACAO !== 'null')
+                        ? item.OBSERVACAO
+                        : "observação"}
+                    </button>
+                    <ItemFilesModal itemID={item.ID} />
+                  </Stack>
+                    
                 </td>
                 <td
                   scope="row"
