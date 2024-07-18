@@ -41,6 +41,15 @@ const postItemFile = async (id: number, formData : FormData) => {
     console.log(e);
   }
 };
+const postItemLinkFile = async(id: number, link: string) => { 
+
+  try {
+    const response = await api.post(`itemFiles/link/${id}`, { link : link} );
+    return response;
+  }catch(e){ 
+    console.log(e);
+  }
+}
 const deleteItemFile = async ( id : number ) => { 
   try {
     const response = await api.delete(`itemFiles/${id}`);
@@ -268,6 +277,7 @@ export {
   fetchItemFiles,
   postItemFile,
   deleteItemFile,
+  postItemLinkFile,
 };
 export type {
   Requisition,

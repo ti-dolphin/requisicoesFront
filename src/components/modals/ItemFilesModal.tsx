@@ -15,7 +15,7 @@ import FolderIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
 import InputFile from '../../pages/requisitionDetail/components/InputFile';
 import { Button, Stack } from '@mui/material';
-import { deleteItemFile, fetchItemFiles, postItemFile } from '../../utils';
+import { deleteItemFile, fetchItemFiles, postItemLinkFile } from '../../utils';
 import { InteractiveListProps, ItemFile } from '../../types';
 import { useState } from 'react';
 import DeleteRequisitionFileModal from './warnings/DeleteRequisitionFileModal';
@@ -71,10 +71,7 @@ const ItemFilesModal = ({ itemID }: ItemFilesModalProps) => {
     }
     const handleSaveLink = async  (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement >  ) => { 
         if(e.key === 'Enter'){ 
-           
-            const formData = new FormData();
-            formData.append('file', new File([inputlinkValue], inputlinkValue, { type: 'text/plain' }));
-               const response = await postItemFile(itemID, formData);
+               const response = await postItemLinkFile(itemID, inputlinkValue);
                if (response?.status === 200) 
                  setIsInputLinkOpen(false);
                  setInputlinkValue('');
@@ -111,7 +108,7 @@ const ItemFilesModal = ({ itemID }: ItemFilesModalProps) => {
             >
                 <Box sx={style}>
                     <Stack direction="column" spacing={2}>
-                        <Typography textAlign="center" id="modal-modal-title" component="h2">
+                        <Typography color="primary" textAlign="center" id="modal-modal-title" component="h2">
                             Anexos do Item
                         </Typography>
 
@@ -132,11 +129,11 @@ const ItemFilesModal = ({ itemID }: ItemFilesModalProps) => {
                         >
                             <Box sx={styleInputlink}>
                                <Stack direction="column" spacing={1}>
-                                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                                    <Typography color="primary" id="modal-modal-title" variant="h6" component="h2">
                                         Insira o link
                                     </Typography>
                                     <input
-                                     className='border border-black rounded-sm'
+                                     className='border border-blue-700 rounded-sm outline-none'
                                      value={inputlinkValue}
                                      onChange={handleInputlinkChange}
                                      onKeyDown={handleSaveLink}
