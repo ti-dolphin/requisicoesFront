@@ -31,7 +31,6 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData, setRequisit
      steps.indexOf(requisitionData.STATUS) === steps.length - 1 ?
      steps.length : steps.indexOf(requisitionData.STATUS)
   );
-  console.log('active Step: ', activeStep)
   const [skipped] = React.useState(new Set<number>());
 
   const isStepOptional = (step: number) => {
@@ -45,7 +44,7 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData, setRequisit
     const nextStep = activeStep + 1;
     if (nextStep < steps.length){ 
       const editedRequisition = { ...requisition, ['STATUS']: steps[activeStep + 1] }
-      console.log('editedRequisition: ', editedRequisition);
+
       try {
         await updateRequisition(editedRequisition);
         setRequisition(editedRequisition);
@@ -60,7 +59,7 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData, setRequisit
   const handleBack = async () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
     const editedRequisition = {...requisition, ['STATUS'] : steps[activeStep - 1]}
-    console.log('editedRequisition: ', editedRequisition);
+
     setRequisition(editedRequisition);
      try{  
       await updateRequisition(editedRequisition);

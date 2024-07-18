@@ -16,13 +16,13 @@ interface RequisitionFields {
 const AddRequisitionForm: React.FC<AddRequisitionFormProps> = ({setIsCreating}) => {
   useEffect(() => {
     async function performAsync() {
-      console.log("performed");
+
       const personData = await fetchPersons();
       const projectData = await fetchAllProjects();
       if (personData && projectData) {
         setPersons(personData);
         setProjects(projectData);
-        console.log("personData: ", personData);
+
       }
     }
     performAsync();
@@ -48,10 +48,7 @@ const AddRequisitionForm: React.FC<AddRequisitionFormProps> = ({setIsCreating}) 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    console.log('fields: ', {
-      ...fields,
-      [id]: value,
-    })
+   
     setFields({
       ...fields,
       [id]: value,
@@ -60,12 +57,9 @@ const AddRequisitionForm: React.FC<AddRequisitionFormProps> = ({setIsCreating}) 
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('currentID: ', currentId);
+
      if (currentId === 0) {
-       console.log({
-            ...fields,
-            ['STATUS'] : 'Em edição'
-          }   )
+      
         const response = await postRequisition([
           {
             ...fields,
@@ -73,7 +67,7 @@ const AddRequisitionForm: React.FC<AddRequisitionFormProps> = ({setIsCreating}) 
           }   
         ]);
        if (response) {
-         console.log('ID: ', response.data);
+ 
          setCurrentId(Number(response.data));
        }
        setIsOpen(true);

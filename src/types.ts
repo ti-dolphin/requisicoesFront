@@ -48,6 +48,7 @@ export interface Project {
   ID: number;
 }
 export interface Item {
+  UNIDADE?: string;
   OC?: number;
   ID: number;
   ATIVO? : number;

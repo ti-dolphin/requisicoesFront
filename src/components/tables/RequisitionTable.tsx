@@ -106,10 +106,8 @@ const headCells: readonly HeadCell[] = [
     label: "Projeto",
   },
 ];
-
 //HELPER COMPONENTS
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const { numSelected } = props;
 
@@ -231,7 +229,6 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
     const data = await fecthRequisitions();
     const personsData = await fetchPersons();
     if (data && personsData) {
-      console.log('data: ', data);
       const rows = data.map((item) => {
         const personName = personsData.find(
           (person) => person.CODPESSOA === item.ID_RESPONSAVEL
@@ -256,13 +253,11 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
 
   useEffect(() => {
     performAsync();
-    console.log("useEffect");
   }, [isCreating, RefreshToggler]);
 
   useEffect(() => {
-    console.log('useEffect interval')
+
     const interval = setInterval(() => {
-      console.log('refresh');
       setRefreshToggler(!RefreshToggler);
     },  50000);
     return () => clearInterval(interval);
@@ -305,7 +300,6 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
         break;
       }
     }
-    console.log('searchTerm: ', searchTerm);
     const filter = allRows.filter((item) =>
       item.STATUS.toUpperCase().includes(
         searchTerm.toUpperCase())

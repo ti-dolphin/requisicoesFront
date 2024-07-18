@@ -10,7 +10,6 @@ const AddedItemsTable: React.FC<AddedItemsTableProps> = ({
 
   const [items, setItems ] = useState<Item[] | null>();
   useEffect(( ) => { 
-    console.log('change');
     setItems(addedItems);
   }, [addedItems]);
 

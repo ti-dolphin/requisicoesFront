@@ -31,7 +31,7 @@ const InputFile = ({ id, caller, setRefreshToggler, refreshToggler } : inputFile
                 setRefreshToggler(!refreshToggler);
                 return;
             }
-           console.log('POST INPUTFILE')
+
            const response = await postRequisitionFile(id, formData);
            if (response === 200) setRefreshToggler(!refreshToggler);
            return;

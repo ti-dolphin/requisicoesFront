@@ -14,8 +14,8 @@ import Typography from '@mui/material/Typography';
 import FolderIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
 import InputFile from '../../pages/requisitionDetail/components/InputFile';
-import { Stack } from '@mui/material';
-import { deleteItemFile, fetchItemFiles } from '../../utils';
+import { Button, Stack } from '@mui/material';
+import { deleteItemFile, fetchItemFiles, postItemFile } from '../../utils';
 import { InteractiveListProps, ItemFile } from '../../types';
 import { useState } from 'react';
 import DeleteRequisitionFileModal from './warnings/DeleteRequisitionFileModal';
@@ -34,8 +34,18 @@ const style = {
     boxShadow: 24,
     p: 4,
 };
-interface ItemFilesModalProps{ 
-    itemID : number;
+const styleInputlink = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 4,
+};
+interface ItemFilesModalProps {
+    itemID: number;
 }
 
 
@@ -45,21 +55,45 @@ const ItemFilesModal = ({ itemID }: ItemFilesModalProps) => {
     const [ItemFiles, setItemFiles] = useState<ItemFile[]>([]);
     const [open, setOpen] = React.useState(false);
     const [refreshToggler, setRefreshToggler] = useState(false);
+    const [isInputLinkOpen, setIsInputLinkOpen] = useState<boolean>(false);
+    const [inputlinkValue, setInputlinkValue ] = useState<string>('');
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
+    const handleInputlinkChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> ) =>  {
+        setInputlinkValue(e.target.value);
+    }
+    const handleOpenInputLink = () => {
+        setIsInputLinkOpen(true);
+    }
+    const handleCloseInputLink = () => {
+        setIsInputLinkOpen(false);
+    }
+    const handleSaveLink = async  (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement >  ) => { 
+        if(e.key === 'Enter'){ 
+           
+            const formData = new FormData();
+            formData.append('file', new File([inputlinkValue], inputlinkValue, { type: 'text/plain' }));
+               const response = await postItemFile(itemID, formData);
+               if (response?.status === 200) 
+                 setIsInputLinkOpen(false);
+                 setInputlinkValue('');
+                 setRefreshToggler(!refreshToggler);
+               return;
+        }
+    }
+
     const getItemFiles = async () => {
-         console.log('fetchItemFiles');
-         const response = await fetchItemFiles(itemID);
-         if (response) {
-             console.log('response: ', response);
-             setItemFiles(response.data);
-             return;
-         } setItemFiles([]);
+        const response = await fetchItemFiles(itemID);
+        if (response) {
+        
+            setItemFiles(response.data);
+            return;
+        } setItemFiles([]);
     }
 
     React.useEffect(() => {
-        console.log('useEffect');
+
         getItemFiles();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [refreshToggler]);
@@ -67,9 +101,9 @@ const ItemFilesModal = ({ itemID }: ItemFilesModalProps) => {
     return (
         <>
             <button
-                 onClick={handleOpen}
+                onClick={handleOpen}
                 className='cursor-pointer text-blue-800 hover:text-blue-500'><AttachFileIcon sx={{ rotate: '45deg' }} /></button>
-                <Modal
+            <Modal
                 open={open}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
@@ -77,20 +111,47 @@ const ItemFilesModal = ({ itemID }: ItemFilesModalProps) => {
             >
                 <Box sx={style}>
                     <Stack direction="column" spacing={2}>
-                        <Typography textAlign="center" id="modal-modal-title"  component="h2">
+                        <Typography textAlign="center" id="modal-modal-title" component="h2">
                             Anexos do Item
                         </Typography>
 
-                        <InputFile
-                            id={itemID}
-                            setRefreshToggler={setRefreshToggler}
-                            refreshToggler={refreshToggler} caller='ItemFilesModal' />
+                        <Stack justifyContent="center" spacing={2} direction="row">
+                            <InputFile
+                                id={itemID}
+                                setRefreshToggler={setRefreshToggler}
+                                refreshToggler={refreshToggler} caller='ItemFilesModal' />
+                            <Button
+                                onClick={handleOpenInputLink}
+                                variant='outlined'>Anexar Link</Button>
+                        </Stack>
+                        <Modal
+                            open={isInputLinkOpen}
+                            onClose={handleCloseInputLink}
+                            aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description"
+                        >
+                            <Box sx={styleInputlink}>
+                               <Stack direction="column" spacing={1}>
+                                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                                        Insira o link
+                                    </Typography>
+                                    <input
+                                     className='border border-black rounded-sm'
+                                     value={inputlinkValue}
+                                     onChange={handleInputlinkChange}
+                                     onKeyDown={handleSaveLink}
+                                     />
+                               </Stack>
+
+                            </Box>
+                        </Modal>
                         {
                             ItemFiles.length > 0 &&
                             <InteractiveList
                                 refreshToggler={refreshToggler}
                                 setRefreshToggler={setRefreshToggler}
-                                files={ItemFiles} />
+                                files={ItemFiles}
+                            />
 
                         }
                     </Stack>

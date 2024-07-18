@@ -38,7 +38,6 @@ export default function ItemObservationModal({
     }
     const handleSave = async( ) => { 
         items[0].OBSERVACAO = currentObservation;
-        console.log(items);
          await updateRequisitionItems(
              items, 
              items[0].ID_REQUISICAO

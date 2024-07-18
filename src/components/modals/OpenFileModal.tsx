@@ -1,5 +1,4 @@
 
-import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import * as React from 'react';
@@ -15,7 +14,7 @@ import Typography from '@mui/material/Typography';
 import FolderIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
 import InputFile from '../../pages/requisitionDetail/components/InputFile';
-import { Stack } from '@mui/material';
+import { Badge, BadgeProps, Stack } from '@mui/material';
 import { deleteRequisitionFile, getRequisitionFiles } from '../../utils';
 import { anexoRequisicao, InteractiveListProps } from '../../types';
 import { useState } from 'react';
@@ -49,26 +48,34 @@ const OpenFileModal = ({ ID_REQUISICAO }: OpenFileModalProps) => {
     const handleClose = () => setOpen(false);
 
     const fetchRequisitionFiles = async () => {
-        console.log('fetchRequisitionFiles');
+
         const data = await getRequisitionFiles(ID_REQUISICAO);
         if (data) {
-            console.log('data: ', data);
             setRequisitionFiles(data);
             return; 
         } setRequisitionFiles([]);
     }
 
     React.useEffect(() => {
-        console.log('useEffect');
         fetchRequisitionFiles();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [refreshToggler]);
-
-
-
+    const StyledBadge = styled(Badge)<BadgeProps>(({theme }) => ({
+        '& .MuiBadge-badge': {
+            ...theme
+        },
+    }));
     return (
         <div>
-            <Button variant='outlined' onClick={handleOpen}>Anexos   <AttachFileIcon /></Button>
+            
+            <IconButton
+                sx={{ border: 'none', height: '30px', borderRadius: '0px', display: 'flex', alignItems: 'center', alignSelf: 'center', gap: '0.5rem' }}
+             onClick={handleOpen}>
+                <a className='text-[16px] text-blue-700 hover:text-blue-400 underline'>Anexos</a>
+                <StyledBadge badgeContent={requisitionFiles.length} color="secondary">
+                    <AttachFileIcon />
+                </StyledBadge>
+            </IconButton>
             <Modal
                 open={open}
                 onClose={handleClose}

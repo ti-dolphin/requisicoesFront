@@ -57,11 +57,11 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
   };
 
   const handleSearchItem = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    console.log("handleSearchItem");
+
     if (e.key === "Enter" && e.currentTarget.value) {
       const { value } = e.currentTarget;
       const searchResults = await searchProducts(value.toUpperCase());
-      console.log(searchResults);
+
       if (searchResults) setFilteredRows([...searchResults.data]);
     }
   };

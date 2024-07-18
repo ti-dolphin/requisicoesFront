@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import HorizontalLinearStepper from "./components/Stepper";
-import { Button, Stack } from "@mui/material";
+import { Badge, BadgeProps, Button, IconButton, Stack, styled } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
 import {
@@ -19,7 +19,7 @@ import RequisitionItemsTable from "../../components/tables/RequisitionItemsTable
 import Loader from "../../components/Loader";
 import { ProductsTableModal } from "../../components/modals/ProductsTableModal";
 import OpenFileModal from "../../components/modals/OpenFileModal";
-
+import AssignmentIcon from '@mui/icons-material/Assignment';
 
 const RequisitionDetail: React.FC = () => {
   const { id } = useParams();
@@ -38,10 +38,8 @@ const RequisitionDetail: React.FC = () => {
       const itemsData = await fetchItems(data.ID_REQUISICAO);
       if (itemsData) setRequisitionItems(itemsData);
       if (personData) {
-        console.log('items: ', itemsData);
         setRequisitionData({ ...data, ['RESPONSAVEL']: personData?.NOME });
         setFieldsBeingEdited({ ...data, ['RESPONSAVEL']: personData?.NOME })
-        console.log('requisitionData: ', data);
       }
     }
   }
@@ -63,10 +61,6 @@ const RequisitionDetail: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, id } = e.target;
-    console.log('fieldsbeingEdited: ', {
-      ...fieldsBeingEdited,
-      [id]: value,
-    });
     fieldsBeingEdited && setFieldsBeingEdited(
       { 
         ...fieldsBeingEdited,
@@ -78,7 +72,6 @@ const RequisitionDetail: React.FC = () => {
   const handleSave = (e: React.KeyboardEvent<HTMLInputElement>) => {
      if(e.key === 'Enter'){ 
         setDisabled(true);
-        // console.log('fieldsBeingEdite: ', fieldsBeingEdited);
        fieldsBeingEdited && updateRequisition(fieldsBeingEdited);
      }
   }
@@ -91,7 +84,11 @@ const RequisitionDetail: React.FC = () => {
     { label: "Ultima atualização", key: 'LAST_UPDATE_ON'},
     { label: "Data de Criação", key: 'CREATED_ON'}
   ];
-
+  const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
+    '& .MuiBadge-badge': {
+      ...theme
+    },
+  }));
   const dateRenderer = (value: string | number) => {
      if(typeof value === 'string'){ 
        const date = value.substring(0, 10).replace(/-/g, '/');
@@ -130,14 +127,20 @@ const RequisitionDetail: React.FC = () => {
         }
       </div>
       <div className="w-full border border-1 px-8 flex justify-end items-center gap-8 h-[50px] ">
-        <a
-          onClick={(e) => handleOpen(e)}
-          className="text-blue-700 hover:text-blue-400 h-[30px] underline "
-          href=""
-        >
-          Adicionar Materiais / Serviços
-        </a>
-        <OpenFileModal ID_REQUISICAO={Number(id)}/>
+        <IconButton
+          sx={{ border: 'none',
+               height: '30px',
+                 borderRadius: '0px',
+                  display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+          onClick={handleOpen}>
+          <a className='text-[16px] text-blue-700 hover:text-blue-400 underline'>Materiais/ Serviços</a>
+          <StyledBadge badgeContent={requisitionItems.length} color="secondary">
+            < AssignmentIcon />
+          </StyledBadge>
+        </IconButton>
+        <OpenFileModal
+         ID_REQUISICAO={Number(id)}
+         />
       </div>
       <Stack  direction="row">
         <Box
