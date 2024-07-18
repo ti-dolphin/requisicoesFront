@@ -247,16 +247,21 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
         };
       });
         setAllRows(rows);
-        setFilteredRows(rows);
+        const defaultFilter = 'Requisitado';
+        const filter = allRows.filter((item) =>
+          item.STATUS.toUpperCase().includes(
+            defaultFilter.toUpperCase())
+      )
+        setFilteredRows(filter);
     }
   }
 
   useEffect(() => {
     performAsync();
+    setCurrentKanbanFilter('A Fazer');
   }, [isCreating, RefreshToggler]);
 
   useEffect(() => {
-
     const interval = setInterval(() => {
       setRefreshToggler(!RefreshToggler);
     },  50000);
@@ -417,10 +422,10 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
           currentKanbanFilter={currentKanbanFilter}
           setCurrentKanbanFilter={setCurrentKanbanFilter}
           handleChangeKanbanFilter={handleChangeKanbanFilter}
-            caller="requisitionTable"
-            handleSearch={handleSearch}
-            refreshToggler={RefreshToggler}
-              setRefreshTooggler={setRefreshToggler } />
+          caller="requisitionTable"
+          handleSearch={handleSearch}
+          refreshToggler={RefreshToggler}
+          setRefreshTooggler={setRefreshToggler} />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
