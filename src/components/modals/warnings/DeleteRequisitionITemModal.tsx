@@ -15,7 +15,11 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 500,
+  width: { 
+    xs: '300px',
+    sm: '300px',
+    md: '500px'
+  },
   height: 200,
   bgcolor: 'background.paper',
   border: 'none',

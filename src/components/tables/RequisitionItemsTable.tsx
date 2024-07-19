@@ -96,7 +96,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
     // <div  className="border w-full p-2 overflow-auto overflow-y-scroll border-blue-100 flex flex-col items-center">
     <div className="realative w-full">
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <Table sx={{ minWidth: 650 }} size="small" aria-label="simple table">
           <TableHead>
             <TableRow>
               {columns.map((column) => (

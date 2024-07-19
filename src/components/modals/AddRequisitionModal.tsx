@@ -46,7 +46,8 @@ const NestedModal: React.FC<addRequisitionModalProps> = ({ isCreating, setIsCrea
         <AddCircle />
         <Typography sx={{ 
           display: { 
-            xs : 'none'
+            xs : 'none',
+            lg: 'block'
           }
         }}>
           Nova Requisição

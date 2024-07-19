@@ -120,7 +120,10 @@ const RequisitionDetail: React.FC = () => {
     >
       <Box sx={{ padding: '1rem', display: 'flex', alignItems: 'center'}}>
           <Button><Link to="/"><ArrowCircleLeftIcon /></Link></Button>
-          <Typography >
+          <Typography sx={{fontSize: { 
+            xs: '12px',
+            md: '16px'
+          }}}>
             Nº {requisitionData?.ID_REQUISICAO} | {requisitionData?.DESCRIPTION} | Projeto {requisitionData?.DESCRICAO}
           </Typography>
 

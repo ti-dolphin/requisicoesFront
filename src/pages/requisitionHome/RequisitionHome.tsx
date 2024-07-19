@@ -20,7 +20,9 @@ const RequisitionHome = () => {
             <img src={logoUrl} alt="logo Dolphin" width={'140px'}/>
             <Typography variant="h6" sx={{
               display: { 
-                xs: 'none'
+                xs: 'none',
+                sm: 'block'
+          
               },
               color: '#34495e'}}>Requisições de materiais e serviços</Typography>
             <Typography sx={{ color: "gray" }}></Typography>
