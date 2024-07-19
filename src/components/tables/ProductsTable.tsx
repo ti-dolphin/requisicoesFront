@@ -2,8 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Item, Product, fetchItems, postRequistionItem, searchProducts } from "../../utils";
 import SearchAppBar from "../../pages/requisitionHome/components/SearchAppBar";
-import { FixedSizeList as List, ListChildComponentProps } from "react-window";
-import AutoSizer from "react-virtualized-auto-sizer";
+
 import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
