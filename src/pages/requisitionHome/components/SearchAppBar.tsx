@@ -71,7 +71,7 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
 
             padding: '1rem',
             marginX: 'auto',
-            width: '50%',
+            top: '1rem',
             display: 'flex',
             flexDirection: {
               xs: 'column',
@@ -87,7 +87,9 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
           <Search sx={{
               border: '1px solid white',
                 width: {
-                  xs: '70%'
+                  xs: '100%',
+                  sm: '90%',
+                  md: '60%'
                 }
               }}  >
                 <SearchIconWrapper>

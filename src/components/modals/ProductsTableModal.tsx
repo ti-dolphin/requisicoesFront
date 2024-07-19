@@ -10,12 +10,12 @@ const style = {
   transform: "translate(-50%, -50%)",
   width: 400,
   bgcolor: "background.paper",
-  borderRadius: '25px',
+
   border: "2px solid #000",
   boxShadow: 24,
-  pt: 2,
-  px: 4,
-  pb: 3,
+  pt: 1,
+  px: 1,
+  pb: 2,
 };
 
 export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
@@ -40,7 +40,7 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
             sx={{color: 'red', position: 'absolute', right: '2rem', top: '1rem', zIndex: 2}}
             onClick={() => setIsCreating(false)}><CloseIcon  />
             </Button>
-          <Stack sx={{ border: '1px solid', height: '100%', overflowY : 'auto'}} direction="column">
+          <Stack sx={{ border: '1px solid', height: '100%', overflowY : 'auto', width: '100%'}} direction="column">
               <ProductsTable ID_REQUISICAO={requisitionID} setIsCreating={setIsCreating}/>
           </Stack>
         </Box>

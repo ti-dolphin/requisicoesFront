@@ -76,8 +76,8 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData, setRequisit
 
 
   return (
-    <Box sx={{ width: "100%", paddingX: '1rem' }}>
-      <Stepper activeStep={activeStep}>
+    <Box sx={{ width: "100%", paddingX: '0.5rem' }}>
+      <Stepper sx={{ flexWrap: 'wrap', gap: '0.5rem'}} activeStep={activeStep}>
         {steps.map((label, index) => {
           const stepProps: { completed?: boolean } = {};
           const labelProps: {

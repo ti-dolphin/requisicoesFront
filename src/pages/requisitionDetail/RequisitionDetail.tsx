@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import HorizontalLinearStepper from "./components/Stepper";
-import { Badge, BadgeProps, Button, IconButton, Stack, styled } from "@mui/material";
+import { Badge, BadgeProps, Button, IconButton, Stack, styled, Typography } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
 import SaveIcon from '@mui/icons-material/Save';
@@ -118,15 +118,15 @@ const RequisitionDetail: React.FC = () => {
         margin: "auto",
       }}
     >
-      <div className="Header w-full h-1/2  border">
-        <div className="h-1/2 w-full bg-[#fafafa]">
+      <Box sx={{ padding: '1rem', display: 'flex', alignItems: 'center'}}>
           <Button><Link to="/"><ArrowCircleLeftIcon /></Link></Button>
-          <h1 className="font-semibold px-6 py-4">
+          <Typography >
             Nº {requisitionData?.ID_REQUISICAO} | {requisitionData?.DESCRIPTION} | Projeto {requisitionData?.DESCRICAO}
-          </h1>
-        </div>
-      </div>
-      <div className="Stepper w-full border  p-2">
+          </Typography>
+
+      </Box>
+
+      <Box sx={{padding: '0.5rem'}}>
         {requisitionData
           && <HorizontalLinearStepper
             requisitionData={requisitionData}
@@ -135,33 +135,42 @@ const RequisitionDetail: React.FC = () => {
             refreshToggler={refreshToggler}
           />
         }
-      </div>
-      <div className="w-full border border-1 px-8 flex justify-end items-center gap-8 h-[50px] ">
-        <IconButton
-          sx={{
-            border: 'none',
-            height: '30px',
-            borderRadius: '0px',
-            display: 'flex', alignItems: 'center', gap: '0.5rem'
-          }}
-          onClick={handleOpen}>
-          <a className='text-[16px] text-blue-700 hover:text-blue-400 underline'>Materiais/ Serviços</a>
-          <StyledBadge badgeContent={requisitionItems.length} color="secondary">
-            < AssignmentIcon />
-          </StyledBadge>
-        </IconButton>
-        <OpenFileModal
-          ID_REQUISICAO={Number(id)}
-        />
-      </div>
-      <Stack direction="row">
+      </Box>
+
+      <Box sx={{ border: '1px solid #e3e3e3', }}>
+        <Stack sx={{paddingX: '2rem'}} direction="row" justifyContent="end">
+                <IconButton
+                  sx={{
+                    border: 'none',
+                    height: '30px',
+                    borderRadius: '0px',
+                    display: 'flex', alignItems: 'center', gap: '0.5rem'
+                  }}
+                  onClick={handleOpen}>
+                  <Typography >Materiais/ Serviços</Typography>
+                  <StyledBadge badgeContent={requisitionItems.length} color="secondary">
+                    < AssignmentIcon />
+                  </StyledBadge>
+                </IconButton>
+                <OpenFileModal
+                  ID_REQUISICAO={Number(id)}
+                />
+        </Stack>
+      </Box>
+
+      <Stack direction="row" sx={{flexWrap: 'wrap'}}>
+
         <Box
           sx={{
             padding: "0.5rem",
             border: "1px solid #d3d6db ",
             maxHeight: '60vh',
             overflowY: 'auto',
-            width: "40%",
+            width: { 
+              xs: '100%',
+              md: '50%',
+              lg: '30%'
+            },
             display: "flex",
             justifyContent: "space-around",
             alignItems: 'flex-start'
@@ -171,7 +180,7 @@ const RequisitionDetail: React.FC = () => {
             alignItems="center"
              spacing={2}
                sx={{ width: "100%", padding: '1rem' }}>
-            <h1 className="">Detalhes</h1>
+            <Typography >Detalhes</Typography>
             {requisitionData ?
               fields.map((item) => (
                 <Stack sx={{ width: '100%'}} direction="column" spacing={0.5}>
@@ -223,9 +232,6 @@ const RequisitionDetail: React.FC = () => {
               }
               
           </Stack>
-
-
-
           {IsAddItemsOpen && requisitionData && (
             <ProductsTableModal
               isOpen={IsAddItemsOpen}
@@ -237,7 +243,11 @@ const RequisitionDetail: React.FC = () => {
         </Box>{" "}
 
         <Box sx={{
-          width: "100%",
+          width: { 
+            xs: '100%',
+            md: '50%',
+            lg: '70%'
+          },
           maxHeight: '400px',
           border: "0.5px solid #e3e3e3",
           overflowY: 'auto',
@@ -251,7 +261,9 @@ const RequisitionDetail: React.FC = () => {
               items={requisitionItems} />
           )}
         </Box>
+
       </Stack>
+
     </Box>
   );
 };
