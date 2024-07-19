@@ -64,60 +64,92 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
 
   return (
     <Box sx={{ flexGrow: 1, width: "100%" }}>
-      <AppBar sx={{ backgroundColor: "#00204a" }} position="static">
-        
-        <Toolbar sx={{marginX:'auto'}}>
+      <AppBar sx={{ backgroundColor: "#00204a"}}
+       position="static">
+        <Toolbar sx={
+          {
+
+            padding: '1rem',
+            marginX: 'auto',
+            width: '50%',
+            display: 'flex',
+            flexDirection: {
+              xs: 'column',
+              sm: 'column',
+           },
+           alignItems: { 
+              xs: 'start'
+           },
+           gap : '1rem'
+          }
+        }>
+
+          <Search sx={{
+              border: '1px solid white',
+                width: {
+                  xs: '70%'
+                }
+              }}  >
+                <SearchIconWrapper>
+                  <SearchIcon />
+                </SearchIconWrapper>
+                <StyledInputBase
+                  placeholder="Pesquisar..."
+                  inputProps={{ "aria-label": "search" }}
+                  onKeyDown={handleSearch}
+                />
+          </Search>
+
           {caller == "ItemsTable" && (
             <AddedItemsModal
               motionVariants={motionItemsVariants}
-              addedItems={addedItems} refreshToggler={refreshToggler} setRefreshToggler={setRefreshTooggler}  />
+              addedItems={addedItems} refreshToggler={refreshToggler} setRefreshToggler={setRefreshTooggler} />
           )}
           { 
             caller !== 'ItemsTable' && ( 
-              <Stack direction="row" spacing={1}>
-                <button
-                  onClick={handleChangeKanbanFilter}
-                  id="Backlog">
-                  <Chip
-                    color={currentKanbanFilter === 'Backlog' ? 'success' : 'primary'}
-                    label="Backlog" />
-                </button>
-                <button
-                  onClick={handleChangeKanbanFilter}
-                  id="A Fazer">
-                  <Chip
-                    color={currentKanbanFilter === 'A Fazer' ? 'success' : 'primary'}
-                    label="A Fazer" />
-                </button>
-                <button
-                  onClick={handleChangeKanbanFilter}
-                  id="Fazendo">
-                  <Chip
-                    color={currentKanbanFilter === 'Fazendo' ? 'success' : 'primary'}
-                    label="Fazendo" />
-                </button>
-                <button
-                  onClick={handleChangeKanbanFilter}
-                  id="Concluído">
-                  <Chip
-                    color={currentKanbanFilter === 'Concluído' ? 'success' : 'primary'}
-                    label="Concluído" />
-                </button>
+              <Stack 
+                      sx={{ 
+                     
+                        flexDirection : { 
+                          xs: 'column',
+                          md: 'row'
+                        },
+                        gap: '0.5rem'
+
+                      }}
+                      >
+                      <button
+                        onClick={handleChangeKanbanFilter}
+                        id="Backlog">
+                        <Chip
+                          color={currentKanbanFilter === 'Backlog' ? 'success' : 'primary'}
+                          label="Backlog" />
+                      </button>
+                      <button
+                        onClick={handleChangeKanbanFilter}
+                        id="A Fazer">
+                        <Chip
+                          color={currentKanbanFilter === 'A Fazer' ? 'success' : 'primary'}
+                          label="A Fazer" />
+                      </button>
+                      <button
+                        onClick={handleChangeKanbanFilter}
+                        id="Fazendo">
+                        <Chip
+                          color={currentKanbanFilter === 'Fazendo' ? 'success' : 'primary'}
+                          label="Fazendo" />
+                      </button>
+                      <button
+                        onClick={handleChangeKanbanFilter}
+                        id="Concluído">
+                        <Chip
+                          color={currentKanbanFilter === 'Concluído' ? 'success' : 'primary'}
+                          label="Concluído" />
+                      </button>
               </Stack>
             )
           }
-         
-
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Pesquisar..."
-              inputProps={{ "aria-label": "search" }}
-              onKeyDown={handleSearch}
-            />
-          </Search>
+        
         </Toolbar>
       </AppBar>
     </Box>

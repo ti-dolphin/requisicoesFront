@@ -18,7 +18,11 @@ const RequisitionHome = () => {
         <Box sx={{ p: 2, display:'flex',justifyContent:'space-between' }}>
           <Stack spacing={2} direction="row" alignItems='center'>
             <img src={logoUrl} alt="logo Dolphin" width={'140px'}/>
-            <Typography variant="h6" sx={{ color: '#34495e'}}>Requisições de materiais e serviços</Typography>
+            <Typography variant="h6" sx={{
+              display: { 
+                xs: 'none'
+              },
+              color: '#34495e'}}>Requisições de materiais e serviços</Typography>
             <Typography sx={{ color: "gray" }}></Typography>
             
           </Stack>

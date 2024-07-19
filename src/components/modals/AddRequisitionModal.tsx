@@ -37,10 +37,22 @@ const NestedModal: React.FC<addRequisitionModalProps> = ({ isCreating, setIsCrea
 
   return (
     <div>
-      <Button variant="contained" sx={{ gap: "0.5rem" }} onClick={handleOpen}>
+      <Button variant="contained"
+       sx={{ gap: "0.5rem",
+            height: '4rem'
+        }} 
+
+       onClick={handleOpen}>
         <AddCircle />
-        <span>Nova Requisição</span>
+        <Typography sx={{ 
+          display: { 
+            xs : 'none'
+          }
+        }}>
+          Nova Requisição
+        </Typography>
       </Button>
+
       <Modal
         sx={{ border: "none" }}
         open={isCreating}

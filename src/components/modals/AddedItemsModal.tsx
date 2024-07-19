@@ -3,7 +3,7 @@ import { AddedItemsModalProps } from "../../types";
 import { useState } from "react";
 import RequisitionItemsTable from "../tables/RequisitionItemsTable";
 import CloseIcon from '@mui/icons-material/Close';
-import { Stack } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 const AddedItemsModal: React.FC<AddedItemsModalProps> = ({
   motionVariants,
   addedItems,
@@ -14,22 +14,18 @@ const AddedItemsModal: React.FC<AddedItemsModalProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
-      <button
-        type="button"
+      <Button
         onClick={() => setIsOpen(!isOpen)}
-        className="text-white
-         bg-[#f96d00]
-           hover:bg-[#ff9340]
-           tracking-wide
-             font-medium rounded-full text-sm px-5 py-2 text-center me-2 mb-2"
+        sx={{ color: '#8dc6ff', '&:hover': { color: 'white'}}}
       >
         Items Adicionados
-      </button>
+      </Button>
+
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ x: 300, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
+            initial={{ x: 400, opacity: 0 }}
+            animate={{ x: 100, opacity: 1 }}
             transition={{ ease: "easeInOut", duration: 0.7 }}
             exit={{ x: 300, opacity: 0 }}
             variants={motionVariants}
@@ -48,6 +44,7 @@ const AddedItemsModal: React.FC<AddedItemsModalProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
+
     </>
   );
 };

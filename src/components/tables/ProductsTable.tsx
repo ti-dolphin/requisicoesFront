@@ -9,7 +9,7 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Typography from "@mui/material/Typography";
-import { Button, Stack } from "@mui/material";
+import { Button, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { ProductsTableProps } from "../../types";
 
@@ -87,7 +87,6 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
   }
 
   const handleOpen = (
-    _e: React.MouseEvent<HTMLButtonElement>,
     item: Product
   ) => {
     setOpenQuantityInput(true);
@@ -102,40 +101,10 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
     }
   };
 
-  const Row: React.FC<ListChildComponentProps> = ({ data, index, style }) => (
-    <tr
-      key={data[index].ID}
-      style={style}
-      className={
-        currentSelectedItem?.ID === data[index].ID
-          ? `border border-cyan-800 odd:bg-white flex gap-1 justify-around even:bg-gray-100 p-0  text-xs`
-          : `border odd:bg-white flex gap-1 justify-around even:bg-gray-100 p-0  text-xs`
-      }
-    >
-      <td
-        scope="row"
-        className="w-1/3  py-2 text-center font-normal text-[0.9rem] text-gray-900 whitespace-nowrap"
-      >
-        {data[index].nome_fantasia}
-      </td>
-      <td
-        scope="row"
-        className="w-1/3 py-2 relative gap-4 text-center font-semibold text-[0.9rem] text-gray-900 whitespace-nowrap"
-      >
-        {data[index].codigo}
-        <button
-          onClick={(e) => handleOpen(e, data[index])}
-          id={data[index].ID}
-          className="border-red-400 border-1 absolute right-1 py-1 text-blue-600 underline"
-        >
-          adicionar
-        </button>
-      </td>
-    </tr>
-  );
+  
 
   return (
-    <div className="h-[600px] border w-full relative mx-auto">
+    <Box>
       <SearchAppBar
         addedItems={addedItems}
         handleSearch={handleSearchItem}
@@ -184,41 +153,34 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
         </Fade>
       </Modal>
 
-      <table className="w-full h-full table-fixed shadow-sm">
-        <thead className="text-xs text-white uppercase bg-gray-900 ">
-          <tr className="flex justify-around">
-            <th scope="col" className="py-2">
-              Material / Serviço
-            </th>
-            <th scope="col" className="py-2">
-              Código TOTVS
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredRows.length ? (
-            <AutoSizer className="absolute left-0">
-              {({ height, width }) => (
-                <List
-                  className="List"
-                  height={height}
-                  itemCount={filteredRows.length}
-                  itemSize={36}
-                  width={width}
-                  itemData={filteredRows}
-                >
-                  {Row}
-                </List>
-              )}
-            </AutoSizer>
-          ) : (
-            <h2 className=" text-center text-lg p-4">
-              Busque os Materiais / Serviços Desejados
-            </h2>
-          )}
-        </tbody>
-      </table>
-    </div>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell align="left">Nome</TableCell>
+              <TableCell align="left">Codigo TOTVS</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredRows.map((row) => (
+              <TableRow
+                key={row.ID}
+                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              >
+                <TableCell align="left">{row.nome_fantasia}</TableCell>
+                <TableCell align="left">
+                  <Stack alignItems="center" spacing={1} direction="row">
+                    <Typography>{row.codigo}</Typography>
+                    <Button  onClick={() => handleOpen(row)}> Adicionar</Button>
+                  </Stack>
+                </TableCell>
+
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
   );
 };
 
