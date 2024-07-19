@@ -127,28 +127,28 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
                         onClick={handleChangeKanbanFilter}
                         id="Backlog">
                         <Chip
-                          color={currentKanbanFilter === 'Backlog' ? 'success' : 'primary'}
+                          color={currentKanbanFilter?.label === 'Backlog' ? 'success' : 'primary'}
                           label="Backlog" />
                       </button>
                       <button
                         onClick={handleChangeKanbanFilter}
                         id="A Fazer">
                         <Chip
-                          color={currentKanbanFilter === 'A Fazer' ? 'success' : 'primary'}
+                          color={currentKanbanFilter?.label === 'A Fazer' ? 'success' : 'primary'}
                           label="A Fazer" />
                       </button>
                       <button
                         onClick={handleChangeKanbanFilter}
                         id="Fazendo">
                         <Chip
-                          color={currentKanbanFilter === 'Fazendo' ? 'success' : 'primary'}
+                          color={currentKanbanFilter?.label === 'Fazendo' ? 'success' : 'primary'}
                           label="Fazendo" />
                       </button>
                       <button
                         onClick={handleChangeKanbanFilter}
                         id="Concluído">
                         <Chip
-                          color={currentKanbanFilter === 'Concluído' ? 'success' : 'primary'}
+                          color={currentKanbanFilter?.label === 'Concluído' ? 'success' : 'primary'}
                           label="Concluído" />
                       </button>
               </Stack>

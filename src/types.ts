@@ -161,8 +161,8 @@ export interface DeleteRequisitionItemModalProps{
       item : Item;
 }
 export interface SearchAppBarProps {
-  currentKanbanFilter? : string | undefined;
-  setCurrentKanbanFilter? : (value : string ) => void | undefined;
+  currentKanbanFilter? : { label : string ; status : string; }
+  setCurrentKanbanFilter? : (filter : { label : string; status: string; } ) => void | undefined;
   handleChangeKanbanFilter? : (e : React.MouseEvent<HTMLButtonElement>) => void | undefined; 
   addedItems?: Item[];
   caller: string;

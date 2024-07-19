@@ -79,9 +79,9 @@ const RequisitionDetail: React.FC = () => {
     setEditMode({ isEditing: true, field: item })
   }
 
-  const handleSave = () => {
+  const handleSave = async() => {
       setEditMode({...editMode, isEditing : false });
-      fieldsBeingEdited && updateRequisition(fieldsBeingEdited);
+      fieldsBeingEdited && await updateRequisition(fieldsBeingEdited);
       setRefreshToggler(!refreshToggler);
   }
 
@@ -150,7 +150,10 @@ const RequisitionDetail: React.FC = () => {
                     display: 'flex', alignItems: 'center', gap: '0.5rem'
                   }}
                   onClick={handleOpen}>
-                  <Typography >Materiais/ Serviços</Typography>
+                      <Typography color="primary"
+                        sx={{textDecoration: 'underline'}}>
+                            Materiais/ Serviços
+                        </Typography>
                   <StyledBadge badgeContent={requisitionItems.length} color="secondary">
                     < AssignmentIcon />
                   </StyledBadge>

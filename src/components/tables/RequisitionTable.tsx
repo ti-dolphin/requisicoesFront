@@ -31,7 +31,7 @@ import {
 } from "../../utils";
 import { useEffect } from "react";
 import { Requisition } from "../../utils";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { EnhancedTableProps, EnhancedTableToolbarProps, HeadCell, Order, RequisitionTableProps } from "../../types";
 import Loader from "../Loader";
 import DeleteRequisitionModal from "../modals/warnings/DeleteRequisitionModal";
@@ -222,7 +222,9 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
   const [rowsPerPage, setRowsPerPage] = React.useState(50);
   const [allRows, setAllRows] = useState<Requisition[]>([]);
   const [filteredRows, setFilteredRows] = useState<Requisition[]>([]);
-  const [currentKanbanFilter, setCurrentKanbanFilter] = useState('');
+  const [currentKanbanFilter, setCurrentKanbanFilter] = useState<{label : string; status: string;}>({label : '', status: ''});
+  const navigate = useNavigate();
+
 
   async function performAsync() {
 
@@ -247,24 +249,26 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
         };
       });
         setAllRows(rows);
+        setFilteredRows(rows);
         const defaultFilter = 'Requisitado';
-        const filter = allRows.filter((item) =>
-          item.STATUS.toUpperCase().includes(
-            defaultFilter.toUpperCase())
-      )
-        setFilteredRows(filter);
+       const filter = rows.filter((item) =>
+         item.STATUS.toUpperCase().includes(
+           defaultFilter.toUpperCase())
+       )
+       setFilteredRows(filter);
+       setCurrentKanbanFilter({ label: 'A Fazer' , status : 'requisitado'});
+       console.log('filter: ', filter);
     }
   }
 
   useEffect(() => {
     performAsync();
-    setCurrentKanbanFilter('A Fazer');
   }, [isCreating, RefreshToggler]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setRefreshToggler(!RefreshToggler);
-    },  50000);
+    },  60000 * 10 );
     return () => clearInterval(interval);
   }, [RefreshToggler]);
 
@@ -285,23 +289,23 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
     switch (id){ 
       case 'Backlog': { 
         searchTerm = 'Em edição'
-        setCurrentKanbanFilter('Backlog')
+        setCurrentKanbanFilter({ label: 'Backlog', status: searchTerm});
         break;
       }
       case 'A Fazer': { 
         searchTerm = 'Requisitado';
-        setCurrentKanbanFilter('A Fazer')
+        setCurrentKanbanFilter({ label: 'A Fazer', status : searchTerm})
         break;
 
       }
       case 'Fazendo' : { 
         searchTerm = 'Em cotação';
-        setCurrentKanbanFilter('Fazendo')
+        setCurrentKanbanFilter({ label: 'Fazendo', status: 'Em cotação'})
         break;
       }
       case 'Concluído': {
         searchTerm = 'Concluído';
-        setCurrentKanbanFilter('Concluído')
+        setCurrentKanbanFilter({ label: 'Concluído', status:'Concluído'})
         break;
       }
     }
@@ -313,35 +317,51 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
   } 
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement, MouseEvent> ) => {
-    setPage(0);
+    console.log('handleSearch')
     
     let searchTerm: string = '';
-    // Verifica se o evento é um evento de teclado
     if ('key' in e && e.key === 'Enter') {
       searchTerm = (e.currentTarget as HTMLInputElement).value;
+      const filter = allRows.filter(
+        (item) =>
+          item.STATUS.toUpperCase().includes(currentKanbanFilter.status.toUpperCase())
+          && ( 
+            item.DESCRIPTION.toUpperCase().includes(
+              searchTerm.toUpperCase()
+            ) ||
+            item.DESCRICAO.toUpperCase().includes(
+              searchTerm.toUpperCase()
+            ) ||
+            item.STATUS.toUpperCase().includes(
+              searchTerm.toUpperCase()
+            )
+            || item.ID_REQUISICAO === Number(searchTerm)
+            || item.RESPONSAVEL.toUpperCase().includes(searchTerm.toUpperCase())
+          )
+      );
+        setFilteredRows([...filter]);
+        
     }
-    // Verifica se o evento é um evento de clique
     else if ('type' in e && e.type === 'click') {
       searchTerm = (e.currentTarget as HTMLLIElement).textContent || '';
+      const filter = allRows.filter(
+        (item) =>
+          item.DESCRIPTION.toUpperCase().includes(
+            searchTerm.toUpperCase()
+          ) ||
+          item.DESCRICAO.toUpperCase().includes(
+            searchTerm.toUpperCase()
+          ) ||
+          item.STATUS.toUpperCase().includes(
+            searchTerm.toUpperCase()
+          )
+          || item.ID_REQUISICAO === Number(searchTerm)
+          || item.RESPONSAVEL.toUpperCase().includes(searchTerm.toUpperCase())
+      );
+      setFilteredRows([...filter]);
     }
 
-    const filter = allRows.filter(
-      (item) =>
-        item.DESCRIPTION.toUpperCase().includes(
-          searchTerm.toUpperCase()
-        ) ||
-        item.DESCRICAO.toUpperCase().includes(
-          searchTerm.toUpperCase()
-        ) ||
-        item.STATUS.toUpperCase().includes(
-          searchTerm.toUpperCase()
-        )
-        || item.ID_REQUISICAO === Number(searchTerm)
-        || item.RESPONSAVEL.toUpperCase().includes(searchTerm.toUpperCase())
-    );
- 
-    if(filter.length || searchTerm === 'Todos')
-       setFilteredRows(searchTerm === 'Todos' ? [...allRows] : filter);
+    
 
   };
 
@@ -377,22 +397,7 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
   };
 
   const handleClick = (_event: React.MouseEvent<unknown>, id: number) => {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected: readonly number[] = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
+    navigate(`requisitionDetail/${id}`);
   };
 
   const handleChangePage = (_event: unknown, newPage: number) => {
@@ -449,8 +454,8 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
 
                   return (
                     <TableRow
-                      hover
-                      onClick={(event) => handleClick(event, Number(row.ID_REQUISICAO))}
+                      onClick={ (event) => 
+                        handleClick(event, Number(row.ID_REQUISICAO))}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
@@ -465,32 +470,40 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
                         scope="row"
                         padding="none"
                       >
-                        {row.DESCRIPTION}
+                        <Typography>
+                           {row.DESCRIPTION}
+                        </Typography> 
                       </TableCell>
-                      <TableCell>{row.STATUS}</TableCell>
 
-                      <TableCell align="right" sx={{textTransform: 'lowercase'}}>{row.RESPONSAVEL}</TableCell>
-                      <TableCell align="center">{row.ID_REQUISICAO}</TableCell>
-                      <TableCell
-                        sx={{
-                          fontSize: "12px",
-                          textTransform: "capitalize",
-                        }}
-                        align="right"
-                      >
-                        <p className="lg:text-sm xl:text-sm ">{row.DESCRICAO}</p>
+                      <TableCell>
+                          <Typography>{row.STATUS}</Typography>
+                      </TableCell>
+
+                      <TableCell align="right" sx={{textTransform: 'lowercase'}}>
+                        <Typography>{row.RESPONSAVEL}</Typography>
+                      </TableCell>
+
+                      <TableCell align="center">
+                        <Typography>{row.ID_REQUISICAO}</Typography>
+                      </TableCell>
+
+                      <TableCell sx={{
+                              fontSize: "12px",
+                              textTransform: "capitalize",
+                            }}
+                            align="right"
+                             >
+                            <Link
+                              to={`requisitionDetail/${row.ID_REQUISICAO}`}
+                            > 
+                              <Typography sx={{fontSize: '12px'}}>{row.DESCRICAO}</Typography> 
+                            </Link>
                       </TableCell>
 
                       <TableCell
                         align="right"
                       >
                        <Stack direction="row" spacing={2}>
-                              <Link
-                                to={`requisitionDetail/${row.ID_REQUISICAO}`}
-                                className="text-blue-400 underline"
-                              >
-                                Editar{" "}
-                              </Link>
                               <button
                                 id={String(row.ID_REQUISICAO)}
                                 onClick={() =>

@@ -6,7 +6,7 @@ import {
 } from "../../utils";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import EditIcon from "@mui/icons-material/Edit";
-import { Button, Paper, Stack, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Button, Paper, Stack, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { requisitionItemsTableProps } from "../../types";
 import DeleteRequisitionItemModal from "../modals/warnings/DeleteRequisitionITemModal";
 import ItemObservationModal from "../modals/ItemObservation";
@@ -107,27 +107,37 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
           </TableHead>
           <TableBody>
             {requisitionItems.map((item) => (
-              <TableRow key={item.ID}>
+              <TableRow  key={item.ID}>
+                
                 <TableCell align="left">
-                  {item.nome_fantasia}
-                  <Stack direction="row"
-                    spacing={1}
-                    sx={{ flexWrap: 'nowrap' }}>
-                    <button
-                      onClick={() => {
-                        setIsObservationModalOpen(true);
-                        setItemsBeingEdited([item]);
-                      }}
-                      className="text-blue-700 hover:text-blue-600 hover:underline max-w-[300px] lg:max-w-[350px] overflow-hidden"
-                    >
-                      {(item.OBSERVACAO && item.OBSERVACAO !== 'null')
-                        ? item.OBSERVACAO
-                        : "observação"}
-                    </button>
-                    <ItemFilesModal itemID={item.ID} />
+                  <Stack direction="row" alignItems="center" spacing={2}>
+                          <Typography sx={{fontSize:{ 
+                            xs : '12px',
+                            md: '14px'
+                          }}}>{item.nome_fantasia}</Typography>
+                          <Stack direction="row"
+                            spacing={1}
+                            sx={{ flexWrap: 'nowrap' }}>
+                            <button
+                              onClick={() => {
+                                setIsObservationModalOpen(true);
+                                setItemsBeingEdited([item]);
+                              }}
+                              className="text-blue-700 hover:text-blue-600 hover:underline max-w-[300px] lg:max-w-[350px] overflow-hidden"
+                            >
+                              {(item.OBSERVACAO && item.OBSERVACAO !== 'null')
+                                ? item.OBSERVACAO
+                                : "observação"}
+                            </button>
+                            <ItemFilesModal itemID={item.ID} />
+                          </Stack>
                   </Stack>
                 </TableCell>
-                <TableCell align="left">{item.codigo}</TableCell>
+
+                <TableCell align="left">
+                  {item.codigo}
+                </TableCell>
+
                 <TableCell align="left">
                   <input
                     id="inputOc"
@@ -149,59 +159,62 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
                   />
 
                 </TableCell>
-                <TableCell align="left">
-                  <input
-                    id="inputQuantity"
-                    onChange={(e) => handleChange(e, item)}
-                    className={
-                      item.ATIVO && item.ATIVO > 0
-                        ? `${editModeStyle} w-[6rem] bg-blue-100 rounded-md p-1`
-                        : ` ${editModeStyle} w-[6rem] bg-gray-200 rounded-md p-1`
-                    }
-                    type="text"
-                    disabled={editMode ? false : true}
-                    value={
-                      editMode
-                        ? itemsBeingEdited.find((value) => value === item)
-                          ?.QUANTIDADE
-                        : item.QUANTIDADE + ` ${item.UNIDADE}`
-                    }
-                  />
-                  <button
-                    id={String(item.ID_PRODUTO)}
-                    className="delete hover:bg-slate-300 rounded-sm p-[0.5]"
-                    onClick={() => handleActivateInput()}
-                  >
-                    <EditIcon
+
+                <TableCell  align="left">
+                  <Stack direction="row">
+                    <input
+                      id="inputQuantity"
+                      onChange={(e) => handleChange(e, item)}
                       className={
                         item.ATIVO && item.ATIVO > 0
-                          ? `cursor-pointer text-blue-600`
-                          : `cursor-pointer text-blue-gray-100`
+                          ? `${editModeStyle} w-[6rem] bg-blue-100 rounded-md p-1`
+                          : ` ${editModeStyle} w-[6rem] bg-gray-200 rounded-md p-1`
+                      }
+                      type="text"
+                      disabled={editMode ? false : true}
+                      value={
+                        editMode
+                          ? itemsBeingEdited.find((value) => value === item)
+                            ?.QUANTIDADE
+                          : item.QUANTIDADE + ` ${item.UNIDADE}`
                       }
                     />
-                  </button>
-                  <button
-                    id={String(item.ID_PRODUTO)}
-                    className={
-                      item.ATIVO && item.ATIVO > 0
-                        ? `cursor-pointer text-red-600`
-                        : `cursor-pointer text-blue-gray-100`
-                    }
-                    onClick={() => {
-                      setIsDeleteRequisitionItemModalOpen(true);
-                      setItemBeingDeleted(item);
-                    }}
-                  >
-                    <DeleteForeverIcon />
-                  </button>
-                  <Switch
-                    checked={item.ATIVO ? item.ATIVO > 0 : false}
-                    onChange={() =>
-                      item.ATIVO && item.ATIVO > 0
-                        ? handleCancelItem(item)
-                        : handleActivateItem(item)
-                    }
-                  />
+                    <button
+                      id={String(item.ID_PRODUTO)}
+                      className="delete hover:bg-slate-300 rounded-sm p-[0.5]"
+                      onClick={() => handleActivateInput()}
+                    >
+                      <EditIcon
+                        className={
+                          item.ATIVO && item.ATIVO > 0
+                            ? `cursor-pointer text-blue-600`
+                            : `cursor-pointer text-blue-gray-100`
+                        }
+                      />
+                    </button>
+                    <button
+                      id={String(item.ID_PRODUTO)}
+                      className={
+                        item.ATIVO && item.ATIVO > 0
+                          ? `cursor-pointer text-red-600`
+                          : `cursor-pointer text-blue-gray-100`
+                      }
+                      onClick={() => {
+                        setIsDeleteRequisitionItemModalOpen(true);
+                        setItemBeingDeleted(item);
+                      }}
+                    >
+                      <DeleteForeverIcon />
+                    </button>
+                    <Switch
+                      checked={item.ATIVO ? item.ATIVO > 0 : false}
+                      onChange={() =>
+                        item.ATIVO && item.ATIVO > 0
+                          ? handleCancelItem(item)
+                          : handleActivateItem(item)
+                      }
+                    />
+                             </Stack>
                 </TableCell>
 
               </TableRow>
