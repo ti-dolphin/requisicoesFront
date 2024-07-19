@@ -158,7 +158,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
       </Modal>
 
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <Table sx={{ minWidth: 650 }} size="small" aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell align="left">Nome</TableCell>
@@ -169,7 +169,8 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
             {filteredRows.map((row) => (
               <TableRow
                 key={row.ID}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                sx={{ '&:last-child td, &:last-child th': { border: 0 },
+              }}
               >
                 <TableCell align="left">{row.nome_fantasia}</TableCell>
                 <TableCell align="left">
