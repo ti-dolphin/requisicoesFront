@@ -24,12 +24,12 @@ const AddedItemsModal: React.FC<AddedItemsModalProps> = ({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ x: 400, opacity: 0 }}
-            animate={{ x: 100, opacity: 1 }}
+            initial={{ x: 300, opacity: 0 }}
+            animate={{ x: -10, opacity: 1 }}
             transition={{ ease: "easeInOut", duration: 0.7 }}
             exit={{ x: 300, opacity: 0 }}
             variants={motionVariants}
-            className="rounded-xl p-4 flex flex-row absolute bg-[#f8f8f8] border shadow-lg top-[5rem]  h-[80vh] w-[60vw] z-20"
+            className="rounded-xl p-4 flex flex-row absolute bg-[#f8f8f8] border shadow-lg top-[5rem]  h-[80vh] w-[90vw] lg:w-[60vw] z-20"
           > 
             <Stack direction="column" spacing={4} sx={{width: '90%'}}>
               <button onClick={() => setIsOpen(false)}> 

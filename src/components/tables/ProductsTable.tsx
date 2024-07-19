@@ -21,7 +21,6 @@ export const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
   bgcolor: "background.paper",
   border: "0.5px solid gray",
   boxShadow: 24,
@@ -126,7 +125,12 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
         }}
       >
         <Fade in={openQuantityInput}>
-          <Box sx={style}>
+          <Box sx={{...style, width: { 
+            xs :'90%',
+            sm: '80%',
+            md: '70%',
+            lg: '40%'
+          }}}>
             <Button
               onClick={() => setOpenQuantityInput(false)}
               sx={{ position: "absolute", right: "1rem", top: "1rem" }}

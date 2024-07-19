@@ -64,13 +64,17 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
 
   return (
     <Box sx={{ flexGrow: 1, width: "100%" }}>
-      <AppBar sx={{ backgroundColor: "#00204a"}}
+      <AppBar sx={{ backgroundColor: "#00204a", height: 'fit-content',
+      display: 'flex', justifyContent: 'center' ,
+      alignItems: 'center',
+      padding: '10px'}}
        position="static">
         <Toolbar sx={
           {
-
+  
             padding: '1rem',
             marginX: 'auto',
+            width: '80%',
             top: '1rem',
             display: 'flex',
             flexDirection: {
@@ -111,7 +115,6 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
             caller !== 'ItemsTable' && ( 
               <Stack 
                       sx={{ 
-                     
                         flexDirection : { 
                           xs: 'column',
                           md: 'row'

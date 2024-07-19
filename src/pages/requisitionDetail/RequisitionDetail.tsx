@@ -138,7 +138,7 @@ const RequisitionDetail: React.FC = () => {
       </Box>
 
       <Box sx={{ border: '1px solid #e3e3e3', }}>
-        <Stack sx={{paddingX: '2rem'}} direction="row" justifyContent="end">
+        <Stack sx={{paddingX: '2rem', flexWrap: 'wrap'}} direction="row" justifyContent="end">
                 <IconButton
                   sx={{
                     border: 'none',
