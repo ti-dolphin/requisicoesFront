@@ -11,7 +11,6 @@ import { requisitionItemsTableProps } from "../../types";
 import DeleteRequisitionItemModal from "../modals/warnings/DeleteRequisitionITemModal";
 import ItemObservationModal from "../modals/ItemObservation";
 import ItemFilesModal from "../modals/ItemFilesModal";
-
 const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
   items,
   refreshToggler,

@@ -21,19 +21,17 @@ import Loader from "../../components/Loader";
 import { ProductsTableModal } from "../../components/modals/ProductsTableModal";
 import OpenFileModal from "../../components/modals/OpenFileModal";
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import { useContext } from 'react';
+import { RequisitionContext } from "../../context/RequisitionContext";
+import { ItemsContextProvider } from "../../context/ItemsContext";
 
-interface Field { 
-  key : string;
-  label : string;
-}
 const RequisitionDetail: React.FC = () => {
   const { id } = useParams();
   const [IsAddItemsOpen, setIsAddItemsOpen] = useState<boolean>(false);
   const [requisitionData, setRequisitionData] = useState<Requisition>();
   const [refreshToggler, setRefreshToggler] = useState<boolean>(false); //refreshes Data
   const [requisitionItems, setRequisitionItems] = useState<Item[]>([]);
-  const [editMode, setEditMode] = useState<{ isEditing: boolean, field: Field }>({isEditing : false, field  : { label: '', key: ''}});
-  const [fieldsBeingEdited, setFieldsBeingEdited] = useState<Requisition>();
+  const {editingField, handleChangeEditingField, seteditingField } = useContext(RequisitionContext);
 
   const fetchData = async () => {
     const data = await fetchRequsitionById(Number(id));
@@ -45,7 +43,6 @@ const RequisitionDetail: React.FC = () => {
       if (itemsData) setRequisitionItems(itemsData);
       if (personData) {
         setRequisitionData({ ...data, ['RESPONSAVEL']: personData?.NOME });
-        setFieldsBeingEdited({ ...data, ['RESPONSAVEL']: personData?.NOME })
       }
     }
   }
@@ -67,21 +64,18 @@ const RequisitionDetail: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, id } = e.target;
-    fieldsBeingEdited && setFieldsBeingEdited(
+    requisitionData && setRequisitionData(
       {
-        ...fieldsBeingEdited,
+        ...requisitionData,
         [id]: value,
       }
     )
   }
-  const handleChangeEditMode = (item : Field ) =>  {
-    console.log('editMode: ', { isEditing: true, field: item });
-    setEditMode({ isEditing: true, field: item })
-  }
+
 
   const handleSave = async() => {
-      setEditMode({...editMode, isEditing : false });
-      fieldsBeingEdited && await updateRequisition(fieldsBeingEdited);
+      seteditingField({...editingField, isEditing : false });
+      requisitionData && await updateRequisition(requisitionData);
       setRefreshToggler(!refreshToggler);
   }
 
@@ -195,7 +189,7 @@ const RequisitionDetail: React.FC = () => {
                       direction="row"
                       spacing={1}
                       key={item.key}
-                      sx={editMode.isEditing && editMode.field.key === item.key ?
+                      sx={editingField.isEditing && editingField.field.key === item.key ?
                          { border: '1px solid blue', padding: '4px', borderRadius: '4px' } :
                          { border: '1px solid #d3d6db',  padding: '4px', borderRadius: '4px' }}
                           >
@@ -203,28 +197,28 @@ const RequisitionDetail: React.FC = () => {
                           id={item.key}
                           className="w-full bg-transparent text-xs focus:outline-none"
                           type="text"
-                          disabled={!editMode.isEditing}
+                          disabled={!editingField.isEditing}
                           value={
-                              fieldsBeingEdited && (
+                              requisitionData && (
                               item.key === 'LAST_UPDATE_ON' || item.key === 'CREATED_ON' ?
                                 dateRenderer(
-                                  fieldsBeingEdited[item.key as keyof Requisition]) :
-                                  fieldsBeingEdited[item.key as keyof Requisition]
+                                  requisitionData[item.key as keyof Requisition]) :
+                                  requisitionData[item.key as keyof Requisition]
                             )
                           }
                           onChange={handleChange}
-                          autoFocus={editMode.isEditing}
+                          autoFocus={editingField.isEditing}
                           />
                     {
                       (item.key === 'DESCRIPTION' || item.key === 'OBSERVACAO') &&
                         <button
-                            onClick={() => handleChangeEditMode(item)}>
+                            onClick={() => handleChangeEditingField(item)}>
                             <EditIcon color="primary"
                             className="cursor-pointer hover:text-blue-400" />
                         </button>
                         
                       }
-                      {editMode.isEditing && editMode.field.key === item.key &&
+                      {editingField.isEditing && editingField.field.key === item.key &&
                        <button
                         onClick={handleSave}
                        >
@@ -261,10 +255,13 @@ const RequisitionDetail: React.FC = () => {
           justifyContent: 'center'
         }}>
           {requisitionItems && (
-            <RequisitionItemsTable
-              setRefreshToggler={setRefreshToggler}
-              refreshToggler={refreshToggler}
-              items={requisitionItems} />
+            <ItemsContextProvider>
+              <RequisitionItemsTable
+                setRefreshToggler={setRefreshToggler}
+                refreshToggler={refreshToggler}
+                items={requisitionItems} />
+            </ItemsContextProvider>
+           
           )}
         </Box>
 
