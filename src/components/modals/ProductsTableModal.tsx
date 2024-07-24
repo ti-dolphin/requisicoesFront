@@ -2,7 +2,9 @@ import { Box, Button, Modal, Stack } from "@mui/material";
 import { ProductsTableModalProps } from "../../types";
 import ProductsTable from "../tables/ProductsTable";
 import CloseIcon from '@mui/icons-material/Close';
-
+import { ItemsContext } from "../../context/ItemsContext";
+import { useContext } from "react";
+import { RequisitionContext } from "../../context/RequisitionContext";
 const style = {
   position: "absolute" as const,
   top: "50%",
@@ -17,29 +19,38 @@ const style = {
 };
 
 export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
-  isOpen,
-  setIsOpen,
   requisitionID,
-  setIsCreating
 }) => {
-  const handleClose = () => {
-    setIsOpen(false);
-  };
+  const {adding, toggleAdding, changing, toggleChanging}  = useContext(ItemsContext);
+  const { toggleCreating, creating, toggleRefreshRequisition } = useContext(RequisitionContext);
+
+  const handleCloseAll = ( ) =>  {
+    if(adding && creating){ 
+        toggleCreating();
+        toggleAdding();
+    }else if( adding ){ 
+      toggleAdding();
+    }else{ 
+      toggleChanging();
+    }
+    toggleRefreshRequisition();
+  }
+ 
   return (
     <>
       <Modal
-        open={isOpen}
-        onClose={handleClose}
+        open={adding || changing[0]}
+        onClose={handleCloseAll}
         aria-labelledby="child-modal-title"
         aria-describedby="child-modal-description"
       >
         <Box sx={{ ...style, width: "95vw", height: "98vh" }}>
           <Button
             sx={{color: 'red', position: 'absolute', right: '2rem', top: '1rem', zIndex: 2}}
-            onClick={() => setIsCreating(false)}><CloseIcon  />
+            onClick={() => handleCloseAll()}><CloseIcon  />
             </Button>
           <Stack sx={{ border: '1px solid gray', height: '100%', overflowY : 'auto', width: '100%'}} direction="column">
-              <ProductsTable ID_REQUISICAO={requisitionID} setIsCreating={setIsCreating}/>
+              <ProductsTable ID_REQUISICAO={requisitionID}/>
           </Stack>
         </Box>
       </Modal>

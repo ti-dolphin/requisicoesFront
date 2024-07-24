@@ -6,8 +6,9 @@ import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { Requisition, updateRequisition } from "../../../utils";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { useContext } from "react";
 import { useState } from "react";
+import { RequisitionContext } from "../../../context/RequisitionContext";
 
 const steps = [
   "Em edição",
@@ -20,11 +21,11 @@ const steps = [
 interface props{ 
   requisitionData : Requisition,
   setRequisitionData: (requisition: Requisition) => void;
-  setRefreshToggler: (value: boolean ) => void;
-  refreshToggler: boolean;
 }
-const HorizontalLinearStepper: React.FC<props> = ({ requisitionData, setRequisitionData, setRefreshToggler, refreshToggler }) => {
-   
+const HorizontalLinearStepper: React.FC<props> = ({ requisitionData, setRequisitionData}) => {
+
+  const {toggleRefreshRequisition} = useContext(RequisitionContext);
+
   const [requisition, setRequisition ] = useState(requisitionData);
 
   const [activeStep, setActiveStep] = useState(
@@ -49,7 +50,7 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData, setRequisit
         await updateRequisition(editedRequisition);
         setRequisition(editedRequisition);
         setRequisitionData(editedRequisition);
-        setRefreshToggler(!refreshToggler);
+        toggleRefreshRequisition()
       } catch (e) {
         console.log(e);
       }
@@ -65,7 +66,7 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData, setRequisit
       await updateRequisition(editedRequisition);
       setRequisition(editedRequisition);
       setRequisitionData(editedRequisition);
-      setRefreshToggler(!refreshToggler);
+      toggleRefreshRequisition();
 
     }catch(e){
       console.log(e);

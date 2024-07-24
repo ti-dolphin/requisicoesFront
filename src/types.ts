@@ -1,6 +1,5 @@
 
 
-import { Dispatch, SetStateAction } from "react";
 
 export interface Requisition {
   OBSERVACAO: string;
@@ -93,15 +92,6 @@ export interface inputFileProps {
   refreshToggler : boolean;
 }
 
-export interface addRequisitionModalProps {
-  isCreating: boolean;
-  setIsCreating: (value: boolean) => void;
-}
-
-export interface AddRequisitionFormProps {
-  setIsCreating : (value : boolean) =>void;
-}
-
 export interface DeleteRequisitionModalProps{ 
     isDeleteRequisitionModalOpen : boolean;
     setIsDeleteRequisitionModalOpen : (value: boolean) => void;
@@ -112,16 +102,12 @@ export interface DeleteRequisitionModalProps{
 export type Order = "asc" | "desc";
 
 export interface ItemObservationModalProps {
-  items : Item[];
-  observation: string | undefined;
-  isObservationModalOpen: boolean;
-  setIsObservationModalOpen: (value: boolean) => void;
+ item? : Item;
+ refreshToggler : boolean;
+ setRefreshToggler : (value : boolean ) => void;
 }
 export interface ProductsTableModalProps {
-  isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
   requisitionID: number;
-  setIsCreating: (value : boolean ) => void;
 }
 
 export interface RequisitionTableProps { 
@@ -130,11 +116,6 @@ export interface RequisitionTableProps {
 
 export interface ProductsTableProps {
   ID_REQUISICAO: number;
-  setIsCreating: (value: boolean) => void;
-  setRequisitionItems?: (value: Item[]) => void;
-  requistionItems?: Item[];
-  isOpen? : boolean;
-  setIsOpen? : (value : boolean) => void;
 }
 
 export const motionItemsVariants = {
@@ -154,16 +135,13 @@ export interface EnhancedTableProps {
   rowCount: number;
   handleSearch: (e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement, MouseEvent>) => void;
 }
-export interface DeleteRequisitionItemModalProps{ 
-  isDeleteRequisitionItemModalOpen : boolean;
-      setIsDeleteRequisitionItemModalOpen : (value: boolean) => void;
-      handleDelete : (item : Item) => void;
-      item : Item;
-}
+ export interface DeleteRequisitionItemModalProps{ 
+  //  isDeleteRequisitionItemModalOpen : boolean;
+  //      setIsDeleteRequisitionItemModalOpen : (value: boolean) => void;
+       handleDelete : (item : Item) => void;
+      //  item : Item;
+ }
 export interface SearchAppBarProps {
-  currentKanbanFilter? : { label : string ; status : string; }
-  setCurrentKanbanFilter? : (filter : { label : string; status: string; } ) => void | undefined;
-  handleChangeKanbanFilter? : (e : React.MouseEvent<HTMLButtonElement>) => void | undefined; 
   addedItems?: Item[];
   caller: string;
   handleSearch: (e: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -201,8 +179,6 @@ export interface AddedItemsModalProps {
 }
 
 export interface requisitionItemsTableProps { 
-    refreshToggler : boolean;
-    setRefreshToggler : (value : boolean ) => void;
     items : Item[];
 }
 

@@ -4,19 +4,24 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import EditIcon from "@mui/icons-material/Edit";
-import { Stack } from '@mui/material';
-import { useState } from 'react';
-import { ItemObservationModalProps } from '../../types';
+import { IconButton, Stack } from '@mui/material';
+import { useContext } from 'react';
 import { updateRequisitionItems } from '../../utils';
-
+import { ItemsContext } from '../../context/ItemsContext';
+import CloseIcon from '@mui/icons-material/Close';
 const style = {
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 600,
-    height: 400,
+    width: { 
+        xs: '90%',
+        sm: '80%',
+        md: '70%',
+        lg: '40%',
+        xl: '30%'
+    },
+    height: 'fit-content',
     bgcolor: 'background.paper',
     display: 'flex',
     flexDirection : 'column',
@@ -25,65 +30,59 @@ const style = {
     p: 4,
 };
 
-export default function ItemObservationModal({
-     items,  
-             observation, 
-                isObservationModalOpen, setIsObservationModalOpen }: ItemObservationModalProps) {
-
-    const handleClose = () => setIsObservationModalOpen(false);
-    const [currentObservation, setCurrentObservation] = useState(observation);
+const ItemObservationModal = () => {
+    const {editingObservation, toggleEditingObservation, setEditingObservation, toggleRefreshItems } = useContext(ItemsContext);
+    const handleClose = () => toggleEditingObservation();
     const handleChange = ( e: React.ChangeEvent<HTMLTextAreaElement> ) => { 
         const { value } = e.target;
-        setCurrentObservation(value);
+        if(editingObservation[1]){ 
+            setEditingObservation([true, { ...editingObservation[1], OBSERVACAO: value }]);
+        }
     }
     const handleSave = async( ) => { 
-        items[0].OBSERVACAO = currentObservation;
-         await updateRequisitionItems(
-             items, 
-             items[0].ID_REQUISICAO
-         );
-         setEditMode(false);
-         setIsObservationModalOpen(false);
+       if(editingObservation[0] && editingObservation[1]){ 
+           await updateRequisitionItems(
+               [editingObservation[1]],
+               editingObservation[1].ID_REQUISICAO
+           );
+           toggleEditingObservation();
+           toggleRefreshItems() 
+     }
     }
-    const [editMode, setEditMode ] = React.useState<boolean>(false);
     return (
-        <div>
+        <Box>
             <Modal
-                open={isObservationModalOpen}
+                open={editingObservation[0]}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
-            >
+            >   
                 <Box sx={style} >
-                    <Typography align='left' id="modal-modal-title" variant="h6" component="h2">
+                    <IconButton
+                        onClick={() => toggleEditingObservation()}
+                        sx={{position: 'absolute', top: '1rem', right: '1rem'}}>
+                        <CloseIcon sx={{color: 'red'}}/>
+                    </IconButton>
+                   <Typography align='left' id="modal-modal-title" variant="h6" component="h2">
                         Observação
-                    </Typography>
+                    </Typography> 
                     <Stack direction="row" spacing={2}>
                         <textarea
-                            value={editMode ? currentObservation : observation}
+                            value={editingObservation[1]?.OBSERVACAO}
                             onChange={handleChange}
-                            disabled={!editMode}
-                            autoFocus={editMode}
-                            className={
-                                editMode ? `border-blue-500 ` + `w-[90%] p-2 outline-none h-[200px] flex flex-wrap text-center border rounded-md`
-                                    : `w-[90%]  outline-none h-[200px] flex flex-wrap text-center border rounded-md p-1`
-                            }
+                            disabled={!editingObservation[0]}
+                            autoFocus={editingObservation[0]}
                         />
-                        <button
-                            onClick={() => setEditMode(true)}
-                            className="delete h-[40px] hover:bg-slate-300 rounded-sm p-[0.5]"
-                        >
-                            <EditIcon className="cursor-pointer text-blue-600" />
-                        </button>
                     </Stack>
                     { 
-                        editMode &&
+                        editingObservation[0] &&
                          <Button
-                            onClick={handleSave}
+                             onClick={handleSave}
                              sx={{alignSelf : 'start'}}>SALVAR</Button>
                     }
                 </Box>
             </Modal>
-        </div>
+        </Box>
     );
 }
+export default ItemObservationModal;

@@ -21,45 +21,48 @@ import Loader from "../../components/Loader";
 import { ProductsTableModal } from "../../components/modals/ProductsTableModal";
 import OpenFileModal from "../../components/modals/OpenFileModal";
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import { useContext } from 'react';
 import { RequisitionContext } from "../../context/RequisitionContext";
-import { ItemsContextProvider } from "../../context/ItemsContext";
-
+import { ItemsContext } from "../../context/ItemsContext";
+import { useContext } from "react";
 const RequisitionDetail: React.FC = () => {
   const { id } = useParams();
-  const [IsAddItemsOpen, setIsAddItemsOpen] = useState<boolean>(false);
   const [requisitionData, setRequisitionData] = useState<Requisition>();
-  const [refreshToggler, setRefreshToggler] = useState<boolean>(false); //refreshes Data
   const [requisitionItems, setRequisitionItems] = useState<Item[]>([]);
-  const {editingField, handleChangeEditingField, seteditingField } = useContext(RequisitionContext);
-
-  const fetchData = async () => {
+  const {editingField, handleChangeEditingField, seteditingField, refreshRequisition, toggleRefreshRequisition } = useContext(RequisitionContext);
+  const { refreshItems, adding, toggleAdding } = useContext(ItemsContext);
+  const fetchRequisitionData = async () => {
     const data = await fetchRequsitionById(Number(id));
-    console.log('fetchData')
     if (data) {
-      console.log(data);
       const personData = await fetchPersonById(data.ID_RESPONSAVEL);
-      const itemsData = await fetchItems(data.ID_REQUISICAO);
-      if (itemsData) setRequisitionItems(itemsData);
       if (personData) {
         setRequisitionData({ ...data, ['RESPONSAVEL']: personData?.NOME });
       }
     }
   }
+  const fetchItemsData = async ( ) => { 
+    const itemsData = await fetchItems(Number(id));
+    if (itemsData){
+      setRequisitionItems(itemsData)
+      return
+    }
+    setRequisitionItems([]);
+  }
 
   useEffect(() => {
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, IsAddItemsOpen, refreshToggler]);
+    console.log('fetchRequisitionData');
+    fetchRequisitionData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshRequisition]);
 
-  useEffect(() => {
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, IsAddItemsOpen]);
-
+  useEffect(() => { 
+    console.log('fetchItemsData');
+    fetchItemsData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshItems, adding]);
+  
   const handleOpen = (e: React.MouseEvent) => {
     e.preventDefault();
-    setIsAddItemsOpen(true);
+    toggleAdding();
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,8 +79,8 @@ const RequisitionDetail: React.FC = () => {
   const handleSave = async() => {
       seteditingField({...editingField, isEditing : false });
       requisitionData && await updateRequisition(requisitionData);
-      setRefreshToggler(!refreshToggler);
-  }
+      toggleRefreshRequisition();
+    }
 
   const fields = [
     { label: "Descrição", key: "DESCRIPTION" },
@@ -128,8 +131,6 @@ const RequisitionDetail: React.FC = () => {
           && <HorizontalLinearStepper
             requisitionData={requisitionData}
             setRequisitionData={setRequisitionData}
-            setRefreshToggler={setRefreshToggler}
-            refreshToggler={refreshToggler}
           />
         }
       </Box>
@@ -158,12 +159,16 @@ const RequisitionDetail: React.FC = () => {
         </Stack>
       </Box>
 
-      <Stack direction="row" sx={{flexWrap: 'wrap'}}>
+      <Stack direction="row" sx={{ flexWrap: 'wrap',  height: { 
+        xs: '1080px',
+        sm: '800px',
+        lg: '600px'
+      } }}>
 
         <Box
           sx={{
             padding: "0.5rem",
-            border: "1px solid #d3d6db ",
+      
             maxHeight: '60vh',
             overflowY: 'auto',
             width: { 
@@ -190,8 +195,9 @@ const RequisitionDetail: React.FC = () => {
                       spacing={1}
                       key={item.key}
                       sx={editingField.isEditing && editingField.field.key === item.key ?
-                         { border: '1px solid blue', padding: '4px', borderRadius: '4px' } :
-                         { border: '1px solid #d3d6db',  padding: '4px', borderRadius: '4px' }}
+                         { border: '1px solid blue', padding: '4px', borderRadius: '4px', height: '36px' } :
+                        { border: '1px solid #d3d6db', padding: '4px', borderRadius: '4px', height: '36px' }}
+
                           >
                         <input
                           id={item.key}
@@ -232,12 +238,9 @@ const RequisitionDetail: React.FC = () => {
               }
               
           </Stack>
-          {IsAddItemsOpen && requisitionData && (
+          {requisitionData && (
             <ProductsTableModal
-              isOpen={IsAddItemsOpen}
-              setIsOpen={setIsAddItemsOpen}
               requisitionID={requisitionData.ID_REQUISICAO}
-              setIsCreating={setIsAddItemsOpen}
             />
           )}
         </Box>{" "}
@@ -248,21 +251,18 @@ const RequisitionDetail: React.FC = () => {
             md: '50%',
             lg: '70%'
           },
-          maxHeight: '400px',
-          border: "0.5px solid #e3e3e3",
+          height: { 
+            lg: '100%'
+          },
+          border: "0.5px solid #e3e3e3 ",
           overflowY: 'auto',
           display: 'flex',
           justifyContent: 'center'
         }}>
-          {requisitionItems && (
-            <ItemsContextProvider>
+          {
               <RequisitionItemsTable
-                setRefreshToggler={setRefreshToggler}
-                refreshToggler={refreshToggler}
-                items={requisitionItems} />
-            </ItemsContextProvider>
-           
-          )}
+                items={requisitionItems} />           
+          }
         </Box>
 
       </Stack>

@@ -6,12 +6,10 @@ import Card from '@mui/material/Card';
 import { Typography } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import AddRequisitionModal from '../../components/modals/AddRequisitionModal';
-import { useState } from 'react';
 import logoUrl from '../../assets/logodolphin.jpg'
 
 const RequisitionHome = () => {
 
-  const [ isCreating, setIsCreating ] = useState<boolean>(false);
   return (
     <>
       <Card variant="outlined" sx={{ maxWidth: "90vw", padding:'0.5rem', marginX:'auto' }}>
@@ -29,16 +27,11 @@ const RequisitionHome = () => {
             
           </Stack>
          <Stack direction="row" spacing={2}>
-           <AddRequisitionModal
-              isCreating={isCreating}
-              setIsCreating={setIsCreating}
-           />
+                <AddRequisitionModal />           
          </Stack>
         </Box>
         <Divider />
-        <RequisitionTable 
-        isCreating={isCreating}
-        />
+        <RequisitionTable />
       </Card>
     </>
   );

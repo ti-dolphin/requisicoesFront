@@ -4,10 +4,11 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
-import React from "react";
+import React, { useContext } from "react";
 import { SearchAppBarProps, motionItemsVariants } from "../../../types";
 import AddedItemsModal from "../../../components/modals/AddedItemsModal";
 import { Chip, Stack } from "@mui/material";
+import { RequisitionContext } from "../../../context/RequisitionContext";
 //HELPER Components
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -54,14 +55,41 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 //MAIN COMPONENT
 const SearchAppBar: React.FC<SearchAppBarProps> = ({
   caller,
-  handleChangeKanbanFilter,
-  currentKanbanFilter,
   handleSearch,
   addedItems,
   refreshToggler,
   setRefreshTooggler
 }) => {
+  const {currentKanbanFilter, changeKanbanFilter } = useContext(RequisitionContext);
 
+  const handleChangeKanbanFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const { id } = e.currentTarget;
+    let searchTerm = '';
+    switch (id) {
+      case 'Backlog': {
+        searchTerm = 'Em edição'
+        changeKanbanFilter({ label: 'Backlog', status: searchTerm });
+        break;
+      }
+      case 'A Fazer': {
+        searchTerm = 'Requisitado';
+        changeKanbanFilter({ label: 'A Fazer', status: searchTerm })
+        break;
+
+      }
+      case 'Fazendo': {
+        searchTerm = 'Em cotação';
+        changeKanbanFilter({ label: 'Fazendo', status: 'Em cotação' })
+        break;
+      }
+      case 'Concluído': {
+        searchTerm = 'Concluído';
+        changeKanbanFilter({ label: 'Concluído', status: 'Concluído' })
+        break;
+      }
+    }
+  } 
+  
   return (
     <Box sx={{ flexGrow: 1, width: "100%" }}>
       <AppBar sx={{ backgroundColor: "#00204a", height: 'fit-content',

@@ -7,16 +7,23 @@ import { Button, Stack } from '@mui/material';
 
 
 const style = {
-  position: 'absolute' as const,
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
+  position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  width: {
+    xs: '90%',
+    sm: '80%',
+    md: '70%',
+    lg: '40%',
+    xl: '30%'
+  },
+  height: 'fit-content',
   bgcolor: 'background.paper',
-  border: '2px solid #000',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: '1rem',
   boxShadow: 24,
   p: 4,
 };

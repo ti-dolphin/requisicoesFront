@@ -10,7 +10,10 @@ import "@fontsource/roboto/700.css";
 import { Typography } from "@mui/material";
 import AddRequisitionForm from "../../pages/requisitionHome/components/AddRequisitionForm";
 import CloseIcon from "@mui/icons-material/Close";
-import { addRequisitionModalProps } from "../../types";
+import { ItemsContextProvider } from "../../context/ItemsContext";
+import { useContext } from "react";
+import { RequisitionContext } from "../../context/RequisitionContext";
+
 
 const style = {
   position: "absolute" as const,
@@ -27,12 +30,16 @@ const style = {
 };
 
 
-const NestedModal: React.FC<addRequisitionModalProps> = ({ isCreating, setIsCreating }) => {
+const NestedModal: React.FC = () => {
+
+  const {creating, toggleCreating } = useContext(RequisitionContext);
+
+
   const handleOpen = () => {
-    setIsCreating(true);
+    toggleCreating();
   };
   const handleClose = () => {
-    setIsCreating(false);
+    toggleCreating();
   };
 
   return (
@@ -56,7 +63,7 @@ const NestedModal: React.FC<addRequisitionModalProps> = ({ isCreating, setIsCrea
 
       <Modal
         sx={{ border: "none" }}
-        open={isCreating}
+        open={creating}
         onClose={handleClose}
         aria-labelledby="parent-modal-title"
         aria-describedby="parent-modal-description"
@@ -78,7 +85,9 @@ const NestedModal: React.FC<addRequisitionModalProps> = ({ isCreating, setIsCrea
               <Typography variant="h6" id="parent-modal-title">
                 Nova Requisição
               </Typography>
-          <AddRequisitionForm setIsCreating={setIsCreating} />
+            <ItemsContextProvider>
+                <AddRequisitionForm />
+            </ItemsContextProvider>
         </Box>
       </Modal>
     </div>

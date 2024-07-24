@@ -23,7 +23,7 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
 import SearchAppBar from "../../pages/requisitionHome/components/SearchAppBar";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
   deleteRequisition,
   fecthRequisitions,
@@ -31,13 +31,14 @@ import {
 } from "../../utils";
 import { useEffect } from "react";
 import { Requisition } from "../../utils";
-import { Link, useNavigate } from "react-router-dom";
-import { EnhancedTableProps, EnhancedTableToolbarProps, HeadCell, Order, RequisitionTableProps } from "../../types";
+import { useNavigate } from "react-router-dom";
+import { EnhancedTableProps, EnhancedTableToolbarProps, HeadCell, Order } from "../../types";
 import Loader from "../Loader";
 import DeleteRequisitionModal from "../modals/warnings/DeleteRequisitionModal";
 import Filter from "./Filter";
 import React from "react";
-
+import { useContext } from "react";
+import { RequisitionContext } from "../../context/RequisitionContext";
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -209,7 +210,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 }
 
 //REQUISITIONS TABLE 
-export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
+export default function EnhancedTable() {
 
   const [currentSelectedId, setCurrentSelectedId] = useState<number>(-1);
   const [RefreshToggler, setRefreshToggler] = useState(false);
@@ -222,55 +223,42 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
   const [rowsPerPage, setRowsPerPage] = React.useState(50);
   const [allRows, setAllRows] = useState<Requisition[]>([]);
   const [filteredRows, setFilteredRows] = useState<Requisition[]>([]);
-  const [currentKanbanFilter, setCurrentKanbanFilter] = useState<{label : string; status: string;}>({label : '', status: ''});
   const navigate = useNavigate();
+  const { refreshRequisition, currentKanbanFilter, toggleRefreshRequisition } = useContext(RequisitionContext);
 
-
-  async function performAsync() {
-
+  const fetchRequisitionData = useCallback( async () => {
     const data = await fecthRequisitions();
     const personsData = await fetchPersons();
     if (data && personsData) {
       const rows = data.map((item) => {
-        const personName = personsData.find(
-          (person) => person.CODPESSOA === item.ID_RESPONSAVEL
-            )?.NOME;
-            if (personName) {
-              return {
-                ...item,
-                RESPONSAVEL: personName,
-                DESCRICAO: item.DESCRICAO ? item.DESCRICAO : ""
-              };
-            }
+        const personName = personsData.find((person) => person.CODPESSOA === item.ID_RESPONSAVEL)?.NOME;
+        if (personName) {
+          return {
+            ...item,
+            RESPONSAVEL: personName,
+            DESCRICAO: item.DESCRICAO ? item.DESCRICAO : ""
+          };
+        }
         return {
           ...item,
           RESPONSAVEL: "",
           DESCRICAO: item.DESCRICAO ? item.DESCRICAO : '',
         };
       });
-        setAllRows(rows);
-        setFilteredRows(rows);
-        const defaultFilter = 'Requisitado';
-       const filter = rows.filter((item) =>
-         item.STATUS.toUpperCase().includes(
-           defaultFilter.toUpperCase())
-       )
-       setFilteredRows(filter);
-       setCurrentKanbanFilter({ label: 'A Fazer' , status : 'requisitado'});
-       console.log('filter: ', filter);
+      setAllRows(rows);
+      setFilteredRows(rows);
+      const filter = rows.filter((item) =>
+        item.STATUS.toUpperCase().includes(
+          currentKanbanFilter.status.toUpperCase())
+      )
+      setFilteredRows(filter);
     }
-  }
+  }, [currentKanbanFilter.status])
 
   useEffect(() => {
-    performAsync();
-  }, [isCreating, RefreshToggler]);
+    fetchRequisitionData();
+  }, [refreshRequisition, currentKanbanFilter, fetchRequisitionData]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setRefreshToggler(!RefreshToggler);
-    },  60000 * 10 );
-    return () => clearInterval(interval);
-  }, [RefreshToggler]);
 
   const handleOpenDeleteModal = (id: number) => {
     setCurrentSelectedId(id);
@@ -279,42 +267,11 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
 
   const handleDelete = async (id: number) => {
     await deleteRequisition(id);
-    setRefreshToggler(!RefreshToggler);
     setIsDeleteRequisitionModalOpen(false);
+    toggleRefreshRequisition();
   };
 
-  const handleChangeKanbanFilter =  (e: React.MouseEvent<HTMLButtonElement> ) => { 
-    const { id } = e.currentTarget;
-    let searchTerm = '';
-    switch (id){ 
-      case 'Backlog': { 
-        searchTerm = 'Em edição'
-        setCurrentKanbanFilter({ label: 'Backlog', status: searchTerm});
-        break;
-      }
-      case 'A Fazer': { 
-        searchTerm = 'Requisitado';
-        setCurrentKanbanFilter({ label: 'A Fazer', status : searchTerm})
-        break;
-
-      }
-      case 'Fazendo' : { 
-        searchTerm = 'Em cotação';
-        setCurrentKanbanFilter({ label: 'Fazendo', status: 'Em cotação'})
-        break;
-      }
-      case 'Concluído': {
-        searchTerm = 'Concluído';
-        setCurrentKanbanFilter({ label: 'Concluído', status:'Concluído'})
-        break;
-      }
-    }
-    const filter = allRows.filter((item) =>
-      item.STATUS.toUpperCase().includes(
-        searchTerm.toUpperCase())
-    )
-    setFilteredRows(filter);
-  } 
+ 
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement, MouseEvent> ) => {
     console.log('handleSearch')
@@ -424,9 +381,6 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
         <SearchAppBar
-          currentKanbanFilter={currentKanbanFilter}
-          setCurrentKanbanFilter={setCurrentKanbanFilter}
-          handleChangeKanbanFilter={handleChangeKanbanFilter}
           caller="requisitionTable"
           handleSearch={handleSearch}
           refreshToggler={RefreshToggler}
@@ -454,8 +408,6 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
 
                   return (
                     <TableRow
-                      onClick={ (event) => 
-                        handleClick(event, Number(row.ID_REQUISICAO))}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
@@ -463,8 +415,11 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
                       selected={isItemSelected}
                       sx={{ cursor: "pointer" }}
                     >
-                      <TableCell padding="checkbox"></TableCell>
+                      <TableCell onClick={ (event) => 
+                        handleClick(event, Number(row.ID_REQUISICAO))} padding="checkbox"></TableCell>
                       <TableCell
+                        onClick={(event) =>
+                          handleClick(event, Number(row.ID_REQUISICAO))}
                         component="th"
                         id={labelId}
                         scope="row"
@@ -475,36 +430,43 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
                         </Typography> 
                       </TableCell>
 
-                      <TableCell>
+                      <TableCell 
+                        onClick={(event) =>
+                        handleClick(event, Number(row.ID_REQUISICAO))}>
                           <Typography>{row.STATUS}</Typography>
                       </TableCell>
 
-                      <TableCell align="right" sx={{textTransform: 'lowercase'}}>
+                      <TableCell
+                        onClick={(event) =>
+                        handleClick(event, Number(row.ID_REQUISICAO))}
+                       align="right" sx={{textTransform: 'lowercase'}}>
                         <Typography>{row.RESPONSAVEL}</Typography>
                       </TableCell>
 
-                      <TableCell align="center">
+                      <TableCell 
+                        onClick={(event) =>
+                        handleClick(event, Number(row.ID_REQUISICAO))}
+                       align="center">
                         <Typography>{row.ID_REQUISICAO}</Typography>
                       </TableCell>
 
-                      <TableCell sx={{
+                      <TableCell
+                        onClick={(event) =>
+                        handleClick(event, Number(row.ID_REQUISICAO))}
+                       sx={{
                               fontSize: "12px",
                               textTransform: "capitalize",
                             }}
                             align="right"
                              >
-                            <Link
-                              to={`requisitionDetail/${row.ID_REQUISICAO}`}
-                            > 
                               <Typography sx={{fontSize: '12px'}}>{row.DESCRICAO}</Typography> 
-                            </Link>
                       </TableCell>
 
                       <TableCell
                         align="right"
                       >
                        <Stack direction="row" spacing={2}>
-                              <button
+                              <IconButton
                                 id={String(row.ID_REQUISICAO)}
                                 onClick={() =>
                                   handleOpenDeleteModal(Number(row.ID_REQUISICAO))
@@ -512,7 +474,7 @@ export default function EnhancedTable({ isCreating }: RequisitionTableProps) {
                                 className="hover:bg-red-100 p-[2px]"
                               >
                                 <DeleteIcon className="text-red-600" />
-                              </button>
+                              </IconButton>
                        </Stack>
                       </TableCell>
                     </TableRow>

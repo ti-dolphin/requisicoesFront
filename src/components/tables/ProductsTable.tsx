@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState } from "react";
-import { Item, Product, fetchItems, postRequistionItem, searchProducts } from "../../utils";
+import React, { useContext, useEffect, useState } from "react";
+import { Item, Product, fetchItems, postRequistionItem, searchProducts, updateRequisitionItems } from "../../utils";
 import SearchAppBar from "../../pages/requisitionHome/components/SearchAppBar";
 
 import Backdrop from "@mui/material/Backdrop";
@@ -8,11 +8,11 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Typography from "@mui/material/Typography";
-import { Button, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Button, IconButton, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { ProductsTableProps } from "../../types";
-
-
+import { ItemsContext } from "../../context/ItemsContext";
+import AddIcon from '@mui/icons-material/Add';
 // eslint-disable-next-line react-refresh/only-export-components
 export const style = {
   position: "absolute",
@@ -34,7 +34,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
   const [openQuantityInput, setOpenQuantityInput] = useState(false);
   const [refreshToggler, setRefreshToggler ] = useState<boolean>(false);
   const [addedItems, setAddedItems ] = useState<Item[]>([]);
-
+  const { changing, adding, toggleChanging, toggleRefreshItems } = useContext(ItemsContext);
   const fetchData = async ( ) => { 
     const itemsData = await fetchItems(ID_REQUISICAO);
     if(itemsData) setAddedItems([...itemsData]);
@@ -48,11 +48,22 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
   const handleAddItem =  (
     e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement>
   ) => {
-    if('key' in e && e.key === 'Enter'){ 
+    if('key' in e && e.key === 'Enter' && adding){ 
             const { id, value } = e.currentTarget;
             performPostItemCallout(id, value);
+            return;
     }
+
   };
+
+  const handleChangeItemProduct = async(product: Product ) => { 
+          if(changing[1]){ 
+            const payload = { ...changing[1], ID_PRODUTO: product.ID }
+            await updateRequisitionItems([payload], payload.ID_REQUISICAO)
+            toggleChanging();
+            toggleRefreshItems();
+          }
+  }
 
   const handleSearchItem = async (e: React.KeyboardEvent<HTMLInputElement>) => {
 
@@ -63,6 +74,11 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
       if (searchResults) setFilteredRows([...searchResults.data]);
     }
   };
+
+  // const performUpdateItemCallout = async( ) => { 
+  //   const response = await updateRequisitionItemProduct();
+  //   console.log('update');
+  // }
 
   const performPostItemCallout = async (id: string, value: string) => {
     const requestBody = [];
@@ -175,8 +191,10 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
                 <TableCell align="left">
                   <Stack alignItems="center" spacing={1} direction="row">
                     <Typography>{row.codigo}</Typography>
-                    <Button  onClick={() => handleOpen(row)}> Adicionar</Button>
-                  </Stack>
+                    {adding ? <IconButton onClick={() => handleOpen(row)}><AddIcon /></IconButton> : 
+                      <Button><Typography onClick={() => handleChangeItemProduct(row)} sx={{fontSize: '12px'}}>Substituir</Typography></Button>
+                    }
+                    </Stack>
                 </TableCell>
 
               </TableRow>

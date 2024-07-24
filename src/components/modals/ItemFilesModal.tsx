@@ -26,12 +26,19 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 600,
-    height: 500,
+    width: {
+        xs: '90%',
+        sm: '80%',
+        md: '70%',
+        lg: '40%',
+        xl: '30%'
+    },
     overflowY: 'auto',
+    maxHeight: 400,
     bgcolor: 'background.paper',
-    border: '1px solid #000',
-    padding: '1rem',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem',
     boxShadow: 24,
     p: 4,
 };

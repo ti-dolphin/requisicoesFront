@@ -4,59 +4,61 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { DeleteRequisitionItemModalProps } from '../../../types';
 import { Button, Stack } from '@mui/material';
-
+import { ItemsContext } from '../../../context/ItemsContext';
+import { useContext } from 'react';
 
 const style = {
   position: 'absolute',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: { 
-    xs: '300px',
-    sm: '300px',
-    md: '500px'
+  width: {
+    xs: '90%',
+    sm: '80%',
+    md: '70%',
+    lg: '40%',
+    xl: '30%'
   },
-  height: 200,
+  height: 'fit-content',
   bgcolor: 'background.paper',
-  border: 'none',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: '1rem',
   boxShadow: 24,
-  padding: 2,
-  zIndex: 10
+  p: 4,
 };
 
 const DeleteRequisitionItemModal : React.FC<DeleteRequisitionItemModalProps> = ({
-      isDeleteRequisitionItemModalOpen,
-      setIsDeleteRequisitionItemModalOpen,
       handleDelete,
-      item
 }) => {
   
-  const handleClose = () => setIsDeleteRequisitionItemModalOpen(false);
-
+  const handleClose = () => toggleDeleting();
+  const {deleting, toggleDeleting } = useContext(ItemsContext);
   return (
       <Modal
-        open={isDeleteRequisitionItemModalOpen}
+        open={deleting[0]}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
         <Box sx={{...style, gap:'2rem'}}>
-          <Typography id="modal-modal-title"  component="h2" align='center'>
-            Tem certeza que deseja excluir o item "{item.nome_fantasia}" ?
-          </Typography>
-          <Stack direction="row" spacing={6}>
-                  <Button
-                   onClick={() => handleDelete(item)}
-                   variant="outlined">Sim</Button>
-                  <Button
-                   onClick={() => setIsDeleteRequisitionItemModalOpen(false)}
-                   color='secondary'
-                    variant="outlined" sx={{color: 'red', border: '1px solid red', hover: 'color:secondary'}}>Não</Button>
-          </Stack>
+          { deleting[1] &&
+           <>
+              <Typography id="modal-modal-title" component="h2" align='center'>
+                Tem certeza que deseja excluir o item "{deleting[1].nome_fantasia}" ?
+              </Typography>
+              <Stack direction="row" spacing={6}>
+                <Button
+                  onClick={() => deleting[1] && handleDelete(deleting[1])}
+                  variant="outlined">Sim</Button>
+                <Button
+                  onClick={() => toggleDeleting()}
+                  color='secondary'
+                  variant="outlined" sx={{ color: 'red', border: '1px solid red', hover: 'color:secondary' }}>Não</Button>
+              </Stack>
+           </>
+           }
         </Box>
       </Modal>
   );

@@ -3,9 +3,9 @@ import { Person, Project, fetchAllProjects } from "../../../utils";
 import { fetchPersons, postRequisition } from "../../../utils";
 import { Button } from "@mui/material";
 import React from "react";
-import { AddRequisitionFormProps } from "../../../types";
 import { ProductsTableModal } from "../../../components/modals/ProductsTableModal";
-
+import { useContext } from "react";
+import { ItemsContext } from "../../../context/ItemsContext";
 
 interface RequisitionFields {
   ID_RESPONSAVEL: number;
@@ -13,10 +13,9 @@ interface RequisitionFields {
   DESCRIPTION: string;
 }
 
-const AddRequisitionForm: React.FC<AddRequisitionFormProps> = ({setIsCreating}) => {
+const AddRequisitionForm: React.FC = () => {
   useEffect(() => {
     async function performAsync() {
-
       const personData = await fetchPersons();
       const projectData = await fetchAllProjects();
       if (personData && projectData) {
@@ -35,9 +34,9 @@ const AddRequisitionForm: React.FC<AddRequisitionFormProps> = ({setIsCreating}) 
   });
   const [projects, setProjects] = useState<Project[]>([]);
   const [persons, setPersons] = useState<Person[]>([]);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [currentId, setCurrentId] = useState<number>(0);
-  
+  const { toggleAdding } = useContext(ItemsContext);
+
   const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { id, value } = e.target;
     setFields({
@@ -57,9 +56,7 @@ const AddRequisitionForm: React.FC<AddRequisitionFormProps> = ({setIsCreating}) 
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
      if (currentId === 0) {
-      
         const response = await postRequisition([
           {
             ...fields,
@@ -70,10 +67,9 @@ const AddRequisitionForm: React.FC<AddRequisitionFormProps> = ({setIsCreating}) 
  
          setCurrentId(Number(response.data));
        }
-       setIsOpen(true);
-       
+       toggleAdding();
       } else{ 
-        setIsOpen(true);
+        toggleAdding();
       }
 
   };
@@ -140,13 +136,9 @@ const AddRequisitionForm: React.FC<AddRequisitionFormProps> = ({setIsCreating}) 
           onChange={handleChange}
         />
       </div>
-      <Button type="submit">Seguir</Button>
+      <Button onClick={() => handleSubmit} type="submit">Seguir</Button>
       {currentId > 0 && (
-        <ProductsTableModal
-          setIsCreating = {setIsCreating}
-          requisitionID={currentId}
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
+        <ProductsTableModal requisitionID={currentId}
         />
 
       )}

@@ -210,13 +210,12 @@ const fetchRequsitionById = async (id: number) => {
 
 const fetchItems = async (id: number) => {
   try {
-    ///requisition/requisitionItems/requisitionId
-    const response = await api.get<Item[]>(
+      const response = await api.get<Item[]>(
       `requisition/requisitionItems/${id}`
     );
     return response.data;
   } catch (e) {
-    console.log(e);
+    return null;
   }
 };
 
@@ -224,6 +223,7 @@ const deleteRequisitionItem = async (
   productId: number,
   requisitionId: number
 ) => {
+  console.log('payload: ', {productId, requisitionId})
   try {
     await api.delete(
       `requisition/requisitionItems/${requisitionId}/${productId}`

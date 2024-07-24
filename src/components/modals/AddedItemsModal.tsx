@@ -7,8 +7,7 @@ import { Button, Stack } from "@mui/material";
 const AddedItemsModal: React.FC<AddedItemsModalProps> = ({
   motionVariants,
   addedItems,
-  refreshToggler,
-  setRefreshToggler
+  
 }) => {
 
   const [isOpen, setIsOpen] = useState(false);
@@ -38,9 +37,7 @@ const AddedItemsModal: React.FC<AddedItemsModalProps> = ({
                  sx={{ color: 'red', position: 'absolute', top: '0.5rem', left: '10px' }} /></button>
                   {addedItems &&
                     <RequisitionItemsTable
-                      items={addedItems}
-                      refreshToggler={refreshToggler}
-                      setRefreshToggler={setRefreshToggler} />}
+                      items={addedItems} />}
             </Stack>
           </motion.div>
         )}
