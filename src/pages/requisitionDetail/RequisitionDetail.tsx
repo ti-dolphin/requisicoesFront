@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import HorizontalLinearStepper from "./components/Stepper";
-import { Badge, BadgeProps, Button, IconButton, Stack, styled, Typography } from "@mui/material";
+import { Badge, BadgeProps, IconButton, Stack, styled, Typography } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
 import SaveIcon from '@mui/icons-material/Save';
@@ -15,7 +15,7 @@ import {
   updateRequisition,
 } from "../../utils";
 // import { useLocation } from "react-router-dom";
-import { Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import RequisitionItemsTable from "../../components/tables/RequisitionItemsTable";
 import Loader from "../../components/Loader";
 import { ProductsTableModal } from "../../components/modals/ProductsTableModal";
@@ -24,12 +24,15 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import { RequisitionContext } from "../../context/RequisitionContext";
 import { ItemsContext } from "../../context/ItemsContext";
 import { useContext } from "react";
+import { userContext } from "../../context/userContext";
 const RequisitionDetail: React.FC = () => {
   const { id } = useParams();
   const [requisitionData, setRequisitionData] = useState<Requisition>();
   const [requisitionItems, setRequisitionItems] = useState<Item[]>([]);
   const {editingField, handleChangeEditingField, seteditingField, refreshRequisition, toggleRefreshRequisition } = useContext(RequisitionContext);
   const { refreshItems, adding, toggleAdding } = useContext(ItemsContext);
+  const { logedIn } = useContext(userContext);
+  const navigate = useNavigate();
   const fetchRequisitionData = async () => {
     const data = await fetchRequsitionById(Number(id));
     if (data) {
@@ -47,6 +50,9 @@ const RequisitionDetail: React.FC = () => {
     }
     setRequisitionItems([]);
   }
+  useEffect(() => { 
+    if (!logedIn) navigate('/');
+  });
 
   useEffect(() => {
     console.log('fetchRequisitionData');
@@ -104,7 +110,9 @@ const RequisitionDetail: React.FC = () => {
     }
 
   }
-
+  const handleNavigateHome = ( ) => { 
+    navigate('/requisitions');
+  }
   return (
     <Box
       sx={{
@@ -116,7 +124,7 @@ const RequisitionDetail: React.FC = () => {
       }}
     >
       <Box sx={{ padding: '1rem', display: 'flex', alignItems: 'center'}}>
-          <Button><Link to="/"><ArrowCircleLeftIcon /></Link></Button>
+          <IconButton onClick={() => handleNavigateHome()}><ArrowCircleLeftIcon /></IconButton>
           <Typography sx={{fontSize: { 
             xs: '12px',
             md: '16px'

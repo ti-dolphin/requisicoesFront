@@ -256,7 +256,10 @@ export default function EnhancedTable() {
   }, [currentKanbanFilter.status])
 
   useEffect(() => {
-    fetchRequisitionData();
+      // if(window.localStorage.getItem('token')){ 
+      //   console.log("token:  ", window.localStorage.getItem("token"));
+        fetchRequisitionData();
+      
   }, [refreshRequisition, currentKanbanFilter, fetchRequisitionData]);
 
 
@@ -270,8 +273,6 @@ export default function EnhancedTable() {
     setIsDeleteRequisitionModalOpen(false);
     toggleRefreshRequisition();
   };
-
- 
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement, MouseEvent> ) => {
     console.log('handleSearch')

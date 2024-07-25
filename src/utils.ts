@@ -12,6 +12,30 @@ import {
   anexoRequisicao,
 } from "./types";
 
+
+const logIn = async (username: string, password: string) => {
+
+  try {
+    const response = await api.post(
+      `/users/login`,
+      {
+        username,
+        password,
+      },
+      {
+        withCredentials: false,
+        headers: {
+          Accept: "*/*"
+        },
+      }
+    );
+     return response.data;
+  } catch (e) {
+    return {message: 'login failed'};
+    console.log(e);
+  }
+}; 
+
 const fetchRequisitionFiles = async (requisitionID: number) => {
   try {
     return await api.get<anexoRequisicao>(`requisitionFiles/${requisitionID}`);
@@ -192,7 +216,7 @@ const searchProducts = async (name: string) => {
 
 const fecthRequisitions = async () => {
   try {
-    const response = await api.get<Requisition[]>("/requisition/");
+    const response = await api.get<Requisition[]>("/requisition");
     return response.data;
   } catch (e) {
     console.log(e);
@@ -232,6 +256,7 @@ const deleteRequisitionItem = async (
     console.log(e);
   }
 };
+
 
 const fetchPersons = async () => {
   try {
@@ -291,6 +316,7 @@ export {
   deleteItemFile,
   postItemLinkFile,
   postRequisitionLinkFile,
+  logIn,
 };
 export type {
   Requisition,

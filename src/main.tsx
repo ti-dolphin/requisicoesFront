@@ -11,6 +11,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { ptBR } from '@mui/material/locale';
 import { RequisitionContextProvider  } from './context/RequisitionContext.tsx';
+import { UserContextProvider } from './context/userContext.tsx';
 
 const theme = createTheme(
   {
@@ -28,11 +29,15 @@ const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
-      <RequisitionContextProvider> 
-          <QueryClientProvider client={queryClient}> 
+      <UserContextProvider>
+        <RequisitionContextProvider>
+          <QueryClientProvider client={queryClient}>
             <RouterProvider router={router} />
           </QueryClientProvider>
-      </RequisitionContextProvider> 
+        </RequisitionContextProvider> 
+      </UserContextProvider>
+     
+
     </ThemeProvider>
 
     

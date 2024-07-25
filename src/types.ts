@@ -181,15 +181,3 @@ export interface AddedItemsModalProps {
 export interface requisitionItemsTableProps { 
     items : Item[];
 }
-
-export interface AddedItemsTableProps {
-  addedItems?: Item[];
-  handleOpen?: (
-    e: React.MouseEvent<HTMLButtonElement>,
-    nome: string,
-    quantities?: Item[],
-
-  ) => void;
-  handleDelete? :  ( e : React.MouseEvent<HTMLButtonElement>) => void;
-  setIsCreating? : ( value : boolean ) => void;
-}
