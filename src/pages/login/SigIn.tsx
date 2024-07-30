@@ -40,9 +40,8 @@ const defaultTheme = createTheme();
         const username = data.get('email') ? data.get('email') : '';
         const responseLogin = await logIn(String(username), String(data.get('password')));
         if (responseLogin.message === 'Login Successful'){ 
-            console.log('login successfull')
             window.localStorage.setItem('token', responseLogin.token);
-            console.log('localStorage token: ', window.localStorage.getItem('token'));
+            window.localStorage.setItem('userID: ', responseLogin.userID);
             navigate('./home');
             toggleLogedIn(true);
         }else{ 

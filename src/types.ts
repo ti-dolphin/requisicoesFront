@@ -138,7 +138,7 @@ export interface EnhancedTableProps {
  export interface DeleteRequisitionItemModalProps{ 
   //  isDeleteRequisitionItemModalOpen : boolean;
   //      setIsDeleteRequisitionItemModalOpen : (value: boolean) => void;
-       handleDelete : (item : Item) => void;
+       handleDelete : (items : Item[]) => void;
       //  item : Item;
  }
 export interface SearchAppBarProps {

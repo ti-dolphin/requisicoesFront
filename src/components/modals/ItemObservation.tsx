@@ -9,6 +9,8 @@ import { useContext } from 'react';
 import { updateRequisitionItems } from '../../utils';
 import { ItemsContext } from '../../context/ItemsContext';
 import CloseIcon from '@mui/icons-material/Close';
+
+
 const style = {
     position: 'absolute',
     top: '50%',
@@ -68,6 +70,10 @@ const ItemObservationModal = () => {
                     </Typography> 
                     <Stack direction="row" spacing={2}>
                         <textarea
+                            style={{ 
+                                border: '1px solid',
+                                width: '90%'
+                            }}
                             value={editingObservation[1]?.OBSERVACAO}
                             onChange={handleChange}
                             disabled={!editingObservation[0]}

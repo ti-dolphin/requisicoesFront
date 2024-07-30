@@ -32,7 +32,7 @@ const style = {
 const DeleteRequisitionItemModal : React.FC<DeleteRequisitionItemModalProps> = ({
       handleDelete,
 }) => {
-  
+  const { selection } = useContext(ItemsContext);
   const handleClose = () => toggleDeleting();
   const {deleting, toggleDeleting } = useContext(ItemsContext);
   return (
@@ -43,14 +43,14 @@ const DeleteRequisitionItemModal : React.FC<DeleteRequisitionItemModalProps> = (
         aria-describedby="modal-modal-description"
       >
         <Box sx={{...style, gap:'2rem'}}>
-          { deleting[1] &&
+          { 
            <>
               <Typography id="modal-modal-title" component="h2" align='center'>
-                Tem certeza que deseja excluir o item "{deleting[1].nome_fantasia}" ?
+                Tem certeza que deseja excluir os items selecionados?
               </Typography>
               <Stack direction="row" spacing={6}>
                 <Button
-                  onClick={() => deleting[1] && handleDelete(deleting[1])}
+                  onClick={() => handleDelete(selection.items)}
                   variant="outlined">Sim</Button>
                 <Button
                   onClick={() => toggleDeleting()}
