@@ -4,11 +4,12 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { SearchAppBarProps, motionItemsVariants } from "../../../types";
 import AddedItemsModal from "../../../components/modals/AddedItemsModal";
 import { Chip, Stack } from "@mui/material";
 import { RequisitionContext } from "../../../context/RequisitionContext";
+import { userContext } from "../../../context/userContext";
 //HELPER Components
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -51,8 +52,25 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
   },
 }));
+const filterAvailableByUser = {
+  compras: [
+   'A Fazer',
+   'Fazendo',
+   'Concluído',
+   'Tudo'
+  ],
+  gerente: [
+    'Backlog',
+    'Acompanhamento',
+    'Tudo'
+  ],
+  requisitante: [
+    'Backlog',
+    'Acompanhamento',
+    'Tudo'
+  ]
+};
 
-//MAIN COMPONENT
 const SearchAppBar: React.FC<SearchAppBarProps> = ({
   caller,
   handleSearch,
@@ -61,128 +79,108 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
   setRefreshTooggler
 }) => {
   const {currentKanbanFilter, changeKanbanFilter } = useContext(RequisitionContext);
+  const { user } = useContext(userContext);
+  const [availableKanbanFilters, setAvailableKanbanFilter ] = useState<string[]>([]);
+  const defineAvailableKanbanFilters = ( ) =>  {
+    console.log('user: ', user)
+    if( user?.CODGERENTE ) { 
+        setAvailableKanbanFilter([...filterAvailableByUser.gerente]);
+    }else if( user?.PERM_COMPRADOR && user?.PERM_COMPRADOR > 0){ 
+      setAvailableKanbanFilter([...filterAvailableByUser.compras]);
+    }else{ 
+      setAvailableKanbanFilter([...filterAvailableByUser.requisitante]);
+    }
+  }
+
+  useEffect(() => {
+    defineAvailableKanbanFilters();
+  }, []);
 
   const handleChangeKanbanFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const { id } = e.currentTarget;
-    let searchTerm = '';
-    switch (id) {
-      case 'Backlog': {
-        searchTerm = 'Em edição'
-        changeKanbanFilter({ label: 'Backlog', status: searchTerm });
-        break;
-      }
-      case 'A Fazer': {
-        searchTerm = 'Requisitado';
-        changeKanbanFilter({ label: 'A Fazer', status: searchTerm })
-        break;
-
-      }
-      case 'Fazendo': {
-        searchTerm = 'Em cotação';
-        changeKanbanFilter({ label: 'Fazendo', status: 'Em cotação' })
-        break;
-      }
-      case 'Concluído': {
-        searchTerm = 'Concluído';
-        changeKanbanFilter({ label: 'Concluído', status: 'Concluído' })
-        break;
-      }
-    }
+      changeKanbanFilter({label: e.currentTarget.id});
   } 
   
   return (
     <Box sx={{ flexGrow: 1, width: "100%" }}>
-      <AppBar sx={{ backgroundColor: "#00204a", height: 'fit-content',
-      display: 'flex', justifyContent: 'center' ,
-      alignItems: 'center',
-      padding: '10px'}}
-       position="static">
-        <Toolbar sx={
-          {
-  
-            padding: '1rem',
-            marginX: 'auto',
-            width: '80%',
-            top: '1rem',
-            display: 'flex',
+      <AppBar
+        sx={{
+          backgroundColor: "#00204a",
+          height: "fit-content",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: "8px",
+        }}
+        position="static"
+      >
+        <Toolbar
+          sx={{
+          
+            marginX: "auto",
+            width: "80%",
+            display: "flex",
             flexDirection: {
-              xs: 'column',
-              sm: 'column',
-           },
-           alignItems: { 
-              xs: 'start'
-           },
-           gap : '1rem'
-          }
-        }>
-
-          <Search sx={{
-              border: '1px solid white',
-                width: {
-                  xs: '100%',
-                  sm: '90%',
-                  md: '60%'
-                }
-              }}  >
-                <SearchIconWrapper>
-                  <SearchIcon />
-                </SearchIconWrapper>
-                <StyledInputBase
-                  placeholder="Pesquisar..."
-                  inputProps={{ "aria-label": "search" }}
-                  onKeyDown={handleSearch}
-                />
+              xs: "column",
+              sm: "column",
+            },
+            alignItems: {
+              xs: "start",
+            },
+            gap: "1rem",
+          }}
+        >
+          <Search
+            sx={{
+              border: "1px solid white",
+              width: {
+                xs: "100%",
+                sm: "90%",
+                md: "60%",
+              },
+            }}
+          >
+            <SearchIconWrapper>
+              <SearchIcon />
+            </SearchIconWrapper>
+            <StyledInputBase
+              placeholder="Pesquisar..."
+              inputProps={{ "aria-label": "search" }}
+              onKeyDown={handleSearch}
+            />
           </Search>
 
           {caller == "ItemsTable" && (
             <AddedItemsModal
               motionVariants={motionItemsVariants}
-              addedItems={addedItems} refreshToggler={refreshToggler} setRefreshToggler={setRefreshTooggler} />
+              addedItems={addedItems}
+              refreshToggler={refreshToggler}
+              setRefreshToggler={setRefreshTooggler}
+            />
           )}
-          { 
-            caller !== 'ItemsTable' && ( 
-              <Stack 
-                      sx={{ 
-                        flexDirection : { 
-                          xs: 'column',
-                          md: 'row'
-                        },
-                        gap: '0.5rem'
-
-                      }}
-                      >
-                      <button
-                        onClick={handleChangeKanbanFilter}
-                        id="Backlog">
-                        <Chip
-                          color={currentKanbanFilter?.label === 'Backlog' ? 'success' : 'primary'}
-                          label="Backlog" />
-                      </button>
-                      <button
-                        onClick={handleChangeKanbanFilter}
-                        id="A Fazer">
-                        <Chip
-                          color={currentKanbanFilter?.label === 'A Fazer' ? 'success' : 'primary'}
-                          label="A Fazer" />
-                      </button>
-                      <button
-                        onClick={handleChangeKanbanFilter}
-                        id="Fazendo">
-                        <Chip
-                          color={currentKanbanFilter?.label === 'Fazendo' ? 'success' : 'primary'}
-                          label="Fazendo" />
-                      </button>
-                      <button
-                        onClick={handleChangeKanbanFilter}
-                        id="Concluído">
-                        <Chip
-                          color={currentKanbanFilter?.label === 'Concluído' ? 'success' : 'primary'}
-                          label="Concluído" />
-                      </button>
-              </Stack>
-            )
-          }
-        
+          {caller !== "ItemsTable" && (
+            <Stack
+              sx={{
+                flexDirection: {
+                  xs: "column",
+                  md: "row",
+                },
+                gap: "0.5rem",
+              }}
+            >
+              {availableKanbanFilters.map((kanbanFilter) => (
+                <button onClick={handleChangeKanbanFilter} id={kanbanFilter}>
+                  <Chip
+                    color={
+                      currentKanbanFilter?.label === kanbanFilter
+                        ? "success"
+                        : "primary"
+                    }
+                    label={kanbanFilter}
+                  />
+                </button>
+              ))}
+            </Stack>
+          )}
         </Toolbar>
       </AppBar>
     </Box>

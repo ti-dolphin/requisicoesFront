@@ -27,7 +27,6 @@ import { useCallback, useState } from "react";
 import {
   deleteRequisition,
   fecthRequisitions,
-  fetchPersons,
 } from "../../utils";
 import { useEffect } from "react";
 import { Requisition } from "../../utils";
@@ -35,10 +34,10 @@ import { useNavigate } from "react-router-dom";
 import { EnhancedTableProps, EnhancedTableToolbarProps, HeadCell, Order } from "../../types";
 import Loader from "../Loader";
 import DeleteRequisitionModal from "../modals/warnings/DeleteRequisitionModal";
-import Filter from "./Filter";
 import React from "react";
 import { useContext } from "react";
 import { RequisitionContext } from "../../context/RequisitionContext";
+import { userContext } from "../../context/userContext";
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -195,7 +194,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
               direction={orderBy === headCell.id ? order : "asc"}
               onClick={headCell.label !== 'Status' ? createSortHandler(headCell.id) : undefined}
             >
-              {headCell.label === 'Status' ? <Filter handleSearch={props.handleSearch} /> : headCell.label}
+              {headCell.label === 'Status' ? 'Status' : headCell.label}
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
                   {order === "desc" ? "sorted descending" : "sorted ascending"}
@@ -221,45 +220,41 @@ export default function EnhancedTable() {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(true);
   const [rowsPerPage, setRowsPerPage] = React.useState(50);
-  const [allRows, setAllRows] = useState<Requisition[]>([]);
   const [filteredRows, setFilteredRows] = useState<Requisition[]>([]);
   const navigate = useNavigate();
-  const { refreshRequisition, currentKanbanFilter, toggleRefreshRequisition } = useContext(RequisitionContext);
+  const { refreshRequisition, currentKanbanFilter, toggleRefreshRequisition,changeKanbanFilter } = useContext(RequisitionContext);
+  const { user } = useContext(userContext);
+ 
+  const defineDefaultKanbanFilter = ( ) =>  {
+    console.log('user: ', user);
+    if(user?.CODGERENTE && user?.CODGERENTE > 0){ 
+      changeKanbanFilter({ label: "Backlog" }); //GERENTE
+    }
+    else if(user?.PERM_COMPRADOR){ 
+      changeKanbanFilter({label: 'A Fazer'}); //COMPRADOR 
+    }else{ 
+      changeKanbanFilter({ label: "Backlog" });
+    }
+  }
+  useEffect(( )=> { 
+    defineDefaultKanbanFilter();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const fetchRequisitionData = useCallback( async () => {
-    const data = await fecthRequisitions();
-    const personsData = await fetchPersons();
-    if (data && personsData) {
-      const rows = data.map((item) => {
-        const personName = personsData.find((person) => person.CODPESSOA === item.ID_RESPONSAVEL)?.NOME;
-        if (personName) {
-          return {
-            ...item,
-            RESPONSAVEL: personName,
-            DESCRICAO: item.DESCRICAO ? item.DESCRICAO : ""
-          };
-        }
-        return {
-          ...item,
-          RESPONSAVEL: "",
-          DESCRICAO: item.DESCRICAO ? item.DESCRICAO : '',
-        };
-      });
-      setAllRows(rows);
-      setFilteredRows(rows);
-      const filter = rows.filter((item) =>
-        item.STATUS.toUpperCase().includes(
-          currentKanbanFilter.status.toUpperCase())
-      )
-      setFilteredRows(filter);
-    }
-  }, [currentKanbanFilter.status])
+   if(user && currentKanbanFilter){ 
+     const data = await fecthRequisitions(user, currentKanbanFilter.label);
+     if (data) {
+      console.log('data: ', data)
+       setFilteredRows(data);
+     }else{
+      setFilteredRows([]);
+     }
+   }
+  }, [currentKanbanFilter, user]);
 
-  useEffect(() => {
-      // if(window.localStorage.getItem('token')){ 
-      //   console.log("token:  ", window.localStorage.getItem("token"));
+  useEffect(() => {  
         fetchRequisitionData();
-      
   }, [refreshRequisition, currentKanbanFilter, fetchRequisitionData]);
 
 
@@ -274,53 +269,17 @@ export default function EnhancedTable() {
     toggleRefreshRequisition();
   };
 
-  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement, MouseEvent> ) => {
-    console.log('handleSearch')
-    
-    let searchTerm: string = '';
-    if ('key' in e && e.key === 'Enter') {
-      searchTerm = (e.currentTarget as HTMLInputElement).value;
-      const filter = allRows.filter(
-        (item) =>
-          item.STATUS.toUpperCase().includes(currentKanbanFilter.status.toUpperCase())
-          && ( 
-            item.DESCRIPTION.toUpperCase().includes(
-              searchTerm.toUpperCase()
-            ) ||
-            item.DESCRICAO.toUpperCase().includes(
-              searchTerm.toUpperCase()
-            ) ||
-            item.STATUS.toUpperCase().includes(
-              searchTerm.toUpperCase()
-            )
-            || item.ID_REQUISICAO === Number(searchTerm)
-            || item.RESPONSAVEL.toUpperCase().includes(searchTerm.toUpperCase())
-          )
+  const handleSearch = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const { value } = e.currentTarget;
+    if (e.key === "Enter" && user && currentKanbanFilter) {
+      const data = await fecthRequisitions(
+        user,
+        currentKanbanFilter?.label,
+        value
       );
-        setFilteredRows([...filter]);
-        
+      data && setFilteredRows(data);
+      return;
     }
-    else if ('type' in e && e.type === 'click') {
-      searchTerm = (e.currentTarget as HTMLLIElement).textContent || '';
-      const filter = allRows.filter(
-        (item) =>
-          item.DESCRIPTION.toUpperCase().includes(
-            searchTerm.toUpperCase()
-          ) ||
-          item.DESCRICAO.toUpperCase().includes(
-            searchTerm.toUpperCase()
-          ) ||
-          item.STATUS.toUpperCase().includes(
-            searchTerm.toUpperCase()
-          )
-          || item.ID_REQUISICAO === Number(searchTerm)
-          || item.RESPONSAVEL.toUpperCase().includes(searchTerm.toUpperCase())
-      );
-      setFilteredRows([...filter]);
-    }
-
-    
-
   };
 
   const visibleRows = React.useMemo(
@@ -402,7 +361,7 @@ export default function EnhancedTable() {
               handleSearch ={ handleSearch }
             />
             <TableBody>
-              {visibleRows.length || allRows.length ? (
+              {visibleRows ? (
                 visibleRows.map((row, index) => {
                   const isItemSelected = isSelected(Number(row.ID_REQUISICAO));
                   const labelId = `enhanced-table-checkbox-${index}`;

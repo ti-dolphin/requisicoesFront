@@ -91,7 +91,7 @@ const ItemFilesModal = ({ itemID }: ItemFilesModalProps) => {
     const getItemFiles = async () => {
         const response = await fetchItemFiles(itemID);
         if (response) {
-        
+            console.log('response.data - itemFilesModal: ', ItemFiles)
             setItemFiles(response.data);
             return;
         } setItemFiles([]);

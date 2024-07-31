@@ -11,6 +11,7 @@ import {
   RequisitionPost,
   anexoRequisicao,
 } from "./types";
+import { User } from "./context/userContext";
 
 
 const logIn = async (username: string, password: string) => {
@@ -214,9 +215,15 @@ const searchProducts = async (name: string) => {
   }
 };
 
-const fecthRequisitions = async () => {
+const fecthRequisitions = async (user: User, currentKanbanFilter : string, search? : string ,) => {
   try {
-    const response = await api.get<Requisition[]>("/requisition");
+    const response = await api.get<Requisition[]>("/requisition", {
+      params: { 
+        userID: user.CODPESSOA,
+        search,
+        currentKanbanFilter
+      }
+    });
     return response.data;
   } catch (e) {
     console.log(e);

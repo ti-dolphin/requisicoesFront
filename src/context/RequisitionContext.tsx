@@ -8,16 +8,14 @@ interface RequisitionContextType {
     editingField: { isEditing: boolean; field: Field };
     refreshRequisition: boolean;
     creating: boolean;
-    currentKanbanFilter: {
+    currentKanbanFilter?: {
         label: string;
-        status: string;
     };
     handleChangeEditingField: (item: Field) => void;
     seteditingField: (value: { isEditing: boolean; field: Field }) => void;
     toggleRefreshRequisition: () => void;
     changeKanbanFilter: (value: {
         label: string;
-        status: string;
     }) => void;
     toggleCreating: () => void;
 }
@@ -30,7 +28,6 @@ export const RequisitionContext = createContext<RequisitionContextType>({
     creating: false,
     editingField: { isEditing: false, field: { label: "", key: "" } },
     refreshRequisition: false,
-    currentKanbanFilter: {label : 'A Fazer', status: 'requisitado'},
     handleChangeEditingField: () => { },
     seteditingField: () => { },
     toggleRefreshRequisition: () => { },
@@ -49,12 +46,10 @@ export const RequisitionContextProvider = ({
     const [creating, setCreating] = useState<boolean>(false);
     const [currentKanbanFilter, setCurrentKanbanFilter] = useState<{
         label: string;
-        status: string;
-    }>({ label: "A Fazer", status: "requisitado" });
+    }>();
 
     const changeKanbanFilter = (filter: {
         label: string;
-        status: string;
     }) => {
         setCurrentKanbanFilter(filter);
     };

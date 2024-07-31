@@ -45,6 +45,7 @@ const RequisitionDetail: React.FC = () => {
   const fetchItemsData = async ( ) => { 
     const itemsData = await fetchItems(Number(id));
     if (itemsData){
+      console.log('itemsData: ', itemsData)
       setRequisitionItems(itemsData)
       return
     }

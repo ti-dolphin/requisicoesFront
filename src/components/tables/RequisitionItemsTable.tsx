@@ -46,20 +46,19 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
     toggleEditingObservation,
     toggleRefreshItems,
   } = useContext(ItemsContext);
+
   const [copiedAlert ,setCopiedAlert] = useState<boolean>(false);
+
   const handleDelete = async (requisitionItems: Item[]) => {
     try {
-      requisitionItems.forEach(async(item) => { 
-        await deleteRequisitionItem(
-          Number(item.ID_PRODUTO),
-          item.ID_REQUISICAO
-        );
-      });
-      toggleDeleting();
-
+     const deletePromises = requisitionItems.map((item) =>
+       deleteRequisitionItem(Number(item.ID_PRODUTO), item.ID_REQUISICAO)
+     );
+     await Promise.all(deletePromises);
     } catch (e) {
       console.log("erro delete item: ", e);
     }
+    toggleDeleting();
     toggleRefreshItems();
   };
 

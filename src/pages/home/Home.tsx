@@ -19,10 +19,12 @@ const modules = [
     path: "/requisitions",
   },
 ];
+
 const Home = () => {
     const navigate = useNavigate();
-    const { logedIn } = useContext(userContext);
+    const { logedIn, user } = useContext(userContext);
     useEffect(( ) => { 
+      console.log('user: ', user);
         if(!logedIn){ 
             navigate('/');
         }

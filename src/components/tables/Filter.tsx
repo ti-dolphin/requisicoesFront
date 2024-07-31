@@ -4,22 +4,22 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ArrowDropDownCircleIcon from '@mui/icons-material/ArrowDropDownCircle';
 
-interface FilterProps { 
-    handleSearch: (e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement, MouseEvent>) => void;
-}
+// interface FilterProps { 
+//     handleSearch: ( e: React.KeyboardEvent<HTMLInputElement>) => void;
+// }
 
 
 
-export default function Filter({ handleSearch } : FilterProps) {
+export default function Filter() {
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
-    const handleClose = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+    const handleClose = () => {
         setAnchorEl(null);
-        handleSearch(e);
+        // handleSearch(e);
     };
 
     return (
@@ -46,7 +46,7 @@ export default function Filter({ handleSearch } : FilterProps) {
             >
                 { 
                     ["Todos", "Em edição" , "Requisitado" , "Em cotação", "Cotado", "Comprar", "Concluído"].map((item) => ( 
-                        <MenuItem onClick={(e) => handleClose(e) }>{item}</MenuItem>
+                        <MenuItem onClick={() => handleClose() }>{item}</MenuItem>
                     ))
                 }
             </Menu>

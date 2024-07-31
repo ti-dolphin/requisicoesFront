@@ -28,7 +28,7 @@ const defaultTheme = createTheme();
 
  const SignIn = ( ) => {
     const navigate = useNavigate();
-    const { toggleLogedIn } = useContext(userContext);
+    const { toggleLogedIn, defineUser } = useContext(userContext);
     const [errorLogin, setErrorLogin] = useState<boolean>(false);
     const toggleErrorLogin = ( ) => { 
         console.log('errorLogin became: ', !errorLogin)
@@ -41,9 +41,10 @@ const defaultTheme = createTheme();
         const responseLogin = await logIn(String(username), String(data.get('password')));
         if (responseLogin.message === 'Login Successful'){ 
             window.localStorage.setItem('token', responseLogin.token);
-            window.localStorage.setItem('userID: ', responseLogin.userID);
+            window.localStorage.setItem('user', JSON.stringify(responseLogin.user));
             navigate('./home');
             toggleLogedIn(true);
+            defineUser(responseLogin.user);
         }else{ 
             toggleErrorLogin();
         }

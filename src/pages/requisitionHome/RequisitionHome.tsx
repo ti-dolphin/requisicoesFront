@@ -29,9 +29,8 @@ const RequisitionHome = () => {
         <IconButton onClick={() => handleNavigateHome()}>
           <HomeIcon />
         </IconButton>
-
-        <Box sx={{ p: 2, display: "flex", justifyContent: "space-between" }}>
-          <Stack spacing={2} direction="row" alignItems="center">
+        <Box sx={{  display: "flex", justifyContent: "space-between" }}>
+          <Stack  spacing={2} direction="row" alignItems="center">
             <img src={logoUrl} alt="logo Dolphin" width={"140px"} />
             <Typography
               variant="h6"

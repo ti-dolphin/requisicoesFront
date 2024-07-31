@@ -133,7 +133,7 @@ export interface EnhancedTableProps {
   order: Order;
   orderBy: string;
   rowCount: number;
-  handleSearch: (e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement, MouseEvent>) => void;
+  handleSearch: (e: React.KeyboardEvent<HTMLInputElement> ) => void;
 }
  export interface DeleteRequisitionItemModalProps{ 
   //  isDeleteRequisitionItemModalOpen : boolean;
