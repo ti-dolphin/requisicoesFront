@@ -291,9 +291,12 @@ const updateRequisitionItems = async (items: Item[], requisitonId: number) => {
   }
 };
 
-const updateRequisition = async (requisition: Requisition) => {
+const updateRequisition = async (codpessoa: number, requisition: Requisition) => {
   try {
-    await api.put(`requisition/${requisition.ID_REQUISICAO}`, requisition);
+    await api.put(`requisition/${requisition.ID_REQUISICAO}`, { 
+      codpessoa,
+      requisition
+    });
   } catch (e) {
     console.log(e);
   }

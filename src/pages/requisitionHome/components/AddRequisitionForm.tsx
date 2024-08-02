@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { Person, Project, fetchAllProjects } from "../../../utils";
-import { fetchPersons, postRequisition } from "../../../utils";
+import { Project, fetchAllProjects } from "../../../utils";
+import { postRequisition } from "../../../utils";
 import { Button } from "@mui/material";
 import React from "react";
 import { ProductsTableModal } from "../../../components/modals/ProductsTableModal";
 import { useContext } from "react";
 import { ItemsContext } from "../../../context/ItemsContext";
+import { userContext } from "../../../context/userContext";
 
 interface RequisitionFields {
   ID_RESPONSAVEL: number;
@@ -16,12 +17,9 @@ interface RequisitionFields {
 const AddRequisitionForm: React.FC = () => {
   useEffect(() => {
     async function performAsync() {
-      const personData = await fetchPersons();
       const projectData = await fetchAllProjects();
-      if (personData && projectData) {
-        setPersons(personData);
+      if (projectData) {
         setProjects(projectData);
-
       }
     }
     performAsync();
@@ -32,8 +30,8 @@ const AddRequisitionForm: React.FC = () => {
     ID_PROJETO: 0,
     DESCRIPTION: "",
   });
+  const { user } =  useContext(userContext);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [persons, setPersons] = useState<Person[]>([]);
   const [currentId, setCurrentId] = useState<number>(0);
   const { toggleAdding } = useContext(ItemsContext);
 
@@ -56,47 +54,30 @@ const AddRequisitionForm: React.FC = () => {
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-     if (currentId === 0) {
+   if(user){ 
+      if (currentId === 0) {
         const response = await postRequisition([
           {
             ...fields,
-            ['STATUS']: 'Em edição'
-          }   
+            ["STATUS"]: "Em edição",
+            ['ID_RESPONSAVEL'] : user.CODPESSOA
+          },
         ]);
-       if (response) {
- 
-         setCurrentId(Number(response.data));
-       }
-       toggleAdding();
-      } else{ 
+        if (response) {
+          setCurrentId(Number(response.data));
+        }
+        toggleAdding();
+      } else {
         toggleAdding();
       }
 
+   }
   };
 
   return (
     <form className="max-w-sm mx-auto mt-5 w-[90%]" onSubmit={handleSubmit}>
-      <div className="mb-5">
-        <label
-          htmlFor="email"
-          className="block mb-2 text-sm font-medium text-gray-900 "
-        >
-          Responsável
-        </label>
-        <select
-          id="ID_RESPONSAVEL"
-          className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-          onChange={(e) => handleSelect(e)}
-          required
-        >
-          <option value=""></option>
-          {persons.map((person) => (
-            <option value={person.CODPESSOA} id={String(person.CODPESSOA)}>
-              {person.NOME}
-            </option>
-          ))}
-        </select>
-      </div>
+   
+
       <div className="mb-5">
         <label
           htmlFor="repeat-password"
@@ -112,7 +93,7 @@ const AddRequisitionForm: React.FC = () => {
         >
           <option value=""></option>
           {projects.map((project) => (
-            <option value={project.ID}>{project.ID}</option>
+            <option value={project.ID}>{project.DESCRICAO}</option>
           ))}
         </select>
       </div>

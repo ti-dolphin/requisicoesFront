@@ -9,6 +9,7 @@ import { Requisition, updateRequisition } from "../../../utils";
 import { useContext } from "react";
 import { useState } from "react";
 import { RequisitionContext } from "../../../context/RequisitionContext";
+import { userContext } from "../../../context/userContext";
 
 const steps = [
   "Em edição",
@@ -23,6 +24,8 @@ interface props{
   setRequisitionData: (requisition: Requisition) => void;
 }
 const HorizontalLinearStepper: React.FC<props> = ({ requisitionData, setRequisitionData}) => {
+
+  const { user } = useContext(userContext);
 
   const {toggleRefreshRequisition} = useContext(RequisitionContext);
 
@@ -44,15 +47,17 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData, setRequisit
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
     const nextStep = activeStep + 1;
     if (nextStep < steps.length){ 
-      const editedRequisition = { ...requisition, ['STATUS']: steps[activeStep + 1] }
-
-      try {
-        await updateRequisition(editedRequisition);
-        setRequisition(editedRequisition);
-        setRequisitionData(editedRequisition);
-        toggleRefreshRequisition()
-      } catch (e) {
-        console.log(e);
+    const editedRequisition = { ...requisition, ['STATUS']: steps[activeStep + 1] }
+    setRequisition(editedRequisition);
+      if(user){ 
+          try {
+            await updateRequisition(user.CODPESSOA, editedRequisition);
+            setRequisition(editedRequisition);
+            setRequisitionData(editedRequisition);
+            toggleRefreshRequisition();
+          } catch (e) {
+            console.log(e);
+          }
       }
     }
   };
@@ -62,15 +67,16 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData, setRequisit
     const editedRequisition = {...requisition, ['STATUS'] : steps[activeStep - 1]}
 
     setRequisition(editedRequisition);
-     try{  
-      await updateRequisition(editedRequisition);
-      setRequisition(editedRequisition);
-      setRequisitionData(editedRequisition);
-      toggleRefreshRequisition();
-
-    }catch(e){
-      console.log(e);
-    }
+        if(user){ 
+          try {
+            await updateRequisition(user.CODPESSOA, editedRequisition);
+            setRequisition(editedRequisition);
+            setRequisitionData(editedRequisition);
+            toggleRefreshRequisition();
+          } catch (e) {
+            console.log(e);
+          }
+        }
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

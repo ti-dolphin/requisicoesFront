@@ -99,6 +99,24 @@ const headCells: readonly HeadCell[] = [
     disablePadding: false,
     label: "Nº Requisição",
   },
+  { 
+    id: 'CREATED_ON',
+    numeric: false,
+    disablePadding:false,
+    label: 'Data de Criação'
+  },
+  { 
+    id: 'LAST_UPDATE_ON',
+    numeric: false,
+    disablePadding: false,
+    label: 'Ultima Alteração'
+  },
+  {   
+    id: 'LAST_MODIFIED_BY_NAME',
+    numeric: false,
+    disablePadding: false,
+    label: 'Alterado Por'
+  },
   {
     id: "ID_PROJETO",
     numeric: true,
@@ -185,8 +203,8 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
-            padding={headCell.disablePadding ? "none" : "normal"}
+            align={"left"}
+            padding={ "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
           >
             <TableSortLabel
@@ -238,7 +256,14 @@ export default function EnhancedTable() {
     defineDefaultKanbanFilter();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
+  const dateRenderer = (value?: string | number) => {
+    if (typeof value === "string") {
+      const date = value.substring(0, 10).replace(/-/g, "/");
+      const time = value.substring(11, 19);
+      const formatted = `${date}, ${time}`;
+      return formatted;
+    }
+  };
   const fetchRequisitionData = useCallback( async () => {
    if(user && currentKanbanFilter){ 
      const data = await fecthRequisitions(user, currentKanbanFilter.label);
@@ -270,13 +295,16 @@ export default function EnhancedTable() {
   const handleSearch = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     const { value } = e.currentTarget;
     if (e.key === "Enter" && user && currentKanbanFilter) {
-      const data = await fecthRequisitions(
-        user,
-        currentKanbanFilter?.label,
-        value
+      setFilteredRows(
+        filteredRows.filter((item) => item.NOME_RESPONSAVEL.toUpperCase().includes(value.toUpperCase()) ||
+          item.DESCRICAO.toUpperCase().includes(value.toUpperCase()) ||
+          item.DESCRIPTION.toUpperCase().includes(value.toUpperCase()) ||
+          item.ID_REQUISICAO === Number(value))
       );
-      data && setFilteredRows(data);
       return;
+    }
+    else if(e.key === "Backspace" && user && currentKanbanFilter){ 
+      toggleRefreshRequisition();
     }
   };
 
@@ -373,67 +401,127 @@ export default function EnhancedTable() {
                       selected={isItemSelected}
                       sx={{ cursor: "pointer" }}
                     >
-                      <TableCell onClick={ (event) => 
-                        handleClick(event, Number(row.ID_REQUISICAO))} padding="checkbox"></TableCell>
                       <TableCell
                         onClick={(event) =>
-                          handleClick(event, Number(row.ID_REQUISICAO))}
+                          handleClick(event, Number(row.ID_REQUISICAO))
+                        }
+                        padding="checkbox"
+                      ></TableCell>
+
+                      <TableCell
+                        onClick={(event) =>
+                          handleClick(event, Number(row.ID_REQUISICAO))
+                        }
                         component="th"
                         id={labelId}
                         scope="row"
                         padding="none"
+                        align="left"
                       >
-                        <Typography>
-                           {row.DESCRIPTION}
-                        </Typography> 
+                        <Typography>{row.DESCRIPTION}</Typography>
                       </TableCell>
 
-                      <TableCell 
+                      <TableCell
+                        align="left"
                         onClick={(event) =>
-                        handleClick(event, Number(row.ID_REQUISICAO))}>
-                          <Typography>{row.STATUS}</Typography>
+                          handleClick(event, Number(row.ID_REQUISICAO))
+                        }
+                      >
+                        <Typography>{row.STATUS}</Typography>
                       </TableCell>
 
                       <TableCell
                         onClick={(event) =>
-                        handleClick(event, Number(row.ID_REQUISICAO))}
-                       align="right" sx={{textTransform: 'lowercase'}}>
-                        <Typography>{row.NOME}</Typography>
+                          handleClick(event, Number(row.ID_REQUISICAO))
+                        }
+                        align="left"
+                        sx={{ textTransform: "lowercase" }}
+                      >
+                        <Typography>{row.NOME_RESPONSAVEL}</Typography>
                       </TableCell>
 
-                      <TableCell 
+                      <TableCell
                         onClick={(event) =>
-                        handleClick(event, Number(row.ID_REQUISICAO))}
-                       align="center">
+                          handleClick(event, Number(row.ID_REQUISICAO))
+                        }
+                        align="left"
+                      >
                         <Typography>{row.ID_REQUISICAO}</Typography>
                       </TableCell>
 
                       <TableCell
                         onClick={(event) =>
-                        handleClick(event, Number(row.ID_REQUISICAO))}
-                       sx={{
-                              fontSize: "12px",
-                              textTransform: "capitalize",
-                            }}
-                            align="right"
-                             >
-                              <Typography sx={{fontSize: '12px'}}>{row.DESCRICAO}</Typography> 
+                          handleClick(event, Number(row.ID_REQUISICAO))
+                        }
+                        sx={{
+                          fontSize: "12px",
+                          textTransform: "capitalize",
+                        }}
+                        align="left"
+                      >
+                        <Typography sx={{ fontSize: "12px" }}>
+                          {dateRenderer(row.CREATED_ON)}
+                        </Typography>
                       </TableCell>
 
                       <TableCell
-                        align="right"
+                        onClick={(event) =>
+                          handleClick(event, Number(row.ID_REQUISICAO))
+                        }
+                        sx={{
+                          fontSize: "12px",
+                          textTransform: "capitalize",
+                        }}
+                        align="left"
                       >
-                       <Stack direction="row" spacing={2}>
-                              <IconButton
-                                id={String(row.ID_REQUISICAO)}
-                                onClick={() =>
-                                  handleOpenDeleteModal(Number(row.ID_REQUISICAO))
-                                }
-                                className="hover:bg-red-100 p-[2px]"
-                              >
-                                <DeleteIcon className="text-red-600" />
-                              </IconButton>
-                       </Stack>
+                        <Typography sx={{ fontSize: "12px" }}>
+                          {dateRenderer(row.LAST_UPDATE_ON)}
+                        </Typography>
+                      </TableCell>
+
+                      <TableCell
+                        onClick={(event) =>
+                          handleClick(event, Number(row.ID_REQUISICAO))
+                        }
+                        sx={{
+                          fontSize: "12px",
+                          textTransform: "capitalize",
+                        }}
+                        align="left"
+                      >
+                        <Typography sx={{ fontSize: "12px" }}>
+                          {row.LAST_MODIFIED_BY_NAME}
+                        </Typography>
+                      </TableCell>
+
+                      <TableCell
+                        onClick={(event) =>
+                          handleClick(event, Number(row.ID_REQUISICAO))
+                        }
+                        sx={{
+                          fontSize: "12px",
+                          textTransform: "capitalize",
+                        }}
+                        align="left"
+                      >
+                        <Typography sx={{ fontSize: "12px" }}>
+                          {row.DESCRICAO}
+                        </Typography>
+                      </TableCell>
+
+                      {/* {EXCLUSÂO} */}
+                      <TableCell align="left">
+                        <Stack direction="row" spacing={2}>
+                          <IconButton
+                            id={String(row.ID_REQUISICAO)}
+                            onClick={() =>
+                              handleOpenDeleteModal(Number(row.ID_REQUISICAO))
+                            }
+                            className="hover:bg-red-100 p-[2px]"
+                          >
+                            <DeleteIcon className="text-red-600" />
+                          </IconButton>
+                        </Stack>
                       </TableCell>
                     </TableRow>
                   );

@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 
 
 
@@ -10,8 +11,9 @@ export interface Requisition {
   ID_PROJETO: number;
   DESCRICAO: string;
   RESPONSAVEL: string;
-  NOME : string;
+  NOME_RESPONSAVEL : string;
   LAST_UPDATE_ON: string | number;
+  LAST_MODIFIED_BY_NAME: string;
   CREATED_ON: string | number;
 }
 export interface RequisitionPost {
@@ -45,6 +47,7 @@ export interface Person {
   CODPESSOA: number;
 }
 export interface Project {
+  DESCRICAO: ReactNode;
   ID: number;
 }
 export interface Item {
@@ -109,6 +112,7 @@ export interface ItemObservationModalProps {
 }
 export interface ProductsTableModalProps {
   requisitionID: number;
+  info? : string;
 }
 
 export interface RequisitionTableProps { 

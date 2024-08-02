@@ -1,4 +1,4 @@
-import { Box, Button, Modal, Stack } from "@mui/material";
+import { Box, Button, Modal, Stack, Typography } from "@mui/material";
 import { ProductsTableModalProps } from "../../types";
 import ProductsTable from "../tables/ProductsTable";
 import CloseIcon from '@mui/icons-material/Close';
@@ -11,7 +11,7 @@ const style = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   bgcolor: "background.paper",
-  border: "2px solid #000",
+  border: "0.5px solid #000",
   boxShadow: 24,
   pt: 1,
   px: 1,
@@ -20,6 +20,7 @@ const style = {
 
 export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
   requisitionID,
+  info
 }) => {
   const {adding, toggleAdding, changing, toggleChanging}  = useContext(ItemsContext);
   const { toggleCreating, creating, toggleRefreshRequisition } = useContext(RequisitionContext);
@@ -44,18 +45,48 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
         aria-labelledby="child-modal-title"
         aria-describedby="child-modal-description"
       >
-        <Box sx={{ ...style, width: "95vw", height: "98vh" }}>
-          <Button
-            sx={{color: 'red', position: 'absolute', right: '0.5rem', top: '0.5rem', zIndex: 2}}
-            onClick={() => handleCloseAll()}><CloseIcon  />
-            </Button>
-          <Stack sx={{ border: '1px solid gray', height: '100%', overflowY : 'auto', width: '100%'}} direction="column">
-              <ProductsTable ID_REQUISICAO={requisitionID}/>
+        <Box sx={{ ...style, width: "98vw", height: "98vh" }}>
+          <Stack
+            sx={{
+              height: "100%",
+              overflowY: "auto",
+              width: "100%",
+            }}
+            spacing={1}
+            direction="column"
+          >
+            <Stack direction="row" paddingLeft="1rem" justifyContent="space-between" alignItems="center">
+              <Typography
+                textAlign="center"
+                sx={{
+                  fontSize: {
+                    xs: "12px",
+                    md: "16px",
+                  },
+                  top: {
+                    xs: "1rem",
+                  },
+                }}
+              >
+                {info}
+              </Typography>
+              <Button
+                sx={{
+                  color: "red",
+                  margin: "2px",
+                }}
+                onClick={() => handleCloseAll()}
+              >
+                <CloseIcon />
+              </Button>
+            </Stack>
+
+            <ProductsTable ID_REQUISICAO={requisitionID} />
           </Stack>
         </Box>
       </Modal>
     </>
-  )
+  );
 };
 
 export { ProductsTable };

@@ -76,6 +76,8 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
   const {currentKanbanFilter, changeKanbanFilter } = useContext(RequisitionContext);
   const { user } = useContext(userContext);
   const [availableKanbanFilters, setAvailableKanbanFilter ] = useState<string[]>([]);
+  const { innerWidth: width } = window;
+
   const defineAvailableKanbanFilters = ( ) =>  {
     console.log('user: ', user)
     if( user?.PERM_COMPRADOR && user?.PERM_COMPRADOR > 0){ 
@@ -86,6 +88,7 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
   }
 
   useEffect(() => {
+    console.log('width: ', width)
     defineAvailableKanbanFilters();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -104,12 +107,12 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
           justifyContent: "center",
           alignItems: "center",
           padding: "8px",
+          boxShadow: 'none'
         }}
         position="static"
       >
         <Toolbar
           sx={{
-          
             marginX: "auto",
             width: "80%",
             display: "flex",
@@ -143,14 +146,14 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
             />
           </Search>
 
-          {caller == "ItemsTable" && (
-            <AddedItemsModal
-              motionVariants={motionItemsVariants}
-              addedItems={addedItems}
-              refreshToggler={refreshToggler}
-              setRefreshToggler={setRefreshTooggler}
-            />
-          )}
+          {caller == "ItemsTable" && width > 600 && (
+                <AddedItemsModal
+                  motionVariants={motionItemsVariants}
+                  addedItems={addedItems}
+                  refreshToggler={refreshToggler}
+                  setRefreshToggler={setRefreshTooggler}
+                />
+              )}
           {caller !== "ItemsTable" && (
             <Stack
               sx={{
@@ -158,6 +161,7 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
                   xs: "column",
                   md: "row",
                 },
+                alignItems: 'start',
                 gap: "0.5rem",
               }}
             >

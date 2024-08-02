@@ -44,7 +44,7 @@ const NestedModal: React.FC = () => {
 
   return (
     <div>
-      <Button variant="contained"
+      <Button
        sx={{ gap: "0.5rem",
             height: '4rem'
         }} 
@@ -71,7 +71,10 @@ const NestedModal: React.FC = () => {
         <Box
           sx={{
             ...style,
-            width: 400,
+            width: { 
+              xs: 300,
+              lg: 400
+            },
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
