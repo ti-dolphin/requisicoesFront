@@ -1,9 +1,9 @@
 import axios from "axios";
-//PROD: https://requisicoes-backend.vercel.app
+//PROD: https://apicontrole.dse.com.br
 //http://localhost:3000
-//currentProd : https://apicontrolehomologacao.dse.com.br
+
 const api = axios.create({
-  baseURL: "https://apicontrolehomologacao.dse.com.br", // Substitua pela URL do seu backend
+  baseURL: "https://apicontrole.dse.com.br", // Substitua pela URL do seu backend
   headers: {
     Accept: "*/*",
     "Content-Type": "application/json",

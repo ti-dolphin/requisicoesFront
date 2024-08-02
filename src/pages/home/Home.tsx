@@ -1,9 +1,11 @@
 import {
   Box,
+  Button,
   Card,
   CardActionArea,
   CardContent,
   CardMedia,
+  IconButton,
   Stack,
   Typography,
 } from "@mui/material";
@@ -19,18 +21,29 @@ const modules = [
     path: "/requisitions",
   },
 ];
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { Dropdown } from "@mui/base/Dropdown";
+import { Menu } from "@mui/base/Menu";
+import { MenuButton as BaseMenuButton } from "@mui/base/MenuButton";
 
 const Home = () => {
+   
     const navigate = useNavigate();
-    const { logedIn, user } = useContext(userContext);
+    const { logedIn, user, toggleLogedIn } = useContext(userContext);
     useEffect(( ) => { 
       console.log('user: ', user);
         if(!logedIn){ 
             navigate('/');
         }
-    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [logedIn]);
     const handleNavigateToModule = (path : string ) => { 
         navigate(path);
+    }
+    const handleLogOut = ( ) =>  {
+        window.localStorage.removeItem('user');
+        window.localStorage.removeItem('token');
+        toggleLogedIn(false);
     }
   return (
     <Box
@@ -55,16 +68,28 @@ const Home = () => {
           width: "100%",
           height: "10%",
         }}
-      ></Box>
+      >
+        <IconButton sx={{ position: "absolute", right: "4rem" }}>
+          <Dropdown>
+            <BaseMenuButton>
+              {" "}
+              <AccountCircleIcon />
+            </BaseMenuButton>
+            <Menu>
+              <Button onClick={() => handleLogOut()}>Log out</Button>
+            </Menu>
+          </Dropdown>
+        </IconButton>
+      </Box>
 
       <Box
         sx={{
-          height: '100%',
+          height: "100%",
           overflowY: "auto",
           display: "flex",
           flexDirection: "column",
           justifyContent: "start",
-          gap: '2rem',
+          gap: "2rem",
           alignItems: "center",
         }}
       >
@@ -75,20 +100,25 @@ const Home = () => {
             fontWeight: "600",
             color: "#1e549f",
             fontSize: "2rem",
-
           }}
         >
           Bem Vindo ao Dolphin Controle
         </Typography>
-        <Stack width="100%" justifyContent="center" flexWrap="wrap"  direction="row" spacing={1}>
+        <Stack
+          width="100%"
+          justifyContent="center"
+          flexWrap="wrap"
+          direction="row"
+          spacing={1}
+        >
           {modules.map((module) => (
-            <Card sx={{ maxWidth: 345,  }}>
+            <Card sx={{ maxWidth: 345 }}>
               <CardActionArea
                 onClick={() => handleNavigateToModule(module.path)}
               >
                 <CardMedia
                   sx={{
-                    minWidth: '315px',
+                    minWidth: "315px",
                     maxHeight: "300px",
                   }}
                   component="img"

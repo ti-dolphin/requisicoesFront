@@ -53,137 +53,160 @@ const styleInputlink = {
     p: 4,
 };
 interface ItemFilesModalProps {
-    itemID: number;
+  itemID: number;
+  editItemsAllowed? : boolean;
+  displayAlert? : ( ) => void;
 }
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const ItemFilesModal = ({ itemID }: ItemFilesModalProps) => {
+const ItemFilesModal = ({ itemID, editItemsAllowed }: ItemFilesModalProps) => {
+  const [ItemFiles, setItemFiles] = useState<ItemFile[]>([]);
+  const [open, setOpen] = React.useState(false);
+  const [refreshToggler, setRefreshToggler] = useState(false);
+  const [isInputLinkOpen, setIsInputLinkOpen] = useState<boolean>(false);
+  const [inputlinkValue, setInputlinkValue] = useState<string>("");
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
-    const [ItemFiles, setItemFiles] = useState<ItemFile[]>([]);
-    const [open, setOpen] = React.useState(false);
-    const [refreshToggler, setRefreshToggler] = useState(false);
-    const [isInputLinkOpen, setIsInputLinkOpen] = useState<boolean>(false);
-    const [inputlinkValue, setInputlinkValue ] = useState<string>('');
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+  const handleInputlinkChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setInputlinkValue(e.target.value);
+  };
+  
+  const handleOpenInputLink = () => {
+    setIsInputLinkOpen(true);
+  };
 
-    const handleInputlinkChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> ) =>  {
-        setInputlinkValue(e.target.value);
+  const handleCloseInputLink = () => {
+    setIsInputLinkOpen(false);
+  };
+  const handleSaveLink = async (
+    e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    if (e.key === "Enter") {
+      const response = await postItemLinkFile(itemID, inputlinkValue);
+      if (response?.status === 200) setIsInputLinkOpen(false);
+      setInputlinkValue("");
+      setRefreshToggler(!refreshToggler);
+      return;
     }
-    const handleOpenInputLink = () => {
-        setIsInputLinkOpen(true);
-    }
-    const handleCloseInputLink = () => {
-        setIsInputLinkOpen(false);
-    }
-    const handleSaveLink = async  (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement >  ) => { 
-        if(e.key === 'Enter'){ 
-               const response = await postItemLinkFile(itemID, inputlinkValue);
-               if (response?.status === 200) 
-                 setIsInputLinkOpen(false);
-                 setInputlinkValue('');
-                 setRefreshToggler(!refreshToggler);
-               return;
-        }
-    }
+  };
 
-    const getItemFiles = async () => {
-        const response = await fetchItemFiles(itemID);
-        if (response) {
-            console.log('response.data - itemFilesModal: ', ItemFiles)
-            setItemFiles(response.data);
-            return;
-        } setItemFiles([]);
+  const getItemFiles = async () => {
+    const response = await fetchItemFiles(itemID);
+    if (response) {
+      console.log("response.data - itemFilesModal: ", ItemFiles);
+      setItemFiles(response.data);
+      return;
     }
+    setItemFiles([]);
+  };
 
-    React.useEffect(() => {
+  React.useEffect(() => {
+    getItemFiles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshToggler]);
+  const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
+    "& .MuiBadge-badge": {
+      ...theme,
+    },
+  }));
 
-        getItemFiles();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [refreshToggler]);
-    const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
-        '& .MuiBadge-badge': {
-            ...theme
-        },
-    }));
-
-    return (
-        <div>
-            <button
-                onClick={handleOpen}
-                className='cursor-pointer  text-blue-800 hover:text-blue-500'>
-                <Stack alignItems="center" direction="row" spacing={1.5}>
-                    <AttachFileIcon sx={{ rotate: '45deg' }} />
-                    <StyledBadge badgeContent={ItemFiles.length} color="secondary">
-                    </StyledBadge>
-                </Stack>
-            </button>
-            <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
+  return (
+    <div>
+      <button
+        onClick={handleOpen}
+        className="cursor-pointer  text-blue-800 hover:text-blue-500"
+      >
+        <Stack alignItems="center" direction="row" spacing={1.5}>
+          <AttachFileIcon sx={{ rotate: "45deg" }} />
+          <StyledBadge
+            badgeContent={ItemFiles.length}
+            color="secondary"
+          ></StyledBadge>
+        </Stack>
+      </button>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <button
+            onClick={handleClose}
+            style={{
+              color: "red",
+              position: "absolute",
+              right: "1rem",
+              top: "1rem",
+            }}
+          >
+            <CloseIcon />
+          </button>
+          <Stack direction="column" spacing={2}>
+            <Typography
+              color="primary"
+              textAlign="center"
+              id="modal-modal-title"
+              component="h2"
             >
-                <Box sx={style}>
-                    <button
-                        onClick={handleClose}
-                        style={{
-                            color: 'red',
-                            position: 'absolute', right: '1rem', top: '1rem'
-                        }}><CloseIcon />
-                    </button>
-                    <Stack direction="column" spacing={2}>
-                        <Typography color="primary" textAlign="center" id="modal-modal-title" component="h2">
-                            Anexos do Item
-                        </Typography>
+              Anexos do Item
+            </Typography>
 
-                        <Stack justifyContent="center" spacing={2} direction="row">
-                            <InputFile
-                                id={itemID}
-                                setRefreshToggler={setRefreshToggler}
-                                refreshToggler={refreshToggler} caller='ItemFilesModal' />
-                            <Button
-                                onClick={handleOpenInputLink}
-                                variant='outlined'>Anexar Link</Button>
-                        </Stack>
-                        <Modal
-                            open={isInputLinkOpen}
-                            onClose={handleCloseInputLink}
-                            aria-labelledby="modal-modal-title"
-                            aria-describedby="modal-modal-description"
-                        >
-                            <Box sx={styleInputlink}>
-                               <Stack direction="column" spacing={1}>
-                                    <Typography color="primary" id="modal-modal-title" variant="h6" component="h2">
-                                        Insira o link
-                                    </Typography>
-                                    <input
-                                     className='border border-blue-700 rounded-sm outline-none'
-                                     value={inputlinkValue}
-                                     onChange={handleInputlinkChange}
-                                     onKeyDown={handleSaveLink}
-                                     />
-                               </Stack>
-
-                            </Box>
-                        </Modal>
-                        {
-                            ItemFiles.length > 0 &&
-                            <InteractiveList
-                                refreshToggler={refreshToggler}
-                                setRefreshToggler={setRefreshToggler}
-                                files={ItemFiles}
-                            />
-
-                        }
-                    </Stack>
-
-                </Box>
+            {editItemsAllowed && (
+              <Stack justifyContent="center" spacing={2} direction="row">
+                <InputFile
+                  id={itemID}
+                  setRefreshToggler={setRefreshToggler}
+                  refreshToggler={refreshToggler}
+                  caller="ItemFilesModal"
+                />
+                <Button onClick={handleOpenInputLink} variant="outlined">
+                  Anexar Link
+                </Button>
+              </Stack>
+            )}
+            <Modal
+              open={isInputLinkOpen}
+              onClose={handleCloseInputLink}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={styleInputlink}>
+                <Stack direction="column" spacing={1}>
+                  <Typography
+                    color="primary"
+                    id="modal-modal-title"
+                    variant="h6"
+                    component="h2"
+                  >
+                    Insira o link
+                  </Typography>
+                  <input
+                    className="border border-blue-700 rounded-sm outline-none"
+                    value={inputlinkValue}
+                    onChange={handleInputlinkChange}
+                    onKeyDown={handleSaveLink}
+                  />
+                </Stack>
+              </Box>
             </Modal>
-        </div>
-    );
-}
+            {ItemFiles.length > 0 && (
+              <InteractiveList
+                refreshToggler={refreshToggler}
+                setRefreshToggler={setRefreshToggler}
+                files={ItemFiles}
+              />
+            )}
+          </Stack>
+        </Box>
+      </Modal>
+    </div>
+  );
+};
 
 
 

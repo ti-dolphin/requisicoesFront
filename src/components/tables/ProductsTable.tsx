@@ -75,10 +75,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
     }
   };
 
-  // const performUpdateItemCallout = async( ) => { 
-  //   const response = await updateRequisitionItemProduct();
-  //   console.log('update');
-  // }
+
 
   const performPostItemCallout = async (id: string, value: string) => {
     const requestBody = [];

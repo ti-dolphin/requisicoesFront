@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Item,
   deleteRequisitionItem,
@@ -29,10 +29,21 @@ import ItemFilesModal from "../modals/ItemFilesModal";
 import { ItemsContext } from "../../context/ItemsContext";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ItemActions from "./ItemActions";
+// import { userContext } from "../../context/userContext";
 
 const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
   items,
+  currentStatus
+
 }) => {
+
+ 
+  const [editItemsAllowed, setEditItemsAllowed] = useState<boolean>(currentStatus === 'Em edição' ? true : false);
+  const [editItemsNotAllowedAlert, setEditItemsNotAllowedAlert] = useState(false);
+  useEffect(() => {
+    setEditItemsAllowed(currentStatus === "Em edição" ? true : false);
+  }, [currentStatus]);
+
   const columns = ["Materiais / Serviços", "Codigo", "OC", "Quantidade"];
   const {
     editing,
@@ -48,18 +59,30 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
   } = useContext(ItemsContext);
 
   const [copiedAlert ,setCopiedAlert] = useState<boolean>(false);
-
+  const displayAlert = ( ) => { 
+    setTimeout(( ) =>  { 
+      setEditItemsNotAllowedAlert(false);
+    }, 3 * 1000);
+    console.log('alert false')
+    setEditItemsNotAllowedAlert(true);
+  }
   const handleDelete = async (requisitionItems: Item[]) => {
-    try {
-     const deletePromises = requisitionItems.map((item) =>
-       deleteRequisitionItem(Number(item.ID_PRODUTO), item.ID_REQUISICAO)
-     );
-     await Promise.all(deletePromises);
-    } catch (e) {
-      console.log("erro delete item: ", e);
-    }
+
+   if(editItemsAllowed) {
+     try {
+       const deletePromises = requisitionItems.map((item) =>
+         deleteRequisitionItem(Number(item.ID_PRODUTO), item.ID_REQUISICAO)
+       );
+       await Promise.all(deletePromises);
+     } catch (e) {
+       console.log("erro delete item: ", e);
+     }
+     toggleDeleting();
+     toggleRefreshItems();
+     return;
+   }
     toggleDeleting();
-    toggleRefreshItems();
+    displayAlert();
   };
 
   const handleSave = async () => {
@@ -183,13 +206,29 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
   return (
     // <div  className="border w-full p-2 overflow-auto overflow-y-scroll border-blue-100 flex flex-col items-center">
     <Box sx={{ width: "100%", height: "100%" }}>
+      {editItemsNotAllowedAlert && (
+        <Alert
+          sx={{
+            position: "absolute",
+            top: "20%",
+            right: "40%",
+            left: "40%",
+            boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;",
+            animation: "-moz-initial",
+          }}
+          variant="filled"
+          severity="warning"
+        >
+          Só é possível editar items quanado o Status é 'Em edição'
+        </Alert>
+      )}
       {copiedAlert && (
         <Alert
           sx={{
             position: "absolute",
             top: "10%",
             right: "45%",
-            transition: 'ease-in-out',
+            transition: "ease-in-out",
           }}
           variant="filled"
           severity="success"
@@ -210,7 +249,6 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
                 <TableCell align="left">
                   {column === "Quantidade" ? (
                     <Stack
-                      
                       direction="row"
                       alignItems="center"
                       justifyContent="space-between"
@@ -245,8 +283,13 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
                 }}
               >
                 <TableCell align="left">
-                  <Stack height="fit-content" direction={{xs: 'column', md: 'column'}} alignItems="start" spacing={0.5}>
-                    <Stack  direction="row" alignItems="center">
+                  <Stack
+                    height="fit-content"
+                    direction={{ xs: "column", md: "column" }}
+                    alignItems="start"
+                    spacing={0.5}
+                  >
+                    <Stack direction="row" alignItems="center">
                       <Typography
                         sx={{
                           fontSize: {
@@ -257,7 +300,13 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
                       >
                         {item.nome_fantasia}
                       </Typography>
-                      <IconButton onClick={() => toggleChanging(item)}>
+                      <IconButton
+                        onClick={() =>
+                          editItemsAllowed
+                            ? toggleChanging(item)
+                            : displayAlert()
+                        }
+                      >
                         <ArrowDropDownIcon />
                       </IconButton>
                     </Stack>
@@ -266,7 +315,13 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
                       spacing={1}
                       sx={{ flexWrap: "nowrap" }}
                     >
-                      <Button onClick={() => toggleEditingObservation(item)}>
+                      <Button
+                        onClick={() =>
+                          editItemsAllowed
+                            ? toggleEditingObservation(item)
+                            : displayAlert()
+                        }
+                      >
                         <Typography
                           sx={{
                             fontSize: "11px",
@@ -280,7 +335,11 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
                             : "Observação"}
                         </Typography>
                       </Button>
-                      <ItemFilesModal itemID={item.ID} />
+                      <ItemFilesModal
+                        displayAlert={displayAlert}
+                        editItemsAllowed={editItemsAllowed}
+                        itemID={item.ID}
+                      />
                     </Stack>
                   </Stack>
                 </TableCell>
@@ -290,6 +349,9 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
                 <TableCell align="left">
                   <Stack direction="row">
                     <input
+                      onKeyDown={(e) => {
+                        e.key === "Enter" && handleSave();
+                      }}
                       id="OC"
                       onChange={(e) => handleChange(e)}
                       style={{
@@ -314,10 +376,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
                 </TableCell>
 
                 <TableCell align="left">
-                  <Stack
-                    justifyContent="space-between"
-                    direction="row"
-                  >
+                  <Stack justifyContent="space-between" direction="row">
                     <input
                       id="QUANTIDADE"
                       onChange={(e) => handleChange(e)}
@@ -332,6 +391,9 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
                             ? "1px solid blue"
                             : "none",
                       }}
+                      onKeyDown={(e) => {
+                        e.key === "Enter" && handleSave();
+                      }}
                       type="text"
                       disabled={!(editing[0] && editing[1]?.ID === item.ID)}
                       autoFocus
@@ -344,7 +406,9 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
                     <IconButton
                       id={String(item.ID)}
                       className="delete hover:bg-slate-300 rounded-sm p-[0.5]"
-                      onClick={() => toggleEditing(item)}
+                      onClick={() => {
+                        editItemsAllowed ? toggleEditing(item) : displayAlert();
+                      }}
                     >
                       <EditIcon
                         className={

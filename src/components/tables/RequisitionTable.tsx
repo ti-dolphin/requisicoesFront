@@ -227,15 +227,13 @@ export default function EnhancedTable() {
  
   const defineDefaultKanbanFilter = ( ) =>  {
     console.log('user: ', user);
-    if(user?.CODGERENTE && user?.CODGERENTE > 0){ 
-      changeKanbanFilter({ label: "Backlog" }); //GERENTE
+    if(user?.PERM_COMPRADOR){  // COMPRAS
+      changeKanbanFilter({label: 'A Fazer'});
+      return;
     }
-    else if(user?.PERM_COMPRADOR){ 
-      changeKanbanFilter({label: 'A Fazer'}); //COMPRADOR 
-    }else{ 
-      changeKanbanFilter({ label: "Backlog" });
-    }
+    changeKanbanFilter({ label: "Backlog" });
   }
+  
   useEffect(( )=> { 
     defineDefaultKanbanFilter();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -400,7 +398,7 @@ export default function EnhancedTable() {
                         onClick={(event) =>
                         handleClick(event, Number(row.ID_REQUISICAO))}
                        align="right" sx={{textTransform: 'lowercase'}}>
-                        <Typography>{row.RESPONSAVEL}</Typography>
+                        <Typography>{row.NOME}</Typography>
                       </TableCell>
 
                       <TableCell 

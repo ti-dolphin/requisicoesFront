@@ -46,7 +46,7 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
       >
         <Box sx={{ ...style, width: "95vw", height: "98vh" }}>
           <Button
-            sx={{color: 'red', position: 'absolute', right: '2rem', top: '1rem', zIndex: 2}}
+            sx={{color: 'red', position: 'absolute', right: '0.5rem', top: '0.5rem', zIndex: 2}}
             onClick={() => handleCloseAll()}><CloseIcon  />
             </Button>
           <Stack sx={{ border: '1px solid gray', height: '100%', overflowY : 'auto', width: '100%'}} direction="column">

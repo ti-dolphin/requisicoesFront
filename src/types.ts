@@ -10,6 +10,7 @@ export interface Requisition {
   ID_PROJETO: number;
   DESCRICAO: string;
   RESPONSAVEL: string;
+  NOME : string;
   LAST_UPDATE_ON: string | number;
   CREATED_ON: string | number;
 }
@@ -180,4 +181,5 @@ export interface AddedItemsModalProps {
 
 export interface requisitionItemsTableProps { 
     items : Item[];
+    currentStatus? : string;
 }

@@ -53,22 +53,17 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 const filterAvailableByUser = {
-  compras: [
+  purchaser: [
    'A Fazer',
    'Fazendo',
    'Concluído',
    'Tudo'
   ],
-  gerente: [
-    'Backlog',
-    'Acompanhamento',
-    'Tudo'
-  ],
-  requisitante: [
-    'Backlog',
-    'Acompanhamento',
-    'Tudo'
-  ]
+ nonPurchaser : [
+  'Backlog',
+  'Acompanhamento',
+  'Tudo'
+ ]
 };
 
 const SearchAppBar: React.FC<SearchAppBarProps> = ({
@@ -83,17 +78,16 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
   const [availableKanbanFilters, setAvailableKanbanFilter ] = useState<string[]>([]);
   const defineAvailableKanbanFilters = ( ) =>  {
     console.log('user: ', user)
-    if( user?.CODGERENTE ) { 
-        setAvailableKanbanFilter([...filterAvailableByUser.gerente]);
-    }else if( user?.PERM_COMPRADOR && user?.PERM_COMPRADOR > 0){ 
-      setAvailableKanbanFilter([...filterAvailableByUser.compras]);
-    }else{ 
-      setAvailableKanbanFilter([...filterAvailableByUser.requisitante]);
+    if( user?.PERM_COMPRADOR && user?.PERM_COMPRADOR > 0){ 
+      setAvailableKanbanFilter([...filterAvailableByUser.purchaser]);
+      return;
     }
+    setAvailableKanbanFilter([...filterAvailableByUser.nonPurchaser])
   }
 
   useEffect(() => {
     defineAvailableKanbanFilters();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChangeKanbanFilter = (e: React.MouseEvent<HTMLButtonElement>) => {

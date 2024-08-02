@@ -33,10 +33,12 @@ const RequisitionDetail: React.FC = () => {
   const { refreshItems, adding, toggleAdding } = useContext(ItemsContext);
   const { logedIn } = useContext(userContext);
   const navigate = useNavigate();
+  
   const fetchRequisitionData = async () => {
     const data = await fetchRequsitionById(Number(id));
     if (data) {
       const personData = await fetchPersonById(data.ID_RESPONSAVEL);
+      console.log('personData: ', personData);
       if (personData) {
         setRequisitionData({ ...data, ['RESPONSAVEL']: personData?.NOME });
       }
@@ -82,12 +84,11 @@ const RequisitionDetail: React.FC = () => {
     )
   }
 
-
   const handleSave = async() => {
       seteditingField({...editingField, isEditing : false });
       requisitionData && await updateRequisition(requisitionData);
       toggleRefreshRequisition();
-    }
+  }
 
   const fields = [
     { label: "Descrição", key: "DESCRIPTION" },
@@ -270,7 +271,8 @@ const RequisitionDetail: React.FC = () => {
         }}>
           {
               <RequisitionItemsTable
-                items={requisitionItems} />           
+                items={requisitionItems}
+                currentStatus = { requisitionData?.STATUS} />           
           }
         </Box>
 
