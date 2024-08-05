@@ -52,43 +52,52 @@ const ItemObservationModal = () => {
      }
     }
     return (
-        <Box>
-            <Modal
-                open={editingObservation[0]}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >   
-                <Box sx={style} >
-                    <IconButton
-                        onClick={() => toggleEditingObservation()}
-                        sx={{position: 'absolute', top: '1rem', right: '1rem'}}>
-                        <CloseIcon sx={{color: 'red'}}/>
-                    </IconButton>
-                   <Typography align='left' id="modal-modal-title" variant="h6" component="h2">
-                        Observação
-                    </Typography> 
-                    <Stack direction="row" spacing={2}>
-                        <textarea
-                            style={{ 
-                                border: '1px solid',
-                                width: '90%'
-                            }}
-                            value={editingObservation[1]?.OBSERVACAO}
-                            onChange={handleChange}
-                            disabled={!editingObservation[0]}
-                            autoFocus={editingObservation[0]}
-                        />
-                    </Stack>
-                    { 
-                        editingObservation[0] &&
-                         <Button
-                             onClick={handleSave}
-                             sx={{alignSelf : 'start'}}>SALVAR</Button>
-                    }
-                </Box>
-            </Modal>
-        </Box>
+      <Box>
+        <Modal
+          open={editingObservation[0]}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <IconButton
+              onClick={() => toggleEditingObservation()}
+              sx={{ position: "absolute", top: "1rem", right: "1rem" }}
+            >
+              <CloseIcon sx={{ color: "red" }} />
+            </IconButton>
+            <Typography
+              align="left"
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+            >
+              Observação
+            </Typography>
+            <Stack direction="row" spacing={2}>
+              <textarea
+                style={{
+                  border: "1px solid",
+                  width: "90%",
+                }}
+                value={
+                  editingObservation[1]?.OBSERVACAO === "null"
+                    ? ""
+                    : editingObservation[1]?.OBSERVACAO
+                }
+                onChange={handleChange}
+                disabled={!editingObservation[0]}
+                autoFocus={editingObservation[0]}
+              />
+            </Stack>
+            {editingObservation[0] && (
+              <Button onClick={handleSave} sx={{ alignSelf: "start" }}>
+                SALVAR
+              </Button>
+            )}
+          </Box>
+        </Modal>
+      </Box>
     );
 }
 export default ItemObservationModal;

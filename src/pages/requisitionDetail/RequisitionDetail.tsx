@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import HorizontalLinearStepper from "./components/Stepper";
 import {
+  Alert,
   Badge,
   BadgeProps,
   IconButton,
@@ -32,10 +33,14 @@ import { RequisitionContext } from "../../context/RequisitionContext";
 import { ItemsContext } from "../../context/ItemsContext";
 import { useContext } from "react";
 import { userContext } from "../../context/userContext";
+
+
 const RequisitionDetail: React.FC = () => {
   const { id } = useParams();
   const [requisitionData, setRequisitionData] = useState<Requisition>();
   const [requisitionItems, setRequisitionItems] = useState<Item[]>([]);
+  const [editionNotAllowedAlert, setEditionNotAllowedAlert] = useState<boolean>(false);
+
   const {
     editingField,
     handleChangeEditingField,
@@ -44,6 +49,7 @@ const RequisitionDetail: React.FC = () => {
     toggleRefreshRequisition,
   } = useContext(RequisitionContext);
   const { refreshItems, adding, toggleAdding } = useContext(ItemsContext);
+  const { activeStep } = useContext(RequisitionContext);
   const { logedIn, user } = useContext(userContext);
   const navigate = useNavigate();
 
@@ -83,8 +89,20 @@ const RequisitionDetail: React.FC = () => {
   }, [refreshItems, adding]);
 
   const handleOpen = (e: React.MouseEvent) => {
-    e.preventDefault();
-    toggleAdding();
+    if (activeStep && activeStep > 0) {
+      displayAlert();
+      return;
+    }
+      e.preventDefault();
+      toggleAdding();
+  };  
+
+  const displayAlert = () => {
+    setTimeout(() => {
+      setEditionNotAllowedAlert(false);
+    }, 3 * 1000);
+    console.log("alert false");
+    setEditionNotAllowedAlert(true);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -113,11 +131,13 @@ const RequisitionDetail: React.FC = () => {
     { label: "Ultima atualização", key: "LAST_UPDATE_ON" },
     { label: "Data de Criação", key: "CREATED_ON" },
   ];
+
   const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
     "& .MuiBadge-badge": {
       ...theme,
     },
   }));
+
   const dateRenderer = (value?: string | number) => {
     if (typeof value === "string") {
       const date = value.substring(0, 10).replace(/-/g, "/");
@@ -126,9 +146,11 @@ const RequisitionDetail: React.FC = () => {
       return formatted;
     }
   };
+
   const handleNavigateHome = () => {
     navigate("/requisitions");
   };
+
   return (
     <Box
       sx={{
@@ -139,6 +161,22 @@ const RequisitionDetail: React.FC = () => {
         margin: "auto",
       }}
     >
+      {editionNotAllowedAlert && (
+        <Alert
+          variant="filled"
+          className="drop-shadow-lg"
+          severity="warning"
+          sx={{
+            top: "10%",
+            width: "400px",
+            position: "absolute",
+            left: "50%",
+            marginLeft: "-200px",
+          }}
+        >
+          Edição só é poossível quando Status é "Em edição"
+        </Alert>
+      )}
       <Box sx={{ padding: "1rem", display: "flex", alignItems: "center" }}>
         <IconButton onClick={() => handleNavigateHome()}>
           <ArrowCircleLeftIcon />

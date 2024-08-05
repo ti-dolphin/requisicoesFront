@@ -21,35 +21,54 @@ import { useState } from 'react';
 import DeleteRequisitionFileModal from './warnings/DeleteRequisitionFileModal';
 import { OpenFileModalProps } from '../../types';
 import CloseIcon from '@mui/icons-material/Close';
+import { RequisitionContext } from '../../context/RequisitionContext';
 const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 600,
-    height: 500,
-    overflowY: 'auto',
-    bgcolor: 'background.paper',
-    border: '1px solid #000',
-    padding: '1rem',
-    boxShadow: 24,
-    p: 4,
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: {
+    xs: "90%",
+    sm: "80%",
+    md: "70%",
+    lg: "40%",
+    xl: "30%",
+  },
+  overflowY: "auto",
+  maxHeight: 400,
+  bgcolor: "background.paper",
+  display: "flex",
+  flexDirection: "column",
+  gap: "1rem",
+  boxShadow: 24,
+  p: 4,
 };
 
 const styleInputlink = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    boxShadow: 24,
-    p: 4,
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: {
+    xs: "90%",
+    sm: "80%",
+    md: "70%",
+    lg: "40%",
+    xl: "30%",
+  },
+  overflowY: "auto",
+  maxHeight: 400,
+  bgcolor: "background.paper",
+  display: "flex",
+  flexDirection: "column",
+  gap: "1rem",
+  boxShadow: 24,
+  p: 4,
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const OpenFileModal = ({ ID_REQUISICAO }: OpenFileModalProps) => {
-
+    const { activeStep } = React.useContext(RequisitionContext);
     const [requisitionFiles, setRequisitionFiles] = useState<anexoRequisicao[]>([]);
     const [open, setOpen] = React.useState(false);
     const [refreshToggler, setRefreshToggler ] = useState(false);
@@ -100,88 +119,114 @@ const OpenFileModal = ({ ID_REQUISICAO }: OpenFileModalProps) => {
         },
     }));
     return (
-        <div>
-            
-            <IconButton
-                sx={{ border: 'none', height: '30px', borderRadius: '0px', display: 'flex', alignItems: 'center', alignSelf: 'center', gap: '0.5rem' }}
-             onClick={handleOpen}>
-                <a className='text-[16px] text-blue-700 hover:text-blue-400 underline'>Anexos</a>
-                <StyledBadge badgeContent={requisitionFiles.length} color="secondary">
-                    <AttachFileIcon />
-                </StyledBadge>
-            </IconButton>
-            <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
+      <div>
+        <IconButton
+          sx={{
+            border: "none",
+            height: "30px",
+            borderRadius: "0px",
+            display: "flex",
+            alignItems: "center",
+            alignSelf: "center",
+            gap: "0.5rem",
+          }}
+          onClick={handleOpen}
+        >
+          <a className="text-[16px] text-blue-700 hover:text-blue-400 underline">
+            Anexos
+          </a>
+          <StyledBadge badgeContent={requisitionFiles.length} color="secondary">
+            <AttachFileIcon />
+          </StyledBadge>
+        </IconButton>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <button
+              onClick={handleClose}
+              style={{
+                color: "red",
+                position: "absolute",
+                right: "1rem",
+                top: "1rem",
+              }}
             >
-                <Box sx={style}>
-                    <button 
-                        onClick={handleClose}
-                        style={{
-                            color: 'red',
-                            position: 'absolute', right: '1rem', top: '1rem'}}><CloseIcon />
-                    </button>
-                  
-                    <Stack direction="column" spacing={2}>
-                        <Typography
+              <CloseIcon />
+            </button>
+
+            <Stack direction="column" spacing={2}>
+              <Typography
+                color="primary"
+                textAlign="center"
+                id="modal-modal-title"
+                variant="h6"
+                component="h2"
+              >
+                Anexos da Requisição
+              </Typography>
+              <Stack justifyContent="center" direction="row" spacing={2}>
+                {activeStep !== undefined && activeStep < 1 && (
+                  <>
+                    <InputFile
+                      id={ID_REQUISICAO}
+                      setRefreshToggler={setRefreshToggler}
+                      refreshToggler={refreshToggler}
+                    />
+                    <Button
+                      sx={{
+                        "&:active": {
+                          backgroundColor: "transparent", // Altere a cor de fundo ao clicar
+                        },
+                      }}
+                      onClick={handleOpenInputLink}
+                      variant="outlined"
+                    >
+                      Anexar Link
+                    </Button>
+                  </>
+                )}
+
+                <Modal
+                  open={isInputLinkOpen}
+                  onClose={handleCloseInputLink}
+                  aria-labelledby="modal-modal-title"
+                  aria-describedby="modal-modal-description"
+                >
+                  <Box sx={styleInputlink}>
+                    <Stack direction="column" spacing={1}>
+                      <Typography
                         color="primary"
-                         textAlign="center" id="modal-modal-title" variant="h6" component="h2">
-                            Anexos da Requisição
-                        </Typography>
-                        <Stack
-                            justifyContent="center"
-                             direction="row" spacing={2}>
-                            <InputFile
-                                id={ID_REQUISICAO}
-                                setRefreshToggler={setRefreshToggler}
-                                refreshToggler={refreshToggler} />
-                            <Button
-                                sx={{
-                                    '&:active': {
-                                        backgroundColor: 'transparent', // Altere a cor de fundo ao clicar
-                                    }
-                                }}
-                                onClick={handleOpenInputLink}
-                                variant='outlined'>Anexar Link
-                            </Button>
-                            <Modal
-                                open={isInputLinkOpen}
-                                onClose={handleCloseInputLink}
-                                aria-labelledby="modal-modal-title"
-                                aria-describedby="modal-modal-description"
-                            >
-                                <Box sx={styleInputlink}>
-                                    <Stack direction="column" spacing={1}>
-                                        <Typography color="primary" id="modal-modal-title" variant="h6" component="h2">
-                                            Insira o link
-                                        </Typography>
-                                        <input
-                                            className='border border-blue-700 rounded-sm outline-none'
-                                            value={inputlinkValue}
-                                            onChange={handleInputlinkChange}
-                                            onKeyDown={handleSaveLink}
-                                        />
-                                    </Stack>
-
-                                </Box>
-                            </Modal>
-                        </Stack>
-                        {
-                            requisitionFiles.length > 0 &&
-                            <InteractiveList 
-                                files={requisitionFiles}
-                                refreshToggler={refreshToggler}
-                                 setRefreshToggler={setRefreshToggler}
-                                 />
-
-                        }
+                        id="modal-modal-title"
+                        variant="h6"
+                        component="h2"
+                      >
+                        Insira o link
+                      </Typography>
+                      <input
+                        className="border border-blue-700 rounded-sm outline-none"
+                        value={inputlinkValue}
+                        onChange={handleInputlinkChange}
+                        onKeyDown={handleSaveLink}
+                      />
                     </Stack>
-
-                </Box>
-            </Modal>
-        </div>
+                  </Box>
+                </Modal>
+              </Stack>
+              {requisitionFiles.length > 0 && (
+                <InteractiveList
+                  files={requisitionFiles}
+                  refreshToggler={refreshToggler}
+                  setRefreshToggler={setRefreshToggler}
+                />
+              )}
+            </Stack>
+          </Box>
+        </Modal>
+      </div>
     );
 }
 
@@ -224,11 +269,11 @@ function InteractiveList({ files, setRefreshToggler, refreshToggler }: Interacti
                                             download
                                         >
                                             <FolderIcon />
-
                                         </a>
                                     </Avatar>
                                 </ListItemAvatar>
-                                <a
+                                <a 
+                                    style={{overflowX: 'hidden'}}
                                     href={item.arquivo}
                                     target='blank'
                                     download

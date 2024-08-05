@@ -11,6 +11,8 @@ interface RequisitionContextType {
     currentKanbanFilter?: {
         label: string;
     };
+    activeStep?: number;
+    changeActiveStep : (value: number) => void;
     handleChangeEditingField: (item: Field) => void;
     seteditingField: (value: { isEditing: boolean; field: Field }) => void;
     toggleRefreshRequisition: () => void;
@@ -25,14 +27,15 @@ interface RequisitionContextProviderProps {
 
 //===========================================================================
 export const RequisitionContext = createContext<RequisitionContextType>({
-    creating: false,
-    editingField: { isEditing: false, field: { label: "", key: "" } },
-    refreshRequisition: false,
-    handleChangeEditingField: () => { },
-    seteditingField: () => { },
-    toggleRefreshRequisition: () => { },
-    toggleCreating: () => { },
-    changeKanbanFilter: () => { }
+  creating: false,
+  editingField: { isEditing: false, field: { label: "", key: "" } },
+  refreshRequisition: false,
+  changeActiveStep: () => {},
+  handleChangeEditingField: () => {},
+  seteditingField: () => {},
+  toggleRefreshRequisition: () => {},
+  toggleCreating: () => {},
+  changeKanbanFilter: () => {},
 });
 
 export const RequisitionContextProvider = ({
@@ -44,10 +47,14 @@ export const RequisitionContextProvider = ({
     }>({ isEditing: false, field: { label: "", key: "" } });
     const [refreshRequisition, setRefreshRequisition] = useState<boolean>(false);
     const [creating, setCreating] = useState<boolean>(false);
+    const [activeStep, setActiveStep ] = useState<number | undefined>();
     const [currentKanbanFilter, setCurrentKanbanFilter] = useState<{
         label: string;
     }>();
 
+    const changeActiveStep = (value : number ) =>  { 
+        setActiveStep(value);
+    };
     const changeKanbanFilter = (filter: {
         label: string;
     }) => {
@@ -67,20 +74,22 @@ export const RequisitionContextProvider = ({
     };
 
     return (
-        <RequisitionContext.Provider
-            value={{
-                editingField,
-                refreshRequisition,
-                creating,
-                currentKanbanFilter,
-                handleChangeEditingField,
-                seteditingField,
-                toggleRefreshRequisition,
-                toggleCreating,
-                changeKanbanFilter,
-            }}
-        >
-            {children}
-        </RequisitionContext.Provider>
+      <RequisitionContext.Provider
+        value={{
+          editingField,
+          refreshRequisition,
+          creating,
+          currentKanbanFilter,
+          handleChangeEditingField,
+          seteditingField,
+          toggleRefreshRequisition,
+          toggleCreating,
+          changeKanbanFilter,
+          activeStep,
+          changeActiveStep,
+        }}
+      >
+        {children}
+      </RequisitionContext.Provider>
     );
 };

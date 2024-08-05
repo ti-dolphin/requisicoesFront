@@ -208,18 +208,18 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
     <Box sx={{ width: "100%", height: "100%" }}>
       {editItemsNotAllowedAlert && (
         <Alert
+          className="drop-shadow-lg"
           sx={{
+            top: '10%',
+            width: "400px",
             position: "absolute",
-            top: "20%",
-            right: "40%",
-            left: "40%",
-            boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;",
-            animation: "-moz-initial",
+            left: "50%",
+            marginLeft: "-200px",
           }}
           variant="filled"
           severity="warning"
         >
-          Só é possível editar items quanado o Status é 'Em edição'
+          Só é possível editar items quando o Status é 'Em edição'
         </Alert>
       )}
       {copiedAlert && (

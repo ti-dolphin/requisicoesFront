@@ -10,13 +10,13 @@ import { useContext } from "react";
 import { useState } from "react";
 import { RequisitionContext } from "../../../context/RequisitionContext";
 import { userContext } from "../../../context/userContext";
+import { Alert } from "@mui/material";
 
 const steps = [
   "Em edição",
   "Requisitado",
   "Em cotação",
   "Cotado",
-  "Comprar",
   "Concluído"
 ];
 interface props{ 
@@ -27,14 +27,30 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData, setRequisit
 
   const { user } = useContext(userContext);
 
-  const {toggleRefreshRequisition} = useContext(RequisitionContext);
+  const {toggleRefreshRequisition, changeActiveStep} = useContext(RequisitionContext);
 
   const [requisition, setRequisition ] = useState(requisitionData);
 
+  const [nonPurchaserAlert, toggleNonPurchaserAlert] = useState<boolean>(false);
+
   const [activeStep, setActiveStep] = useState(
-     steps.indexOf(requisitionData.STATUS) === steps.length - 1 ?
-     steps.length : steps.indexOf(requisitionData.STATUS)
+    steps.indexOf(requisitionData.STATUS) === steps.length - 1
+      ? steps.length
+      : steps.indexOf(requisitionData.STATUS)
   );
+
+  React.useEffect(() =>  {
+    changeActiveStep(activeStep);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeStep]);
+  
+   const displayAlert = () => {
+     setTimeout(() => {
+       toggleNonPurchaserAlert(false);
+     }, 3 * 1000);
+     toggleNonPurchaserAlert(true);
+   };
+
   const [skipped] = React.useState(new Set<number>());
 
   const isStepOptional = (step: number) => {
@@ -43,31 +59,23 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData, setRequisit
   const isStepSkipped = (step: number) => {
     return skipped.has(step);
   };
+
   const handleNext = async () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    const nextStep = activeStep + 1;
-    if (nextStep < steps.length){ 
-    const editedRequisition = { ...requisition, ['STATUS']: steps[activeStep + 1] }
-    setRequisition(editedRequisition);
-      if(user){ 
-          try {
-            await updateRequisition(user.CODPESSOA, editedRequisition);
-            setRequisition(editedRequisition);
-            setRequisitionData(editedRequisition);
-            toggleRefreshRequisition();
-          } catch (e) {
-            console.log(e);
-          }
-      }
+    const isPurchaser = user?.PERM_COMPRADOR;
+    if(!isPurchaser && activeStep > 0) { 
+      displayAlert();
+      return;
     }
-  };
-
-  const handleBack = async () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    const editedRequisition = {...requisition, ['STATUS'] : steps[activeStep - 1]}
-
-    setRequisition(editedRequisition);
-        if(user){ 
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      const nextStep = activeStep + 1;
+      changeActiveStep(nextStep)
+      if (nextStep < steps.length) {
+        const editedRequisition = {
+          ...requisition,
+          ["STATUS"]: steps[activeStep + 1],
+        };
+        setRequisition(editedRequisition);
+        if (user) {
           try {
             await updateRequisition(user.CODPESSOA, editedRequisition);
             setRequisition(editedRequisition);
@@ -77,14 +85,57 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData, setRequisit
             console.log(e);
           }
         }
+      }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleBack = async () => {
+    const isPurchaser = user?.PERM_COMPRADOR;
+   if(isPurchaser){ 
+       setActiveStep((prevActiveStep) => prevActiveStep - 1);
+       const previousStep = activeStep - 1;
+       changeActiveStep(previousStep);
+       const editedRequisition = {
+         ...requisition,
+         ["STATUS"]: steps[activeStep - 1],
+       };
+       setRequisition(editedRequisition);
+       if (user) {
+         try {
+           await updateRequisition(user.CODPESSOA, editedRequisition);
+           setRequisition(editedRequisition);
+           setRequisitionData(editedRequisition);
+           toggleRefreshRequisition();
+         } catch (e) {
+           console.log(e);
+         }
+       }
+   }
+   else{ 
+     displayAlert();
+   }
+  };
+
+   //eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 
   return (
-    <Box sx={{ width: "100%", paddingX: '0.5rem' }}>
-      <Stepper sx={{ flexWrap: 'wrap', gap: '0.5rem'}} activeStep={activeStep}>
+    <Box sx={{ width: "100%", paddingX: "0.5rem" }}>
+      {nonPurchaserAlert && (
+        <Alert
+          variant="filled"
+          className="drop-shadow-lg"
+          severity="warning"
+          sx={{
+            width: "400px",
+            position: "absolute",
+            left: "50%",
+            marginLeft: "-200px",
+          }}
+        >
+          Você não tem permissão para alterar Status
+        </Alert>
+      )}
+      <Stepper sx={{ flexWrap: "wrap", gap: "0.5rem" }} activeStep={activeStep}>
         {steps.map((label, index) => {
           const stepProps: { completed?: boolean } = {};
           const labelProps: {
@@ -104,20 +155,17 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData, setRequisit
             </Step>
           );
         })}
-      </Stepper>            
+      </Stepper>
       {activeStep === steps.length ? (
         <React.Fragment>
-          <Typography sx={{ mt: 2, mb: 1 }}>
-            Requisição tratada!
-          </Typography>
+          <Typography sx={{ mt: 2, mb: 1 }}>Requisição tratada!</Typography>
           <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
             <Box sx={{ flex: "1 1 auto" }} />
-            
           </Box>
         </React.Fragment>
       ) : (
         <React.Fragment>
-          <Box sx={{ display: "flex", flexDirection: "row", pt: 2}}>
+          <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
             <Button
               color="inherit"
               disabled={activeStep === 0}
@@ -128,26 +176,9 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData, setRequisit
             </Button>
             <Box sx={{ flex: "1 1 auto" }} />
 
-            <Button onClick={  handleNext }>
+            <Button onClick={handleNext}>
               {activeStep === steps.length - 1 ? "Finalizar" : "Avançar"}
             </Button>
-             {/* <Modal
-              open={isChangeStatusModalOpen}
-             >
-              <Box sx={{
-                      position: 'absolute',
-                      top: '50%',
-                      left: '50%',
-                      transform: 'translate(-50%, -50%)',
-                      width: 400,
-                      bgcolor: 'background.paper',
-                      border: '2px solid #000',
-                      boxShadow: 24,
-                      p: 4,
-                  }}>
-
-              </Box>
-             </Modal> */}
           </Box>
         </React.Fragment>
       )}
