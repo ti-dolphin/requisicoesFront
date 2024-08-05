@@ -1,10 +1,12 @@
 import { Box, Button, Modal, Stack, Typography } from "@mui/material";
-import { ProductsTableModalProps } from "../../types";
+import { ProductsTableModalProps, Requisition } from "../../types";
 import ProductsTable from "../tables/ProductsTable";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
 import { ItemsContext } from "../../context/ItemsContext";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { RequisitionContext } from "../../context/RequisitionContext";
+import { useNavigate } from "react-router-dom";
+import { fetchRequsitionById, fetchPersonById } from "../../utils";
 const style = {
   position: "absolute" as const,
   top: "50%",
@@ -20,23 +22,40 @@ const style = {
 
 export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
   requisitionID,
-  info
 }) => {
-  const {adding, toggleAdding, changing, toggleChanging}  = useContext(ItemsContext);
+  const { adding, toggleAdding, changing, toggleChanging } = useContext(ItemsContext);
   const { toggleCreating, creating, toggleRefreshRequisition } = useContext(RequisitionContext);
+  const navigate = useNavigate();
+  const [requisitionData, setRequisitionData] = useState<Requisition>();
 
-  const handleCloseAll = ( ) =>  {
-    if(adding && creating){ 
-        toggleCreating();
-        toggleAdding();
-    }else if( adding ){ 
+  const fetchRequisitionData = async () => {
+    const data = await fetchRequsitionById(Number(requisitionID));
+    if (data) {
+      const personData = await fetchPersonById(data.ID_RESPONSAVEL);
+      console.log("personData: ", personData);
+      if (personData) {
+        setRequisitionData({ ...data, ["RESPONSAVEL"]: personData?.NOME });
+      }
+    }
+  };
+  useEffect(() =>  {
+    fetchRequisitionData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleCloseAll = () => {
+    if (adding && creating) {
+      toggleCreating();
       toggleAdding();
-    }else{ 
+      navigate("/requisitions/requisitionDetail/" + requisitionID);
+    } else if (adding) {
+      toggleAdding();
+    } else {
       toggleChanging();
     }
     toggleRefreshRequisition();
-  }
- 
+  };
+
   return (
     <>
       <Modal
@@ -55,7 +74,12 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
             spacing={1}
             direction="column"
           >
-            <Stack direction="row" paddingLeft="1rem" justifyContent="space-between" alignItems="center">
+            <Stack
+              direction="row"
+              paddingLeft="1rem"
+              justifyContent="space-between"
+              alignItems="center"
+            >
               <Typography
                 textAlign="center"
                 sx={{
@@ -68,7 +92,7 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
                   },
                 }}
               >
-                {info}
+                {`Nº ${requisitionData?.ID_REQUISICAO} | ${requisitionData?.DESCRIPTION} | Projeto ${requisitionData?.DESCRICAO}`}
               </Typography>
               <Button
                 sx={{

@@ -63,6 +63,7 @@ const RequisitionDetail: React.FC = () => {
       }
     }
   };
+
   const fetchItemsData = async () => {
     const itemsData = await fetchItems(Number(id));
     if (itemsData) {
@@ -105,7 +106,7 @@ const RequisitionDetail: React.FC = () => {
     setEditionNotAllowedAlert(true);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { value, id } = e.target;
     requisitionData &&
       setRequisitionData({
@@ -146,6 +147,17 @@ const RequisitionDetail: React.FC = () => {
       return formatted;
     }
   };
+
+  const valueRenderer = (item : { label: string; key : string}) =>  { 
+    if(requisitionData){ 
+      const currentFieldValue = requisitionData[item.key as keyof Requisition];
+      if (item.key === "LAST_UPDATE_ON" || item.key === "CREATED_ON") {
+        return dateRenderer(currentFieldValue);
+      } else  { 
+        return currentFieldValue !== 'null' ? currentFieldValue : ''
+      }
+    }
+  }
 
   const handleNavigateHome = () => {
     navigate("/requisitions");
@@ -254,7 +266,7 @@ const RequisitionDetail: React.FC = () => {
             width: {
               xs: "100%",
               md: "50%",
-              lg: "30%",
+              lg: "20%",
             },
             display: "flex",
             justifyContent: "space-around",
@@ -293,20 +305,11 @@ const RequisitionDetail: React.FC = () => {
                           }
                     }
                   >
-                    <input
+                    <textarea
                       id={item.key}
                       className="w-full bg-white text-xs focus:outline-none"
-                      type="text"
                       disabled={!editingField.isEditing}
-                      value={
-                        requisitionData &&
-                        (item.key === "LAST_UPDATE_ON" ||
-                        item.key === "CREATED_ON"
-                          ? dateRenderer(
-                              requisitionData[item.key as keyof Requisition]
-                            )
-                          : requisitionData[item.key as keyof Requisition])
-                      }
+                      value={valueRenderer(item)}
                       onChange={handleChange}
                       autoFocus={editingField.isEditing}
                     />
@@ -347,7 +350,7 @@ const RequisitionDetail: React.FC = () => {
             width: {
               xs: "100%",
               md: "50%",
-              lg: "70%",
+              lg: "80%",
             },
             height: {
               lg: "100%",

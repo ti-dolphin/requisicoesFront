@@ -1,3 +1,4 @@
+/* eslint-disable no-irregular-whitespace */
 import {
   Box,
   Button,
@@ -9,16 +10,40 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import logoUrl from '../../assets/logodolphin.jpg';
+import logoUrl from "../../assets/logodolphin.jpg";
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { userContext } from "../../context/userContext";
 const modules = [
   {
-    image:"https://firebasestorage.googleapis.com/v0/b/dolphin-8f800.appspot.com/o/homeBg-worker.jpeg?alt=media&token=cdbc7d30-2e57-44b7-b786-4e6685e6e83e",
-    name: "Dolphin Requisições",
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/dolphin-8f800.appspot.com/o/homeBg-worker.jpeg?alt=media&token=cdbc7d30-2e57-44b7-b786-4e6685e6e83e",
+    name: "Dolphin Requisições  (Em desenvolvimento)",
     Info: "Faça aqui suas Requisições de Materiais/Serviços",
     path: "/requisitions",
+  },
+  {
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/dolphin-8f800.appspot.com/o/_6d46fa5a-0284-43eb-a5fb-bdc796ada67a.jpeg?alt=media&token=e1450447-7f7f-4610-87a7-f13b674a852d",
+    name: "Controle de Patrimônios  (Em desenvolvimento)",
+    Info: `Gerenciar a localização;
+            Responsável pela guarda;
+            Registro de movimentações (Obra, sede e manutenção/calibração);
+            // eslint-disable-next-line no-irregular-whitespace
+            Controle dos acessórios (Cabos, bateria reserva)`,
+    path: "/home",
+  },
+  {
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/dolphin-8f800.appspot.com/o/_9a5059cb-cba2-4295-a84b-ef43505868e1.jpeg?alt=media&token=82691098-8e4c-4384-8a5b-569e00f00273",
+    name: "Banco de Currículos (Em desenvolvimento)",
+    Info: `Cadastro de currículos recebidos;
+            Triagem de currículos
+            Controle de possíveis contratações para o futuro;
+            Controle de indicações;
+            // eslint-disable-next-line no-irregular-whitespace, no-irregular-whitespace
+            Acesso ilimitado aos gerentes/coordenadores para consultas (Exemplo prospectar currículo adequado para uma vaga específica para setor de orçamentos, projetos ou alguma vaga na obra)`,
+    path: "/home",
   },
 ];
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -27,24 +52,23 @@ import { Menu } from "@mui/base/Menu";
 import { MenuButton as BaseMenuButton } from "@mui/base/MenuButton";
 
 const Home = () => {
-   
-    const navigate = useNavigate();
-    const { logedIn, user, toggleLogedIn } = useContext(userContext);
-    useEffect(( ) => { 
-      console.log('user: ', user);
-        if(!logedIn){ 
-            navigate('/');
-        }
+  const navigate = useNavigate();
+  const { logedIn, user, toggleLogedIn } = useContext(userContext);
+  useEffect(() => {
+    console.log("user: ", user);
+    if (!logedIn) {
+      navigate("/");
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [logedIn]);
-    const handleNavigateToModule = (path : string ) => { 
-        navigate(path);
-    }
-    const handleLogOut = ( ) =>  {
-        window.localStorage.removeItem('user');
-        window.localStorage.removeItem('token');
-        toggleLogedIn(false);
-    }
+  }, [logedIn]);
+  const handleNavigateToModule = (path: string) => {
+    navigate(path);
+  };
+  const handleLogOut = () => {
+    window.localStorage.removeItem("user");
+    window.localStorage.removeItem("token");
+    toggleLogedIn(false);
+  };
   return (
     <Box
       sx={{

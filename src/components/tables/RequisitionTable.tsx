@@ -97,7 +97,7 @@ const headCells: readonly HeadCell[] = [
     id: "ID_REQUISICAO",
     numeric: true,
     disablePadding: false,
-    label: "Nº Requisição",
+    label: "Nº",
   },
   { 
     id: 'CREATED_ON',
@@ -418,7 +418,9 @@ export default function EnhancedTable() {
                         padding="none"
                         align="left"
                       >
-                        <Typography>{row.DESCRIPTION}</Typography>
+                        <Typography textTransform="capitalize">
+                          {row.DESCRIPTION.toLowerCase()}
+                        </Typography>
                       </TableCell>
 
                       <TableCell
@@ -427,7 +429,9 @@ export default function EnhancedTable() {
                           handleClick(event, Number(row.ID_REQUISICAO))
                         }
                       >
-                        <Typography>{row.STATUS}</Typography>
+                        <Typography textTransform="capitalize">
+                          {row.STATUS.toLowerCase()}
+                        </Typography>
                       </TableCell>
 
                       <TableCell
@@ -437,7 +441,9 @@ export default function EnhancedTable() {
                         align="left"
                         sx={{ textTransform: "lowercase" }}
                       >
-                        <Typography>{row.NOME_RESPONSAVEL}</Typography>
+                        <Typography textTransform="capitalize">
+                          {row.NOME_RESPONSAVEL.toLowerCase()}
+                        </Typography>
                       </TableCell>
 
                       <TableCell
@@ -459,7 +465,7 @@ export default function EnhancedTable() {
                         }}
                         align="left"
                       >
-                        <Typography sx={{ fontSize: "12px" }}>
+                        <Typography textTransform="capitalize" fontSize="14px">
                           {dateRenderer(row.CREATED_ON)}
                         </Typography>
                       </TableCell>
@@ -474,7 +480,7 @@ export default function EnhancedTable() {
                         }}
                         align="left"
                       >
-                        <Typography sx={{ fontSize: "12px" }}>
+                        <Typography fontSize="14px">
                           {dateRenderer(row.LAST_UPDATE_ON)}
                         </Typography>
                       </TableCell>
@@ -489,8 +495,8 @@ export default function EnhancedTable() {
                         }}
                         align="left"
                       >
-                        <Typography sx={{ fontSize: "12px" }}>
-                          {row.LAST_MODIFIED_BY_NAME}
+                        <Typography textTransform="capitalize">
+                          {row.LAST_MODIFIED_BY_NAME.toLowerCase()}
                         </Typography>
                       </TableCell>
 
@@ -504,7 +510,9 @@ export default function EnhancedTable() {
                         }}
                         align="left"
                       >
-                        <Typography sx={{ fontSize: "12px" }}>
+                        <Typography
+                          sx={{ fontSize: "12px", textTransform: "capitalize" }}
+                        >
                           {row.DESCRICAO}
                         </Typography>
                       </TableCell>

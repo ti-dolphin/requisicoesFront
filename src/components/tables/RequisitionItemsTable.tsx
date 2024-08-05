@@ -279,15 +279,14 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
                 key={item.ID}
                 sx={{
                   backgroundColor:
-                    item.ATIVO && item.ATIVO > 0 ? "transparent" : "#ececec",
-                }}
+                    item.ATIVO && item.ATIVO > 0 ? "transparent" : "#ececec"}}
               >
                 <TableCell align="left">
                   <Stack
                     height="fit-content"
                     direction={{ xs: "column", md: "column" }}
                     alignItems="start"
-                    spacing={0.5}
+                    
                   >
                     <Stack direction="row" alignItems="center">
                       <Typography
@@ -428,6 +427,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
                     />
                   </Stack>
                 </TableCell>
+                
               </TableRow>
             ))}
           </TableBody>

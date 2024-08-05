@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Project, fetchAllProjects } from "../../../utils";
 import { postRequisition } from "../../../utils";
-import { Button } from "@mui/material";
+import { Autocomplete, AutocompleteChangeDetails, AutocompleteChangeReason, Button, TextField } from "@mui/material";
 import React from "react";
 import { ProductsTableModal } from "../../../components/modals/ProductsTableModal";
 import { useContext } from "react";
@@ -12,6 +12,10 @@ interface RequisitionFields {
   ID_RESPONSAVEL: number;
   ID_PROJETO: number;
   DESCRIPTION: string;
+}
+interface ProjectOption {
+  label: string;
+  id: number;
 }
 
 const AddRequisitionForm: React.FC = () => {
@@ -35,17 +39,36 @@ const AddRequisitionForm: React.FC = () => {
   const [currentId, setCurrentId] = useState<number>(0);
   const { toggleAdding } = useContext(ItemsContext);
 
-  const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { id, value } = e.target;
-    setFields({
-      ...fields,
-      [id]: Number(value)
-    });
+  const handleSelect = (
+    event: React.SyntheticEvent<Element, Event>,
+    value: ProjectOption | null,
+    reason: AutocompleteChangeReason,
+    details?: AutocompleteChangeDetails<ProjectOption> | undefined
+  ) => {
+     console.log("Selecionado:", value, event, reason, details);
+     if(value){ 
+      console.log({
+        ...fields,
+        ID_PROJETO: Number(value?.id),
+      });
+      setFields({
+        ...fields,
+        ID_PROJETO: Number(value?.id),
+      });
+     }
   };
-
+  const renderProjectOptions = ( ) => { 
+     const projectsArray : {label: string, id: number }[] = [];
+      projects.forEach((project) => { 
+        projectsArray.push({
+          label: String(project.DESCRICAO),
+          id: project.ID,
+        });
+      } );
+      return projectsArray;
+  }
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-   
     setFields({
       ...fields,
       [id]: value,
@@ -76,8 +99,6 @@ const AddRequisitionForm: React.FC = () => {
 
   return (
     <form className="max-w-sm mx-auto mt-5 w-[90%]" onSubmit={handleSubmit}>
-   
-
       <div className="mb-5">
         <label
           htmlFor="repeat-password"
@@ -85,7 +106,16 @@ const AddRequisitionForm: React.FC = () => {
         >
           Projeto
         </label>
-        <select
+        <Autocomplete
+          disablePortal
+          id="selectProject"
+          options={renderProjectOptions()}
+          getOptionLabel={(option) => option.label}
+          onChange={handleSelect}
+          renderInput={(params) => <TextField {...params} label="Projeto" />}
+        />
+
+        {/* <select
           id="ID_PROJETO"
           className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
           required
@@ -95,7 +125,7 @@ const AddRequisitionForm: React.FC = () => {
           {projects.map((project) => (
             <option value={project.ID}>{project.DESCRICAO}</option>
           ))}
-        </select>
+        </select> */}
       </div>
       <div className="mb-5">
         <label
@@ -117,12 +147,10 @@ const AddRequisitionForm: React.FC = () => {
           onChange={handleChange}
         />
       </div>
-      <Button onClick={() => handleSubmit} type="submit">Seguir</Button>
-      {currentId > 0 && (
-        <ProductsTableModal requisitionID={currentId}
-        />
-
-      )}
+      <Button onClick={() => handleSubmit} type="submit">
+        Seguir
+      </Button>
+      {currentId > 0 && <ProductsTableModal requisitionID={currentId} />}
     </form>
   );
 };
