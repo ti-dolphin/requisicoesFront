@@ -17,7 +17,7 @@ import { userContext } from "../../context/userContext";
 const modules = [
   {
     image:
-      "https://firebasestorage.googleapis.com/v0/b/dolphin-8f800.appspot.com/o/homeBg-worker.jpeg?alt=media&token=cdbc7d30-2e57-44b7-b786-4e6685e6e83e",
+      "https://firebasestorage.googleapis.com/v0/b/dolphin-8f800.appspot.com/o/homeBg-worker.jpeg?alt=media&token=70c011e5-eac1-4fa1-a280-f76eb61c612a",
     name: "Dolphin Requisições  (Em desenvolvimento)",
     Info: "Faça aqui suas Requisições de Materiais/Serviços",
     path: "/requisitions",
