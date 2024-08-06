@@ -67,6 +67,7 @@ const AddRequisitionForm: React.FC = () => {
       } );
       return projectsArray;
   }
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFields({

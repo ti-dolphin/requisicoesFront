@@ -3,11 +3,15 @@ import Box from "@mui/material/Box";
 import HorizontalLinearStepper from "./components/Stepper";
 import {
   Alert,
+  Autocomplete,
+  AutocompleteChangeDetails,
+  AutocompleteChangeReason,
   Badge,
   BadgeProps,
   IconButton,
   Stack,
   styled,
+  TextField,
   Typography,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
@@ -16,6 +20,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import {
   Item,
   Requisition,
+  fetchAllProjects,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   fetchItems,
   fetchPersonById,
@@ -40,7 +45,8 @@ const RequisitionDetail: React.FC = () => {
   const [requisitionData, setRequisitionData] = useState<Requisition>();
   const [requisitionItems, setRequisitionItems] = useState<Item[]>([]);
   const [editionNotAllowedAlert, setEditionNotAllowedAlert] = useState<boolean>(false);
-
+  const [projectAlteredSuccessAlert , setProjectAlteredSuccessAlert] = useState<boolean>(false);
+  const [projectOptions, setProjectOptions ] = useState<ProjectOption[]>([]);
   const {
     editingField,
     handleChangeEditingField,
@@ -57,7 +63,6 @@ const RequisitionDetail: React.FC = () => {
     const data = await fetchRequsitionById(Number(id));
     if (data) {
       const personData = await fetchPersonById(data.ID_RESPONSAVEL);
-      console.log("personData: ", personData);
       if (personData) {
         setRequisitionData({ ...data, ["RESPONSAVEL"]: personData?.NOME });
       }
@@ -67,24 +72,45 @@ const RequisitionDetail: React.FC = () => {
   const fetchItemsData = async () => {
     const itemsData = await fetchItems(Number(id));
     if (itemsData) {
-      console.log("itemsData: ", itemsData);
       setRequisitionItems(itemsData);
       return;
     }
     setRequisitionItems([]);
   };
+
+     const renderProjectOptions = async () => {
+      console.log('projectOptions');
+       const projects = await fetchAllProjects();
+       console.log('projects: ', projects)
+       if (projects) {
+         const projectsArray: { label: string; id: number }[] = [];
+         projects.forEach((project) => {
+           projectsArray.push({
+             label: String(project.DESCRICAO),
+             id: project.ID,
+           });
+         });
+         console.log("projectOptions: ", projectsArray);
+         setProjectOptions([...projectsArray]);
+       }
+     };
+     const renderProjectDescription = ( ) => { 
+      if(requisitionData && projectOptions){ 
+          return {label: requisitionData.DESCRICAO, id: requisitionData.ID_PROJETO}
+      }
+     }
+
   useEffect(() => {
     if (!logedIn) navigate("/");
   });
 
   useEffect(() => {
-    console.log("fetchRequisitionData");
     fetchRequisitionData();
+    renderProjectOptions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshRequisition]);
 
   useEffect(() => {
-    console.log("fetchItemsData");
     fetchItemsData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshItems, adding]);
@@ -98,12 +124,20 @@ const RequisitionDetail: React.FC = () => {
       toggleAdding();
   };  
 
-  const displayAlert = () => {
-    setTimeout(() => {
-      setEditionNotAllowedAlert(false);
-    }, 3 * 1000);
-    console.log("alert false");
-    setEditionNotAllowedAlert(true);
+  const displayAlert = (content?: string) => {
+    if (content === "Projeto Alterado!"){ 
+      setTimeout(() => {
+        setProjectAlteredSuccessAlert(false);
+      }, 3 * 1000);
+      setProjectAlteredSuccessAlert(true);
+    }else{ 
+        setTimeout(() => {
+          setEditionNotAllowedAlert(false);
+        }, 3 * 1000);
+        setEditionNotAllowedAlert(true);
+    }
+
+   
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -123,6 +157,8 @@ const RequisitionDetail: React.FC = () => {
       toggleRefreshRequisition();
     }
   };
+
+
 
   const fields = [
     { label: "Descrição", key: "DESCRIPTION" },
@@ -162,6 +198,34 @@ const RequisitionDetail: React.FC = () => {
   const handleNavigateHome = () => {
     navigate("/requisitions");
   };
+interface ProjectOption {
+  label: string;
+  id: number;
+}
+  const handleSelectProject = async(
+    event: React.SyntheticEvent<Element, Event>,
+    value: ProjectOption | null,
+    reason: AutocompleteChangeReason,
+    details?: AutocompleteChangeDetails<ProjectOption> | undefined
+  ) => {
+    console.log("Selecionado:", value, reason, details, event);
+    if(value && requisitionData && user){ 
+      console.log("updated: ", {
+        ...requisitionData,
+        ID_PROJETO: Number(value.id),
+      });
+       await updateRequisition(
+        user.CODPESSOA,
+        {
+         ...requisitionData,
+         ID_PROJETO: Number(value.id),
+       });
+       toggleRefreshRequisition();
+       displayAlert('Projeto Alterado!');
+    }
+   
+
+  };
 
   return (
     <Box
@@ -187,6 +251,22 @@ const RequisitionDetail: React.FC = () => {
           }}
         >
           Edição só é poossível quando Status é "Em edição"
+        </Alert>
+      )}
+      {projectAlteredSuccessAlert && (
+        <Alert
+          variant="filled"
+          className="drop-shadow-lg"
+          severity="success"
+          sx={{
+            top: "10%",
+            width: "400px",
+            position: "absolute",
+            left: "50%",
+            marginLeft: "-200px",
+          }}
+        >
+          Projeto Alterado!
         </Alert>
       )}
       <Box sx={{ padding: "1rem", display: "flex", alignItems: "center" }}>
@@ -260,13 +340,12 @@ const RequisitionDetail: React.FC = () => {
         <Box
           sx={{
             padding: "0.5rem",
-
             maxHeight: "60vh",
             overflowY: "auto",
             width: {
               xs: "100%",
               md: "50%",
-              lg: "20%",
+              lg: "25%",
             },
             display: "flex",
             justifyContent: "space-around",
@@ -283,9 +362,10 @@ const RequisitionDetail: React.FC = () => {
             {requisitionData ? (
               fields.map((item) => (
                 <Stack sx={{ width: "100%" }} direction="column" spacing={0.5}>
-                  <label>{item.label}</label>
+                  {item.key !== "DESCRICAO" && <label>{item.label}</label>}
                   <Stack
                     direction="row"
+                    alignItems="center"
                     spacing={1}
                     key={item.key}
                     sx={
@@ -295,42 +375,71 @@ const RequisitionDetail: React.FC = () => {
                             border: "1px solid blue",
                             padding: "4px",
                             borderRadius: "4px",
-                            height: "36px",
                           }
                         : {
-                            border: "1px solid #d3d6db",
+                            border: item.key !== 'DESCRICAO' ? "1px solid #d3d6db" : 'none',
                             padding: "4px",
                             borderRadius: "4px",
-                            height: "36px",
                           }
                     }
                   >
-                    <textarea
-                      id={item.key}
-                      className="w-full bg-white text-xs focus:outline-none"
-                      disabled={!editingField.isEditing}
-                      value={valueRenderer(item)}
-                      onChange={handleChange}
-                      autoFocus={editingField.isEditing}
-                    />
-                    {(item.key === "DESCRIPTION" ||
-                      item.key === "OBSERVACAO") && (
-                      <button onClick={() => handleChangeEditingField(item)}>
-                        <EditIcon
-                          color="primary"
-                          className="cursor-pointer hover:text-blue-400"
+                    {item.key === "DESCRICAO" ? (
+                      <>
+                        <Autocomplete
+                          disablePortal
+                          id="selectProject"
+                          options={projectOptions}
+                          getOptionLabel={(option) => option.label}
+                          onChange={handleSelectProject}
+                          value={renderProjectDescription()}
+                          sx={{ width: "100%", outline: 'none' }}
+                          renderInput={(params) => (
+                            <TextField {...params} sx={{fontSize: '12px'}} label="Projeto" />
+                          )}
                         />
-                      </button>
+                        {editingField.isEditing &&
+                          editingField.field.key === item.key && (
+                            <button onClick={handleSave}>
+                              <SaveIcon
+                                className="hover:text-blue-400"
+                                color="primary"
+                              />
+                            </button>
+                          )}
+                      </>
+                    ) : (
+                      <>
+                        <textarea
+                          id={item.key}
+                          style={{ minHeight: "2rem" }}
+                          className="w-full bg-white text-xs focus:outline-none"
+                          disabled={!editingField.isEditing}
+                          value={valueRenderer(item)}
+                          onChange={handleChange}
+                          autoFocus={editingField.isEditing}
+                        />
+                        {(item.key === "DESCRIPTION" ||
+                          item.key === "OBSERVACAO") && (
+                          <button
+                            onClick={() => handleChangeEditingField(item)}
+                          >
+                            <EditIcon
+                              color="primary"
+                              className="cursor-pointer hover:text-blue-400"
+                            />
+                          </button>
+                        )}
+                        {editingField.isEditing &&
+                          editingField.field.key === item.key && (
+                            <button onClick={handleSave}>
+                              <SaveIcon
+                                className="hover:text-blue-400"
+                                color="primary"
+                              />
+                            </button>
+                          )}
+                      </>
                     )}
-                    {editingField.isEditing &&
-                      editingField.field.key === item.key && (
-                        <button onClick={handleSave}>
-                          <SaveIcon
-                            className="hover:text-blue-400"
-                            color="primary"
-                          />
-                        </button>
-                      )}
                   </Stack>
                 </Stack>
               ))
@@ -350,7 +459,7 @@ const RequisitionDetail: React.FC = () => {
             width: {
               xs: "100%",
               md: "50%",
-              lg: "80%",
+              lg: "75%",
             },
             height: {
               lg: "100%",

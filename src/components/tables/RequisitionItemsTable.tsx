@@ -101,18 +101,20 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
   };
 
   const handleCancelItems = async (items: Item[]) => {
-    items.forEach(async (item) =>  {
+   const promises = items.map(async (item) =>  {
        item.ATIVO = 0;
        await updateRequisitionItems([item], item.ID_REQUISICAO);
     });
+    await Promise.all(promises);
     toggleRefreshItems();
   };
 
   const handleActivateItems = async (items: Item[]) => {
-    items.forEach( async (item) => { 
+   const promises =  items.map( async (item) => { 
         item.ATIVO = 1;
         await updateRequisitionItems([item], item.ID_REQUISICAO);
-    })
+    });
+    await Promise.all(promises);
     toggleRefreshItems();
   };
 
