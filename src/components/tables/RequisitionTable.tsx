@@ -256,14 +256,18 @@ export default function EnhancedTable() {
     defineDefaultKanbanFilter();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   const dateRenderer = (value?: string | number) => {
     if (typeof value === "string") {
       const date = value.substring(0, 10).replace(/-/g, "/");
       const time = value.substring(11, 19);
-      const formatted = `${date}, ${time}`;
+      let formatted = `${date}, ${time}`;
+      const localeDate = new Date(formatted).toLocaleDateString();
+      formatted = `${localeDate}, ${time}`;
       return formatted;
     }
   };
+
   const fetchRequisitionData = useCallback( async () => {
    if(user && currentKanbanFilter){ 
      const data = await fecthRequisitions(user, currentKanbanFilter.label);

@@ -175,14 +175,16 @@ const RequisitionDetail: React.FC = () => {
     },
   }));
 
-  const dateRenderer = (value?: string | number) => {
-    if (typeof value === "string") {
-      const date = value.substring(0, 10).replace(/-/g, "/");
-      const time = value.substring(11, 19);
-      const formatted = `${date}, ${time}`;
-      return formatted;
-    }
-  };
+ const dateRenderer = (value?: string | number) => {
+   if (typeof value === "string") {
+     const date = value.substring(0, 10).replace(/-/g, "/");
+     const time = value.substring(11, 19);
+     let formatted = `${date}, ${time}`;
+     const localeDate = new Date(formatted).toLocaleDateString();
+     formatted = `${localeDate}, ${time}`;
+     return formatted;
+   }
+ };
 
   const valueRenderer = (item : { label: string; key : string}) =>  { 
     if(requisitionData){ 
