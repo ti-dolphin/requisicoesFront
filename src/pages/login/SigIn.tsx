@@ -8,9 +8,9 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { logIn } from '../../utils';
-import { useContext, useState } from 'react';
-import { userContext } from '../../context/userContext';
+import { logIn } from "../../Requisitions/utils";
+import { useContext, useState } from "react";
+import { userContext } from "../../Requisitions/context/userContext";
 import { useNavigate } from 'react-router-dom';
 import { Alert } from '@mui/material';
 function Copyright() {

@@ -12,24 +12,21 @@ import { RequisitionContext } from "../../../context/RequisitionContext";
 import { userContext } from "../../../context/userContext";
 import { Alert } from "@mui/material";
 
-const steps = [
-  "Em edição",
-  "Requisitado",
-  "Em cotação",
-  "Cotado",
-  "Concluído"
-];
-interface props{ 
-  requisitionData : Requisition,
+const steps = ["Em edição", "Requisitado", "Em cotação", "Cotado", "Concluído"];
+interface props {
+  requisitionData: Requisition;
   setRequisitionData: (requisition: Requisition) => void;
 }
-const HorizontalLinearStepper: React.FC<props> = ({ requisitionData, setRequisitionData}) => {
-
+const HorizontalLinearStepper: React.FC<props> = ({
+  requisitionData,
+  setRequisitionData,
+}) => {
   const { user } = useContext(userContext);
 
-  const {toggleRefreshRequisition, changeActiveStep} = useContext(RequisitionContext);
+  const { toggleRefreshRequisition, changeActiveStep } =
+    useContext(RequisitionContext);
 
-  const [requisition, setRequisition ] = useState(requisitionData);
+  const [requisition, setRequisition] = useState(requisitionData);
 
   const [nonPurchaserAlert, toggleNonPurchaserAlert] = useState<boolean>(false);
 
@@ -39,17 +36,17 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData, setRequisit
       : steps.indexOf(requisitionData.STATUS)
   );
 
-  React.useEffect(() =>  {
+  React.useEffect(() => {
     changeActiveStep(activeStep);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeStep]);
-  
-   const displayAlert = () => {
-     setTimeout(() => {
-       toggleNonPurchaserAlert(false);
-     }, 3 * 1000);
-     toggleNonPurchaserAlert(true);
-   };
+
+  const displayAlert = () => {
+    setTimeout(() => {
+      toggleNonPurchaserAlert(false);
+    }, 3 * 1000);
+    toggleNonPurchaserAlert(true);
+  };
 
   const [skipped] = React.useState(new Set<number>());
 
@@ -62,61 +59,59 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData, setRequisit
 
   const handleNext = async () => {
     const isPurchaser = user?.PERM_COMPRADOR;
-    if(!isPurchaser && activeStep > 0) { 
+    if (!isPurchaser && activeStep > 0) {
       displayAlert();
       return;
     }
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
-      const nextStep = activeStep + 1;
-      changeActiveStep(nextStep)
-      if (nextStep < steps.length) {
-        const editedRequisition = {
-          ...requisition,
-          ["STATUS"]: steps[activeStep + 1],
-        };
-        setRequisition(editedRequisition);
-        if (user) {
-          try {
-            await updateRequisition(user.CODPESSOA, editedRequisition);
-            setRequisition(editedRequisition);
-            setRequisitionData(editedRequisition);
-            toggleRefreshRequisition();
-          } catch (e) {
-            console.log(e);
-          }
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    const nextStep = activeStep + 1;
+    changeActiveStep(nextStep);
+    if (nextStep < steps.length) {
+      const editedRequisition = {
+        ...requisition,
+        ["STATUS"]: steps[activeStep + 1],
+      };
+      setRequisition(editedRequisition);
+      if (user) {
+        try {
+          await updateRequisition(user.CODPESSOA, editedRequisition);
+          setRequisition(editedRequisition);
+          setRequisitionData(editedRequisition);
+          toggleRefreshRequisition();
+        } catch (e) {
+          console.log(e);
         }
       }
+    }
   };
 
   const handleBack = async () => {
     const isPurchaser = user?.PERM_COMPRADOR;
-   if(isPurchaser){ 
-       setActiveStep((prevActiveStep) => prevActiveStep - 1);
-       const previousStep = activeStep - 1;
-       changeActiveStep(previousStep);
-       const editedRequisition = {
-         ...requisition,
-         ["STATUS"]: steps[activeStep - 1],
-       };
-       setRequisition(editedRequisition);
-       if (user) {
-         try {
-           await updateRequisition(user.CODPESSOA, editedRequisition);
-           setRequisition(editedRequisition);
-           setRequisitionData(editedRequisition);
-           toggleRefreshRequisition();
-         } catch (e) {
-           console.log(e);
-         }
-       }
-   }
-   else{ 
-     displayAlert();
-   }
+    if (isPurchaser) {
+      setActiveStep((prevActiveStep) => prevActiveStep - 1);
+      const previousStep = activeStep - 1;
+      changeActiveStep(previousStep);
+      const editedRequisition = {
+        ...requisition,
+        ["STATUS"]: steps[activeStep - 1],
+      };
+      setRequisition(editedRequisition);
+      if (user) {
+        try {
+          await updateRequisition(user.CODPESSOA, editedRequisition);
+          setRequisition(editedRequisition);
+          setRequisitionData(editedRequisition);
+          toggleRefreshRequisition();
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    } else {
+      displayAlert();
+    }
   };
 
-   //eslint-disable-next-line @typescript-eslint/no-unused-vars
-
+  //eslint-disable-next-line @typescript-eslint/no-unused-vars
 
   return (
     <Box sx={{ width: "100%", paddingX: "0.5rem" }}>
@@ -184,5 +179,5 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData, setRequisit
       )}
     </Box>
   );
-}
+};
 export default HorizontalLinearStepper;

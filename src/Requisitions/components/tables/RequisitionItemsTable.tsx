@@ -33,12 +33,13 @@ import ItemActions from "./ItemActions";
 
 const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
   items,
-  currentStatus
-
+  currentStatus,
 }) => {
-  
-  const [editItemsAllowed, setEditItemsAllowed] = useState<boolean>(currentStatus === 'Em edição' ? true : false);
-  const [editItemsNotAllowedAlert, setEditItemsNotAllowedAlert] = useState(false);
+  const [editItemsAllowed, setEditItemsAllowed] = useState<boolean>(
+    currentStatus === "Em edição" ? true : false
+  );
+  const [editItemsNotAllowedAlert, setEditItemsNotAllowedAlert] =
+    useState(false);
   useEffect(() => {
     setEditItemsAllowed(currentStatus === "Em edição" ? true : false);
   }, [currentStatus]);
@@ -57,29 +58,28 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
     toggleRefreshItems,
   } = useContext(ItemsContext);
 
-  const [copiedAlert ,setCopiedAlert] = useState<boolean>(false);
-  const displayAlert = ( ) => { 
-    setTimeout(( ) =>  { 
+  const [copiedAlert, setCopiedAlert] = useState<boolean>(false);
+  const displayAlert = () => {
+    setTimeout(() => {
       setEditItemsNotAllowedAlert(false);
     }, 3 * 1000);
-    console.log('alert false')
+    console.log("alert false");
     setEditItemsNotAllowedAlert(true);
-  }
+  };
   const handleDelete = async (requisitionItems: Item[]) => {
-
-   if(editItemsAllowed) {
-     try {
-       const deletePromises = requisitionItems.map((item) =>
-         deleteRequisitionItem(Number(item.ID_PRODUTO), item.ID_REQUISICAO)
-       );
-       await Promise.all(deletePromises);
-     } catch (e) {
-       console.log("erro delete item: ", e);
-     }
-     toggleDeleting();
-     toggleRefreshItems();
-     return;
-   }
+    if (editItemsAllowed) {
+      try {
+        const deletePromises = requisitionItems.map((item) =>
+          deleteRequisitionItem(Number(item.ID_PRODUTO), item.ID_REQUISICAO)
+        );
+        await Promise.all(deletePromises);
+      } catch (e) {
+        console.log("erro delete item: ", e);
+      }
+      toggleDeleting();
+      toggleRefreshItems();
+      return;
+    }
     toggleDeleting();
     displayAlert();
   };
@@ -87,7 +87,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
   const handleSave = async () => {
     if (editing[1]) {
       await updateRequisitionItems([editing[1]], editing[1]?.ID_REQUISICAO);
-    
+
       toggleEditing();
       toggleRefreshItems();
     }
@@ -101,24 +101,24 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
   };
 
   const handleCancelItems = async (items: Item[]) => {
-   const promises = items.map(async (item) =>  {
-       item.ATIVO = 0;
-       await updateRequisitionItems([item], item.ID_REQUISICAO);
+    const promises = items.map(async (item) => {
+      item.ATIVO = 0;
+      await updateRequisitionItems([item], item.ID_REQUISICAO);
     });
     await Promise.all(promises);
     toggleRefreshItems();
   };
 
   const handleActivateItems = async (items: Item[]) => {
-   const promises =  items.map( async (item) => { 
-        item.ATIVO = 1;
-        await updateRequisitionItems([item], item.ID_REQUISICAO);
+    const promises = items.map(async (item) => {
+      item.ATIVO = 1;
+      await updateRequisitionItems([item], item.ID_REQUISICAO);
     });
     await Promise.all(promises);
     toggleRefreshItems();
   };
 
-  const handleCopyContent = async (selectedItems : Item[]) => {
+  const handleCopyContent = async (selectedItems: Item[]) => {
     const tempDiv = document.createElement("div");
     const table = createCopiedTable(selectedItems);
     tempDiv.appendChild(table);
@@ -132,7 +132,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
     await navigator.clipboard.write(data);
   };
 
-  const createCopiedTable = (selectedItems : Item[]) => {
+  const createCopiedTable = (selectedItems: Item[]) => {
     const table = document.createElement("table");
     table.appendChild(document.createElement("thead"));
     const tableHead = table.firstChild;
@@ -155,7 +155,8 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
           tableRow.appendChild(document.createElement("td"));
           tableRow.appendChild(document.createElement("td"));
           tableRow.childNodes[0].textContent = item.nome_fantasia;
-          tableRow.childNodes[1].textContent = String(item.QUANTIDADE) + ' ' + item.UNIDADE;
+          tableRow.childNodes[1].textContent =
+            String(item.QUANTIDADE) + " " + item.UNIDADE;
         }
       });
       table.style.fontFamily = "arial, sans-serif";
@@ -169,33 +170,33 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
       });
     }
     setCopiedAlert(true);
-    setTimeout(() => { 
+    setTimeout(() => {
       setCopiedAlert(false);
     }, 5000);
-   
+
     console.log("table: ", table);
     return table;
   };
 
-  const handleSelectAll = (e:React.ChangeEvent<HTMLInputElement> ) =>  { 
-    if(e.target.checked){ 
-          changeSelection([...items]);
-          return
+  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      changeSelection([...items]);
+      return;
     }
     changeSelection([]);
-  }
+  };
 
   const handleSelectItem = (
     e: React.ChangeEvent<HTMLInputElement>,
     item: Item
   ) => {
-    if(e.target.checked && selection.items.indexOf(item) === -1){ 
+    if (e.target.checked && selection.items.indexOf(item) === -1) {
       console.log("indexOfItem check: ", selection.items.indexOf(item));
       const selectedItems = [...selection.items];
       selectedItems.push(item);
       changeSelection(selectedItems);
-      console.log('selectedItems: ', selectedItems);
-      return
+      console.log("selectedItems: ", selectedItems);
+      return;
     }
     const indexOfItem = selection.items.indexOf(item);
     console.log("indexofItem: ", indexOfItem);
@@ -212,7 +213,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
         <Alert
           className="drop-shadow-lg"
           sx={{
-            top: '10%',
+            top: "10%",
             width: "400px",
             position: "absolute",
             left: "50%",
@@ -281,14 +282,14 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
                 key={item.ID}
                 sx={{
                   backgroundColor:
-                    item.ATIVO && item.ATIVO > 0 ? "transparent" : "#ececec"}}
+                    item.ATIVO && item.ATIVO > 0 ? "transparent" : "#ececec",
+                }}
               >
                 <TableCell align="left">
                   <Stack
                     height="fit-content"
                     direction={{ xs: "column", md: "column" }}
                     alignItems="start"
-                    
                   >
                     <Stack direction="row" alignItems="center">
                       <Typography
@@ -429,7 +430,6 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
                     />
                   </Stack>
                 </TableCell>
-                
               </TableRow>
             ))}
           </TableBody>

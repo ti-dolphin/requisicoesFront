@@ -13,9 +13,9 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { Item } from "../../types";
 
 interface ItemActionsProps {
-  handleDelete: (requisitionItem:  Item[]) => Promise<void>;
-  handleCancelItems: (item:  Item[]) => Promise<void>;
-  handleActivateItems: (item:  Item[]) => Promise<void>;
+  handleDelete: (requisitionItem: Item[]) => Promise<void>;
+  handleCancelItems: (item: Item[]) => Promise<void>;
+  handleActivateItems: (item: Item[]) => Promise<void>;
   handleCopyContent: (selectedItems: Item[]) => Promise<void>;
 }
 const ItemActions = ({
@@ -23,7 +23,6 @@ const ItemActions = ({
   handleActivateItems,
   handleCopyContent,
 }: ItemActionsProps) => {
-
   const { selection, toggleDeleting } = useContext(ItemsContext);
 
   return (
@@ -33,9 +32,15 @@ const ItemActions = ({
       </MenuButton>
       <Menu slots={{ listbox: AnimatedListbox }}>
         <MenuItem onClick={() => toggleDeleting()}>Exluir</MenuItem>
-        <MenuItem onClick={() => handleCopyContent(selection.items)}>Copiar</MenuItem>
-        <MenuItem onClick={() => handleCancelItems(selection.items)}>Inativar</MenuItem>
-        <MenuItem onClick={() => handleActivateItems(selection.items)}>Ativar</MenuItem>
+        <MenuItem onClick={() => handleCopyContent(selection.items)}>
+          Copiar
+        </MenuItem>
+        <MenuItem onClick={() => handleCancelItems(selection.items)}>
+          Inativar
+        </MenuItem>
+        <MenuItem onClick={() => handleActivateItems(selection.items)}>
+          Ativar
+        </MenuItem>
       </Menu>
     </Dropdown>
   );

@@ -53,17 +53,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 const filterAvailableByUser = {
-  purchaser: [
-   'A Fazer',
-   'Fazendo',
-   'Concluído',
-   'Tudo'
-  ],
- nonPurchaser : [
-  'Backlog',
-  'Acompanhamento',
-  'Tudo'
- ]
+  purchaser: ["A Fazer", "Fazendo", "Concluído", "Tudo"],
+  nonPurchaser: ["Backlog", "Acompanhamento", "Tudo"],
 };
 
 const SearchAppBar: React.FC<SearchAppBarProps> = ({
@@ -71,32 +62,35 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
   handleSearch,
   addedItems,
   refreshToggler,
-  setRefreshTooggler
+  setRefreshTooggler,
 }) => {
-  const {currentKanbanFilter, changeKanbanFilter } = useContext(RequisitionContext);
+  const { currentKanbanFilter, changeKanbanFilter } =
+    useContext(RequisitionContext);
   const { user } = useContext(userContext);
-  const [availableKanbanFilters, setAvailableKanbanFilter ] = useState<string[]>([]);
+  const [availableKanbanFilters, setAvailableKanbanFilter] = useState<string[]>(
+    []
+  );
   const { innerWidth: width } = window;
 
-  const defineAvailableKanbanFilters = ( ) =>  {
-    console.log('user: ', user)
-    if( user?.PERM_COMPRADOR && user?.PERM_COMPRADOR > 0){ 
+  const defineAvailableKanbanFilters = () => {
+    console.log("user: ", user);
+    if (user?.PERM_COMPRADOR && user?.PERM_COMPRADOR > 0) {
       setAvailableKanbanFilter([...filterAvailableByUser.purchaser]);
       return;
     }
-    setAvailableKanbanFilter([...filterAvailableByUser.nonPurchaser])
-  }
+    setAvailableKanbanFilter([...filterAvailableByUser.nonPurchaser]);
+  };
 
   useEffect(() => {
-    console.log('width: ', width)
+    console.log("width: ", width);
     defineAvailableKanbanFilters();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChangeKanbanFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
-      changeKanbanFilter({label: e.currentTarget.id});
-  } 
-  
+    changeKanbanFilter({ label: e.currentTarget.id });
+  };
+
   return (
     <Box sx={{ flexGrow: 1, width: "100%" }}>
       <AppBar
@@ -107,7 +101,7 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
           justifyContent: "center",
           alignItems: "center",
           padding: "8px",
-          boxShadow: 'none'
+          boxShadow: "none",
         }}
         position="static"
       >
@@ -147,13 +141,13 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
           </Search>
 
           {caller == "ItemsTable" && width > 600 && (
-                <AddedItemsModal
-                  motionVariants={motionItemsVariants}
-                  addedItems={addedItems}
-                  refreshToggler={refreshToggler}
-                  setRefreshToggler={setRefreshTooggler}
-                />
-              )}
+            <AddedItemsModal
+              motionVariants={motionItemsVariants}
+              addedItems={addedItems}
+              refreshToggler={refreshToggler}
+              setRefreshToggler={setRefreshTooggler}
+            />
+          )}
           {caller !== "ItemsTable" && (
             <Stack
               sx={{
@@ -161,7 +155,7 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
                   xs: "column",
                   md: "row",
                 },
-                alignItems: 'start',
+                alignItems: "start",
                 gap: "0.5rem",
               }}
             >

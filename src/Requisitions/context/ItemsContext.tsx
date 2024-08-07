@@ -7,9 +7,9 @@ interface ItemsContextType {
   changing: [boolean, Item?];
   deleting: [boolean, Item?];
   editingObservation: [boolean, Item?];
-  selection : { 
-    items : Item[] 
-  }
+  selection: {
+    items: Item[];
+  };
   refreshItems: boolean;
   toggleEditingObservation: (item?: Item) => void;
   toggleEditing: (item?: Item) => void;
@@ -29,7 +29,7 @@ export const ItemsContext = createContext<ItemsContextType>({
   changing: [false],
   deleting: [false],
   editingObservation: [false],
-  selection : {items : []},
+  selection: { items: [] },
   toggleEditing: () => {},
   toggleChanging: () => {},
   toggleAdding: () => {},
@@ -38,7 +38,7 @@ export const ItemsContext = createContext<ItemsContextType>({
   toggleEditingObservation: () => {},
   setEditingObservation: () => {},
   toggleRefreshItems: () => {},
-  changeSelection : () => {},
+  changeSelection: () => {},
 });
 interface ItemsContextProviderProps {
   children: React.ReactNode;
@@ -50,17 +50,19 @@ export const ItemsContextProvider = ({
   const [adding, setAdding] = useState<boolean>(false);
   const [changing, setChanging] = useState<[boolean, Item?]>([false]);
   const [deleting, setDeleting] = useState<[boolean, Item?]>([false]);
-  const [selection, setSelection] = useState<{ items : Item[]}>({items : []});
-  const [editingObservation, setEditingObservation] = useState<[boolean, Item?]>([false]);
+  const [selection, setSelection] = useState<{ items: Item[] }>({ items: [] });
+  const [editingObservation, setEditingObservation] = useState<
+    [boolean, Item?]
+  >([false]);
   const [refreshItems, setRefresh] = useState<boolean>(false);
 
-  const changeSelection = (items ? : Item[] ) =>  { 
-    if(items ) {
-        setSelection({items: [...items]});
-        return;
+  const changeSelection = (items?: Item[]) => {
+    if (items) {
+      setSelection({ items: [...items] });
+      return;
     }
-    setSelection({items : []});
-  }
+    setSelection({ items: [] });
+  };
 
   const toggleRefreshItems = () => {
     console.log("toggleRefresh ", !refreshItems);

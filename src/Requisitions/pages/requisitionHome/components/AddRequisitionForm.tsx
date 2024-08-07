@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import { Project, fetchAllProjects } from "../../../utils";
 import { postRequisition } from "../../../utils";
-import { Autocomplete, AutocompleteChangeDetails, AutocompleteChangeReason, Button, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  AutocompleteChangeDetails,
+  AutocompleteChangeReason,
+  Button,
+  TextField,
+} from "@mui/material";
 import React from "react";
 import { ProductsTableModal } from "../../../components/modals/ProductsTableModal";
 import { useContext } from "react";
@@ -34,7 +40,7 @@ const AddRequisitionForm: React.FC = () => {
     ID_PROJETO: 0,
     DESCRIPTION: "",
   });
-  const { user } =  useContext(userContext);
+  const { user } = useContext(userContext);
   const [projects, setProjects] = useState<Project[]>([]);
   const [currentId, setCurrentId] = useState<number>(0);
   const { toggleAdding } = useContext(ItemsContext);
@@ -45,8 +51,8 @@ const AddRequisitionForm: React.FC = () => {
     reason: AutocompleteChangeReason,
     details?: AutocompleteChangeDetails<ProjectOption> | undefined
   ) => {
-     console.log("Selecionado:", value, event, reason, details);
-     if(value){ 
+    console.log("Selecionado:", value, event, reason, details);
+    if (value) {
       console.log({
         ...fields,
         ID_PROJETO: Number(value?.id),
@@ -55,19 +61,19 @@ const AddRequisitionForm: React.FC = () => {
         ...fields,
         ID_PROJETO: Number(value?.id),
       });
-     }
+    }
   };
-  const renderProjectOptions = ( ) => { 
-     const projectsArray : {label: string, id: number }[] = [];
-      projects.forEach((project) => { 
-        projectsArray.push({
-          label: String(project.DESCRICAO),
-          id: project.ID,
-        });
-      } );
-      return projectsArray;
-  }
-  
+  const renderProjectOptions = () => {
+    const projectsArray: { label: string; id: number }[] = [];
+    projects.forEach((project) => {
+      projectsArray.push({
+        label: String(project.DESCRICAO),
+        id: project.ID,
+      });
+    });
+    return projectsArray;
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFields({
@@ -75,16 +81,16 @@ const AddRequisitionForm: React.FC = () => {
       [id]: value,
     });
   };
-  
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-   if(user){ 
+    if (user) {
       if (currentId === 0) {
         const response = await postRequisition([
           {
             ...fields,
             ["STATUS"]: "Em edição",
-            ['ID_RESPONSAVEL'] : user.CODPESSOA
+            ["ID_RESPONSAVEL"]: user.CODPESSOA,
           },
         ]);
         if (response) {
@@ -94,8 +100,7 @@ const AddRequisitionForm: React.FC = () => {
       } else {
         toggleAdding();
       }
-
-   }
+    }
   };
 
   return (

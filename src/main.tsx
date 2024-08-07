@@ -10,8 +10,8 @@ import '@fontsource/roboto/700.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { ptBR } from '@mui/material/locale';
-import { RequisitionContextProvider  } from './context/RequisitionContext.tsx';
-import { UserContextProvider } from './context/userContext.tsx';
+import { RequisitionContextProvider } from "./Requisitions/context/RequisitionContext.tsx";
+import { UserContextProvider } from "./Requisitions/context/userContext.tsx";
 
 const theme = createTheme(
   {

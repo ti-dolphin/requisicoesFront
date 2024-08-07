@@ -1,9 +1,9 @@
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import RequisitionHome from './pages/requisitionHome/RequisitionHome';
-import RequisitionDetail from "./pages/requisitionDetail/RequisitionDetail";
+import RequisitionHome from "./Requisitions/pages/requisitionHome/RequisitionHome";
+import RequisitionDetail from "./Requisitions/pages/requisitionDetail/RequisitionDetail";
 import "./index.css";
-import { ItemsContextProvider } from "./context/ItemsContext";
+import { ItemsContextProvider } from "./Requisitions/context/ItemsContext";
 import SignIn from "./pages/login/SigIn";
 import Home from "./pages/home/Home";
 

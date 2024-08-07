@@ -10,10 +10,10 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import logoUrl from "../../assets/logodolphin.jpg";
+import logoUrl from "../../Requisitions/assets/logodolphin.jpg";
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
-import { userContext } from "../../context/userContext";
+import { userContext } from "../../Requisitions/context/userContext";
 const modules = [
   {
     image:

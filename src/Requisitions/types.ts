@@ -1,7 +1,4 @@
 import { ReactNode } from "react";
-
-
-
 export interface Requisition {
   OBSERVACAO: string;
   ID_REQUISICAO: number;

@@ -24,14 +24,16 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
 import SearchAppBar from "../../pages/requisitionHome/components/SearchAppBar";
 import { useCallback, useState } from "react";
-import {
-  deleteRequisition,
-  fecthRequisitions,
-} from "../../utils";
+import { deleteRequisition, fecthRequisitions } from "../../utils";
 import { useEffect } from "react";
 import { Requisition } from "../../utils";
 import { useNavigate } from "react-router-dom";
-import { EnhancedTableProps, EnhancedTableToolbarProps, HeadCell, Order } from "../../types";
+import {
+  EnhancedTableProps,
+  EnhancedTableToolbarProps,
+  HeadCell,
+  Order,
+} from "../../types";
 import Loader from "../Loader";
 import DeleteRequisitionModal from "../modals/warnings/DeleteRequisitionModal";
 import React from "react";
@@ -60,11 +62,11 @@ function getComparator<Key extends keyof any>(
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 function stableSort<T>(
-    array: readonly T[],
-    comparator: (a: T, b: T) => number
+  array: readonly T[],
+  comparator: (a: T, b: T) => number
 ) {
-    const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-    stabilizedThis.sort((a, b) => {
+  const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
+  stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) {
       return order;
@@ -99,23 +101,23 @@ const headCells: readonly HeadCell[] = [
     disablePadding: false,
     label: "Nº",
   },
-  { 
-    id: 'CREATED_ON',
-    numeric: false,
-    disablePadding:false,
-    label: 'Data de Criação'
-  },
-  { 
-    id: 'LAST_UPDATE_ON',
+  {
+    id: "CREATED_ON",
     numeric: false,
     disablePadding: false,
-    label: 'Ultima Alteração'
+    label: "Data de Criação",
   },
-  {   
-    id: 'LAST_MODIFIED_BY_NAME',
+  {
+    id: "LAST_UPDATE_ON",
     numeric: false,
     disablePadding: false,
-    label: 'Alterado Por'
+    label: "Ultima Alteração",
+  },
+  {
+    id: "LAST_MODIFIED_BY_NAME",
+    numeric: false,
+    disablePadding: false,
+    label: "Alterado Por",
   },
   {
     id: "ID_PROJETO",
@@ -132,7 +134,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   return (
     <Toolbar
       sx={{
-        display: 'none',
+        display: "none",
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
         ...(numSelected > 0 && {
@@ -145,7 +147,6 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
       }}
     >
       <Stack>
-           
         <OutlinedInput
           sx={{ height: "30px", marginX: "1rem" }}
           id="outlined-adornment-weight"
@@ -184,7 +185,6 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           </Tooltip>
         )}
       </Stack>
-      
     </Toolbar>
   );
 }
@@ -204,15 +204,19 @@ function EnhancedTableHead(props: EnhancedTableProps) {
           <TableCell
             key={headCell.id}
             align={"left"}
-            padding={ "normal"}
+            padding={"normal"}
             sortDirection={orderBy === headCell.id ? order : false}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
               direction={orderBy === headCell.id ? order : "asc"}
-              onClick={headCell.label !== 'Status' ? createSortHandler(headCell.id) : undefined}
+              onClick={
+                headCell.label !== "Status"
+                  ? createSortHandler(headCell.id)
+                  : undefined
+              }
             >
-              {headCell.label === 'Status' ? 'Status' : headCell.label}
+              {headCell.label === "Status" ? "Status" : headCell.label}
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
                   {order === "desc" ? "sorted descending" : "sorted ascending"}
@@ -226,35 +230,42 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   );
 }
 
-//REQUISITIONS TABLE 
+//REQUISITIONS TABLE
 export default function EnhancedTable() {
-
   const [currentSelectedId, setCurrentSelectedId] = useState<number>(-1);
   const [RefreshToggler, setRefreshToggler] = useState(false);
-  const [isDeleteRequisitionModalOpen, setIsDeleteRequisitionModalOpen] =useState(false);
+  const [isDeleteRequisitionModalOpen, setIsDeleteRequisitionModalOpen] =
+    useState(false);
   const [order, setOrder] = React.useState<Order>("asc");
-  const [orderBy, setOrderBy] = React.useState<keyof Requisition>("ID_REQUISICAO");
+  const [orderBy, setOrderBy] =
+    React.useState<keyof Requisition>("ID_REQUISICAO");
   const [selected, setSelected] = React.useState<readonly number[]>([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(true);
   const [rowsPerPage, setRowsPerPage] = React.useState(50);
   const [filteredRows, setFilteredRows] = useState<Requisition[]>([]);
   const navigate = useNavigate();
-  const { refreshRequisition, currentKanbanFilter, toggleRefreshRequisition,changeKanbanFilter } = useContext(RequisitionContext);
+  const {
+    refreshRequisition,
+    currentKanbanFilter,
+    toggleRefreshRequisition,
+    changeKanbanFilter,
+  } = useContext(RequisitionContext);
   const { user } = useContext(userContext);
- 
-  const defineDefaultKanbanFilter = ( ) =>  {
-    console.log('user: ', user);
-    if(user?.PERM_COMPRADOR){  // COMPRAS
-      changeKanbanFilter({label: 'A Fazer'});
+
+  const defineDefaultKanbanFilter = () => {
+    console.log("user: ", user);
+    if (user?.PERM_COMPRADOR) {
+      // COMPRAS
+      changeKanbanFilter({ label: "A Fazer" });
       return;
     }
     changeKanbanFilter({ label: "Backlog" });
-  }
-  
-  useEffect(( )=> { 
+  };
+
+  useEffect(() => {
     defineDefaultKanbanFilter();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const dateRenderer = (value?: string | number) => {
@@ -268,22 +279,21 @@ export default function EnhancedTable() {
     }
   };
 
-  const fetchRequisitionData = useCallback( async () => {
-   if(user && currentKanbanFilter){ 
-     const data = await fecthRequisitions(user, currentKanbanFilter.label);
-     if (data) {
-      console.log('data: ', data)
-       setFilteredRows(data);
-     }else{
-      setFilteredRows([]);
-     }
-   }
+  const fetchRequisitionData = useCallback(async () => {
+    if (user && currentKanbanFilter) {
+      const data = await fecthRequisitions(user, currentKanbanFilter.label);
+      if (data) {
+        console.log("data: ", data);
+        setFilteredRows(data);
+      } else {
+        setFilteredRows([]);
+      }
+    }
   }, [currentKanbanFilter, user]);
 
-  useEffect(() => {  
-        fetchRequisitionData();
+  useEffect(() => {
+    fetchRequisitionData();
   }, [refreshRequisition, currentKanbanFilter, fetchRequisitionData]);
-
 
   const handleOpenDeleteModal = (id: number) => {
     setCurrentSelectedId(id);
@@ -300,29 +310,28 @@ export default function EnhancedTable() {
     const { value } = e.currentTarget;
     if (e.key === "Enter" && user && currentKanbanFilter) {
       setFilteredRows(
-        filteredRows.filter((item) => item.NOME_RESPONSAVEL.toUpperCase().includes(value.toUpperCase()) ||
-          item.DESCRICAO.toUpperCase().includes(value.toUpperCase()) ||
-          item.DESCRIPTION.toUpperCase().includes(value.toUpperCase()) ||
-          item.ID_REQUISICAO === Number(value))
+        filteredRows.filter(
+          (item) =>
+            item.NOME_RESPONSAVEL.toUpperCase().includes(value.toUpperCase()) ||
+            item.DESCRICAO.toUpperCase().includes(value.toUpperCase()) ||
+            item.DESCRIPTION.toUpperCase().includes(value.toUpperCase()) ||
+            item.ID_REQUISICAO === Number(value)
+        )
       );
       return;
-    }
-    else if(e.key === "Backspace" && user && currentKanbanFilter){ 
+    } else if (e.key === "Backspace" && user && currentKanbanFilter) {
       toggleRefreshRequisition();
     }
   };
 
   const visibleRows = React.useMemo(
     () =>
-      stableSort(
-          filteredRows, 
-            getComparator(order, orderBy)).slice(
-                            page * rowsPerPage,
-                            page * rowsPerPage + rowsPerPage
-    ),
+      stableSort(filteredRows, getComparator(order, orderBy)).slice(
+        page * rowsPerPage,
+        page * rowsPerPage + rowsPerPage
+      ),
 
     [order, orderBy, page, rowsPerPage, filteredRows]
-
   );
 
   const handleRequestSort = (
@@ -374,7 +383,8 @@ export default function EnhancedTable() {
           caller="requisitionTable"
           handleSearch={handleSearch}
           refreshToggler={RefreshToggler}
-          setRefreshTooggler={setRefreshToggler} />
+          setRefreshTooggler={setRefreshToggler}
+        />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -388,7 +398,7 @@ export default function EnhancedTable() {
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={visibleRows.length}
-              handleSearch ={ handleSearch }
+              handleSearch={handleSearch}
             />
             <TableBody>
               {visibleRows ? (
@@ -554,7 +564,6 @@ export default function EnhancedTable() {
           </Table>
         </TableContainer>
         <TablePagination
-          
           rowsPerPageOptions={[25, 40, 50]}
           component="div"
           count={filteredRows.length}
@@ -576,7 +585,7 @@ export default function EnhancedTable() {
         control={<Switch checked={dense} onChange={handleChangeDense} />}
         label="Linhas Finas"
       />
-    <EnhancedTableToolbar  numSelected={0}/>
+      <EnhancedTableToolbar numSelected={0} />
     </Box>
   );
 }

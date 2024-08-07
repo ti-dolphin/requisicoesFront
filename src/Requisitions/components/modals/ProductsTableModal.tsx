@@ -23,8 +23,10 @@ const style = {
 export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
   requisitionID,
 }) => {
-  const { adding, toggleAdding, changing, toggleChanging } = useContext(ItemsContext);
-  const { toggleCreating, creating, toggleRefreshRequisition } = useContext(RequisitionContext);
+  const { adding, toggleAdding, changing, toggleChanging } =
+    useContext(ItemsContext);
+  const { toggleCreating, creating, toggleRefreshRequisition } =
+    useContext(RequisitionContext);
   const navigate = useNavigate();
   const [requisitionData, setRequisitionData] = useState<Requisition>();
 
@@ -38,9 +40,9 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
       }
     }
   };
-  useEffect(() =>  {
+  useEffect(() => {
     fetchRequisitionData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleCloseAll = () => {

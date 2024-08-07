@@ -1,5 +1,5 @@
 import { AxiosRequestConfig } from "axios";
-import api from "./api";
+import api from "../api";
 import {
   Item,
   ItemFile,
@@ -13,9 +13,7 @@ import {
 } from "./types";
 import { User } from "./context/userContext";
 
-
 const logIn = async (username: string, password: string) => {
-
   try {
     const response = await api.post(
       `/users/login`,
@@ -26,16 +24,16 @@ const logIn = async (username: string, password: string) => {
       {
         withCredentials: false,
         headers: {
-          Accept: "*/*"
+          Accept: "*/*",
         },
       }
     );
-     return response.data;
+    return response.data;
   } catch (e) {
-    return {message: 'login failed'};
+    return { message: "login failed" };
     console.log(e);
   }
-}; 
+};
 
 const fetchRequisitionFiles = async (requisitionID: number) => {
   try {
@@ -44,14 +42,14 @@ const fetchRequisitionFiles = async (requisitionID: number) => {
     console.log(e);
   }
 };
-const fetchItemFiles = async (itemID : number ) => { 
-  try{ 
+const fetchItemFiles = async (itemID: number) => {
+  try {
     return await api.get<ItemFile[]>(`itemFiles/${itemID}`);
-  }catch(e){ 
+  } catch (e) {
     console.log(e);
   }
 };
-const postItemFile = async (id: number, formData : FormData) => {
+const postItemFile = async (id: number, formData: FormData) => {
   const config: AxiosRequestConfig = {
     headers: {
       "Content-Type": "multipart/form-data",
@@ -59,22 +57,21 @@ const postItemFile = async (id: number, formData : FormData) => {
     data: formData,
   };
   try {
-    console.log('POST ITEM');
+    console.log("POST ITEM");
     const response = await api.post(`itemFiles/${id}`, formData, config);
     return response;
   } catch (e) {
     console.log(e);
   }
 };
-const postItemLinkFile = async(id: number, link: string) => { 
-
+const postItemLinkFile = async (id: number, link: string) => {
   try {
-    const response = await api.post(`itemFiles/link/${id}`, { link : link} );
+    const response = await api.post(`itemFiles/link/${id}`, { link: link });
     return response;
-  }catch(e){ 
+  } catch (e) {
     console.log(e);
   }
-}
+};
 
 const postRequisitionLinkFile = async (id: number, link: string) => {
   try {
@@ -87,26 +84,25 @@ const postRequisitionLinkFile = async (id: number, link: string) => {
   }
 };
 
-const deleteItemFile = async ( id : number ) => { 
+const deleteItemFile = async (id: number) => {
   try {
     const response = await api.delete(`itemFiles/${id}`);
     return response.status;
-  }catch(e){ 
+  } catch (e) {
     console.log(e);
   }
-}
-const deleteRequisitionFile = async (fileID : number ) => { 
-  try{ 
+};
+const deleteRequisitionFile = async (fileID: number) => {
+  try {
     const response = await api.delete(`requisitionFiles/${fileID}`);
-    if(response.status === 200){ 
-       console.log("file deleted");
-       return response.status;
+    if (response.status === 200) {
+      console.log("file deleted");
+      return response.status;
     }
-    
-  }catch(e){ 
+  } catch (e) {
     console.log(e);
   }
-}
+};
 
 const postRequisitionFile = async (
   requisitionID: number,
@@ -119,21 +115,19 @@ const postRequisitionFile = async (
     data: formData,
   };
   try {
- 
     const response = await api.post(
       `requisitionFiles/${requisitionID}`,
       formData,
       config
     );
-    if (response.status === 200){ 
-       console.log("file Uploaded");
-       return response.status;
+    if (response.status === 200) {
+      console.log("file Uploaded");
+      return response.status;
     }
   } catch (e) {
     console.log(e);
   }
 };
-
 
 const getRequisitionFiles = async (requisitionID: number) => {
   try {
@@ -215,14 +209,18 @@ const searchProducts = async (name: string) => {
   }
 };
 
-const fecthRequisitions = async (user: User, currentKanbanFilter : string, search? : string ,) => {
+const fecthRequisitions = async (
+  user: User,
+  currentKanbanFilter: string,
+  search?: string
+) => {
   try {
     const response = await api.get<Requisition[]>("/requisition", {
-      params: { 
+      params: {
         userID: user.CODPESSOA,
         search,
-        currentKanbanFilter
-      }
+        currentKanbanFilter,
+      },
     });
     return response.data;
   } catch (e) {
@@ -241,7 +239,7 @@ const fetchRequsitionById = async (id: number) => {
 
 const fetchItems = async (id: number) => {
   try {
-      const response = await api.get<Item[]>(
+    const response = await api.get<Item[]>(
       `requisition/requisitionItems/${id}`
     );
     return response.data;
@@ -254,7 +252,7 @@ const deleteRequisitionItem = async (
   productId: number,
   requisitionId: number
 ) => {
-  console.log('payload: ', {productId, requisitionId})
+  console.log("payload: ", { productId, requisitionId });
   try {
     await api.delete(
       `requisition/requisitionItems/${requisitionId}/${productId}`
@@ -263,7 +261,6 @@ const deleteRequisitionItem = async (
     console.log(e);
   }
 };
-
 
 const fetchPersons = async () => {
   try {
@@ -291,11 +288,14 @@ const updateRequisitionItems = async (items: Item[], requisitonId: number) => {
   }
 };
 
-const updateRequisition = async (codpessoa: number, requisition: Requisition) => {
+const updateRequisition = async (
+  codpessoa: number,
+  requisition: Requisition
+) => {
   try {
-    await api.put(`requisition/${requisition.ID_REQUISICAO}`, { 
+    await api.put(`requisition/${requisition.ID_REQUISICAO}`, {
       codpessoa,
-      requisition
+      requisition,
     });
   } catch (e) {
     console.log(e);

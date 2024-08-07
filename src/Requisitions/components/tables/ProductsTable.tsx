@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useContext, useEffect, useState } from "react";
-import { Item, Product, fetchItems, postRequistionItem, searchProducts, updateRequisitionItems } from "../../utils";
+import {
+  Item,
+  Product,
+  fetchItems,
+  postRequistionItem,
+  searchProducts,
+  updateRequisitionItems,
+} from "../../utils";
 import SearchAppBar from "../../pages/requisitionHome/components/SearchAppBar";
 
 import Backdrop from "@mui/material/Backdrop";
@@ -8,11 +15,22 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Typography from "@mui/material/Typography";
-import { Button, IconButton, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import {
+  Button,
+  IconButton,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { ProductsTableProps } from "../../types";
 import { ItemsContext } from "../../context/ItemsContext";
-import AddIcon from '@mui/icons-material/Add';
+import AddIcon from "@mui/icons-material/Add";
 // eslint-disable-next-line react-refresh/only-export-components
 export const style = {
   position: "absolute",
@@ -26,47 +44,46 @@ export const style = {
   p: 4,
 };
 
-const ProductsTable: React.FC<ProductsTableProps> = ({
-  ID_REQUISICAO,
-}) => {
+const ProductsTable: React.FC<ProductsTableProps> = ({ ID_REQUISICAO }) => {
   const [currentSelectedItem, setCurrentSelectedItem] = useState<Product>();
   const [filteredRows, setFilteredRows] = useState<Product[]>([]);
   const [openQuantityInput, setOpenQuantityInput] = useState(false);
-  const [refreshToggler, setRefreshToggler ] = useState<boolean>(false);
-  const [addedItems, setAddedItems ] = useState<Item[]>([]);
-  const { changing, adding, toggleChanging, toggleRefreshItems } = useContext(ItemsContext);
-  const fetchData = async ( ) => { 
+  const [refreshToggler, setRefreshToggler] = useState<boolean>(false);
+  const [addedItems, setAddedItems] = useState<Item[]>([]);
+  const { changing, adding, toggleChanging, toggleRefreshItems } =
+    useContext(ItemsContext);
+  const fetchData = async () => {
     const itemsData = await fetchItems(ID_REQUISICAO);
-    if(itemsData) setAddedItems([...itemsData]);
-  }
-  
-  useEffect(() => { 
-    fetchData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshToggler])
-
-  const handleAddItem =  (
-    e: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement>
-  ) => {
-    if('key' in e && e.key === 'Enter' && adding){ 
-            const { id, value } = e.currentTarget;
-            performPostItemCallout(id, value);
-            return;
-    }
-
+    if (itemsData) setAddedItems([...itemsData]);
   };
 
-  const handleChangeItemProduct = async(product: Product ) => { 
-          if(changing[1]){ 
-            const payload = { ...changing[1], ID_PRODUTO: product.ID }
-            await updateRequisitionItems([payload], payload.ID_REQUISICAO)
-            toggleChanging();
-            toggleRefreshItems();
-          }
-  }
+  useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshToggler]);
+
+  const handleAddItem = (
+    e:
+      | React.KeyboardEvent<HTMLInputElement>
+      | React.MouseEvent<HTMLButtonElement>
+  ) => {
+    if ("key" in e && e.key === "Enter" && adding) {
+      const { id, value } = e.currentTarget;
+      performPostItemCallout(id, value);
+      return;
+    }
+  };
+
+  const handleChangeItemProduct = async (product: Product) => {
+    if (changing[1]) {
+      const payload = { ...changing[1], ID_PRODUTO: product.ID };
+      await updateRequisitionItems([payload], payload.ID_REQUISICAO);
+      toggleChanging();
+      toggleRefreshItems();
+    }
+  };
 
   const handleSearchItem = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-
     if (e.key === "Enter" && e.currentTarget.value) {
       const { value } = e.currentTarget;
       const searchResults = await searchProducts(value.toUpperCase());
@@ -75,34 +92,28 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
     }
   };
 
-
-
   const performPostItemCallout = async (id: string, value: string) => {
     const requestBody = [];
-    requestBody.push(
-      {
-        QUANTIDADE: Number(value),
-        ID_PRODUTO: Number(id),
-        ID_REQUISICAO: ID_REQUISICAO
-      }
-    );
+    requestBody.push({
+      QUANTIDADE: Number(value),
+      ID_PRODUTO: Number(id),
+      ID_REQUISICAO: ID_REQUISICAO,
+    });
     const reqIDParam = ID_REQUISICAO;
     const response = await postRequistionItem(
       requestBody,
       `/requisition/requisitionItems/${reqIDParam}`
     );
-    if(response){ 
+    if (response) {
       setOpenQuantityInput(false);
       setRefreshToggler(!refreshToggler);
     }
-  }
+  };
 
-  const handleOpen = (
-    item: Product
-  ) => {
+  const handleOpen = (item: Product) => {
     setOpenQuantityInput(true);
     setCurrentSelectedItem({
-      ...item
+      ...item,
     });
   };
 
@@ -112,17 +123,15 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
     }
   };
 
-  
-
   return (
     <Box>
       <SearchAppBar
         addedItems={addedItems}
         handleSearch={handleSearchItem}
-        caller="ItemsTable" 
+        caller="ItemsTable"
         refreshToggler={false}
         setRefreshTooggler={setRefreshToggler}
-        />
+      />
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -137,12 +146,17 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
         }}
       >
         <Fade in={openQuantityInput}>
-          <Box sx={{...style, width: { 
-            xs :'90%',
-            sm: '80%',
-            md: '70%',
-            lg: '40%'
-          }}}>
+          <Box
+            sx={{
+              ...style,
+              width: {
+                xs: "90%",
+                sm: "80%",
+                md: "70%",
+                lg: "40%",
+              },
+            }}
+          >
             <Button
               onClick={() => setOpenQuantityInput(false)}
               sx={{ position: "absolute", right: "1rem", top: "1rem" }}
@@ -169,10 +183,15 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
         </Fade>
       </Modal>
 
-      <TableContainer sx={{maxHeight: { 
-        xs: '60vh',
-        lg: '76vh'
-      }}}  component={Paper}>
+      <TableContainer
+        sx={{
+          maxHeight: {
+            xs: "60vh",
+            lg: "76vh",
+          },
+        }}
+        component={Paper}
+      >
         <Table sx={{ minWidth: 650 }} size="small" aria-label="simple table">
           <TableHead>
             <TableRow>
@@ -184,19 +203,28 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
             {filteredRows.map((row) => (
               <TableRow
                 key={row.ID}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 },
-              }}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell align="left">{row.nome_fantasia}</TableCell>
                 <TableCell align="left">
                   <Stack alignItems="center" spacing={1} direction="row">
                     <Typography>{row.codigo}</Typography>
-                    {adding ? <IconButton onClick={() => handleOpen(row)}><AddIcon /></IconButton> : 
-                      <Button><Typography onClick={() => handleChangeItemProduct(row)} sx={{fontSize: '12px'}}>Substituir</Typography></Button>
-                    }
-                    </Stack>
+                    {adding ? (
+                      <IconButton onClick={() => handleOpen(row)}>
+                        <AddIcon />
+                      </IconButton>
+                    ) : (
+                      <Button>
+                        <Typography
+                          onClick={() => handleChangeItemProduct(row)}
+                          sx={{ fontSize: "12px" }}
+                        >
+                          Substituir
+                        </Typography>
+                      </Button>
+                    )}
+                  </Stack>
                 </TableCell>
-
               </TableRow>
             ))}
           </TableBody>

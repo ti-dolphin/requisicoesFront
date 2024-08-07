@@ -1,6 +1,6 @@
 
 import './App.css'
-import RequisitionHome from './pages/requisitionHome/RequisitionHome'
+import RequisitionHome from "./Requisitions/pages/requisitionHome/RequisitionHome";
 
 function App() {
   return (

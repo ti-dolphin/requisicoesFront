@@ -39,14 +39,15 @@ import { ItemsContext } from "../../context/ItemsContext";
 import { useContext } from "react";
 import { userContext } from "../../context/userContext";
 
-
 const RequisitionDetail: React.FC = () => {
   const { id } = useParams();
   const [requisitionData, setRequisitionData] = useState<Requisition>();
   const [requisitionItems, setRequisitionItems] = useState<Item[]>([]);
-  const [editionNotAllowedAlert, setEditionNotAllowedAlert] = useState<boolean>(false);
-  const [projectAlteredSuccessAlert , setProjectAlteredSuccessAlert] = useState<boolean>(false);
-  const [projectOptions, setProjectOptions ] = useState<ProjectOption[]>([]);
+  const [editionNotAllowedAlert, setEditionNotAllowedAlert] =
+    useState<boolean>(false);
+  const [projectAlteredSuccessAlert, setProjectAlteredSuccessAlert] =
+    useState<boolean>(false);
+  const [projectOptions, setProjectOptions] = useState<ProjectOption[]>([]);
   const {
     editingField,
     handleChangeEditingField,
@@ -78,27 +79,30 @@ const RequisitionDetail: React.FC = () => {
     setRequisitionItems([]);
   };
 
-     const renderProjectOptions = async () => {
-      console.log('projectOptions');
-       const projects = await fetchAllProjects();
-       console.log('projects: ', projects)
-       if (projects) {
-         const projectsArray: { label: string; id: number }[] = [];
-         projects.forEach((project) => {
-           projectsArray.push({
-             label: String(project.DESCRICAO),
-             id: project.ID,
-           });
-         });
-         console.log("projectOptions: ", projectsArray);
-         setProjectOptions([...projectsArray]);
-       }
-     };
-     const renderProjectDescription = ( ) => { 
-      if(requisitionData && projectOptions){ 
-          return {label: requisitionData.DESCRICAO, id: requisitionData.ID_PROJETO}
-      }
-     }
+  const renderProjectOptions = async () => {
+    console.log("projectOptions");
+    const projects = await fetchAllProjects();
+    console.log("projects: ", projects);
+    if (projects) {
+      const projectsArray: { label: string; id: number }[] = [];
+      projects.forEach((project) => {
+        projectsArray.push({
+          label: String(project.DESCRICAO),
+          id: project.ID,
+        });
+      });
+      console.log("projectOptions: ", projectsArray);
+      setProjectOptions([...projectsArray]);
+    }
+  };
+  const renderProjectDescription = () => {
+    if (requisitionData && projectOptions) {
+      return {
+        label: requisitionData.DESCRICAO,
+        id: requisitionData.ID_PROJETO,
+      };
+    }
+  };
 
   useEffect(() => {
     if (!logedIn) navigate("/");
@@ -120,25 +124,27 @@ const RequisitionDetail: React.FC = () => {
       displayAlert();
       return;
     }
-      e.preventDefault();
-      toggleAdding();
-  };  
+    e.preventDefault();
+    toggleAdding();
+  };
 
   const displayAlert = (content?: string) => {
-    if (content === "Projeto Alterado!"){ 
+    if (content === "Projeto Alterado!") {
       setTimeout(() => {
         setProjectAlteredSuccessAlert(false);
       }, 3 * 1000);
       setProjectAlteredSuccessAlert(true);
-    }else{ 
-        setTimeout(() => {
-          setEditionNotAllowedAlert(false);
-        }, 3 * 1000);
-        setEditionNotAllowedAlert(true);
+    } else {
+      setTimeout(() => {
+        setEditionNotAllowedAlert(false);
+      }, 3 * 1000);
+      setEditionNotAllowedAlert(true);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { value, id } = e.target;
     requisitionData &&
       setRequisitionData({
@@ -156,8 +162,6 @@ const RequisitionDetail: React.FC = () => {
     }
   };
 
-
-
   const fields = [
     { label: "Descrição", key: "DESCRIPTION" },
     { label: "Responsável", key: "RESPONSAVEL" },
@@ -173,57 +177,57 @@ const RequisitionDetail: React.FC = () => {
     },
   }));
 
- const dateRenderer = (value?: string | number) => {
-   if (typeof value === "string") {
-     const date = value.substring(0, 10).replace(/-/g, "/");
-     const time = value.substring(11, 19);
-     let formatted = `${date}, ${time}`;
-     const localeDate = new Date(formatted).toLocaleDateString();
-     formatted = `${localeDate}, ${time}`;
-     return formatted;
-   }
- };
+  const dateRenderer = (value?: string | number) => {
+    if (typeof value === "string") {
+      const date = value.substring(0, 10).replace(/-/g, "/");
+      const time = value.substring(11, 19);
+      let formatted = `${date}, ${time}`;
+      const localeDate = new Date(formatted).toLocaleDateString();
+      formatted = `${localeDate}, ${time}`;
+      return formatted;
+    }
+  };
 
-  const valueRenderer = (item : { label: string; key : string}) =>  { 
-    if(requisitionData){ 
+  const valueRenderer = (item: { label: string; key: string }) => {
+    if (requisitionData) {
       const currentFieldValue = requisitionData[item.key as keyof Requisition];
       if (item.key === "LAST_UPDATE_ON" || item.key === "CREATED_ON") {
         return dateRenderer(currentFieldValue);
-      } else  { 
-        return currentFieldValue !== 'null' ? currentFieldValue : ''
+      } else {
+        return currentFieldValue !== "null" ? currentFieldValue : "";
       }
     }
-  }
+  };
 
   const handleNavigateHome = () => {
     navigate("/requisitions");
   };
-interface ProjectOption {
-  label: string;
-  id: number;
-}
+  interface ProjectOption {
+    label: string;
+    id: number;
+  }
 
-  const handleSelectProject = async(
+  const handleSelectProject = async (
     event: React.SyntheticEvent<Element, Event>,
     value: ProjectOption | null,
     reason: AutocompleteChangeReason,
     details?: AutocompleteChangeDetails<ProjectOption> | undefined
   ) => {
     console.log("Selecionado:", value, reason, details, event);
-    if(activeStep === 0){ 
-       if (value && requisitionData && user) {
-         console.log("updated: ", {
-           ...requisitionData,
-           ID_PROJETO: Number(value.id),
-         });
-         await updateRequisition(user.CODPESSOA, {
-           ...requisitionData,
-           ID_PROJETO: Number(value.id),
-         });
-         toggleRefreshRequisition();
-         displayAlert("Projeto Alterado!");
-       }
-    }else{ 
+    if (activeStep === 0) {
+      if (value && requisitionData && user) {
+        console.log("updated: ", {
+          ...requisitionData,
+          ID_PROJETO: Number(value.id),
+        });
+        await updateRequisition(user.CODPESSOA, {
+          ...requisitionData,
+          ID_PROJETO: Number(value.id),
+        });
+        toggleRefreshRequisition();
+        displayAlert("Projeto Alterado!");
+      }
+    } else {
       displayAlert();
       toggleRefreshRequisition();
     }
@@ -379,7 +383,10 @@ interface ProjectOption {
                             borderRadius: "4px",
                           }
                         : {
-                            border: item.key !== 'DESCRICAO' ? "1px solid #d3d6db" : 'none',
+                            border:
+                              item.key !== "DESCRICAO"
+                                ? "1px solid #d3d6db"
+                                : "none",
                             padding: "4px",
                             borderRadius: "4px",
                           }
@@ -394,9 +401,13 @@ interface ProjectOption {
                           getOptionLabel={(option) => option.label}
                           onChange={handleSelectProject}
                           value={renderProjectDescription()}
-                          sx={{ width: "100%", outline: 'none' }}
+                          sx={{ width: "100%", outline: "none" }}
                           renderInput={(params) => (
-                            <TextField {...params} sx={{fontSize: '12px'}} label="Projeto" />
+                            <TextField
+                              {...params}
+                              sx={{ fontSize: "12px" }}
+                              label="Projeto"
+                            />
                           )}
                         />
                         {editingField.isEditing &&
@@ -413,8 +424,11 @@ interface ProjectOption {
                       <>
                         <textarea
                           id={item.key}
-                          style={{ minHeight: item.key === "OBSERVACAO" ? "6rem" : "2rem" }}
-                          className="w-full bg-white text-xs focus:outline-none"
+                          style={{
+                            minHeight:
+                              item.key === "OBSERVACAO" ? "6rem" : "2rem",
+                          }}
+                          className="w-full bg-white text-sm lowercase  focus:outline-none"
                           disabled={!editingField.isEditing}
                           value={valueRenderer(item)}
                           onChange={handleChange}
@@ -423,9 +437,11 @@ interface ProjectOption {
                         {(item.key === "DESCRIPTION" ||
                           item.key === "OBSERVACAO") && (
                           <button
-                            onClick={() => {activeStep 
-                              ? displayAlert()
-                              : handleChangeEditingField(item);}}
+                            onClick={() => {
+                              activeStep
+                                ? displayAlert()
+                                : handleChangeEditingField(item);
+                            }}
                           >
                             <EditIcon
                               color="primary"
