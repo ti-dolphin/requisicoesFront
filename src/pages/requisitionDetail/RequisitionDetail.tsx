@@ -136,8 +136,6 @@ const RequisitionDetail: React.FC = () => {
         }, 3 * 1000);
         setEditionNotAllowedAlert(true);
     }
-
-   
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -204,6 +202,7 @@ interface ProjectOption {
   label: string;
   id: number;
 }
+
   const handleSelectProject = async(
     event: React.SyntheticEvent<Element, Event>,
     value: ProjectOption | null,
@@ -211,22 +210,23 @@ interface ProjectOption {
     details?: AutocompleteChangeDetails<ProjectOption> | undefined
   ) => {
     console.log("Selecionado:", value, reason, details, event);
-    if(value && requisitionData && user){ 
-      console.log("updated: ", {
-        ...requisitionData,
-        ID_PROJETO: Number(value.id),
-      });
-       await updateRequisition(
-        user.CODPESSOA,
-        {
-         ...requisitionData,
-         ID_PROJETO: Number(value.id),
-       });
-       toggleRefreshRequisition();
-       displayAlert('Projeto Alterado!');
+    if(activeStep === 0){ 
+       if (value && requisitionData && user) {
+         console.log("updated: ", {
+           ...requisitionData,
+           ID_PROJETO: Number(value.id),
+         });
+         await updateRequisition(user.CODPESSOA, {
+           ...requisitionData,
+           ID_PROJETO: Number(value.id),
+         });
+         toggleRefreshRequisition();
+         displayAlert("Projeto Alterado!");
+       }
+    }else{ 
+      displayAlert();
+      toggleRefreshRequisition();
     }
-   
-
   };
 
   return (
@@ -413,7 +413,7 @@ interface ProjectOption {
                       <>
                         <textarea
                           id={item.key}
-                          style={{ minHeight: "2rem" }}
+                          style={{ minHeight: item.key === "OBSERVACAO" ? "6rem" : "2rem" }}
                           className="w-full bg-white text-xs focus:outline-none"
                           disabled={!editingField.isEditing}
                           value={valueRenderer(item)}
@@ -423,7 +423,9 @@ interface ProjectOption {
                         {(item.key === "DESCRIPTION" ||
                           item.key === "OBSERVACAO") && (
                           <button
-                            onClick={() => handleChangeEditingField(item)}
+                            onClick={() => {activeStep 
+                              ? displayAlert()
+                              : handleChangeEditingField(item);}}
                           >
                             <EditIcon
                               color="primary"

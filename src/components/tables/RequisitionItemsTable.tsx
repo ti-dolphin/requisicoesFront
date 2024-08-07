@@ -36,8 +36,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
   currentStatus
 
 }) => {
-
- 
+  
   const [editItemsAllowed, setEditItemsAllowed] = useState<boolean>(currentStatus === 'Em edição' ? true : false);
   const [editItemsNotAllowedAlert, setEditItemsNotAllowedAlert] = useState(false);
   useEffect(() => {
@@ -88,6 +87,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
   const handleSave = async () => {
     if (editing[1]) {
       await updateRequisitionItems([editing[1]], editing[1]?.ID_REQUISICAO);
+    
       toggleEditing();
       toggleRefreshItems();
     }
