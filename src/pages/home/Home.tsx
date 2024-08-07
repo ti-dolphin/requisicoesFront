@@ -18,8 +18,8 @@ const modules = [
   {
     image:
       "https://firebasestorage.googleapis.com/v0/b/dolphin-8f800.appspot.com/o/homeBg-worker.jpeg?alt=media&token=70c011e5-eac1-4fa1-a280-f76eb61c612a",
-    name: "Dolphin Requisições  (Em desenvolvimento)",
-    Info: "Faça aqui suas Requisições de Materiais/Serviços",
+    name: "Dolphin Requisições",
+    Info: "Realize solicitações de materiais aplicados no projeto, materiais de consumo, EPI's, equipamentos do operacional ou TI, ferramentas e serviços.",
     path: "/requisitions",
   },
   {
@@ -28,8 +28,7 @@ const modules = [
     name: "Controle de Patrimônios  (Em desenvolvimento)",
     Info: `Gerenciar a localização;
             Responsável pela guarda;
-            Registro de movimentações (Obra, sede e manutenção/calibração);
-            // eslint-disable-next-line no-irregular-whitespace
+            Registro de movimentações (Obra, sede e manutenção/calibração).
             Controle dos acessórios (Cabos, bateria reserva)`,
     path: "/home",
   },
@@ -40,8 +39,7 @@ const modules = [
     Info: `Cadastro de currículos recebidos;
             Triagem de currículos
             Controle de possíveis contratações para o futuro;
-            Controle de indicações;
-            // eslint-disable-next-line no-irregular-whitespace, no-irregular-whitespace
+            Controle de indicações.
             Acesso ilimitado aos gerentes/coordenadores para consultas (Exemplo prospectar currículo adequado para uma vaga específica para setor de orçamentos, projetos ou alguma vaga na obra)`,
     path: "/home",
   },
@@ -135,7 +133,7 @@ const Home = () => {
           direction="row"
           spacing={1}
         >
-          {modules.map((module) => (
+          {modules.map((module, index) => (
             <Card sx={{ maxWidth: 345 }}>
               <CardActionArea
                 onClick={() => handleNavigateToModule(module.path)}
@@ -143,7 +141,8 @@ const Home = () => {
                 <CardMedia
                   sx={{
                     minWidth: "315px",
-                    maxHeight: "300px",
+                    maxHeight: "240px",
+                    filter: index > 0 ?"grayscale(100%)" : 'none',
                   }}
                   component="img"
                   image={module.image}
