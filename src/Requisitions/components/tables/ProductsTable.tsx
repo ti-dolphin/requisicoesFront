@@ -50,8 +50,10 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ ID_REQUISICAO }) => {
   const [openQuantityInput, setOpenQuantityInput] = useState(false);
   const [refreshToggler, setRefreshToggler] = useState<boolean>(false);
   const [addedItems, setAddedItems] = useState<Item[]>([]);
-  const { changing, adding, toggleChanging, toggleRefreshItems } =
+  const { changing, adding, toggleChanging, toggleRefreshItems, refreshItems } =
     useContext(ItemsContext);
+
+
   const fetchData = async () => {
     const itemsData = await fetchItems(ID_REQUISICAO);
     if (itemsData) setAddedItems([...itemsData]);
@@ -60,7 +62,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ ID_REQUISICAO }) => {
   useEffect(() => {
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshToggler]);
+  }, [refreshToggler, refreshItems]);
 
   const handleAddItem = (
     e:

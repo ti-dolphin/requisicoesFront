@@ -38,17 +38,18 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
   const [editItemsAllowed, setEditItemsAllowed] = useState<boolean>(
     currentStatus === "Em edição" ? true : false
   );
-  const [editItemsNotAllowedAlert, setEditItemsNotAllowedAlert] =
-    useState(false);
+  const [editItemsNotAllowedAlert, setEditItemsNotAllowedAlert] = useState(false);
   useEffect(() => {
     setEditItemsAllowed(currentStatus === "Em edição" ? true : false);
   }, [currentStatus]);
 
   const columns = ["Materiais / Serviços", "Codigo", "OC", "Quantidade"];
+
   const {
     editing,
     deleting,
     selection,
+    adding,
     changeSelection,
     toggleChanging,
     toggleEditing,
@@ -59,6 +60,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
   } = useContext(ItemsContext);
 
   const [copiedAlert, setCopiedAlert] = useState<boolean>(false);
+
   const displayAlert = () => {
     setTimeout(() => {
       setEditItemsNotAllowedAlert(false);
@@ -66,6 +68,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
     console.log("alert false");
     setEditItemsNotAllowedAlert(true);
   };
+
   const handleDelete = async (requisitionItems: Item[]) => {
     if (editItemsAllowed) {
       try {
@@ -409,7 +412,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
                       id={String(item.ID)}
                       className="delete hover:bg-slate-300 rounded-sm p-[0.5]"
                       onClick={() => {
-                        editItemsAllowed ? toggleEditing(item) : displayAlert();
+                        editItemsAllowed || adding ? toggleEditing(item) : displayAlert();
                       }}
                     >
                       <EditIcon
