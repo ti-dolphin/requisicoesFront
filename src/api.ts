@@ -1,15 +1,17 @@
 import axios from "axios";
 //PROD: https://apicontrole.dse.com.br
+//HOMOLOG: https://apicontrolehomologacao.dse.com.br
 //http://localhost:3000
 
 const api = axios.create({
-  baseURL: "https://apicontrole.dse.com.br", // Substitua pela URL do seu backend
+  baseURL: "https://apicontrolehomologacao.dse.com.br", // Substitua pela URL do seu backend
   headers: {
     Accept: "*/*",
     "Content-Type": "application/json",
     Authorization: window.localStorage.getItem("token"),
   },
 });
+
 api.interceptors.request.use(
   function (config) {
     const token = window.localStorage.getItem("token") || "";
