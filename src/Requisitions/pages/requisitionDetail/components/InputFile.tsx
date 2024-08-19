@@ -22,6 +22,7 @@ const InputFile = ({
   setRefreshToggler,
   refreshToggler,
 }: inputFileProps) => {
+  
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const file = e.target.files[0];

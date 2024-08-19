@@ -6,15 +6,18 @@ import "./index.css";
 import { ItemsContextProvider } from "./Requisitions/context/ItemsContext";
 import SignIn from "./pages/login/SigIn";
 import Home from "./pages/home/Home";
+import PatrimonyHome from "./Patrimony/pages/PatrimonyHome";
+import PatrimonyDetails from "./Patrimony/pages/PatrimonyDetails";
 
 const router = createBrowserRouter([
 
   { path: "/", element: <SignIn />},
   { path: "/home", element: <Home />},
   { path: "/requisitions", element: <RequisitionHome/>},
-  {
-    path: "requisitions/requisitionDetail/:id", element : <ItemsContextProvider><RequisitionDetail /></ItemsContextProvider>
-  }
+  { path: '/patrimony', element: <PatrimonyHome />},
+  {path: '/patrimony/details/:id_patrimonio', element : <PatrimonyDetails/>},
+  {path: "requisitions/requisitionDetail/:id", element : <ItemsContextProvider><RequisitionDetail /></ItemsContextProvider>},
+
 ]);
 // eslint-disable-next-line react-refresh/only-export-components
 export {router, RouterProvider}

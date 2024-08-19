@@ -30,7 +30,7 @@ const modules = [
             Responsável pela guarda;
             Registro de movimentações (Obra, sede e manutenção/calibração).
             Controle dos acessórios (Cabos, bateria reserva)`,
-    path: "/home",
+    path: "/patrimony",
   },
   {
     image:

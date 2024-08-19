@@ -38,9 +38,8 @@ export const RequisitionContext = createContext<RequisitionContextType>({
   changeKanbanFilter: () => {},
 });
 
-export const RequisitionContextProvider = ({
-    children,
-}: RequisitionContextProviderProps) => {
+export const RequisitionContextProvider = ({children}: RequisitionContextProviderProps) => {
+    
     const [editingField, seteditingField] = useState<{
         isEditing: boolean;
         field: Field;

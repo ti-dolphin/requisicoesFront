@@ -3,7 +3,7 @@ import axios from "axios";
 //HOMOLOG: https://apicontrolehomologacao.dse.com.br
 //http://localhost:3000
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: "https://apicontrolehomologacao.dse.com.br", // Substitua pela URL do seu backend
   headers: {
     Accept: "*/*",
@@ -16,7 +16,6 @@ api.interceptors.request.use(
   function (config) {
     const token = window.localStorage.getItem("token") || "";
     config.headers["Authorization"] = token;
-
     return config;
   },
   function (error) {
@@ -28,7 +27,6 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   function(response){
     console.log('intercptor response')
-    
     return response;
   },
   function(error) {
