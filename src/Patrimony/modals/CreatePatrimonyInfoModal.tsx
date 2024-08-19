@@ -10,7 +10,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateField } from "@mui/x-date-pickers/DateField";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { createPatrimony } from "../utils";
 import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
 import { Form } from "react-router-dom";
@@ -94,9 +94,23 @@ export default function CreatePatrimonyInfoModal() {
 
   };
  const handleNext = async ( ) => { 
+  const { data_compra } = patrimonyInfo;
+
+ if (!data_compra || !dayjs(data_compra).isValid()) {
+   alert("Por favor, insira uma data de compra válida.");
+   return;
+ }
+
+ // Verifica se a data não é futura
+ if (dayjs(data_compra).isAfter(dayjs())) {
+   alert("A data de compra não pode ser uma data futura.");
+   return;
+ }
     changeCreatingPatrimonyInfo({ 
       ...patrimonyInfo
     });
+    
+
  }
 
 

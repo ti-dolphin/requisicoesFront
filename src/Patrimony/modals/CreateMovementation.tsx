@@ -73,6 +73,7 @@ export default function CreateMovementation({ handleSave }: CreateMovementationP
           console.log('a patrimony is being created, it will be saved firts');
           const insertIdPatrimony =  await handleSave();
           if(insertIdPatrimony){ 
+          
             const insertIdMovementation = await createMovementation({
               ...newMovementation,
               ["id_patrimonio"]: insertIdPatrimony,
@@ -84,6 +85,7 @@ export default function CreateMovementation({ handleSave }: CreateMovementationP
                 return;
             }
           }
+          return;
     }
     const insertIdMovementation = await createMovementation({
       ...newMovementation,
