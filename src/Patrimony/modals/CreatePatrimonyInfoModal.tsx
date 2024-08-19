@@ -64,6 +64,7 @@ const style = {
 export default function CreatePatrimonyInfoModal() {
   const {creatingPatrimonyInfo, toggleCreatingPatrimonyInfo, changeCreatingPatrimonyInfo } = useContext(PatrimonyInfoContext);
   const [patrimonyInfo, setPatrimonynInfo] = useState<Patrimony>({
+    id_patrimonio: 0,
     nome: "",
     data_compra: "", // This should be in ISO date string format, e.g., "2024-08-09"
     nserie: "",
