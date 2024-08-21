@@ -43,7 +43,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
     setEditItemsAllowed(currentStatus === "Em edição" ? true : false);
   }, [currentStatus]);
 
-  const columns = ["Materiais / Serviços", "Codigo", "OC", "Quantidade"];
+  const columns = ["Materiais / Serviços", "Observação" , "Codigo", "OC", "Quantidade"];
 
   const {
     editing,
@@ -252,7 +252,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
           <TableHead>
             <TableRow>
               {columns.map((column) => (
-                <TableCell align="left">
+                <TableCell align="left" sx={{ padding: 0 }}>
                   {column === "Quantidade" ? (
                     <Stack
                       direction="row"
@@ -288,7 +288,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
                     item.ATIVO && item.ATIVO > 0 ? "transparent" : "#ececec",
                 }}
               >
-                <TableCell align="left">
+                <TableCell align="left" sx={{ padding: "0" }}>
                   <Stack
                     height="fit-content"
                     direction={{ xs: "column", md: "column" }}
@@ -315,37 +315,39 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
                         <ArrowDropDownIcon />
                       </IconButton>
                     </Stack>
-                    <Stack
-                      direction="row"
-                      spacing={1}
-                      sx={{ flexWrap: "nowrap" }}
+                  </Stack>
+                </TableCell>
+
+                <TableCell>
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{ flexWrap: "nowrap" }}
+                  >
+                    <Button
+                      onClick={() =>
+                        editItemsAllowed
+                          ? toggleEditingObservation(item)
+                          : displayAlert()
+                      }
                     >
-                      <Button
-                        onClick={() =>
-                          editItemsAllowed
-                            ? toggleEditingObservation(item)
-                            : displayAlert()
-                        }
+                      <Typography
+                        sx={{
+                          fontSize: "11px",
+                          textTransform: "capitalize",
+                          color: item.ATIVO && item.ATIVO > 0 ? "blue" : "gray",
+                        }}
                       >
-                        <Typography
-                          sx={{
-                            fontSize: "11px",
-                            textTransform: "capitalize",
-                            color:
-                              item.ATIVO && item.ATIVO > 0 ? "blue" : "gray",
-                          }}
-                        >
-                          {item.OBSERVACAO !== "null" && item.OBSERVACAO
-                            ? item.OBSERVACAO
-                            : "Observação"}
-                        </Typography>
-                      </Button>
-                      <ItemFilesModal
-                        displayAlert={displayAlert}
-                        editItemsAllowed={editItemsAllowed}
-                        itemID={item.ID}
-                      />
-                    </Stack>
+                        {item.OBSERVACAO !== "null" && item.OBSERVACAO
+                          ? item.OBSERVACAO
+                          : "Observação"}
+                      </Typography>
+                    </Button>
+                    <ItemFilesModal
+                      displayAlert={displayAlert}
+                      editItemsAllowed={editItemsAllowed}
+                      itemID={item.ID}
+                    />
                   </Stack>
                 </TableCell>
 
@@ -412,7 +414,9 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
                       id={String(item.ID)}
                       className="delete hover:bg-slate-300 rounded-sm p-[0.5]"
                       onClick={() => {
-                        editItemsAllowed || adding ? toggleEditing(item) : displayAlert();
+                        editItemsAllowed || adding
+                          ? toggleEditing(item)
+                          : displayAlert();
                       }}
                     >
                       <EditIcon

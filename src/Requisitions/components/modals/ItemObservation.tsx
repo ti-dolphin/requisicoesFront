@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import { IconButton, Stack } from "@mui/material";
+import { IconButton, Stack, TextField } from "@mui/material";
 import { useContext } from "react";
 import { updateRequisitionItems } from "../../utils";
 import { ItemsContext } from "../../context/ItemsContext";
@@ -82,7 +82,8 @@ const ItemObservationModal = () => {
             Observação
           </Typography>
           <Stack direction="row" spacing={2}>
-            <textarea
+            <TextField 
+               multiline
               style={{
                 border: "1px solid",
                 width: "90%",

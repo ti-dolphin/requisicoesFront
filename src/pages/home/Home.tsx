@@ -18,7 +18,7 @@ const modules = [
   {
     image:
       "https://firebasestorage.googleapis.com/v0/b/dolphin-8f800.appspot.com/o/homeBg-worker.jpeg?alt=media&token=70c011e5-eac1-4fa1-a280-f76eb61c612a",
-    name: "Dolphin Requisições",
+    name: "Requisições",
     Info: "Realize solicitações de materiais aplicados no projeto, materiais de consumo, EPI's, equipamentos do operacional ou TI, ferramentas e serviços.",
     path: "/requisitions",
   },
