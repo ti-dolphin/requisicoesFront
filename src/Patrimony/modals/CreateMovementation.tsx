@@ -5,7 +5,7 @@ import Modal from "@mui/material/Modal";
 import { Autocomplete, AutocompleteChangeDetails, AutocompleteChangeReason, Button, IconButton, Stack, TextField } from "@mui/material";
 import AddCircle from "@mui/icons-material/AddCircle";
 import { fetchAllProjects, fetchPersons, Person, Project } from "../../Requisitions/utils";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -19,6 +19,8 @@ import SaveIcon from "@mui/icons-material/Save";
 import { createMovementation } from "../utils";
 import { useParams } from "react-router-dom";
 import { MovimentationContext } from "../context/movementationContext";
+import { userContext } from "../../Requisitions/context/userContext";
+import { ResponsableContext } from "../context/responsableContext";
 
 dayjs.locale("pt-br");
 
@@ -51,11 +53,12 @@ interface CreateMovementationProps {
 export default function CreateMovementation({ handleSave }: CreateMovementationProps) {
 
   const {id_patrimonio } = useParams();
-  const { creatingPatrimonyInfo, toggleCreatingPatrimonyInfo, toggleRefreshPatrimonyInfo } =
-    React.useContext(PatrimonyInfoContext);
+  const { creatingPatrimonyInfo, toggleCreatingPatrimonyInfo, toggleRefreshPatrimonyInfo, setCurrentFilter } = React.useContext(PatrimonyInfoContext);
+     const { user } = React.useContext(userContext);
   const { toggleRefreshMovimentation, toggleCreatingMovementation, creatingMovementation} = React.useContext(MovimentationContext);
   const [projectOptions, setProjectOptions] = useState<Project[]>([]);
   const [personOptions, setPersonOptions] = useState<Person[]>();
+  const {responsable } = useContext(ResponsableContext)
   const [newMovementation, setNewMovementation] = useState<Movementation>({
     id_movimentacao: 0, // Default value for number
     id_projeto: 0, 
@@ -80,6 +83,7 @@ export default function CreateMovementation({ handleSave }: CreateMovementationP
             });
             if(insertIdMovementation){ 
               console.log("insertIdMovementation: ", insertIdMovementation);
+                setCurrentFilter('Ativos');
                 toggleRefreshPatrimonyInfo();
                 toggleCreatingPatrimonyInfo();
                 return;
@@ -99,7 +103,15 @@ export default function CreateMovementation({ handleSave }: CreateMovementationP
  
   };
 
-  const handleOpen = () => toggleCreatingMovementation();
+  const handleOpen = () => { 
+    if (Number(responsable) !== Number(user?.CODPESSOA)) {
+      console.log("responsable: ", responsable);
+      console.log('user.codpessoa: ', user?.CODPESSOA)
+      window.alert("Somente o resopnsável pode movimentar!");
+      return;
+    }
+    toggleCreatingMovementation();
+  }
 
   const handleClose = () => {
     creatingPatrimonyInfo[0] ? toggleCreatingPatrimonyInfo() : toggleCreatingMovementation();
@@ -181,14 +193,7 @@ export default function CreateMovementation({ handleSave }: CreateMovementationP
     });
   };
 
-  // const handleChangeDate = (day: Dayjs | null) => {
-  //       if(day){ 
-  //         setNewMovementation({
-  //           ...newMovementation,
-  //           ["data"]: day?.toString(),
-  //         });
-  //       }
-  // };
+ 
 
   const getMovementationKeys = () => {
    return [
@@ -219,7 +224,7 @@ export default function CreateMovementation({ handleSave }: CreateMovementationP
         sx={{ display: creatingPatrimonyInfo[0] ? "none" : "block" }}
         onClick={handleOpen}
       >
-        <AddCircle />
+        <AddCircle sx={{ color: "#F7941E" }} />
       </IconButton>
 
       <Modal

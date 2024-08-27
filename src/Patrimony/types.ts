@@ -1,6 +1,7 @@
 
 export type Patrimony = {
   nome: string;
+  tipo : number;
   id_patrimonio : number;
   data_compra: string; // ISO Date string format
   nserie: string;
@@ -8,6 +9,11 @@ export type Patrimony = {
   pat_legado?: string;
   id_projeto? : number;
 };
+
+export type patrimonyType = { 
+  id_tipo_patrimonio : number;
+  nome_tipo : string;
+}
 
 export interface ProjectOption {
   label: string;
@@ -61,6 +67,7 @@ export type AcessorioPatrimonio = {
 
 export interface PatrimonyInfo {
   id_patrimonio : number; // não aparece
+  id_responsavel : number;
   gerente: string; // aparece
   patrimonio: string;
   nome: string;

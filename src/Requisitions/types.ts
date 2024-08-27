@@ -67,11 +67,14 @@ export interface ItemFile{
 }
 
 export interface InteractiveListProps {
+  editItemsAllowed? : boolean;
   files: anexoRequisicao[] | ItemFile[];
   setRefreshToggler: (value: boolean) => void;
   refreshToggler: boolean;
+  currentStatus ? : string;
 }
 export interface OpenFileModalProps {
+  currentStatus? : string;
   ID_REQUISICAO: number;
 }
 export interface EnhancedTableToolbarProps {

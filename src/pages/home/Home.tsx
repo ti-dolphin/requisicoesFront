@@ -95,7 +95,7 @@ const Home = () => {
           <Dropdown>
             <BaseMenuButton>
               {" "}
-              <AccountCircleIcon />
+              <AccountCircleIcon sx={{color: '#F7941E'}}/>
             </BaseMenuButton>
             <Menu>
               <Button onClick={() => handleLogOut()}>Log out</Button>

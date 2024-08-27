@@ -29,18 +29,22 @@ import ItemFilesModal from "../modals/ItemFilesModal";
 import { ItemsContext } from "../../context/ItemsContext";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ItemActions from "./ItemActions";
+import { userContext } from "../../context/userContext";
 // import { userContext } from "../../context/userContext";
 
 const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
   items,
   currentStatus,
 }) => {
+  const { user } = useContext(userContext);
   const [editItemsAllowed, setEditItemsAllowed] = useState<boolean>(
-    currentStatus === "Em edição" ? true : false
+    currentStatus === "Em edição" || user?.PERM_COMPRADOR ? true : false
   );
+  
   const [editItemsNotAllowedAlert, setEditItemsNotAllowedAlert] = useState(false);
   useEffect(() => {
-    setEditItemsAllowed(currentStatus === "Em edição" ? true : false);
+    setEditItemsAllowed(currentStatus === "Em edição" || user?.PERM_COMPRADOR  ? true : false);
+
   }, [currentStatus]);
 
   const columns = ["Materiais / Serviços", "Observação" , "Codigo", "OC", "Quantidade"];
@@ -344,6 +348,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
                       </Typography>
                     </Button>
                     <ItemFilesModal
+                      currentStatus={currentStatus}
                       displayAlert={displayAlert}
                       editItemsAllowed={editItemsAllowed}
                       itemID={item.ID}
@@ -420,6 +425,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
                       }}
                     >
                       <EditIcon
+                        sx={{ color: "#2B3990" }}
                         className={
                           item.ATIVO && item.ATIVO > 0
                             ? `cursor-pointer text-blue-600`

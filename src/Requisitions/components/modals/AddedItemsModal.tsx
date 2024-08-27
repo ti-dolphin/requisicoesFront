@@ -40,7 +40,7 @@ const AddedItemsModal: React.FC<AddedItemsModalProps> = ({
                   }}
                 />
               </button>
-              {addedItems && <RequisitionItemsTable items={addedItems} />}
+              {addedItems && <RequisitionItemsTable currentStatus="Em edição" items={addedItems} />}
             </Stack>
           </motion.div>
         )}

@@ -22,7 +22,6 @@ const HorizontalLinearStepper: React.FC<props> = ({
   setRequisitionData,
 }) => {
   const { user } = useContext(userContext);
-
   const { toggleRefreshRequisition, changeActiveStep } =
     useContext(RequisitionContext);
 
@@ -37,6 +36,7 @@ const HorizontalLinearStepper: React.FC<props> = ({
   );
 
   React.useEffect(() => {
+    console.log('active step do stepper: ', activeStep)
     changeActiveStep(activeStep);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeStep]);
@@ -165,13 +165,13 @@ const HorizontalLinearStepper: React.FC<props> = ({
               color="inherit"
               disabled={activeStep === 0}
               onClick={handleBack}
-              sx={{ mr: 1 }}
+              sx={{ mr: 1, color: "#2B3990" }}
             >
               Voltar
             </Button>
             <Box sx={{ flex: "1 1 auto" }} />
 
-            <Button onClick={handleNext}>
+            <Button onClick={handleNext} sx={{ color: "#2B3990" }}>
               {activeStep === steps.length - 1 ? "Finalizar" : "Avançar"}
             </Button>
           </Box>

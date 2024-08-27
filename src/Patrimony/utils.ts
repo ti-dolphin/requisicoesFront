@@ -31,6 +31,17 @@ export const dateTimeRenderer = (value?: string | number) => {
     return `${formattedDate}, ${formattedTime}`;
   }
 };
+export const deleteMultiplePatrimonies = async (selectedItems: PatrimonyInfo[]) => {
+  try {
+   Promise.all( 
+     selectedItems.map(async (item) => ( 
+      await api.delete(`patrimony/${item.id_patrimonio}`)
+   ))
+ )
+  } catch (e) {
+    console.log(e);
+  }
+};
 export const dateRenderer = (value?: string | number) => {
     if (typeof value === "string") {
       const date = value.substring(0, 10).replace(/-/g, "/")
@@ -39,8 +50,51 @@ export const dateRenderer = (value?: string | number) => {
       formatted = `${localeDate}`;
       return formatted;
     }
-  };
+};
+export const getResponsableForPatrimony = async(patrimonyId: number  ) =>  {
+   console.log("patrimonyId passado: ", patrimonyId);
+   try{ 
+       const response = await api.get(`/patrimony/responsable/${patrimonyId}`);
+       console.log("resopnse: ", response.data);
+       return response.data;
+   }catch(e){ 
+         console.log(e);
+      }
+   }
+export const getTypesOfPatrimony = async ( ) => { 
+      try{ 
+         const response = await api.get('/patrimony/types');
+         return response.data;
+      }catch(e){ 
+         console.log(e);
+      }
+};
 
+export const getInactivePatrimonyInfo = async ( ) => { 
+   try{ 
+      const response = await api.get(`patrimony/inactive`);
+      console.log('respoonse data: ', response.data)
+      return response.data;
+   }catch(e){ 
+      console.log(e);
+   }
+};
+
+export const updateMultiplePatrimonies = async (selectedItems : PatrimonyInfo[], options? : { active : boolean } ) => { 
+   try{ 
+      if(options && options.active ){ 
+          const response = await api.put(`/patrimony`, { 
+            selectedItems, 
+            active: options.active
+          });
+      return response;
+      }
+      const response = await api.put(`/patrimony`, { selectedItems, active : false});
+      return response;
+   }catch(e){ 
+      console.log(e);
+   }
+};
 export const createMovementationfile = async(movementationId: number ,file : FormData) =>  {
     const config: AxiosRequestConfig = {
       headers: {

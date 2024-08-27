@@ -7,10 +7,12 @@ import SearchIcon from "@mui/icons-material/Search";
 import React, { useContext, useEffect, useState } from "react";
 import { SearchAppBarProps, motionItemsVariants } from "../../../types";
 import AddedItemsModal from "../../../components/modals/AddedItemsModal";
-import { Chip, Stack } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import { RequisitionContext } from "../../../context/RequisitionContext";
 import { userContext } from "../../../context/userContext";
+import AddRequisitionModal from "../../../components/modals/AddRequisitionModal";
 //HELPER Components
+
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -64,8 +66,7 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
   refreshToggler,
   setRefreshTooggler,
 }) => {
-  const { currentKanbanFilter, changeKanbanFilter } =
-    useContext(RequisitionContext);
+  const { currentKanbanFilter, changeKanbanFilter } = useContext(RequisitionContext);
   const { user } = useContext(userContext);
   const [availableKanbanFilters, setAvailableKanbanFilter] = useState<string[]>(
     []
@@ -95,84 +96,86 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
     <Box sx={{ flexGrow: 1, width: "100%" }}>
       <AppBar
         sx={{
-          backgroundColor: "#00204a",
+          backgroundColor: "#2B3990", //  className="text-gray-[#2B3990]"
           height: "fit-content",
           display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
+          // justifyContent: "center",
+          // alignItems: "center",
           padding: "8px",
           boxShadow: "none",
         }}
         position="static"
       >
-        <Toolbar
-          sx={{
-            marginX: "auto",
-            width: "80%",
-            display: "flex",
-            flexDirection: {
-              xs: "column",
-              sm: "column",
-            },
-            alignItems: {
-              xs: "start",
-            },
-            gap: "1rem",
-          }}
-        >
-          <Search
-            sx={{
-              border: "1px solid white",
-              width: {
-                xs: "100%",
-                sm: "90%",
-                md: "60%",
-              },
-            }}
+        <Toolbar>
+          <Stack
+            direction="row"
+            flexWrap="wrap"
+            width="100%"
+            justifyContent="space-between"
+            alignItems="center"
+            spacing={2}
+            className="space-y-2"
           >
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Pesquisar..."
-              inputProps={{ "aria-label": "search" }}
-              onKeyDown={handleSearch}
-            />
-          </Search>
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Pesquisar..."
+                inputProps={{ "aria-label": "search" }}
+                onKeyDown={handleSearch}
+              />
+            </Search>
 
-          {caller == "ItemsTable" && width > 600 && (
-            <AddedItemsModal
-              motionVariants={motionItemsVariants}
-              addedItems={addedItems}
-              refreshToggler={refreshToggler}
-              setRefreshToggler={setRefreshTooggler}
-            />
-          )}
-          {caller !== "ItemsTable" && (
-            <Stack
-              sx={{
-                flexDirection: {
-                  xs: "column",
-                  md: "row",
-                },
-                alignItems: "start",
-                gap: "0.5rem",
-              }}
-            >
-              {availableKanbanFilters.map((kanbanFilter) => (
-                <button onClick={handleChangeKanbanFilter} id={kanbanFilter}>
-                  <Chip
-                    color={
-                      currentKanbanFilter?.label === kanbanFilter
-                        ? "success"
-                        : "primary"
-                    }
-                    label={kanbanFilter}
-                  />
-                </button>
-              ))}
-            </Stack>
-          )}
+            {caller == "ItemsTable" && width > 600 && (
+              <AddedItemsModal
+                motionVariants={motionItemsVariants}
+                addedItems={addedItems}
+                refreshToggler={refreshToggler}
+                setRefreshToggler={setRefreshTooggler}
+              />
+            )}
+            {caller !== "ItemsTable" && (
+              <Stack
+                sx={{
+                  flexDirection: {
+                    xs: "column",
+                    md: "row",
+                  },
+                  alignItems: "start",
+                  gap: "0.5rem",
+                }}
+              >
+                {availableKanbanFilters.map((kanbanFilter) => (
+                  <Button
+                    sx={{
+                      backgroundColor:
+                        currentKanbanFilter?.label === kanbanFilter
+                          ? "#f1b963"
+                          : "#F7941E",
+
+                      "&:hover": {
+                        backgroundColor: "#f1b963",
+                      },
+                      padding: "0.4rem",
+                      borderRadius: "5px",
+                    }}
+                    onClick={handleChangeKanbanFilter}
+                    id={kanbanFilter}
+                  >
+                    <Typography
+                      color="white"
+                      sx={{ textTransform: "underline" }}
+                      fontSize="small"
+                    >
+                      {kanbanFilter}
+                    </Typography>
+                  </Button>
+                ))}
+              </Stack>
+            )}
+            {caller !== "ItemsTable" && <AddRequisitionModal />}
+          </Stack>
         </Toolbar>
       </AppBar>
     </Box>

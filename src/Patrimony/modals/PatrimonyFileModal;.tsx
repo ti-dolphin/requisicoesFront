@@ -19,9 +19,10 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useParams } from "react-router-dom";
 import { PatrimonyFile } from "../types";
 import { useContext, useEffect, useState } from "react";
-import { createPatrimonyfile, getPatrimonyFiles } from "../utils";
+import { createPatrimonyfile, getPatrimonyFiles, getResponsableForPatrimony } from "../utils";
 import { PatrimonyFileContext } from "../context/patrimonyFileContext";
 import DeletePatrimonyFileModal from "./DeletePatrimonyFileModal";
+import { userContext } from "../../Requisitions/context/userContext";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -53,7 +54,7 @@ function RenderRow(props: ListChildComponentProps & {fileData  : PatrimonyFile[]
           <IconButton
             onClick={() => toggleDeletingPatrimonyFile(true, fileData[index])}
           >
-            <DeleteIcon />
+            <DeleteIcon sx={{ color: "#F7941E" }} />
           </IconButton>
         </Stack>
       </ListItemButton>
@@ -64,17 +65,23 @@ function RenderRow(props: ListChildComponentProps & {fileData  : PatrimonyFile[]
 //MAIN COMPONENT
 export default function PatrimonyFileModal() {
   const { id_patrimonio } = useParams();
+  const { user } = useContext(userContext);
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [fileData, setFileData] = useState<PatrimonyFile[]>();
   const {refreshPatrimonyFile, toggleRefreshPatrimonyFile } = useContext(PatrimonyFileContext);
+  const [responsable, setResponsable] = useState<number>();
+
 
   const fetchPatrimonyFiles = async( ) => { 
     const data = await getPatrimonyFiles(Number(id_patrimonio));
+    const responsableData = await getResponsableForPatrimony(Number(id_patrimonio));
+    
+    if (responsableData) {
+      setResponsable(responsableData[0].id_responsavel);
+    }
     if(data){ 
-      console.log('\ndata\n: ', data);
-      console.log('\ndata length: ', data.length)
       setFileData(data);
     }
   }
@@ -98,7 +105,8 @@ export default function PatrimonyFileModal() {
    };
 
    useEffect(() => {
-    console.log("\n\nuseEffect ->  fetchPatrimonyFiles()");
+
+     console.log('teste');
      fetchPatrimonyFiles();
      // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [refreshPatrimonyFile]);
@@ -107,7 +115,7 @@ export default function PatrimonyFileModal() {
     <div>
       <Badge badgeContent={fileData?.length || 0} color="primary">
         <IconButton onClick={handleOpen}>
-          <AttachFile />
+          <AttachFile sx={{ color: "#F7941E" }} />
         </IconButton>
       </Badge>
       <Modal
@@ -146,16 +154,20 @@ export default function PatrimonyFileModal() {
               </Button>
             </Stack>
 
-            <Button
-              component="label"
-              role={undefined}
-              variant="contained"
-              tabIndex={-1}
-              startIcon={<CloudUploadIcon />}
-            >
-              Anexar
-              <VisuallyHiddenInput onChange={handleUploadFile} type="file" />
-            </Button>
+            {user?.CODPESSOA === responsable ? (
+              <Button
+                component="label"
+                role={undefined}
+                variant="contained"
+                tabIndex={-1}
+                startIcon={<CloudUploadIcon />}
+              >
+                Anexar
+                <VisuallyHiddenInput onChange={handleUploadFile} type="file" />
+              </Button>
+            ) : (
+              ""
+            )}
 
             <h2 id="transition-modal-title" className="modal-title">
               Anexos

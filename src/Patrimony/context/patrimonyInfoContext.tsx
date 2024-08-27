@@ -4,9 +4,11 @@ import { Patrimony } from "../types";
 interface PatrimonyInfoContextType {
   refreshPatrimonyInfo: boolean;
   creatingPatrimonyInfo: [boolean, Patrimony?];
+  currentFilter: string;
   toggleRefreshPatrimonyInfo: () => void;
   toggleCreatingPatrimonyInfo: () => void;
   changeCreatingPatrimonyInfo: (patrimony: Patrimony) => void;
+  setCurrentFilter: (filter: string) => void;
 }
 
 interface PatrimonyInfoContextProviderProps {
@@ -16,24 +18,30 @@ interface PatrimonyInfoContextProviderProps {
 export const PatrimonyInfoContext = createContext<PatrimonyInfoContextType>({
   refreshPatrimonyInfo: false,
   creatingPatrimonyInfo: [false],
+  currentFilter: "Ativos",
   toggleRefreshPatrimonyInfo: () => {},
-  toggleCreatingPatrimonyInfo: ( ) => {},
-  changeCreatingPatrimonyInfo: ( ) => {},
+  toggleCreatingPatrimonyInfo: () => {},
+  changeCreatingPatrimonyInfo: () => {},
+  setCurrentFilter: () => {},
 });
 
-export const PatrimonyInfoContextProvider = ({children}: PatrimonyInfoContextProviderProps) => {
-  const [refreshPatrimonyInfo, setRefreshPatrimonyInfo] = useState<boolean>(false);
-  const [creatingPatrimonyInfo, setCreatingPatrimonyInfo] = useState<[boolean, Patrimony?]>([false]);
+export const PatrimonyInfoContextProvider = ({
+  children,
+}: PatrimonyInfoContextProviderProps) => {
+  const [refreshPatrimonyInfo, setRefreshPatrimonyInfo] =
+    useState<boolean>(false);
+  const [creatingPatrimonyInfo, setCreatingPatrimonyInfo] = useState<
+    [boolean, Patrimony?]
+  >([false]);
+  const [currentFilter, setCurrentFilter] = useState<string>("Ativos");
 
-  const toggleCreatingPatrimonyInfo = ( ) =>  {
-    console.log("toggleCreatingPatrimonyInfo");
-    setCreatingPatrimonyInfo(
-      creatingPatrimonyInfo[0] ? [false] : [true]
-    );
+  const toggleCreatingPatrimonyInfo = () => {
+    setCreatingPatrimonyInfo(creatingPatrimonyInfo[0] ? [false] : [true]);
   };
-  const changeCreatingPatrimonyInfo = (patrimony : Patrimony ) => { 
-          setCreatingPatrimonyInfo([true, patrimony]);
-  }
+
+  const changeCreatingPatrimonyInfo = (patrimony: Patrimony) => {
+    setCreatingPatrimonyInfo([true, patrimony]);
+  };
 
   const toggleRefreshPatrimonyInfo = () => {
     setRefreshPatrimonyInfo((prev) => !prev);
@@ -47,6 +55,8 @@ export const PatrimonyInfoContextProvider = ({children}: PatrimonyInfoContextPro
         toggleCreatingPatrimonyInfo,
         creatingPatrimonyInfo,
         changeCreatingPatrimonyInfo,
+        currentFilter,
+        setCurrentFilter,
       }}
     >
       {children}

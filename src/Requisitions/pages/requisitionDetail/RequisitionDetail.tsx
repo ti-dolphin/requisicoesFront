@@ -56,8 +56,10 @@ const RequisitionDetail: React.FC = () => {
     toggleRefreshRequisition,
   } = useContext(RequisitionContext);
   const { refreshItems, adding, toggleAdding } = useContext(ItemsContext);
+
   const { activeStep } = useContext(RequisitionContext);
   const { logedIn, user } = useContext(userContext);
+
   const navigate = useNavigate();
 
   const fetchRequisitionData = async () => {
@@ -109,13 +111,16 @@ const RequisitionDetail: React.FC = () => {
   });
 
   useEffect(() => {
+
     fetchRequisitionData();
     renderProjectOptions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshRequisition]);
 
   useEffect(() => {
+
     fetchItemsData();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshItems, adding]);
 
@@ -318,9 +323,10 @@ const RequisitionDetail: React.FC = () => {
             }}
             onClick={handleOpen}
           >
-            <Typography color="primary" sx={{ textDecoration: "underline" }}>
+            <Typography sx={{ textDecoration: "underline", color: "#2B3990" }}>
               Materiais/ Serviços
             </Typography>
+
             <StyledBadge
               badgeContent={requisitionItems.length}
               color="secondary"
@@ -328,7 +334,10 @@ const RequisitionDetail: React.FC = () => {
               <AssignmentIcon />
             </StyledBadge>
           </IconButton>
-          <OpenFileModal ID_REQUISICAO={Number(id)} />
+          <OpenFileModal
+            currentStatus={requisitionData?.STATUS}
+            ID_REQUISICAO={Number(id)}
+          />
         </Stack>
       </Box>
 
@@ -414,6 +423,7 @@ const RequisitionDetail: React.FC = () => {
                           editingField.field.key === item.key && (
                             <button onClick={handleSave}>
                               <SaveIcon
+                                sx={{ color: "#2B3990" }}
                                 className="hover:text-blue-400"
                                 color="primary"
                               />
@@ -444,7 +454,7 @@ const RequisitionDetail: React.FC = () => {
                             }}
                           >
                             <EditIcon
-                              color="primary"
+                              sx={{ color: "#2B3990" }}
                               className="cursor-pointer hover:text-blue-400"
                             />
                           </button>
@@ -453,6 +463,7 @@ const RequisitionDetail: React.FC = () => {
                           editingField.field.key === item.key && (
                             <button onClick={handleSave}>
                               <SaveIcon
+                                sx={{ color: "#2B3990" }}
                                 className="hover:text-blue-400"
                                 color="primary"
                               />

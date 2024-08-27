@@ -2,17 +2,17 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
-import AddCircle from "@mui/icons-material/AddCircle";
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
-import { Typography } from "@mui/material";
+import { IconButton, Typography } from "@mui/material";
 import AddRequisitionForm from "../../pages/requisitionHome/components/AddRequisitionForm";
 import CloseIcon from "@mui/icons-material/Close";
 import { ItemsContextProvider } from "../../context/ItemsContext";
 import { useContext } from "react";
 import { RequisitionContext } from "../../context/RequisitionContext";
+import AddIcon from "@mui/icons-material/Add";
 
 
 const style = {
@@ -44,22 +44,15 @@ const NestedModal: React.FC = () => {
 
   return (
     <div>
-      <Button
-       sx={{ gap: "0.5rem",
-            height: '4rem'
-        }} 
-
-       onClick={handleOpen}>
-        <AddCircle />
-        <Typography sx={{ 
-          display: { 
-            xs : 'none',
-            lg: 'block'
-          }
-        }}>
-          Nova Requisição
-        </Typography>
-      </Button>
+      <IconButton
+        sx={{
+          backgroundColor: "#F7941E",
+          "&:hover": { backgroundColor: "#f1b963" },
+        }}
+        onClick={handleOpen}
+      >
+        <AddIcon sx={{ color: "#2B3990" }} />
+      </IconButton>
 
       <Modal
         sx={{ border: "none" }}
@@ -71,9 +64,9 @@ const NestedModal: React.FC = () => {
         <Box
           sx={{
             ...style,
-            width: { 
+            width: {
               xs: 300,
-              lg: 400
+              lg: 400,
             },
             display: "flex",
             flexDirection: "column",
@@ -82,15 +75,18 @@ const NestedModal: React.FC = () => {
             border: "1px solid gray",
           }}
         >
-          <Button onClick={handleClose} sx={{ position: 'absolute', top: '10px', right: '0' }}>
+          <Button
+            onClick={handleClose}
+            sx={{ position: "absolute", top: "10px", right: "0" }}
+          >
             <CloseIcon />
           </Button>
-              <Typography variant="h6" id="parent-modal-title">
-                Nova Requisição
-              </Typography>
-            <ItemsContextProvider>
-                <AddRequisitionForm />
-            </ItemsContextProvider>
+          <Typography variant="h6" id="parent-modal-title">
+            Nova Requisição
+          </Typography>
+          <ItemsContextProvider>
+            <AddRequisitionForm />
+          </ItemsContextProvider>
         </Box>
       </Modal>
     </div>

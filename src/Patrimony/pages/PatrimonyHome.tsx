@@ -10,12 +10,12 @@ const PatrimonyHome = () => {
   return (
     <Box border="1px solid #eeeeee" padding={1} height="95vh">
       <Box>
-        <Stack direction="row" spacing={1} alignItems="center">
+        <Stack direction="row" flexWrap="wrap" spacing={1} alignItems="center">
           <IconButton onClick={() => navigate("/home")}>
             <ArrowLeftIcon />
           </IconButton>
           <img src={logoUrl} width="120px" />
-          <Typography color="#757a79" variant="h6">
+          <Typography color="#2B3990" variant="h6">
             Controle de Patrimônios
           </Typography>
         </Stack>

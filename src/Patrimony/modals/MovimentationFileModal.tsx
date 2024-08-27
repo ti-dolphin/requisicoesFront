@@ -11,9 +11,11 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { MovementationFileContext } from '../context/movementationFileContext';
 import DeleteMovimentationFileModal from './DeleteMovimentationFileModal';
-import { createMovementationfile, getMovementationFiles } from '../utils';
+import { createMovementationfile, getMovementationFiles, getResponsableForPatrimony } from '../utils';
 import { MovementationFile } from '../types';
 import { useState } from 'react';
+import { userContext } from '../../Requisitions/context/userContext';
+import { useParams } from 'react-router-dom';
 
 
 const VisuallyHiddenInput = styled("input")({
@@ -79,13 +81,24 @@ export default function MovimentationFileModal({
   movementationId,
 }: MovimentationFileModalProps) {
   const {toggleMovementationFileOpen, movementationFileOpen, refreshMovementationFile, toggleRefreshMovementationFile } = React.useContext(MovementationFileContext);
+  const {user } = React.useContext(userContext);
+  const { id_patrimonio } = useParams();
   const handleOpen = () => toggleMovementationFileOpen(movementationId);
   const handleClose = () => toggleMovementationFileOpen();
   const [fileData, setFileData] = useState<MovementationFile[]>();
-  
+  const [responsable, setResponsable] = useState<number>(0);
+
   const fetchFileData = async () => {
+   
     if(movementationId){ 
+      console.log("movementationId: ", movementationId);
       const fileData = await getMovementationFiles(movementationId);
+      const responsable = await getResponsableForPatrimony(
+        Number(id_patrimonio)
+      );
+      if(responsable){ 
+        setResponsable(responsable[0].id_responsavel);
+      }
       if (fileData) {
         setFileData(fileData);
       }
@@ -110,15 +123,16 @@ export default function MovimentationFileModal({
   };
 
  React.useEffect(() => {
-   fetchFileData();
-   // eslint-disable-next-line react-hooks/exhaustive-deps
+
+  fetchFileData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
  }, [refreshMovementationFile]);
 
   return (
     <div>
       <IconButton aria-label="cart" onClick={handleOpen}>
         <StyledBadge badgeContent={fileData?.length} color="secondary">
-          <AttachFile />
+          <AttachFile sx={{ color: "#F7941E" }} />
         </StyledBadge>
       </IconButton>
       <Modal
@@ -161,16 +175,20 @@ export default function MovimentationFileModal({
               </Button>
             </Stack>
 
-            <Button
-              component="label"
-              role={undefined}
-              variant="contained"
-              tabIndex={-1}
-              startIcon={<CloudUploadIcon />}
-            >
-              Anexar
-              <VisuallyHiddenInput onChange={handleUploadFile} type="file" />
-            </Button>
+            {user?.CODPESSOA === responsable ? (
+              <Button
+                component="label"
+                role={undefined}
+                variant="contained"
+                tabIndex={-1}
+                startIcon={<CloudUploadIcon />}
+              >
+                Anexar
+                <VisuallyHiddenInput onChange={handleUploadFile} type="file" />
+              </Button>
+            ) : (
+              ""
+            )}
 
             <h2 id="transition-modal-title" className="modal-title">
               Anexos

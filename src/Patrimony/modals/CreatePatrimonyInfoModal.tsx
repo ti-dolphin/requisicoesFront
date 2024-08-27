@@ -1,17 +1,17 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { PatrimonyInfoContext } from "../context/patrimonyInfoContext";
-import { Button, Stack, TextField } from "@mui/material";
+import { Autocomplete, Button, Stack, TextField } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { Patrimony } from "../types";
+import { Patrimony, patrimonyType } from "../types";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateField } from "@mui/x-date-pickers/DateField";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs, { Dayjs } from "dayjs";
-import { createPatrimony } from "../utils";
+import { createPatrimony, getTypesOfPatrimony } from "../utils";
 import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
 import { Form } from "react-router-dom";
 import CreateMovementation from "./CreateMovementation";
@@ -24,6 +24,10 @@ interface ColumnData {
 
 
 const columns: ColumnData[] = [
+  { 
+    label: 'Tipo',
+    dataKey : 'tipo'
+  },
   {
     label: "Nome",
     dataKey: "nome",
@@ -62,15 +66,20 @@ const style = {
 };
 
 export default function CreatePatrimonyInfoModal() {
+
   const {creatingPatrimonyInfo, toggleCreatingPatrimonyInfo, changeCreatingPatrimonyInfo } = useContext(PatrimonyInfoContext);
+
   const [patrimonyInfo, setPatrimonynInfo] = useState<Patrimony>({
     id_patrimonio: 0,
+    tipo: 0,
     nome: "",
     data_compra: "", // This should be in ISO date string format, e.g., "2024-08-09"
     nserie: "",
     descricao: "",
     pat_legado: "",
   });
+
+  const [typeOptions, setTypes ] = useState<patrimonyType[]>([]);
   
   const handleClose = () => toggleCreatingPatrimonyInfo();
    
@@ -93,26 +102,30 @@ export default function CreatePatrimonyInfoModal() {
      }
 
   };
- const handleNext = async ( ) => { 
-  const { data_compra } = patrimonyInfo;
 
- if (!data_compra || !dayjs(data_compra).isValid()) {
-   alert("Por favor, insira uma data de compra válida.");
-   return;
- }
+  const handleNext = async () => {
+   const { data_compra, tipo } = patrimonyInfo;
 
- // Verifica se a data não é futura
- if (dayjs(data_compra).isAfter(dayjs())) {
-   alert("A data de compra não pode ser uma data futura.");
-   return;
- }
-    changeCreatingPatrimonyInfo({ 
-      ...patrimonyInfo
-    });
-    
+   if (!data_compra || !dayjs(data_compra).isValid()) {
+     alert("Por favor, insira uma data de compra válida.");
+     return;
+   }
 
- }
+   if (!tipo) {
+     alert("Por favor, selecione um tipo de patrimônio.");
+     return;
+   }
 
+   // Verifica se a data não é futura
+   if (dayjs(data_compra).isAfter(dayjs())) {
+     alert("A data de compra não pode ser uma data futura.");
+     return;
+   }
+
+   changeCreatingPatrimonyInfo({
+     ...patrimonyInfo,
+   });
+  };
 
   const handleChangeDate = (day: Dayjs | null) => {
       console.log({
@@ -127,6 +140,38 @@ export default function CreatePatrimonyInfoModal() {
      }
   };
 
+  const renderTypeOptions = ( ) =>  {
+           return typeOptions.map((type) => ({
+             label: type.nome_tipo,
+             id: type.id_tipo_patrimonio,
+           }));
+  };
+
+  const handleSelectType = (
+    event: React.SyntheticEvent,
+    value: { label: string; id: number } | null
+  ) => {
+    console.log(event);
+    if (value) {
+      console.log({
+        ...patrimonyInfo,
+        tipo: value.id,
+      });
+      setPatrimonynInfo({
+        ...patrimonyInfo,
+        tipo: value.id,
+      });
+    }
+  };
+
+  const fetchTypeOptions = async  () => { 
+    const types = await getTypesOfPatrimony();
+    setTypes(types);
+  }
+    useEffect(( ) => { 
+      fetchTypeOptions();
+    }, []);
+
   return (
     <div>
       <Modal
@@ -136,7 +181,7 @@ export default function CreatePatrimonyInfoModal() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={{ ...style, gap: "1rem" }}>
-          <CreateMovementation handleSave={handleSave}/>
+          <CreateMovementation handleSave={handleSave} />
           <Stack direction="row" justifyContent="end" spacing={4}>
             <Typography id="modal-modal-title" variant="h6" component="h2">
               Novo Patrimônio
@@ -163,6 +208,17 @@ export default function CreatePatrimonyInfoModal() {
                       />
                     </DemoContainer>
                   </LocalizationProvider>
+                ) : column.dataKey == "tipo" ? (
+                  <Autocomplete
+                    disablePortal
+                    id="combo-box-demo"
+                    options={renderTypeOptions()}
+                    onChange={handleSelectType} // Adiciona essa linha para chamar a função ao selecionar um item
+                    sx={{ width: 300 }}
+                    renderInput={(params) => (
+                      <TextField {...params} label={column.label} />
+                    )}
+                  />
                 ) : (
                   <TextField
                     type={column.numeric ? "number" : "text"}
@@ -174,7 +230,7 @@ export default function CreatePatrimonyInfoModal() {
               )}
             </Stack>
             <Button
-              type ="submit"
+              type="submit"
               sx={{ width: "1rem", marginX: "1rem", marginTop: "1rem" }}
             >
               <ArrowCircleRightIcon />

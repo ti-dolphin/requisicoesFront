@@ -25,6 +25,7 @@ import DeleteRequisitionFileModal from "./warnings/DeleteRequisitionFileModal";
 import { OpenFileModalProps } from "../../types";
 import CloseIcon from "@mui/icons-material/Close";
 import { RequisitionContext } from "../../context/RequisitionContext";
+import { userContext } from "../../context/userContext";
 const style = {
   position: "absolute",
   top: "50%",
@@ -70,8 +71,13 @@ const styleInputlink = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const OpenFileModal = ({ ID_REQUISICAO }: OpenFileModalProps) => {
+const OpenFileModal = ({
+  ID_REQUISICAO,
+  currentStatus,
+}: OpenFileModalProps) => {
   const { activeStep } = React.useContext(RequisitionContext);
+  const { user } = React.useContext(userContext);
+
   const [requisitionFiles, setRequisitionFiles] = useState<anexoRequisicao[]>(
     []
   );
@@ -120,6 +126,15 @@ const OpenFileModal = ({ ID_REQUISICAO }: OpenFileModalProps) => {
     setRequisitionFiles([]);
   };
 
+  const attachFileAllowed = ( ) => { 
+    if(activeStep !== undefined && activeStep < 1 ){ 
+      return true;
+    }
+    if(user && user.PERM_COMPRADOR){ 
+      return true;
+    }
+  }
+
   React.useEffect(() => {
     fetchRequisitionFiles();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -143,9 +158,10 @@ const OpenFileModal = ({ ID_REQUISICAO }: OpenFileModalProps) => {
         }}
         onClick={handleOpen}
       >
-        <a className="text-[16px] text-blue-700 hover:text-blue-400 underline">
+        <Typography sx={{ color: "#2B3990", textDecoration: "underline" }}>
           Anexos
-        </a>
+        </Typography>
+
         <StyledBadge badgeContent={requisitionFiles.length} color="secondary">
           <AttachFileIcon />
         </StyledBadge>
@@ -180,7 +196,7 @@ const OpenFileModal = ({ ID_REQUISICAO }: OpenFileModalProps) => {
               Anexos da Requisição
             </Typography>
             <Stack justifyContent="center" direction="row" spacing={2}>
-              {activeStep !== undefined && activeStep < 1 && (
+              { attachFileAllowed() &&   (
                 <>
                   <InputFile
                     id={ID_REQUISICAO}
@@ -229,6 +245,7 @@ const OpenFileModal = ({ ID_REQUISICAO }: OpenFileModalProps) => {
             </Stack>
             {requisitionFiles.length > 0 && (
               <InteractiveList
+                currentStatus={currentStatus}
                 files={requisitionFiles}
                 refreshToggler={refreshToggler}
                 setRefreshToggler={setRefreshToggler}
@@ -245,6 +262,7 @@ function InteractiveList({
   files,
   setRefreshToggler,
   refreshToggler,
+  currentStatus
 }: InteractiveListProps) {
   const [dense] = React.useState(false);
   const [
@@ -270,7 +288,7 @@ function InteractiveList({
             {files.map((item) => (
               <ListItem
                 secondaryAction={
-                  <IconButton
+                 currentStatus === 'Em edição' &&   <IconButton
                     onClick={() => {
                       setCurrentFileIdbeingDeleted(item.id);
                       setIsDeleteRequisitionFileModalOpen(

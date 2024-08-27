@@ -432,7 +432,7 @@ export default function EnhancedTable() {
                         padding="none"
                         align="left"
                       >
-                        <Typography textTransform="capitalize">
+                        <Typography fontSize="" textTransform="capitalize">
                           {row.DESCRIPTION.toLowerCase()}
                         </Typography>
                       </TableCell>
@@ -443,7 +443,7 @@ export default function EnhancedTable() {
                           handleClick(event, Number(row.ID_REQUISICAO))
                         }
                       >
-                        <Typography textTransform="capitalize">
+                        <Typography fontSize="small" textTransform="capitalize">
                           {row.STATUS.toLowerCase()}
                         </Typography>
                       </TableCell>
@@ -455,7 +455,7 @@ export default function EnhancedTable() {
                         align="left"
                         sx={{ textTransform: "lowercase" }}
                       >
-                        <Typography textTransform="capitalize">
+                        <Typography fontSize="small" textTransform="capitalize">
                           {row.NOME_RESPONSAVEL.toLowerCase()}
                         </Typography>
                       </TableCell>
@@ -466,7 +466,9 @@ export default function EnhancedTable() {
                         }
                         align="left"
                       >
-                        <Typography>{row.ID_REQUISICAO}</Typography>
+                        <Typography fontSize="small">
+                          {row.ID_REQUISICAO}
+                        </Typography>
                       </TableCell>
 
                       <TableCell
@@ -479,7 +481,7 @@ export default function EnhancedTable() {
                         }}
                         align="left"
                       >
-                        <Typography textTransform="capitalize" fontSize="14px">
+                        <Typography fontSize="small" textTransform="capitalize">
                           {dateRenderer(row.CREATED_ON)}
                         </Typography>
                       </TableCell>
@@ -494,7 +496,7 @@ export default function EnhancedTable() {
                         }}
                         align="left"
                       >
-                        <Typography fontSize="14px">
+                        <Typography fontSize="small">
                           {dateRenderer(row.LAST_UPDATE_ON)}
                         </Typography>
                       </TableCell>
@@ -509,7 +511,7 @@ export default function EnhancedTable() {
                         }}
                         align="left"
                       >
-                        <Typography textTransform="capitalize">
+                        <Typography fontSize="small" textTransform="capitalize">
                           {row.LAST_MODIFIED_BY_NAME.toLowerCase()}
                         </Typography>
                       </TableCell>
@@ -525,7 +527,8 @@ export default function EnhancedTable() {
                         align="left"
                       >
                         <Typography
-                          sx={{ fontSize: "12px", textTransform: "capitalize" }}
+                          fontSize="small"
+                          sx={{ textTransform: "capitalize" }}
                         >
                           {row.DESCRICAO}
                         </Typography>
@@ -541,7 +544,7 @@ export default function EnhancedTable() {
                             }
                             className="hover:bg-red-100 p-[2px]"
                           >
-                            <DeleteIcon className="text-red-600" />
+                            <DeleteIcon sx={{ color: "#F7941E" }} />
                           </IconButton>
                         </Stack>
                       </TableCell>

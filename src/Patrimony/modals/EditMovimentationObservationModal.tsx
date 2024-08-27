@@ -7,6 +7,7 @@ import { Button, Stack, TextField } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { updateMovementation } from "../utils";
+import { userContext } from "../../Requisitions/context/userContext";
 
 const style = {
   position: "absolute" as const,
@@ -29,6 +30,7 @@ export default function EditMovimentationObservationModal() {
     togglEditingMovementationObservation,
     toggleRefreshMovimentation,
   } = useContext(MovimentationContext);
+  useContext(userContext);
   const [observation, setObservation ] = useState<string>(editingMovementationObservation[1]?.observacao || '');
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => { 
     const {value} = e.target;
@@ -66,7 +68,8 @@ export default function EditMovimentationObservationModal() {
             id="modal-modal-title"
             variant="h6"
             component="h2"
-          >Editar observação
+          >
+              Editar observação
           </Typography>
           <TextField
             multiline

@@ -106,24 +106,31 @@ function RowContent(_index: number, row: Movementation) {
               column.dataKey === "id_movimentacao" ? "end" : "space-between"
             }
           >
-            <Typography sx={{ fontSize: "12px", textAlign: "left", textTransform: 'capitalize' }}>
+            <Typography
+              sx={{
+                fontSize: "12px",
+                textAlign: "left",
+                textTransform: "capitalize",
+              }}
+            >
               {column.dataKey === "data"
                 ? dateTimeRenderer(row.data)
-                : String(row[column.dataKey])
-                }
+                : String(row[column.dataKey])}
             </Typography>
 
             {column.dataKey === "projeto" ? (
               <MovimentationFileModal movementationId={row.id_movimentacao} />
             ) : column.dataKey === "observacao" ? (
               <IconButton
-                onClick={() => togglEditingMovementationObservation(true, row)}
+                onClick={() => {
+                  togglEditingMovementationObservation(true, row);
+                }}
               >
-                <EditIcon />
+                <EditIcon sx={{ color: "#F7941E" }} />
               </IconButton>
             ) : column.dataKey === "id_movimentacao" ? (
               <IconButton onClick={() => toggleDeletingMovementation(row)}>
-                <DeleteIcon />
+                <DeleteIcon sx={{ color: "#F7941E" }} />
               </IconButton>
             ) : (
               ""
@@ -140,13 +147,14 @@ export default function DetailMovementsTable() {
   const { id_patrimonio } = useParams();
   const [movementations, setMovementations] = React.useState<Movementation[]>();
   const {refreshMovimentation } = useContext(MovimentationContext);
+  // const { user }= useContext(userContext);
 
   const fetchMovementations = async ( ) =>  { 
         const movementationsData = await getMovementationsByPatrimonyId(Number(id_patrimonio));
-        if(movementationsData){ 
-          console.log("movementationsData: ", movementationsData);
-          setMovementations([...movementationsData]);
-        }
+          if (movementationsData) {
+            console.log("movementationsData: ", movementationsData);
+            setMovementations([...movementationsData]);
+          }
   }
 
   React.useEffect(( ) =>  { 

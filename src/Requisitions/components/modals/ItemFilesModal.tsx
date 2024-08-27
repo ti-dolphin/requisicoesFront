@@ -16,9 +16,11 @@ import InputFile from "../../pages/requisitionDetail/components/InputFile";
 import { Badge, BadgeProps, Button, Stack } from "@mui/material";
 import { deleteItemFile, fetchItemFiles, postItemLinkFile } from "../../utils";
 import { InteractiveListProps, ItemFile } from "../../types";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import DeleteRequisitionFileModal from "./warnings/DeleteRequisitionFileModal";
 import CloseIcon from "@mui/icons-material/Close";
+import { userContext } from "../../context/userContext";
+// import { RequisitionContext } from "../../context/RequisitionContext";
 
 const style = {
   position: "absolute",
@@ -55,15 +57,22 @@ interface ItemFilesModalProps {
   itemID: number;
   editItemsAllowed?: boolean;
   displayAlert?: () => void;
+  currentStatus?: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const ItemFilesModal = ({ itemID, editItemsAllowed }: ItemFilesModalProps) => {
+const ItemFilesModal = ({
+  itemID,
+  editItemsAllowed,
+  currentStatus
+}: ItemFilesModalProps) => {
+   const { user} = useContext(userContext);
   const [ItemFiles, setItemFiles] = useState<ItemFile[]>([]);
   const [open, setOpen] = React.useState(false);
   const [refreshToggler, setRefreshToggler] = useState(false);
   const [isInputLinkOpen, setIsInputLinkOpen] = useState<boolean>(false);
   const [inputlinkValue, setInputlinkValue] = useState<string>("");
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -101,9 +110,16 @@ const ItemFilesModal = ({ itemID, editItemsAllowed }: ItemFilesModalProps) => {
     }
     setItemFiles([]);
   };
+  const attachFileAllowed = ( ) => { 
+   if( currentStatus === 'Em edição' || user?.PERM_COMPRADOR){ 
+    return true;
+   }
+   return false;
+  }
 
   React.useEffect(() => {
     getItemFiles();
+    // console.log('active step itemFilesModal: ', activeStep)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshToggler]);
   const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
@@ -116,7 +132,7 @@ const ItemFilesModal = ({ itemID, editItemsAllowed }: ItemFilesModalProps) => {
     <div>
       <button
         onClick={handleOpen}
-        className="cursor-pointer  text-blue-800 hover:text-blue-500"
+        className="cursor-pointer  text-[#2B3990] hover:text-blue-500"
       >
         <Stack alignItems="center" direction="row" spacing={1.5}>
           <AttachFileIcon sx={{ rotate: "45deg" }} />
@@ -154,7 +170,7 @@ const ItemFilesModal = ({ itemID, editItemsAllowed }: ItemFilesModalProps) => {
               Anexos do Item
             </Typography>
 
-            {editItemsAllowed && (
+            {attachFileAllowed() && (
               <Stack justifyContent="center" spacing={2} direction="row">
                 <InputFile
                   id={itemID}
@@ -194,6 +210,8 @@ const ItemFilesModal = ({ itemID, editItemsAllowed }: ItemFilesModalProps) => {
             </Modal>
             {ItemFiles.length > 0 && (
               <InteractiveList
+                 currentStatus={currentStatus || ''}
+                editItemsAllowed={editItemsAllowed || false}
                 refreshToggler={refreshToggler}
                 setRefreshToggler={setRefreshToggler}
                 files={ItemFiles}
@@ -210,6 +228,8 @@ function InteractiveList({
   files,
   setRefreshToggler,
   refreshToggler,
+  editItemsAllowed,
+  currentStatus
 }: InteractiveListProps) {
   const [dense] = React.useState(false);
   const [
@@ -235,18 +255,20 @@ function InteractiveList({
             {files.map((item) => (
               <ListItem
                 secondaryAction={
-                  <IconButton
-                    onClick={() => {
-                      setCurrentFileIdbeingDeleted(item.id);
-                      setIsDeleteRequisitionFileModalOpen(
-                        !isDeleteRequisitionFileModalOpen
-                      );
-                    }}
-                    edge="end"
-                    aria-label="delete"
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                  editItemsAllowed && currentStatus === 'Em edição' && (
+                    <IconButton
+                      onClick={() => {
+                        setCurrentFileIdbeingDeleted(item.id);
+                        setIsDeleteRequisitionFileModalOpen(
+                          !isDeleteRequisitionFileModalOpen
+                        );
+                      }}
+                      edge="end"
+                      aria-label="delete"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  )
                 }
               >
                 <ListItemAvatar>
@@ -269,6 +291,7 @@ function InteractiveList({
           </List>
         </Demo>
       </Grid>
+
       <DeleteRequisitionFileModal
         isDeleteRequisitionFileModalOpen={isDeleteRequisitionFileModalOpen}
         setIsDeleteRequisitionFileModalOpen={
