@@ -141,34 +141,49 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
 
   const createCopiedTable = (selectedItems: Item[]) => {
     const table = document.createElement("table");
+
+    // Criando o cabeçalho da tabela
     table.appendChild(document.createElement("thead"));
     const tableHead = table.firstChild;
     tableHead?.appendChild(document.createElement("tr"));
     const tableHeadRow = tableHead?.firstChild;
-    const columns = ["Material/Serviço", "Quantidade"];
-    columns.forEach((column, index) => {
-      tableHeadRow?.appendChild(document.createElement("th"));
-      if (tableHeadRow) {
-        tableHeadRow.childNodes[index].textContent = column;
-      }
+
+    // Adicionando as colunas no cabeçalho
+    const columns = ["Material/Serviço", "Quantidade", "Unidade"];
+    columns.forEach((column) => {
+      const th = document.createElement("th");
+      th.textContent = column;
+      tableHeadRow?.appendChild(th);
     });
+
+    // Criando o corpo da tabela
     table.appendChild(document.createElement("tbody"));
     const tableBody = table.childNodes[1];
+
     if (tableBody) {
-      selectedItems.forEach((item, index) => {
-        tableBody.appendChild(document.createElement("tr"));
-        const tableRow = tableBody?.childNodes[index];
-        if (tableRow) {
-          tableRow.appendChild(document.createElement("td"));
-          tableRow.appendChild(document.createElement("td"));
-          tableRow.childNodes[0].textContent = item.nome_fantasia;
-          tableRow.childNodes[1].textContent =
-            String(item.QUANTIDADE) + " " + item.UNIDADE;
-        }
+      selectedItems.forEach((item) => {
+        const tr = document.createElement("tr");
+        tableBody.appendChild(tr);
+
+        // Criando as células da linha
+        const nameCell = document.createElement("td");
+        const quantityCell = document.createElement("td");
+        const unitCell = document.createElement("td");
+
+        nameCell.textContent = item.nome_fantasia;
+        quantityCell.textContent = String(item.QUANTIDADE);
+        unitCell.textContent = item.UNIDADE || '';
+
+        tr.appendChild(nameCell);
+        tr.appendChild(quantityCell);
+        tr.appendChild(unitCell);
       });
+
+
       table.style.fontFamily = "arial, sans-serif";
       table.style.borderCollapse = "collapse";
       table.style.width = "100%";
+
       const cells = table.querySelectorAll("td");
       cells.forEach((cell) => {
         cell.style.border = "1px solid #dddddd";
@@ -176,6 +191,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
         cell.style.padding = "8px";
       });
     }
+
     setCopiedAlert(true);
     setTimeout(() => {
       setCopiedAlert(false);
@@ -184,6 +200,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
     console.log("table: ", table);
     return table;
   };
+
 
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {

@@ -136,7 +136,12 @@ function RowContent(
     setResponsable(row.id_responsavel);
     window.location.href = `/patrimony/details/${id_patrimonio}`;
   };
-
+  const isOnSelectedItems = ( row : PatrimonyInfo) => { 
+    if(selectedItems.find((item) => row === item)){ 
+      return true;
+    }
+    return false;
+  };
   return (
     <React.Fragment>
       {columns.map((column) =>
@@ -166,7 +171,7 @@ function RowContent(
           </TableCell>
         ) : (
           <TableCell align="center">
-            <Checkbox onChange={(e) => handleSelectItem(e, row)} sx={{ margin: "0", padding: "0" }} />
+            <Checkbox checked={isOnSelectedItems(row)}  onChange={(e) => handleSelectItem(e, row)} sx={{ margin: "0", padding: "0" }} />
           </TableCell>
         )
       )}
