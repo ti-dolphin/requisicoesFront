@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useContext, useEffect, useState } from "react";
 import {
   Item,
@@ -9,7 +8,7 @@ import {
   updateRequisitionItems,
 } from "../../utils";
 import SearchAppBar from "../../pages/requisitionHome/components/SearchAppBar";
-
+import { TableComponents, TableVirtuoso } from "react-virtuoso";
 import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
@@ -31,7 +30,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { ProductsTableProps } from "../../types";
 import { ItemsContext } from "../../context/ItemsContext";
 import AddIcon from "@mui/icons-material/Add";
-// eslint-disable-next-line react-refresh/only-export-components
+
 export const style = {
   position: "absolute",
   borderRadius: "25px",
@@ -44,6 +43,60 @@ export const style = {
   p: 4,
 };
 
+
+const RowContent: React.FC<{
+  row: Product;
+  columns: { width: number; label: string; dataKey: keyof Product }[];
+  adding: boolean;
+  handleOpen: (row: Product) => void;
+  handleChangeItemProduct: (product: Product) => void;
+}> = ({ row, columns, adding, handleOpen, handleChangeItemProduct }) => {
+  return (
+    <React.Fragment>
+      {columns.map((column) =>
+        column.dataKey === "nome_fantasia" ? (
+          <TableCell
+            sx={{ paddingY: "4px", width: column.width }}
+            key={column.dataKey}
+          >
+            <Typography fontSize="small">{row[column.dataKey]}</Typography>
+          </TableCell>
+        ) : (
+          <TableCell
+            sx={{ paddingY: "4px", width: column.width }}
+            key={column.dataKey}
+          >
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="center"
+              spacing={0.5}
+            >
+              <Typography fontSize="small" >
+                {row[column.dataKey]}
+              </Typography>
+              {adding ? (
+                <IconButton onClick={() => handleOpen(row)} size="small">
+                  <AddIcon fontSize="small" />
+                </IconButton>
+              ) : (
+                <Button
+                  onClick={() => handleChangeItemProduct(row)}
+                  size="small"
+                >
+                  <Typography sx={{ fontSize: "0.75rem" }}>
+                    Substituir
+                  </Typography>
+                </Button>
+              )}
+            </Stack>
+          </TableCell>
+        )
+      )}
+    </React.Fragment>
+  );
+};
+
 const ProductsTable: React.FC<ProductsTableProps> = ({ ID_REQUISICAO }) => {
   const [currentSelectedItem, setCurrentSelectedItem] = useState<Product>();
   const [filteredRows, setFilteredRows] = useState<Product[]>([]);
@@ -52,16 +105,26 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ ID_REQUISICAO }) => {
   const [addedItems, setAddedItems] = useState<Item[]>([]);
   const { changing, adding, toggleChanging, toggleRefreshItems, refreshItems } =
     useContext(ItemsContext);
-
-
+  const columns = [
+    {
+      width: 300,
+      label: "Nome",
+      dataKey: "nome_fantasia" as keyof Product,
+    },
+    {
+      width: 300,
+      label: "Codigo TOTVS",
+      dataKey: "codigo" as keyof Product,
+    },
+  ];
   const fetchData = async () => {
     const itemsData = await fetchItems(ID_REQUISICAO);
     if (itemsData) setAddedItems([...itemsData]);
+    console.log('itemsData: ', itemsData);
   };
 
   useEffect(() => {
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshToggler, refreshItems]);
 
   const handleAddItem = (
@@ -89,7 +152,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ ID_REQUISICAO }) => {
     if (e.key === "Enter" && e.currentTarget.value) {
       const { value } = e.currentTarget;
       const searchResults = await searchProducts(value.toUpperCase());
-
+      console.log("searchResults: ", searchResults);
       if (searchResults) setFilteredRows([...searchResults.data]);
     }
   };
@@ -123,6 +186,24 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ ID_REQUISICAO }) => {
     if (e.key === "Enter") {
       setOpenQuantityInput(false);
     }
+  };
+  const VirtuosoTableComponents: TableComponents<Product> = {
+    Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
+      <TableContainer component={Paper} {...props} ref={ref} />
+    )),
+    Table: (props) => (
+      <Table
+        {...props}
+        sx={{ borderCollapse: "separate", tableLayout: "fixed" }}
+      />
+    ),
+    TableHead: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
+      <TableHead {...props} ref={ref} />
+    )),
+    TableRow,
+    TableBody: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
+      <TableBody {...props} ref={ref} />
+    )),
   };
 
   return (
@@ -185,53 +266,26 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ ID_REQUISICAO }) => {
         </Fade>
       </Modal>
 
-      <TableContainer
+      <Paper
         sx={{
-          maxHeight: {
-            xs: "60vh",
-            lg: "76vh",
-          },
+          height: { xs: "600px", lg: "700px" },
         }}
         component={Paper}
       >
-        <Table sx={{ minWidth: 650 }} size="small" aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell align="left">Nome</TableCell>
-              <TableCell align="left">Codigo TOTVS</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredRows.map((row) => (
-              <TableRow
-                key={row.ID}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell align="left">{row.nome_fantasia}</TableCell>
-                <TableCell align="left">
-                  <Stack alignItems="center" spacing={1} direction="row">
-                    <Typography>{row.codigo}</Typography>
-                    {adding ? (
-                      <IconButton onClick={() => handleOpen(row)}>
-                        <AddIcon />
-                      </IconButton>
-                    ) : (
-                      <Button>
-                        <Typography
-                          onClick={() => handleChangeItemProduct(row)}
-                          sx={{ fontSize: "12px" }}
-                        >
-                          Substituir
-                        </Typography>
-                      </Button>
-                    )}
-                  </Stack>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+        <TableVirtuoso
+          data={filteredRows}
+          components={VirtuosoTableComponents}
+          itemContent={(index, row) => (
+            <RowContent
+              row={row}
+              columns={columns}
+              adding={adding}
+              handleOpen={handleOpen}
+              handleChangeItemProduct={handleChangeItemProduct}
+            />
+          )}
+        />
+      </Paper>
     </Box>
   );
 };
