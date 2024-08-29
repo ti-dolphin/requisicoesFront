@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
-import { Dispatch, SetStateAction, useContext } from "react";
+import { Dispatch, SetStateAction, useContext, useEffect } from "react";
 import { PatrimonyInfoContext } from "../context/patrimonyInfoContext";
 import AddIcon from "@mui/icons-material/Add";
 import {
@@ -22,6 +22,7 @@ import React from "react";
 import { PatrimonyInfo } from "../types";
 import { deleteMultiplePatrimonies, updateMultiplePatrimonies } from "../utils";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import { userContext } from "../../Requisitions/context/userContext";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -94,7 +95,7 @@ export default function SearchAppBar({
     toggleRefreshPatrimonyInfo,
     setCurrentFilter,
   } = useContext(PatrimonyInfoContext);
-
+  const { user } = useContext(userContext);
   const [actionsMenu, setActionsMenu] = React.useState<null | HTMLElement>(
     null
   );
@@ -182,7 +183,10 @@ export default function SearchAppBar({
       }
     }
   };
-
+  useEffect(() => { 
+    console.log('PERM_ADMINISTRADOR: ', user?.PERM_ADMINISTRADOR);
+    console.log("PERM_CADASTRAR_PAT: ", user?.PERM_CADASTRAR_PAT);
+  }, []);
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -213,96 +217,100 @@ export default function SearchAppBar({
               />
             </Search>
 
-            <Stack
-              className="MenuList"
-              flexWrap="wrap"
-              justifyContent="end"
-              direction="row"
-              spacing={2}
-            >
-              <Button
-                id="basic-button"
-                aria-controls={actionsMenuOpen ? "basic-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={actionsMenuOpen ? "true" : undefined}
-                onClick={handleClickAction}
-                sx={{
-                  color: "white",
-                  backgroundColor: "#F7941E",
-                  "&:hover": {
-                    backgroundColor: "#f1b963",
-                  },
-                }}
+            {user?.PERM_ADMINISTRADOR && (
+              <Stack
+                className="MenuList"
+                flexWrap="wrap"
+                justifyContent="end"
+                direction="row"
+                spacing={2}
               >
-                <Typography textTransform="capitalize">Ações</Typography>
-                <ArrowDropDownCircleIcon sx={{ color: "white" }} />
-              </Button>
-              <Menu
-                id="basic-menu"
-                anchorEl={actionsMenu}
-                open={actionsMenuOpen}
-                onClose={handleCloseActions}
-                MenuListProps={{
-                  "aria-labelledby": "basic-button",
-                }}
-              >
-                {["Inativar", "Ativar", "Excluir"].map((action) => (
-                  <MenuItem
-                    key={action}
-                    onClick={() => handleOpenActionModal(action)}
-                  >
-                    {action}
-                  </MenuItem>
-                ))}
-              </Menu>
+                <Button
+                  id="basic-button"
+                  aria-controls={actionsMenuOpen ? "basic-menu" : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={actionsMenuOpen ? "true" : undefined}
+                  onClick={handleClickAction}
+                  sx={{
+                    color: "white",
+                    backgroundColor: "#F7941E",
+                    "&:hover": {
+                      backgroundColor: "#f1b963",
+                    },
+                  }}
+                >
+                  <Typography textTransform="capitalize">Ações</Typography>
+                  <ArrowDropDownCircleIcon sx={{ color: "white" }} />
+                </Button>
+                <Menu
+                  id="basic-menu"
+                  anchorEl={actionsMenu}
+                  open={actionsMenuOpen}
+                  onClose={handleCloseActions}
+                  MenuListProps={{
+                    "aria-labelledby": "basic-button",
+                  }}
+                >
+                  {["Inativar", "Ativar", "Excluir"].map((action) => (
+                    <MenuItem
+                      key={action}
+                      onClick={() => handleOpenActionModal(action)}
+                    >
+                      {action}
+                    </MenuItem>
+                  ))}
+                </Menu>
 
-              <Button
-                id="basic-button"
-                aria-controls={filterMenuOpen ? "basic-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={filterMenuOpen ? "true" : undefined}
-                onClick={handleClickFilter}
-                sx={{
-                  color: "white",
-                  backgroundColor: "#F7941E",
-                  "&:hover": {
-                    backgroundColor: "#f1b963",
-                  },
-                }}
-              >
-                <Typography textTransform="capitalize">Filtros</Typography>
-                <FilterAltIcon sx={{ color: "white" }} />
-              </Button>
-              <Menu
-                id="basic-menu"
-                anchorEl={filterMenu}
-                open={filterMenuOpen}
-                onClose={handleCloseFilter}
-                MenuListProps={{
-                  "aria-labelledby": "basic-button",
-                }}
-              >
-                {["Ativos", "Inativos"].map((filter) => (
-                  <MenuItem
-                    key={filter}
-                    onClick={() => handleSelectFilter(filter)}
-                  >
-                    {filter}
-                  </MenuItem>
-                ))}
-              </Menu>
-            </Stack>
+                <Button
+                  id="basic-button"
+                  aria-controls={filterMenuOpen ? "basic-menu" : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={filterMenuOpen ? "true" : undefined}
+                  onClick={handleClickFilter}
+                  sx={{
+                    color: "white",
+                    backgroundColor: "#F7941E",
+                    "&:hover": {
+                      backgroundColor: "#f1b963",
+                    },
+                  }}
+                >
+                  <Typography textTransform="capitalize">Filtros</Typography>
+                  <FilterAltIcon sx={{ color: "white" }} />
+                </Button>
+                <Menu
+                  id="basic-menu"
+                  anchorEl={filterMenu}
+                  open={filterMenuOpen}
+                  onClose={handleCloseFilter}
+                  MenuListProps={{
+                    "aria-labelledby": "basic-button",
+                  }}
+                >
+                  {["Ativos", "Inativos"].map((filter) => (
+                    <MenuItem
+                      key={filter}
+                      onClick={() => handleSelectFilter(filter)}
+                    >
+                      {filter}
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </Stack>
+            )}
 
-            <IconButton
-              onClick={toggleCreatingPatrimonyInfo}
-              sx={{
-                backgroundColor: "#F7941E",
-                color: "white",
-                "&:hover": { backgroundColor: "#f1b963" },
-              }}
-            >
-              <AddIcon sx={{ color: "#2B3990" }} />
-            </IconButton>
+            {user?.PERM_CADASTRAR_PAT && (
+              <IconButton
+                onClick={toggleCreatingPatrimonyInfo}
+                sx={{
+                  backgroundColor: "#F7941E",
+                  color: "white",
+                  "&:hover": { backgroundColor: "#f1b963" },
+                }}
+              >
+                <AddIcon sx={{ color: "#2B3990" }} />
+              </IconButton>
+            )}
           </Stack>
         </Toolbar>
       </AppBar>

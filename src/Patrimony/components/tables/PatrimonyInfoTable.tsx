@@ -97,9 +97,10 @@ function fixedHeaderContent() {
           style={{ width: column.width }}
           sx={{
             backgroundColor: "background.paper",
+            padding: "0.2",
           }}
         >
-          {column.label}
+          <Typography fontSize="small" sx={{fontWeight: 'bold'}}>{column.label}</Typography>
         </TableCell>
       ))}
     </TableRow>
@@ -112,36 +113,34 @@ function RowContent(
   setSelectedItems: Dispatch<SetStateAction<PatrimonyInfo[]>>,
   selectedItems: PatrimonyInfo[]
 ) {
-  const { setResponsable } = useContext(ResponsableContext);
+        const { setResponsable } = useContext(ResponsableContext);
 
-  const handleSelectItem = (e : React.ChangeEvent<HTMLInputElement> ,row : PatrimonyInfo) => {
-    if(e.target.checked){ 
-        const currentSelectedItems = [...selectedItems];
-        currentSelectedItems.push( 
-          row
-        );
-        setSelectedItems([...currentSelectedItems]);
-        console.log("currentSelected: \n", currentSelectedItems);
-        return;
-    }
-      const currentSelectedItems = [...selectedItems];
-      currentSelectedItems.splice(currentSelectedItems.indexOf(row), 1);
-      setSelectedItems([...currentSelectedItems]);
+        const handleSelectItem = (e : React.ChangeEvent<HTMLInputElement> ,row : PatrimonyInfo) => {
+          if(e.target.checked){ 
+              const currentSelectedItems = [...selectedItems];
+              currentSelectedItems.push( 
+                row
+              );
+              setSelectedItems([...currentSelectedItems]);
+              console.log("currentSelected: \n", currentSelectedItems);
+              return;
+          }
+            const currentSelectedItems = [...selectedItems];
+            currentSelectedItems.splice(currentSelectedItems.indexOf(row), 1);
+            setSelectedItems([...currentSelectedItems]);
+        };
 
-      console.log('currentSelected: \n', currentSelectedItems)
+        const handleOpenPatrimonyDetail = (id_patrimonio: number) => {
+          setResponsable(row.id_responsavel);
+          window.location.href = `/patrimony/details/${id_patrimonio}`;
+        };
+        const isOnSelectedItems = ( row : PatrimonyInfo) => { 
+          if(selectedItems.find((item) => row === item)){ 
+            return true;
+          }
+          return false;
+        };
 
-  };
-
-  const handleOpenPatrimonyDetail = (id_patrimonio: number) => {
-    setResponsable(row.id_responsavel);
-    window.location.href = `/patrimony/details/${id_patrimonio}`;
-  };
-  const isOnSelectedItems = ( row : PatrimonyInfo) => { 
-    if(selectedItems.find((item) => row === item)){ 
-      return true;
-    }
-    return false;
-  };
   return (
     <React.Fragment>
       {columns.map((column) =>
@@ -149,7 +148,7 @@ function RowContent(
           <TableCell
             sx={{
               cursor: "pointer",
-              padding: "0",
+              paddingX: "0.2",
               textTransform: "capitalize",
          
             }}
@@ -170,7 +169,7 @@ function RowContent(
             )}
           </TableCell>
         ) : (
-          <TableCell align="center">
+          <TableCell align="center" >
             <Checkbox checked={isOnSelectedItems(row)}  onChange={(e) => handleSelectItem(e, row)} sx={{ margin: "0", padding: "0" }} />
           </TableCell>
         )
@@ -231,6 +230,7 @@ export default function MovementsTable() {
   React.useEffect(() => {
     console.log("fetchData");
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshPatrimonyInfo, currentFilter]);
  
   return (
@@ -246,7 +246,7 @@ export default function MovementsTable() {
         components={VirtuosoTableComponents}
         fixedHeaderContent={fixedHeaderContent}
         itemContent={(index, row) =>
-          RowContent(index, row, setSelectedItems, selectedItems)
+        RowContent(index, row, setSelectedItems, selectedItems)
         }
       />
     </Paper>

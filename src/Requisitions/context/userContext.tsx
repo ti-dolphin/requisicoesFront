@@ -5,7 +5,9 @@ export interface User {
   CODPESSOA: number;
   CODGERENTE?: number;
   PERM_REQUISITAR?: number;
+  PERM_CADASTRAR_PAT: number;
   PERM_COMPRADOR?: number;
+  PERM_ADMINISTRADOR? : number;
 }
 interface userContextType {
   logedIn: boolean;

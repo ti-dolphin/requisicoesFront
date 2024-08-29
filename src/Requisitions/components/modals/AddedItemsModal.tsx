@@ -1,51 +1,68 @@
-import { AnimatePresence, motion } from "framer-motion";
 import { AddedItemsModalProps } from "../../types";
 import { useState } from "react";
 import RequisitionItemsTable from "../tables/RequisitionItemsTable";
 import CloseIcon from "@mui/icons-material/Close";
-import { Button, Stack } from "@mui/material";
-const AddedItemsModal: React.FC<AddedItemsModalProps> = ({
-  motionVariants,
-  addedItems,
-}) => {
+import {
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  IconButton,
+  Stack,
+} from "@mui/material";
+
+const AddedItemsModal: React.FC<AddedItemsModalProps> = ({ addedItems }) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleClose = () => {
+    setIsOpen(false);
+  };
+
   return (
     <>
       <Button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setIsOpen(true)}
         sx={{ color: "#8dc6ff", "&:hover": { color: "white" } }}
       >
         Items Adicionados
       </Button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ x: "50%", opacity: 0 }}
-            animate={{ x: "50%", opacity: 1 }}
-            // transition={{ ease: "easeInOut", duration: 0.7 }}
-            // exit={{ x: 0, opacity: 0 }}
-            variants={motionVariants}
-            className="p-4 flex flex-row absolute bg-[#f8f8f8] border shadow-lg top-[5rem] h-[80vh] 
-            z-20 overflow-auto max-h-[70vh]"
+      <Dialog
+        open={isOpen}
+        onClose={handleClose}
+        fullWidth
+        maxWidth="md"
+        sx={{
+          "& .MuiPaper-root": {
+            borderRadius: 2,
+            padding: 2,
+            backgroundColor: "#f8f8f8",
+          },
+        }}
+      >
+        <DialogTitle>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
           >
-            <Stack direction="column" spacing={4} sx={{ width: "90%" }}>
-              <button onClick={() => setIsOpen(false)}>
-                <CloseIcon
-                  sx={{
-                    color: "red",
-                    position: "absolute",
-                    top: "0.5rem",
-                    left: "10px",
-                  }}
-                />
-              </button>
-              {addedItems && <RequisitionItemsTable currentStatus="Em edição" items={addedItems} />}
-            </Stack>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <span>Items Adicionados</span>
+            <IconButton onClick={handleClose} sx={{ color: "red" }}>
+              <CloseIcon />
+            </IconButton>
+          </Stack>
+        </DialogTitle>
+        <DialogContent dividers sx={{ maxHeight: "70vh", overflowY: "auto" }}>
+          {addedItems && (
+            <RequisitionItemsTable
+              currentStatus="Em edição"
+              items={addedItems}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
+
 export default AddedItemsModal;

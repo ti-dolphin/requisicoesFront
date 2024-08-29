@@ -5,7 +5,7 @@ import Modal from "@mui/material/Modal";
 import { Autocomplete, AutocompleteChangeDetails, AutocompleteChangeReason, Button, IconButton, Stack, TextField } from "@mui/material";
 import AddCircle from "@mui/icons-material/AddCircle";
 import { fetchAllProjects, fetchPersons, Person, Project } from "../../Requisitions/utils";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -20,7 +20,6 @@ import { createMovementation } from "../utils";
 import { useParams } from "react-router-dom";
 import { MovimentationContext } from "../context/movementationContext";
 import { userContext } from "../../Requisitions/context/userContext";
-import { ResponsableContext } from "../context/responsableContext";
 
 dayjs.locale("pt-br");
 
@@ -48,73 +47,86 @@ interface PersonOption{
 
 interface CreateMovementationProps {
   handleSave?: () => Promise<number>;
+  responsable? : number;
 }
 
-export default function CreateMovementation({ handleSave }: CreateMovementationProps) {
+export default function CreateMovementation({
+  handleSave,
+  responsable,
 
-  const {id_patrimonio } = useParams();
-  const { creatingPatrimonyInfo, toggleCreatingPatrimonyInfo, toggleRefreshPatrimonyInfo, setCurrentFilter } = React.useContext(PatrimonyInfoContext);
-     const { user } = React.useContext(userContext);
-  const { toggleRefreshMovimentation, toggleCreatingMovementation, creatingMovementation} = React.useContext(MovimentationContext);
+}: CreateMovementationProps) {
+  const { id_patrimonio } = useParams();
+  const {
+    creatingPatrimonyInfo,
+    toggleCreatingPatrimonyInfo,
+    toggleRefreshPatrimonyInfo,
+    setCurrentFilter,
+  } = React.useContext(PatrimonyInfoContext);
+  const { user } = React.useContext(userContext);
+  const {
+    toggleRefreshMovimentation,
+    toggleCreatingMovementation,
+    creatingMovementation,
+  } = React.useContext(MovimentationContext);
   const [projectOptions, setProjectOptions] = useState<Project[]>([]);
   const [personOptions, setPersonOptions] = useState<Person[]>();
-  const {responsable } = useContext(ResponsableContext)
+
   const [newMovementation, setNewMovementation] = useState<Movementation>({
     id_movimentacao: 0, // Default value for number
-    id_projeto: 0, 
+    id_projeto: 0,
     id_patrimonio: 0,
-    id_ultima_movimentacao : 0,// Default value for number
+    id_ultima_movimentacao: 0, // Default value for number
     data: "", // Default value for string
     id_responsavel: 0, // Default value for string
     numeroMovimentacao: 0, // Default value for number
     observacao: "",
-  }); 
- 
+  });
 
-  const handleSaveMovementation = async( ) => { 
-    if(creatingPatrimonyInfo[0] && handleSave){ //CREATING PATRIMONY AND FIRST MOVEMENTATION
-          console.log('a patrimony is being created, it will be saved firts');
-          const insertIdPatrimony =  await handleSave();
-          if(insertIdPatrimony){ 
-          
-            const insertIdMovementation = await createMovementation({
-              ...newMovementation,
-              ["id_patrimonio"]: insertIdPatrimony,
-            });
-            if(insertIdMovementation){ 
-              console.log("insertIdMovementation: ", insertIdMovementation);
-                setCurrentFilter('Ativos');
-                toggleRefreshPatrimonyInfo();
-                toggleCreatingPatrimonyInfo();
-                return;
-            }
-          }
+  const handleSaveMovementation = async () => {
+    if (creatingPatrimonyInfo[0] && handleSave) {
+      //CREATING PATRIMONY AND FIRST MOVEMENTATION
+      console.log("a patrimony is being created, it will be saved firts");
+      const insertIdPatrimony = await handleSave();
+      if (insertIdPatrimony) {
+        const insertIdMovementation = await createMovementation({
+          ...newMovementation,
+          ["id_patrimonio"]: insertIdPatrimony,
+        });
+        if (insertIdMovementation) {
+          console.log("insertIdMovementation: ", insertIdMovementation);
+          setCurrentFilter("Ativos");
+          toggleRefreshPatrimonyInfo();
+          toggleCreatingPatrimonyInfo();
           return;
+        }
+      }
+      return;
     }
     const insertIdMovementation = await createMovementation({
       ...newMovementation,
       ["id_patrimonio"]: Number(id_patrimonio),
     });
-    if(insertIdMovementation) {
-        toggleRefreshMovimentation();
-        toggleCreatingMovementation();
+    if (insertIdMovementation) {
+      toggleRefreshMovimentation();
+      toggleCreatingMovementation();
     }
     // no caso de estar criando a movimentação para o patrimonio já existente, o id virá do contexto de criação da movimentação, que irá receber o id do patrimônio
- 
   };
 
-  const handleOpen = () => { 
+  const handleOpen = () => {
     if (Number(responsable) !== Number(user?.CODPESSOA)) {
       console.log("responsable: ", responsable);
-      console.log('user.codpessoa: ', user?.CODPESSOA)
+      console.log("user.codpessoa: ", user?.CODPESSOA);
       window.alert("Somente o resopnsável pode movimentar!");
       return;
     }
     toggleCreatingMovementation();
-  }
+  };
 
   const handleClose = () => {
-    creatingPatrimonyInfo[0] ? toggleCreatingPatrimonyInfo() : toggleCreatingMovementation();
+    creatingPatrimonyInfo[0]
+      ? toggleCreatingPatrimonyInfo()
+      : toggleCreatingMovementation();
   };
 
   const renderProjectOptions = () => {
@@ -128,18 +140,18 @@ export default function CreateMovementation({ handleSave }: CreateMovementationP
     return projectOptionsArray;
   };
 
-  const renderPersonOptions = ( ) => { 
-    const personOptionsArray : { label : string, id: number}[] = [];
-    personOptions?.forEach((person) => { 
+  const renderPersonOptions = () => {
+    const personOptionsArray: { label: string; id: number }[] = [];
+    personOptions?.forEach((person) => {
       personOptionsArray.push({
         label: String(person.NOME),
         id: Number(person.CODPESSOA),
       });
     });
-    return personOptionsArray
-  }
+    return personOptionsArray;
+  };
 
-  const handleSelectProject =  (
+  const handleSelectProject = (
     _event: React.SyntheticEvent<Element, Event>,
     value: ProjectOption | null,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -165,18 +177,17 @@ export default function CreateMovementation({ handleSave }: CreateMovementationP
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _details?: AutocompleteChangeDetails<PersonOption> | undefined
   ) => {
-      if(value){ 
-        console.log({
-          ...newMovementation,
-          ["id_responsavel"]: value.id,
-        });
+    if (value) {
+      console.log({
+        ...newMovementation,
+        ["id_responsavel"]: value.id,
+      });
 
-        setNewMovementation({ 
-          ...newMovementation,
-          ['id_responsavel'] : value.id
-        });
-      }
-
+      setNewMovementation({
+        ...newMovementation,
+        ["id_responsavel"]: value.id,
+      });
+    }
   };
 
   const handleChange = (
@@ -193,15 +204,13 @@ export default function CreateMovementation({ handleSave }: CreateMovementationP
     });
   };
 
- 
-
   const getMovementationKeys = () => {
-   return [
-     { label: "Projeto", dataKey: "id_projeto" },
-     { label: "Responsável", dataKey: "id_responsavel" },
-     { label: "Data da Movimentação", dataKey: "data" },
-     { label: "Observação", dataKey: "observacao" },
-   ];
+    return [
+      { label: "Projeto", dataKey: "id_projeto" },
+      { label: "Responsável", dataKey: "id_responsavel" },
+      { label: "Data da Movimentação", dataKey: "data" },
+      { label: "Observação", dataKey: "observacao" },
+    ];
   };
 
   React.useEffect(() => {
@@ -211,7 +220,7 @@ export default function CreateMovementation({ handleSave }: CreateMovementationP
         setProjectOptions(projectData);
       }
       const personData = await fetchPersons();
-      if(personData){
+      if (personData) {
         setPersonOptions(personData);
       }
     }

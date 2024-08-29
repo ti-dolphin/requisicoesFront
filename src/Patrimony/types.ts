@@ -41,6 +41,7 @@ export interface Movementation {
   responsavel? : string,
   projeto?: string;
   data: string;
+  id_ultimo_responsavel? : number;
   id_responsavel: number;
   numeroMovimentacao?: number;
   observacao: string;

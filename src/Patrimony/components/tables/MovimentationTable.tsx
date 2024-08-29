@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -11,7 +10,7 @@ import { TableVirtuoso, TableComponents } from "react-virtuoso";
 import { IconButton, Stack, Typography } from "@mui/material";
 import { Movementation } from "../../types";
 import MovimentationFileModal from "../../modals/MovimentationFileModal";
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from "@mui/icons-material/Edit";
 import { MovimentationContext } from "../../context/movementationContext";
 import { useContext } from "react";
 import EditMovimentationObservationModal from "../../modals/EditMovimentationObservationModal";
@@ -19,9 +18,9 @@ import { dateTimeRenderer, getMovementationsByPatrimonyId } from "../../utils";
 import { useParams } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DeleteMovementationModal from "../../modals/DeleteMovementationModal";
+import { userContext } from "../../../Requisitions/context/userContext";
 
 // Define the interface for the new data structure
-
 
 // Column data configuration
 interface ColumnData {
@@ -32,12 +31,32 @@ interface ColumnData {
 }
 
 const columns: ColumnData[] = [
-  { width: 300, label: "Projeto", dataKey: "projeto", numeric: false },
-  { width: 100, label: "Observação", dataKey: "observacao", numeric: false },
-  { width: 200, label: "Data", dataKey: "data", numeric: false },
-  { width: 200, label: "Responsável", dataKey: "responsavel", numeric: false },
   {
-    width: 200,
+    width: 170, // 28.33% do total
+    label: "Projeto",
+    dataKey: "projeto",
+    numeric: false,
+  },
+  {
+    width: 170, // 28.33% do total
+    label: "Observação",
+    dataKey: "observacao",
+    numeric: false,
+  },
+  {
+    width: 100, // 16.67% do total
+    label: "Data",
+    dataKey: "data",
+    numeric: false,
+  },
+  {
+    width: 110, // 18.33% do total
+    label: "Responsável",
+    dataKey: "responsavel",
+    numeric: false,
+  },
+  {
+    width: 50, // 8.33% do total
     label: "Nº Movimentação",
     dataKey: "id_movimentacao",
     numeric: true,
@@ -45,7 +64,6 @@ const columns: ColumnData[] = [
 ];
 
 // Sample dummy data
-
 
 const VirtuosoTableComponents: TableComponents<Movementation> = {
   Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
@@ -86,15 +104,38 @@ function fixedHeaderContent() {
   );
 }
 
-function RowContent(_index: number, row: Movementation) {
+const RowContent = ({
+  row,
+  singleMovementation,
+}: {
+  row: Movementation;
+  singleMovementation: () => boolean;
+}) => {
+  const { togglEditingMovementationObservation, toggleDeletingMovementation } =
+    useContext(MovimentationContext);
+  const { user } = useContext(userContext);
 
-  const {togglEditingMovementationObservation, toggleDeletingMovementation} = useContext(MovimentationContext);
+  const handleClickDeleteMovimentation = (row: Movementation) => {
+    if (singleMovementation()) {
+      console.log("singleMov");
+      alert("Não é permitido excluir a única movimentação!");
+    }
+    if (!isWhoCreated()) {
+      alert("Apenas quem criou pode excluir a movimentação!");
+      return;
+    }
+    toggleDeletingMovementation(row);
+  };
+
+  const isWhoCreated = () => {
+    return user?.CODPESSOA === row.id_ultimo_responsavel;
+  };
 
   return (
     <React.Fragment>
       {columns.map((column) => (
         <TableCell
-          sx={{ paddingY: "0" }}
+          sx={{ paddingY: "0", border: "0.5px solid" }}
           key={column.dataKey}
           align={column.numeric ? "right" : "left"}
         >
@@ -102,6 +143,7 @@ function RowContent(_index: number, row: Movementation) {
             direction="row"
             spacing={1}
             alignItems="center"
+            flexWrap="wrap"
             justifyContent={
               column.dataKey === "id_movimentacao" ? "end" : "space-between"
             }
@@ -129,7 +171,7 @@ function RowContent(_index: number, row: Movementation) {
                 <EditIcon sx={{ color: "#F7941E" }} />
               </IconButton>
             ) : column.dataKey === "id_movimentacao" ? (
-              <IconButton onClick={() => toggleDeletingMovementation(row)}>
+              <IconButton onClick={() => handleClickDeleteMovimentation(row)}>
                 <DeleteIcon sx={{ color: "#F7941E" }} />
               </IconButton>
             ) : (
@@ -140,28 +182,35 @@ function RowContent(_index: number, row: Movementation) {
       ))}
     </React.Fragment>
   );
-}
+};
 
 //MAIN COMPONENT
 export default function DetailMovementsTable() {
   const { id_patrimonio } = useParams();
-  const [movementations, setMovementations] = React.useState<Movementation[]>();
-  const {refreshMovimentation } = useContext(MovimentationContext);
+  const [movementations, setMovementations] = React.useState<Movementation[]>(
+    []
+  );
+  const { refreshMovimentation } = useContext(MovimentationContext);
   // const { user }= useContext(userContext);
 
-  const fetchMovementations = async ( ) =>  { 
-        const movementationsData = await getMovementationsByPatrimonyId(Number(id_patrimonio));
-          if (movementationsData) {
-            console.log("movementationsData: ", movementationsData);
-            setMovementations([...movementationsData]);
-          }
-  }
+  const fetchMovementations = async () => {
+    const movementationsData = await getMovementationsByPatrimonyId(
+      Number(id_patrimonio)
+    );
+    if (movementationsData) {
+      console.log("movementationsData: ", movementationsData);
+      setMovementations([...movementationsData]);
+    }
+  };
 
-  React.useEffect(( ) =>  { 
-        fetchMovementations()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const singleMovementation = () => {
+    return movementations.length === 0;
+  };
+
+  React.useEffect(() => {
+    fetchMovementations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshMovimentation]);
-
 
   return (
     <Paper
@@ -172,7 +221,9 @@ export default function DetailMovementsTable() {
         data={movementations}
         components={VirtuosoTableComponents}
         fixedHeaderContent={fixedHeaderContent}
-        itemContent={RowContent}
+        itemContent={(_index, row) => (
+          <RowContent row={row} singleMovementation={singleMovementation} />
+        )}
       />
       <DeleteMovementationModal />
       <EditMovimentationObservationModal />
