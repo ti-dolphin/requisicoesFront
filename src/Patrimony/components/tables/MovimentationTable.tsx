@@ -135,7 +135,7 @@ const RowContent = ({
     <React.Fragment>
       {columns.map((column) => (
         <TableCell
-          sx={{ paddingY: "0", border: "0.5px solid" }}
+          sx={{ paddingY: "0" }}
           key={column.dataKey}
           align={column.numeric ? "right" : "left"}
         >

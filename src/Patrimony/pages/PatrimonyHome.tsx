@@ -1,7 +1,6 @@
 import { Box, IconButton, Stack, Typography } from "@mui/material";
 import PatrimonyInfoTable from "../components/tables/PatrimonyInfoTable";
 import logoUrl from '../assets/logodolphin.jpg';
-import { PatrimonyInfoContextProvider } from "../context/patrimonyInfoContext";
 import { ArrowLeftIcon } from "@mui/x-date-pickers/icons";
 import { useNavigate } from "react-router-dom";
 
@@ -20,9 +19,9 @@ const PatrimonyHome = () => {
           </Typography>
         </Stack>
       </Box>
-      <PatrimonyInfoContextProvider>
+
         <PatrimonyInfoTable />
-      </PatrimonyInfoContextProvider>
+
     </Box>
   );
 };

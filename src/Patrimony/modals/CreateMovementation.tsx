@@ -107,6 +107,7 @@ export default function CreateMovementation({
       ["id_patrimonio"]: Number(id_patrimonio),
     });
     if (insertIdMovementation) {
+      toggleRefreshPatrimonyInfo();
       toggleRefreshMovimentation();
       toggleCreatingMovementation();
     }

@@ -12,6 +12,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { ptBR } from '@mui/material/locale';
 import { RequisitionContextProvider } from "./Requisitions/context/RequisitionContext.tsx";
 import { UserContextProvider } from "./Requisitions/context/userContext.tsx";
+import { PatrimonyInfoContextProvider } from './Patrimony/context/patrimonyInfoContext.tsx';
 
 const theme = createTheme(
   {
@@ -26,20 +27,18 @@ const queryClient = new QueryClient();
 
 
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <UserContextProvider>
         <RequisitionContextProvider>
-          <QueryClientProvider client={queryClient}>
-            <RouterProvider router={router} />
-          </QueryClientProvider>
-        </RequisitionContextProvider> 
+          <PatrimonyInfoContextProvider>
+            <QueryClientProvider client={queryClient}>
+              <RouterProvider router={router} />
+            </QueryClientProvider>
+          </PatrimonyInfoContextProvider>
+        </RequisitionContextProvider>
       </UserContextProvider>
-     
-
     </ThemeProvider>
-
-    
-  </React.StrictMode>,
+  </React.StrictMode>
 );

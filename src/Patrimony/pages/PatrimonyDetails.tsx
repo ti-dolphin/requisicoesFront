@@ -10,7 +10,6 @@ import PatrimonyFileModal from "../modals/PatrimonyFileModal;";
 import CreateMovementation from "../modals/CreateMovementation";
 import {
   PatrimonyInfoContext,
-  PatrimonyInfoContextProvider,
 } from "../context/patrimonyInfoContext";
 import {  getResponsableForPatrimony, getSinglePatrimony, upatePatrimony } from "../utils";
 import { useNavigate, useParams } from "react-router-dom";
@@ -118,7 +117,6 @@ const PatrimonyDetails = () => {
 
   return (
     <Box sx={{ height: "98vh", overflow: "auto" }}>
-      <PatrimonyInfoContextProvider>
         <MovimentationContextProvider>
           <MovementationFileContextProvider>
             <PatrimonyFileContextProvider>
@@ -269,7 +267,6 @@ const PatrimonyDetails = () => {
             </PatrimonyFileContextProvider>
           </MovementationFileContextProvider>
         </MovimentationContextProvider>
-      </PatrimonyInfoContextProvider>
     </Box>
   );
 };
