@@ -3,7 +3,7 @@ import * as React from 'react';
 import { styled, css } from '@mui/system';
 import { Modal as BaseModal } from '@mui/base/Modal';
 import Fade from '@mui/material/Fade';
-import { Badge, BadgeProps, Button, IconButton, ListItem, ListItemButton, ListItemText, Stack } from '@mui/material';
+import { Badge, BadgeProps, Button, CircularProgress, IconButton, ListItem, ListItemButton, ListItemText, Stack, Typography } from '@mui/material';
 import AttachFile from '@mui/icons-material/AttachFile';
 import CloseIcon from "@mui/icons-material/Close";
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
@@ -87,6 +87,8 @@ export default function MovimentationFileModal({
   const handleClose = () => toggleMovementationFileOpen();
   const [fileData, setFileData] = useState<MovementationFile[]>();
   const [responsable, setResponsable] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
 
   const fetchFileData = async () => {
    
@@ -107,20 +109,21 @@ export default function MovimentationFileModal({
 
   const handleUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && movementationId) {
+      setIsLoading(true);
       console.log("movementationId: ", movementationId);
       const file = e.target.files[0];
       const formData = new FormData();
       formData.append("file", file);
       const response = await createMovementationfile(movementationId, formData);
       if(response && response.status === 200){ 
+        setIsLoading(false);
         toggleRefreshMovementationFile();
         return;
       }
       window.alert('Erro ao fazer upload!')
     }
-  
 
-  };
+};
 
  React.useEffect(() => {
 
@@ -193,7 +196,17 @@ export default function MovimentationFileModal({
             <h2 id="transition-modal-title" className="modal-title">
               Anexos
             </h2>
-
+            {isLoading && (
+              <Stack
+                direction="row"
+                justifyContent="center"
+                alignItems="center"
+                sx={{ mt: 2 }}
+              >
+                <CircularProgress />
+                <Typography sx={{ ml: 2 }}>Enviando...</Typography>
+              </Stack>
+            )}
             <FixedSizeList
               height={400}
               width="100%"

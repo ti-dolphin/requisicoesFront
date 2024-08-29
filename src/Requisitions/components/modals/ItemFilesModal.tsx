@@ -20,6 +20,8 @@ import { useContext, useState } from "react";
 import DeleteRequisitionFileModal from "./warnings/DeleteRequisitionFileModal";
 import CloseIcon from "@mui/icons-material/Close";
 import { userContext } from "../../context/userContext";
+import CircularProgress from "@mui/material/CircularProgress";
+
 // import { RequisitionContext } from "../../context/RequisitionContext";
 
 const style = {
@@ -72,6 +74,7 @@ const ItemFilesModal = ({
   const [refreshToggler, setRefreshToggler] = useState(false);
   const [isInputLinkOpen, setIsInputLinkOpen] = useState<boolean>(false);
   const [inputlinkValue, setInputlinkValue] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -92,24 +95,30 @@ const ItemFilesModal = ({
   const handleSaveLink = async (
     e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (e.key === "Enter") {
-      const response = await postItemLinkFile(itemID, inputlinkValue);
-      if (response?.status === 200) setIsInputLinkOpen(false);
-      setInputlinkValue("");
-      setRefreshToggler(!refreshToggler);
-      return;
-    }
+        if (e.key === "Enter") {
+          setIsLoading(true); // Start loading
+          try {
+            const response = await postItemLinkFile(itemID, inputlinkValue);
+            if (response?.status === 200) {
+              setIsInputLinkOpen(false);
+              setInputlinkValue("");
+              setRefreshToggler(!refreshToggler);
+            }
+          } finally {
+            setIsLoading(false); // Stop loading
+          }
+  }
   };
 
   const getItemFiles = async () => {
     const response = await fetchItemFiles(itemID);
     if (response) {
-      console.log("response.data - itemFilesModal: ", ItemFiles);
       setItemFiles(response.data);
       return;
     }
     setItemFiles([]);
   };
+
   const attachFileAllowed = ( ) => { 
    if( currentStatus === 'Em edição' || user?.PERM_COMPRADOR){ 
     return true;
@@ -173,6 +182,7 @@ const ItemFilesModal = ({
             {attachFileAllowed() && (
               <Stack justifyContent="center" spacing={2} direction="row">
                 <InputFile
+                  setIsLoading={setIsLoading}
                   id={itemID}
                   setRefreshToggler={setRefreshToggler}
                   refreshToggler={refreshToggler}
@@ -208,9 +218,22 @@ const ItemFilesModal = ({
                 </Stack>
               </Box>
             </Modal>
-            {ItemFiles.length > 0 && (
+
+            {isLoading && (
+              <Stack
+                direction="row"
+                justifyContent="center"
+                alignItems="center"
+                sx={{ mt: 2 }}
+              >
+                <CircularProgress />
+                <Typography sx={{ ml: 2 }}>Enviando...</Typography>
+              </Stack>
+            )}
+
+            {ItemFiles.length > 0 && !isLoading && (
               <InteractiveList
-                 currentStatus={currentStatus || ''}
+                currentStatus={currentStatus || ""}
                 editItemsAllowed={editItemsAllowed || false}
                 refreshToggler={refreshToggler}
                 setRefreshToggler={setRefreshToggler}

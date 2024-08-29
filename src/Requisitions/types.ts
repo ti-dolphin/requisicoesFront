@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { Dispatch, ReactNode, SetStateAction } from "react";
 export interface Requisition {
   OBSERVACAO: string;
   ID_REQUISICAO: number;
@@ -90,10 +90,11 @@ export interface HeadCell {
 
 
 export interface inputFileProps {
-  caller? : string;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
+  caller?: string;
   id: number;
   setRefreshToggler: (value: boolean) => void;
-  refreshToggler : boolean;
+  refreshToggler: boolean;
 }
 
 export interface DeleteRequisitionModalProps{ 

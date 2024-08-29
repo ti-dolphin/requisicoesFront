@@ -13,7 +13,7 @@ import Typography from "@mui/material/Typography";
 import FolderIcon from "@mui/icons-material/Folder";
 import DeleteIcon from "@mui/icons-material/Delete";
 import InputFile from "../../pages/requisitionDetail/components/InputFile";
-import { Badge, BadgeProps, Button, Stack } from "@mui/material";
+import { Badge, BadgeProps, Button, CircularProgress, Stack } from "@mui/material";
 import {
   deleteRequisitionFile,
   getRequisitionFiles,
@@ -87,6 +87,7 @@ const OpenFileModal = ({
   const handleClose = () => setOpen(false);
   const [isInputLinkOpen, setIsInputLinkOpen] = useState<boolean>(false);
   const [inputlinkValue, setInputlinkValue] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleInputlinkChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -98,12 +99,16 @@ const OpenFileModal = ({
     e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     if (e.key === "Enter") {
+      setIsLoading(true);
       console.log("inputlinkValue ", inputlinkValue);
       const response = await postRequisitionLinkFile(
         ID_REQUISICAO,
         inputlinkValue
       );
-      if (response?.status === 200) setIsInputLinkOpen(false);
+      if (response?.status === 200){ 
+         setIsInputLinkOpen(false);
+         setIsLoading(false);
+      }
       setInputlinkValue("");
       setRefreshToggler(!refreshToggler);
       return;
@@ -196,9 +201,10 @@ const OpenFileModal = ({
               Anexos da Requisição
             </Typography>
             <Stack justifyContent="center" direction="row" spacing={2}>
-              { attachFileAllowed() &&   (
+              {attachFileAllowed() && (
                 <>
                   <InputFile
+                    setIsLoading={setIsLoading}
                     id={ID_REQUISICAO}
                     setRefreshToggler={setRefreshToggler}
                     refreshToggler={refreshToggler}
@@ -243,7 +249,18 @@ const OpenFileModal = ({
                 </Box>
               </Modal>
             </Stack>
-            {requisitionFiles.length > 0 && (
+            {isLoading && (
+              <Stack
+                direction="row"
+                justifyContent="center"
+                alignItems="center"
+                sx={{ mt: 2 }}
+              >
+                <CircularProgress />
+                <Typography sx={{ ml: 2 }}>Enviando...</Typography>
+              </Stack>
+            )}
+            {requisitionFiles.length > 0 && !isLoading && (
               <InteractiveList
                 currentStatus={currentStatus}
                 files={requisitionFiles}

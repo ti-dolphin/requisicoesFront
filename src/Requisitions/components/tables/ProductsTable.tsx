@@ -275,7 +275,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ ID_REQUISICAO }) => {
         <TableVirtuoso
           data={filteredRows}
           components={VirtuosoTableComponents}
-          itemContent={(index, row) => (
+          itemContent={(_index, row) => (
             <RowContent
               row={row}
               columns={columns}

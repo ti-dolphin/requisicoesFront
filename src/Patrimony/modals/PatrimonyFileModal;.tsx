@@ -5,11 +5,13 @@ import Fade from "@mui/material/Fade";
 import {
   Badge,
   Button,
+  CircularProgress,
   IconButton,
   ListItem,
   ListItemButton,
   ListItemText,
   Stack,
+  Typography,
 } from "@mui/material";
 import AttachFile from "@mui/icons-material/AttachFile";
 import CloseIcon from "@mui/icons-material/Close";
@@ -44,7 +46,7 @@ function RenderRow(props: ListChildComponentProps & {fileData  : PatrimonyFile[]
   const {toggleDeletingPatrimonyFile } = useContext(PatrimonyFileContext);
   return (
     <ListItem style={style} key={index} component="div">
-      <ListItemButton>
+      <ListItemButton> 
         <Stack direction="row" alignItems="center" spacing={1}>
           <ListItemText
             onClick={() => handleOpenLink(fileData[index].arquivo)}
@@ -72,6 +74,7 @@ export default function PatrimonyFileModal() {
   const [fileData, setFileData] = useState<PatrimonyFile[]>();
   const {refreshPatrimonyFile, toggleRefreshPatrimonyFile } = useContext(PatrimonyFileContext);
   const [responsable, setResponsable] = useState<number>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
 
   const fetchPatrimonyFiles = async( ) => { 
@@ -88,6 +91,7 @@ export default function PatrimonyFileModal() {
 
    const handleUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
      if (e.target.files && id_patrimonio) {
+        setIsLoading(true);
        console.log("id_patrimonio : ", id_patrimonio);
        const file = e.target.files[0];
        const formData = new FormData();
@@ -97,6 +101,7 @@ export default function PatrimonyFileModal() {
          formData
        );
        if (response && response.status === 200) {
+          setIsLoading(false);
          toggleRefreshPatrimonyFile();
          return;
        }
@@ -172,7 +177,17 @@ export default function PatrimonyFileModal() {
             <h2 id="transition-modal-title" className="modal-title">
               Anexos
             </h2>
-
+            {isLoading && (
+              <Stack
+                direction="row"
+                justifyContent="center"
+                alignItems="center"
+                sx={{ mt: 2 }}
+              >
+                <CircularProgress />
+                <Typography sx={{ ml: 2 }}>Enviando...</Typography>
+              </Stack>
+            )}
             <FixedSizeList
               height={400}
               width="100%"

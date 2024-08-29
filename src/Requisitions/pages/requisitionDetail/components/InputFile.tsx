@@ -20,23 +20,30 @@ const InputFile = ({
   id,
   caller,
   setRefreshToggler,
+  setIsLoading,
   refreshToggler,
 }: inputFileProps) => {
   
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
+      setIsLoading(true);
       const file = e.target.files[0];
       const formData = new FormData();
       formData.append("file", file);
 
       if (caller === "ItemFilesModal") {
         const response = await postItemFile(id, formData);
+        setIsLoading(false);
         if (response?.status === 200) setRefreshToggler(!refreshToggler);
         return;
       }
 
       const response = await postRequisitionFile(id, formData);
-      if (response === 200) setRefreshToggler(!refreshToggler);
+      if (response === 200){ 
+         console.log('response === 200')
+         setRefreshToggler(!refreshToggler);
+         setIsLoading(false);
+      }
       return;
     }
   };
