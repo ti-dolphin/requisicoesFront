@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { Stack } from '@mui/material';
+import { anexoRequisicao, ItemFile } from '../../../types';
 
 const style = {
     position: 'absolute',
@@ -16,39 +17,54 @@ const style = {
 };
 
 interface DeleteRequisitionItemModalProps {
-    handleDelete: (value: number) => void;
-    isDeleteRequisitionFileModalOpen: boolean;
-    id: number;
-    setIsDeleteRequisitionFileModalOpen: (value: boolean) => void;
+  handleDelete: (file : ItemFile | anexoRequisicao) => void;
+  isDeleteRequisitionFileModalOpen: boolean;
+  currentFileIdBeingDeleted: ItemFile | anexoRequisicao;
+  setIsDeleteRequisitionFileModalOpen: (value: boolean) => void;
 }
 
-const DeleteRequisitionItemModal = (
-    { handleDelete, id, isDeleteRequisitionFileModalOpen, setIsDeleteRequisitionFileModalOpen }
-     : DeleteRequisitionItemModalProps ) => {
-
-
-    return (
-        <div>
-            <Modal
-                open={isDeleteRequisitionFileModalOpen}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
+const DeleteRequisitionItemModal = ({
+  handleDelete,
+  currentFileIdBeingDeleted,
+  isDeleteRequisitionFileModalOpen,
+  setIsDeleteRequisitionFileModalOpen,
+}: DeleteRequisitionItemModalProps) => {
+  return (
+    <div>
+      <Modal
+        open={isDeleteRequisitionFileModalOpen}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Tem certeza que deseja excluir este anexo?
+          </Typography>
+          <Stack direction="row" justifyContent="center" spacing={2}>
+            <Button
+              variant="outlined"
+              sx={{ color: "blue" }}
+              onClick={() => handleDelete(currentFileIdBeingDeleted)}
             >
-                <Box sx={style}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
-                        Tem certeza que deseja excluir este anexo?
-                    </Typography>
-                    <Stack direction="row" justifyContent="center" spacing={2}>
-                        <Button variant='outlined' sx={{ color: 'blue' }}
-                             onClick={() => handleDelete(id)}>Sim </Button>
-                        <Button variant='outlined' sx={{ color: 'red' }}
-                             onClick={() => setIsDeleteRequisitionFileModalOpen(!isDeleteRequisitionFileModalOpen)}>Não</Button>
-                    </Stack>
-                </Box>
-            </Modal>
-        </div>
-    );
-}
+              Sim{" "}
+            </Button>
+            <Button
+              variant="outlined"
+              sx={{ color: "red" }}
+              onClick={() =>
+                setIsDeleteRequisitionFileModalOpen(
+                  !isDeleteRequisitionFileModalOpen
+                )
+              }
+            >
+              Não
+            </Button>
+          </Stack>
+        </Box>
+      </Modal>
+    </div>
+  );
+};
 export default DeleteRequisitionItemModal;
 
 

@@ -36,10 +36,10 @@ const HorizontalLinearStepper: React.FC<props> = ({
   );
 
   React.useEffect(() => {
-    console.log('active step do stepper: ', activeStep)
+    console.log('requisiton: ', requisition)
     changeActiveStep(activeStep);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeStep]);
+  }, [activeStep, requisition]);
 
   const displayAlert = () => {
     setTimeout(() => {
@@ -73,6 +73,7 @@ const HorizontalLinearStepper: React.FC<props> = ({
       };
       setRequisition(editedRequisition);
       if (user) {
+        console.log('editRequisition: ', editedRequisition);
         try {
           await updateRequisition(user.CODPESSOA, editedRequisition);
           setRequisition(editedRequisition);

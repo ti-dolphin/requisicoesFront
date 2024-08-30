@@ -15,7 +15,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import InputFile from "../../pages/requisitionDetail/components/InputFile";
 import { Badge, BadgeProps, Button, Stack } from "@mui/material";
 import { deleteItemFile, fetchItemFiles, postItemLinkFile } from "../../utils";
-import { InteractiveListProps, ItemFile } from "../../types";
+import { anexoRequisicao, InteractiveListProps, ItemFile } from "../../types";
 import { useContext, useState } from "react";
 import DeleteRequisitionFileModal from "./warnings/DeleteRequisitionFileModal";
 import CloseIcon from "@mui/icons-material/Close";
@@ -259,10 +259,10 @@ function InteractiveList({
     isDeleteRequisitionFileModalOpen,
     setIsDeleteRequisitionFileModalOpen,
   ] = useState<boolean>(false);
-  const [currentFileIdBeingDeleted, setCurrentFileIdbeingDeleted] =
-    useState<number>(0);
-  const handleDelete = async (id: number) => {
-    const responseStatus = await deleteItemFile(id);
+  const [currentFileIdBeingDeleted, setCurrentFileIdbeingDeleted] =  useState<ItemFile | anexoRequisicao>();
+
+  const handleDelete = async (file : ItemFile | anexoRequisicao) => {
+    const responseStatus = await deleteItemFile(file);
     if (responseStatus === 200) {
       setIsDeleteRequisitionFileModalOpen(false);
       setRefreshToggler(!refreshToggler);
@@ -278,10 +278,11 @@ function InteractiveList({
             {files.map((item) => (
               <ListItem
                 secondaryAction={
-                  editItemsAllowed && currentStatus === 'Em edição' && (
+                  editItemsAllowed &&
+                  currentStatus === "Em edição" && (
                     <IconButton
                       onClick={() => {
-                        setCurrentFileIdbeingDeleted(item.id);
+                        setCurrentFileIdbeingDeleted(item);
                         setIsDeleteRequisitionFileModalOpen(
                           !isDeleteRequisitionFileModalOpen
                         );
@@ -315,14 +316,16 @@ function InteractiveList({
         </Demo>
       </Grid>
 
-      <DeleteRequisitionFileModal
-        isDeleteRequisitionFileModalOpen={isDeleteRequisitionFileModalOpen}
-        setIsDeleteRequisitionFileModalOpen={
-          setIsDeleteRequisitionFileModalOpen
-        }
-        handleDelete={handleDelete}
-        id={currentFileIdBeingDeleted}
-      />
+      {currentFileIdBeingDeleted && (
+        <DeleteRequisitionFileModal
+          isDeleteRequisitionFileModalOpen={isDeleteRequisitionFileModalOpen}
+          setIsDeleteRequisitionFileModalOpen={
+            setIsDeleteRequisitionFileModalOpen
+          }
+          handleDelete={handleDelete}
+          currentFileIdBeingDeleted={currentFileIdBeingDeleted}
+        />
+      )}
     </Box>
   );
 }

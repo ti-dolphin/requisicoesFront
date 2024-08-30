@@ -125,10 +125,12 @@ const RequisitionDetail: React.FC = () => {
   }, [refreshItems, adding]);
 
   const handleOpen = (e: React.MouseEvent) => {
-    if (activeStep && activeStep > 0) {
+
+    if (activeStep && activeStep > 0 && !user?.PERM_COMPRADOR) {
       displayAlert();
       return;
     }
+    
     e.preventDefault();
     toggleAdding();
   };
@@ -151,11 +153,17 @@ const RequisitionDetail: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { value, id } = e.target;
-    requisitionData &&
-      setRequisitionData({
-        ...requisitionData,
-        [id]: value,
-      });
+    console.log({
+      ...requisitionData,
+      [id]: value,
+    });
+      if(requisitionData){ 
+          setRequisitionData({
+            ...requisitionData,
+            [id]: value,
+    });
+  }
+     
   };
 
   const handleSave = async () => {
@@ -237,7 +245,9 @@ const RequisitionDetail: React.FC = () => {
       toggleRefreshRequisition();
     }
   };
-
+  const isFieldEnabled =(item : {label : string, key : string}) =>{ 
+    return !editingField.isEditing || item.key === "RESPONSAVEL";
+  };
   return (
     <Box
       sx={{
@@ -387,15 +397,10 @@ const RequisitionDetail: React.FC = () => {
                       editingField.isEditing &&
                       editingField.field.key === item.key
                         ? {
-                            border: "1px solid blue",
                             padding: "4px",
                             borderRadius: "4px",
                           }
                         : {
-                            border:
-                              item.key !== "DESCRICAO"
-                                ? "1px solid #d3d6db"
-                                : "none",
                             padding: "4px",
                             borderRadius: "4px",
                           }
@@ -432,14 +437,15 @@ const RequisitionDetail: React.FC = () => {
                       </>
                     ) : (
                       <>
-                        <textarea
+                        <TextField
                           id={item.key}
+                          multiline
                           style={{
                             minHeight:
                               item.key === "OBSERVACAO" ? "6rem" : "2rem",
                           }}
                           className="w-full bg-white text-sm lowercase  focus:outline-none"
-                          disabled={!editingField.isEditing}
+                          disabled={isFieldEnabled(item)}
                           value={valueRenderer(item)}
                           onChange={handleChange}
                           autoFocus={editingField.isEditing}

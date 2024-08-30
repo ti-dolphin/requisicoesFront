@@ -84,19 +84,18 @@ const postRequisitionLinkFile = async (id: number, link: string) => {
   }
 };
 
-const deleteItemFile = async (id: number) => {
+const deleteItemFile = async (file: anexoRequisicao | ItemFile) => {
   try {
-    const response = await api.delete(`itemFiles/${id}`);
+    const response = await api.delete(`itemFiles/${file.nome_arquivo}/${file.id}`);
     return response.status;
   } catch (e) {
     console.log(e);
   }
 };
-const deleteRequisitionFile = async (fileID: number) => {
+const deleteRequisitionFile = async (file: ItemFile | anexoRequisicao) => {
   try {
-    const response = await api.delete(`requisitionFiles/${fileID}`);
+    const response = await api.delete(`requisitionFiles/${file.nome_arquivo}/${file.id}`);
     if (response.status === 200) {
-      console.log("file deleted");
       return response.status;
     }
   } catch (e) {

@@ -17,7 +17,7 @@ import { userContext } from "../../Requisitions/context/userContext";
 const modules = [
   {
     image:
-      "https://firebasestorage.googleapis.com/v0/b/dolphin-8f800.appspot.com/o/homeBg-worker.jpeg?alt=media&token=70c011e5-eac1-4fa1-a280-f76eb61c612a",
+      "https://firebasestorage.googleapis.com/v0/b/dolphin-8f800.appspot.com/o/_69f4380e-7447-4651-93ee-1d1529dd5c78.jpeg?alt=media&token=3c2206db-d85c-432d-bf7a-8ec79c671ecd",
     name: "Requisições",
     Info: "Realize solicitações de materiais aplicados no projeto, materiais de consumo, EPI's, equipamentos do operacional ou TI, ferramentas e serviços.",
     path: "/requisitions",
@@ -78,7 +78,7 @@ const Home = () => {
       }}
     >
       <Box
-        className="shadow-sm"
+ 
         sx={{
           background: `url('${logoUrl}')`,
           backgroundPosition: "left",
@@ -95,7 +95,7 @@ const Home = () => {
           <Dropdown>
             <BaseMenuButton>
               {" "}
-              <AccountCircleIcon sx={{color: '#F7941E'}}/>
+              <AccountCircleIcon sx={{ color: "#F7941E" }} />
             </BaseMenuButton>
             <Menu>
               <Button onClick={() => handleLogOut()}>Log out</Button>
@@ -128,37 +128,55 @@ const Home = () => {
         </Typography>
         <Stack
           width="100%"
-          justifyContent="center"
-          flexWrap="wrap"
+
           direction="row"
-          spacing={1}
+          justifyContent="center"
+          alignItems="center"
+          gap={6}
+          flexWrap="wrap"
+          className="space-y-2"
         >
-          {modules.map((module, index) => (
-            <Card sx={{ maxWidth: 345 }}>
-              <CardActionArea
-                onClick={() => handleNavigateToModule(module.path)}
+          {modules.map(
+            (
+              module,
+              index //box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+            ) => (
+              <Card
+                sx={{
+                  width: 300,
+                  height: "500px",
+                  borderRadius: "30px",
+                  boxShadow: 'none'
+                }}
               >
-                <CardMedia
-                  sx={{
-                    minWidth: "315px",
-                    maxHeight: "240px",
-                    filter: index > 0 ?"grayscale(100%)" : 'none',
-                  }}
-                  component="img"
-                  image={module.image}
-                  alt="green iguana"
-                />
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
-                    {module.name}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {module.Info}
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card>
-          ))}
+                <CardActionArea
+                  onClick={() => handleNavigateToModule(module.path)}
+                >
+                  <CardMedia
+                    sx={{
+                      filter: index > 0 ? "grayscale(100%)" : "none",
+                    }}
+                    component="img"
+                    image={module.image}
+                    alt="green iguana"
+                  />
+                  <CardContent
+                    style={{
+                      backgroundColor: "white",
+                      transform: "translateY(-100px)",
+                    }}
+                  >
+                    <Typography gutterBottom variant="h5" component="div">
+                      {module.name}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {module.Info}
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            )
+          )}
         </Stack>
       </Box>
     </Box>

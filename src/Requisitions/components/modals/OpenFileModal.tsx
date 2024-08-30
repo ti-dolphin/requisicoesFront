@@ -19,7 +19,7 @@ import {
   getRequisitionFiles,
   postRequisitionLinkFile,
 } from "../../utils";
-import { anexoRequisicao, InteractiveListProps } from "../../types";
+import { anexoRequisicao, InteractiveListProps, ItemFile } from "../../types";
 import { useState } from "react";
 import DeleteRequisitionFileModal from "./warnings/DeleteRequisitionFileModal";
 import { OpenFileModalProps } from "../../types";
@@ -286,10 +286,12 @@ function InteractiveList({
     isDeleteRequisitionFileModalOpen,
     setIsDeleteRequisitionFileModalOpen,
   ] = useState<boolean>(false);
-  const [currentFileIdBeingDeleted, setCurrentFileIdbeingDeleted] =
-    useState<number>(0);
-  const handleDelete = async (id: number) => {
-    const responseStatus = await deleteRequisitionFile(id);
+  const [currentFileIdBeingDeleted, setCurrentFileIdbeingDeleted] = useState<
+    ItemFile | anexoRequisicao
+  >();
+
+  const handleDelete = async (file : ItemFile | anexoRequisicao) => {
+    const responseStatus = await deleteRequisitionFile(file);
     if (responseStatus === 200) {
       setIsDeleteRequisitionFileModalOpen(false);
       setRefreshToggler(!refreshToggler);
@@ -305,18 +307,20 @@ function InteractiveList({
             {files.map((item) => (
               <ListItem
                 secondaryAction={
-                 currentStatus === 'Em edição' &&   <IconButton
-                    onClick={() => {
-                      setCurrentFileIdbeingDeleted(item.id);
-                      setIsDeleteRequisitionFileModalOpen(
-                        !isDeleteRequisitionFileModalOpen
-                      );
-                    }}
-                    edge="end"
-                    aria-label="delete"
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                  currentStatus === "Em edição" && (
+                    <IconButton
+                      onClick={() => {
+                        setCurrentFileIdbeingDeleted(item);
+                        setIsDeleteRequisitionFileModalOpen(
+                          !isDeleteRequisitionFileModalOpen
+                        );
+                      }}
+                      edge="end"
+                      aria-label="delete"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  )
                 }
               >
                 <ListItemAvatar>
@@ -340,14 +344,16 @@ function InteractiveList({
           </List>
         </Demo>
       </Grid>
-      <DeleteRequisitionFileModal
-        isDeleteRequisitionFileModalOpen={isDeleteRequisitionFileModalOpen}
-        setIsDeleteRequisitionFileModalOpen={
-          setIsDeleteRequisitionFileModalOpen
-        }
-        handleDelete={handleDelete}
-        id={currentFileIdBeingDeleted}
-      />
+      {currentFileIdBeingDeleted && (
+        <DeleteRequisitionFileModal
+          isDeleteRequisitionFileModalOpen={isDeleteRequisitionFileModalOpen}
+          setIsDeleteRequisitionFileModalOpen={
+            setIsDeleteRequisitionFileModalOpen
+          }
+          handleDelete={handleDelete}
+          currentFileIdBeingDeleted={currentFileIdBeingDeleted}
+        />
+      )}
     </Box>
   );
 }

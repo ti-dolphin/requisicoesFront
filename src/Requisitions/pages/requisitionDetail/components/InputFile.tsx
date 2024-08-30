@@ -25,6 +25,7 @@ const InputFile = ({
 }: inputFileProps) => {
   
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('handleChange Input File');
     if (e.target.files) {
       setIsLoading(true);
       const file = e.target.files[0];
@@ -56,7 +57,7 @@ const InputFile = ({
       startIcon={<AttachFileIcon />}
     >
       Anexar Arquivo
-      <VisuallyHiddenInput onChange={handleChange} type="file" />
+      <VisuallyHiddenInput   onChange={handleChange} type="file" />
     </Button>
   );
 };

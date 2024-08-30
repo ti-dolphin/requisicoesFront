@@ -116,8 +116,6 @@ export default function CreateMovementation({
 
   const handleOpen = () => {
     if (Number(responsable) !== Number(user?.CODPESSOA)) {
-      console.log("responsable: ", responsable);
-      console.log("user.codpessoa: ", user?.CODPESSOA);
       window.alert("Somente o resopnsável pode movimentar!");
       return;
     }
