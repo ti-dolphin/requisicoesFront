@@ -129,6 +129,10 @@ const AnimatedListbox = React.forwardRef(function AnimatedListbox(
 
   const verticalPlacement = popupContext.placement.split("-")[0];
 
+  React.useEffect( ( ) => { 
+    console.log('Componente foi renderizado - Item Actions')
+  }, []);
+
   return (
     <CssTransition
       className={`placement-${verticalPlacement}`}

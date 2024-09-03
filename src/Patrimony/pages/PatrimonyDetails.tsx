@@ -55,6 +55,7 @@ const PatrimonyDetails = () => {
      const responsable = await getResponsableForPatrimony(Number(id_patrimonio));
     if (data) { 
       setResponsable(responsable[0].id_responsavel);
+      console.log("patrimonyData: ", data[0]);
       setPatrimonyData(data[0]);
       console.log(`responsável é: ${responsable[0].id_responsavel}`);
     }
@@ -87,6 +88,8 @@ const PatrimonyDetails = () => {
         return "Descricao";
       case "pat_legado":
         return "Código Patrimônio";
+      case "nome_tipo": 
+        return "Tipo"
     }
   };
 
@@ -109,7 +112,13 @@ const PatrimonyDetails = () => {
   const handleBack = () => {
     navigate("/patrimony");
   };
-
+  const handleClickTextField = (key : string) => { 
+        if( key === "id_patrimonio" ){ 
+         window.alert("Não é permitido editar o número do patrimônio");
+         return;
+        }
+       setEditing([true, key])
+  }
   useEffect(() => {
     fetchPatrimonyData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -184,13 +193,8 @@ const PatrimonyDetails = () => {
                           ) : (
                             <TextField
                               onChange={(e) => handleChange(e, key)}
-                              onClick={() =>
-                                key === "id_patrimonio"
-                                  ? window.alert(
-                                      "Não é permitido editar o número do patrimônio"
-                                    )
-                                  : setEditing([true, key])
-                              }
+                              onClick={() => handleClickTextField(key)}
+                              disabled={key === "nome_tipo"}
                               fullWidth
                               id="outlined-basic"
                               multiline

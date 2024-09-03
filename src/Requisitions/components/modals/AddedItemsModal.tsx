@@ -9,6 +9,7 @@ import {
   DialogContent,
   IconButton,
   Stack,
+  Typography,
 } from "@mui/material";
 
 const AddedItemsModal: React.FC<AddedItemsModalProps> = ({ addedItems }) => {
@@ -22,9 +23,15 @@ const AddedItemsModal: React.FC<AddedItemsModalProps> = ({ addedItems }) => {
     <>
       <Button
         onClick={() => setIsOpen(true)}
-        sx={{ color: "#8dc6ff", "&:hover": { color: "white" } }}
+        sx={{
+          color: "#8dc6ff",
+          "&:hover": { backgroundColor: "#f1b963" },
+          backgroundColor: "#F7941E",
+        }}
       >
-        Items Adicionados
+        <Typography fontSize="small" textTransform="capitalize" color="white">
+          Items Adicionados
+        </Typography>
       </Button>
 
       <Dialog

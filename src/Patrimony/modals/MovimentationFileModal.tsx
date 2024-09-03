@@ -125,6 +125,10 @@ export default function MovimentationFileModal({
 
 };
 
+const allowedToAttachFile = ( ) => { 
+    return user?.CODPESSOA === responsable || user?.PERM_ADMINISTRADOR;
+};
+
  React.useEffect(() => {
 
   fetchFileData();
@@ -178,7 +182,7 @@ export default function MovimentationFileModal({
               </Button>
             </Stack>
 
-            {user?.CODPESSOA === responsable ? (
+            {allowedToAttachFile() ? (
               <Button
                 component="label"
                 role={undefined}

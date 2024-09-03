@@ -288,9 +288,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
                           handleActivateItems={handleActivateItems}
                           handleCopyContent={handleCopyContent}
                         />
-                        <Checkbox
-                          onChange={(e) => handleSelectAll(e)}
-                        ></Checkbox>
+                        <Checkbox onChange={(e) => handleSelectAll(e)}></Checkbox>
                       </Stack>
                     </Stack>
                   ) : (

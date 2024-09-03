@@ -22,10 +22,9 @@ const HorizontalLinearStepper: React.FC<props> = ({
   setRequisitionData,
 }) => {
   const { user } = useContext(userContext);
-  const { toggleRefreshRequisition, changeActiveStep } =
+  const { toggleRefreshRequisition, changeActiveStep, refreshRequisition } =
     useContext(RequisitionContext);
 
-  const [requisition, setRequisition] = useState(requisitionData);
 
   const [nonPurchaserAlert, toggleNonPurchaserAlert] = useState<boolean>(false);
 
@@ -36,10 +35,10 @@ const HorizontalLinearStepper: React.FC<props> = ({
   );
 
   React.useEffect(() => {
-    console.log('requisiton: ', requisition)
+    console.log("requisiton: ", requisitionData);
     changeActiveStep(activeStep);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeStep, requisition]);
+  }, [activeStep, refreshRequisition]);
 
   const displayAlert = () => {
     setTimeout(() => {
@@ -68,15 +67,15 @@ const HorizontalLinearStepper: React.FC<props> = ({
     changeActiveStep(nextStep);
     if (nextStep < steps.length) {
       const editedRequisition = {
-        ...requisition,
+        ...requisitionData,
         ["STATUS"]: steps[activeStep + 1],
       };
-      setRequisition(editedRequisition);
+      
       if (user) {
         console.log('editRequisition: ', editedRequisition);
         try {
           await updateRequisition(user.CODPESSOA, editedRequisition);
-          setRequisition(editedRequisition);
+          
           setRequisitionData(editedRequisition);
           toggleRefreshRequisition();
         } catch (e) {
@@ -93,14 +92,14 @@ const HorizontalLinearStepper: React.FC<props> = ({
       const previousStep = activeStep - 1;
       changeActiveStep(previousStep);
       const editedRequisition = {
-        ...requisition,
+        ...requisitionData,
         ["STATUS"]: steps[activeStep - 1],
       };
-      setRequisition(editedRequisition);
+      
       if (user) {
         try {
           await updateRequisition(user.CODPESSOA, editedRequisition);
-          setRequisition(editedRequisition);
+          
           setRequisitionData(editedRequisition);
           toggleRefreshRequisition();
         } catch (e) {

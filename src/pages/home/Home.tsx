@@ -120,7 +120,7 @@ const Home = () => {
           sx={{
             textAlign: "center",
             fontWeight: "600",
-            color: "#1e549f",
+            color: "#2B3990",
             fontSize: "2rem",
           }}
         >

@@ -77,6 +77,7 @@ export default function CreatePatrimonyInfoModal() {
     nserie: "",
     descricao: "",
     pat_legado: "",
+    nome_tipo: ''
   });
 
   const [typeOptions, setTypes ] = useState<patrimonyType[]>([]);

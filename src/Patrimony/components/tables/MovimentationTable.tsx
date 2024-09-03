@@ -120,12 +120,16 @@ const RowContent = ({
       console.log("singleMov");
       alert("Não é permitido excluir a única movimentação!");
     }
-    if (!isWhoCreated()) {
-      alert("Apenas quem criou pode excluir a movimentação!");
+    if (notAllowedToCreateMovementation()) {
+      alert("Apenas quem criou ou o administrador pode excluir a movimentação!");
       return;
     }
     toggleDeletingMovementation(row);
   };
+
+  const notAllowedToCreateMovementation = ( ) => { 
+    return !isWhoCreated() && !user?.PERM_ADMINISTRADOR;
+  }
 
   const isWhoCreated = () => {
     return user?.CODPESSOA === row.id_ultimo_responsavel;

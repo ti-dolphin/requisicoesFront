@@ -108,7 +108,9 @@ export default function PatrimonyFileModal() {
        window.alert("Erro ao fazer upload!");
      }
    };
-
+   const allowedToAttachFile = ( ) => { 
+    return user?.CODPESSOA === responsable || user?.PERM_ADMINISTRADOR;
+   };
    useEffect(() => {
 
      console.log('teste');
@@ -159,7 +161,7 @@ export default function PatrimonyFileModal() {
               </Button>
             </Stack>
 
-            {user?.CODPESSOA === responsable ? (
+            {allowedToAttachFile() ? (
               <Button
                 component="label"
                 role={undefined}

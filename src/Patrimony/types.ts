@@ -1,13 +1,14 @@
 
 export type Patrimony = {
   nome: string;
-  tipo : number;
-  id_patrimonio : number;
+  tipo: number;
+  id_patrimonio: number;
   data_compra: string; // ISO Date string format
   nserie: string;
   descricao: string;
   pat_legado?: string;
-  id_projeto? : number;
+  id_projeto?: number;
+  nome_tipo: string;
 };
 
 export type patrimonyType = { 

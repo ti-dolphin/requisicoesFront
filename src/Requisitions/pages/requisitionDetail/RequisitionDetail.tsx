@@ -153,10 +153,7 @@ const RequisitionDetail: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { value, id } = e.target;
-    console.log({
-      ...requisitionData,
-      [id]: value,
-    });
+   
       if(requisitionData){ 
           setRequisitionData({
             ...requisitionData,

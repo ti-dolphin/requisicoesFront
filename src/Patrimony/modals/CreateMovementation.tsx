@@ -115,12 +115,16 @@ export default function CreateMovementation({
   };
 
   const handleOpen = () => {
-    if (Number(responsable) !== Number(user?.CODPESSOA)) {
+    if (notAllowedToCreateMovementation()) {
       window.alert("Somente o resopnsável pode movimentar!");
       return;
     }
     toggleCreatingMovementation();
   };
+  const notAllowedToCreateMovementation = ( ) => { 
+    return Number(responsable) !== Number(user?.CODPESSOA) && !user?.PERM_ADMINISTRADOR;
+  }
+ 
 
   const handleClose = () => {
     creatingPatrimonyInfo[0]
