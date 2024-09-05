@@ -36,6 +36,8 @@ const style = {
 export default function CreatePatrimonyAccessoryModal() {
   const { creatingPatrimonyAccessory, toggleCreatingPatrimonyAccessory, toggleRefreshPatrimonyAccessory } = useContext(PatrimonyInfoContext);
 
+  
+
   const { id_patrimonio } = useParams<{ id_patrimonio: string }>();
 
   const [patrimonyAccessory, setPatrimonyAccessory] =
@@ -58,13 +60,21 @@ export default function CreatePatrimonyAccessoryModal() {
       [key]: value,
     });
   };
-
+  const clearState = ( ) => { 
+    setPatrimonyAccessory({
+      descricao: "",
+      id_acessorio_patrimonio: 0,
+      nome: "",
+      id_patrimonio: Number(id_patrimonio),
+    });
+  }
 
   const handleSave = async () => {
     console.log("Saving patrimony accessory:", patrimonyAccessory);
     try {
       const response = await createAccessory(patrimonyAccessory);
       console.log("Accessory created successfully:", response);
+      clearState();
       toggleRefreshPatrimonyAccessory();
       toggleCreatingPatrimonyAccessory();
     } catch (error) {
@@ -75,9 +85,11 @@ export default function CreatePatrimonyAccessoryModal() {
   return (
     <div>
       <Badge>
-        <IconButton onClick={toggleCreatingPatrimonyAccessory}>
-          <HomeRepairServiceIcon sx={{ color: "#F7941E" }} />
-        </IconButton>
+        {!open && (
+          <IconButton onClick={toggleCreatingPatrimonyAccessory}>
+            <HomeRepairServiceIcon sx={{ color: "#F7941E" }} />
+          </IconButton>
+        )}
       </Badge>
       <Modal
         open={creatingPatrimonyAccessory}
@@ -90,27 +102,25 @@ export default function CreatePatrimonyAccessoryModal() {
             <Typography id="modal-modal-title" variant="h6" component="h2">
               Novo Acessório de Patrimônio
             </Typography>
-            <Button
+            <IconButton
               onClick={toggleCreatingPatrimonyAccessory}
-              variant="outlined"
               sx={{ color: "red" }}
             >
               <CloseIcon />
-            </Button>
+            </IconButton>
           </Stack>
           <Stack direction="column" spacing={2}>
             <TextField
               required
-         
               label="Nome"
               value={patrimonyAccessory.nome}
-              onChange={(e) => handleChange(e, 'nome')}
+              onChange={(e) => handleChange(e, "nome")}
             />
             <TextField
               required
               label="Descrição"
               value={patrimonyAccessory.descricao}
-              onChange={(e) => handleChange(e, 'descricao')}
+              onChange={(e) => handleChange(e, "descricao")}
             />
           </Stack>
           <Button

@@ -9,7 +9,10 @@ import {
   Badge,
   ListItem,
   ListItemButton,
-  ListItemText
+  ListItemText,
+  useMediaQuery,
+  useTheme,
+  Theme,
 } from "@mui/material";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import CloseIcon from "@mui/icons-material/Close";
@@ -21,35 +24,52 @@ import { FixedSizeList, ListChildComponentProps } from "react-window";
 import HomeRepairServiceIcon from "@mui/icons-material/HomeRepairService";
 import { useParams } from "react-router-dom";
 import PatrimonyAccessoryFileModal from "./PatrimonyAccessoryFileModal";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import CreatePatrimonyAccessoryModal from "./CreatePatrimonyAccessory";
 
-const modalStyle = {
+// Styles using breakpoints for responsiveness
+const modalStyle = (theme: Theme) => ({
   position: "absolute" as const,
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: "50%",
+  width: "90%",
+  maxWidth: 600,
   bgcolor: "background.paper",
   boxShadow: 24,
   p: 4,
-};
+  [theme.breakpoints.down("sm")]: {
+    width: "100%", // Full width on mobile
+    p: 2,
+  },
+});
 
-const innerModalStyle = {
+const innerModalStyle = (theme: Theme) => ({
   position: "absolute" as const,
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: "40%",
+  width: "80%",
+  maxWidth: 400,
   bgcolor: "background.paper",
   boxShadow: 24,
   p: 4,
-};
+  [theme.breakpoints.down("sm")]: {
+    width: "90%",
+  },
+});
 
 export default function PatrimonyAccessoryModal() {
   const { id_patrimonio } = useParams();
-  const { creatingPatrimonyAccessory, toggleCreatingPatrimonyAccessory } =
+  const { toggleCreatingPatrimonyAccessory, refreshPatrimonyAccessory } =
     useContext(PatrimonyInfoContext);
   const [accessories, setAccessories] = useState<PatrimonyAccessory[]>([]);
-  const [selectedAccessory, setSelectedAccessory] = useState<PatrimonyAccessory | null>(null);
+  const [selectedAccessory, setSelectedAccessory] =
+    useState<PatrimonyAccessory | null>(null);
+  const [open, setOpen] = useState<boolean>(false);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,9 +78,9 @@ export default function PatrimonyAccessoryModal() {
       setAccessories(data);
     };
     fetchData();
-  }, []);
+  }, [refreshPatrimonyAccessory]);
 
-  const handleClose = () => toggleCreatingPatrimonyAccessory();
+  const handleClose = () => setOpen(false);
 
   const handleOpenInnerModal = (accessory: PatrimonyAccessory) => {
     setSelectedAccessory(accessory);
@@ -87,8 +107,7 @@ export default function PatrimonyAccessoryModal() {
             justifyContent="space-between"
           >
             <ListItemText secondary={`${accessories[index].nome}`} />
-
-            <Stack direction={"row"}>
+            <Stack direction="row">
               <IconButton
                 onClick={() => handleOpenInnerModal(accessories[index])}
               >
@@ -108,29 +127,39 @@ export default function PatrimonyAccessoryModal() {
     );
   }
 
- 
+  const handleOpenCreatePatrimonyAccessory = () => {
+    toggleCreatingPatrimonyAccessory();
+  };
+  const handleOpen = () => {
+    setOpen(true);
+  };
 
   return (
     <div>
       <Badge>
-        <IconButton onClick={toggleCreatingPatrimonyAccessory}>
+        <IconButton onClick={handleOpen}>
           <HomeRepairServiceIcon sx={{ color: "#F7941E" }} />
         </IconButton>
       </Badge>
-      <Modal open={creatingPatrimonyAccessory} onClose={handleClose}>
-        <Box sx={modalStyle}>
+      <Modal open={open} onClose={handleClose}>
+        <Box sx={modalStyle(theme)}>
           <Stack direction="row" justifyContent="space-between" spacing={2}>
-            <Typography variant="h6" component="h2">
+            <Typography variant={isMobile ? "subtitle1" : "h6"} component="h2">
               Acessórios do Patrimônio
             </Typography>
-            <IconButton onClick={handleClose}>
-              <CloseIcon />
-            </IconButton>
+            <Stack direction="row">
+              <IconButton onClick={handleOpenCreatePatrimonyAccessory}>
+                <AddCircleIcon />
+              </IconButton>
+              <IconButton sx={{ color: "red" }} onClick={handleClose}>
+                <CloseIcon />
+              </IconButton>
+            </Stack>
           </Stack>
           <FixedSizeList
-            height={400}
+            height={isMobile ? 300 : 400}
             width="100%"
-            itemSize={46}
+            itemSize={isMobile ? 70 : 46}
             itemCount={accessories.length}
             overscanCount={5}
           >
@@ -148,14 +177,12 @@ export default function PatrimonyAccessoryModal() {
               open={!!selectedAccessory}
               selectedAccessory={selectedAccessory}
               handleCloseInnerModal={handleCloseInnerModal}
-              innerModalStyle={innerModalStyle}
-           
+              innerModalStyle={innerModalStyle(theme)}
             />
           )}
+          <CreatePatrimonyAccessoryModal />
         </Box>
       </Modal>
     </div>
   );
 }
-
-

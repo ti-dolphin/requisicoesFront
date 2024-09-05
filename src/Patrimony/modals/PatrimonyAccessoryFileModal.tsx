@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useEffect, useState } from "react";
 import {
   Modal,
@@ -7,10 +8,11 @@ import {
   IconButton,
   ListItem,
   ListItemButton,
-  ListItemText,
   styled,
   Box,
   CircularProgress,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import CloseIcon from "@mui/icons-material/Close";
@@ -23,17 +25,7 @@ import {
   deletePatrimonyAccessoryFile,
   getPatrimonyAccessoryFiles,
 } from "../utils";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "fit-content",
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-};
+import { style } from "../../Requisitions/components/tables/ProductsTable";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -58,12 +50,7 @@ interface PatrimonyAccessoryFileModalProps {
 
 const PatrimonyAccessoryFileModal: React.FC<
   PatrimonyAccessoryFileModalProps
-> = ({
-  selectedAccessory,
-
-  handleCloseInnerModal,
-  innerModalStyle,
-}) => {
+> = ({ selectedAccessory, handleCloseInnerModal, innerModalStyle }) => {
   const [patrimonyAccessoryFiles, setPatrimonyAccessoryFiles] =
     useState<PatrimonyAccessoryFile[]>();
   const {
@@ -79,23 +66,27 @@ const PatrimonyAccessoryFileModal: React.FC<
         selectedAccessory?.id_acessorio_patrimonio
       );
       if (data) {
-        console.log("data: ", data);
         setPatrimonyAccessoryFiles(data);
       }
     }
   };
+
   useEffect(() => {
     fetchPatrmonyAccessoryFiles();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAccessory, refreshPatrimonyAccessoryFiles]);
 
   function RenderRowAccessoryFile(
     props: ListChildComponentProps & { files: PatrimonyAccessoryFile[] }
   ) {
     const { index, style, files } = props;
-    const { toggleDeletingPatrimonyAccessoryFile } =
+    const { toggleDeletingPatrimonyAccessoryFile, deletingPatrimonyAccessoryFile } =
       useContext(PatrimonyInfoContext);
 
+    const handleOpenfile = (fileLink : string ) =>  { 
+      if(!deletingPatrimonyAccessoryFile[0]){ 
+           window.open(fileLink);
+      }
+    };
     return (
       <ListItem style={style} key={index} component="div">
         {files.length && (
@@ -106,8 +97,13 @@ const PatrimonyAccessoryFileModal: React.FC<
               width="100%"
               justifyContent="space-between"
             >
-              <ListItemText secondary={`${files[index].nome}`} />
-
+              <Typography
+                fontSize="small"
+                sx={{ textDecoration: "underline", color: 'blue' }}
+                onClick={() => handleOpenfile(files[index].arquivo)}
+              >
+                {files[index].nome}
+              </Typography>
               <Stack direction={"row"}>
                 <IconButton
                   onClick={() =>
@@ -146,10 +142,6 @@ const PatrimonyAccessoryFileModal: React.FC<
   const handleUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && selectedAccessory?.id_acessorio_patrimonio) {
       setIsLoading(true);
-      console.log(
-        "selectedAccessory?.id_acessorio_patrimonio : ",
-        selectedAccessory?.id_acessorio_patrimonio
-      );
       const file = e.target.files[0];
       const formData = new FormData();
       formData.append("file", file);
@@ -166,70 +158,85 @@ const PatrimonyAccessoryFileModal: React.FC<
       setIsLoading(false);
     }
   };
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
     <Modal open={!!selectedAccessory} onClose={handleCloseInnerModal}>
-      <Box sx={innerModalStyle} display="flex" flexDirection="column" gap={3}>
-        <Stack direction="row" justifyContent="space-between">
+      <Box
+        sx={{
+          ...innerModalStyle,
+          width: isMobile ? "90%" : "50%", // Responsividade
+          maxHeight: "90vh", // Garantir que o modal não ultrapasse a altura da tela
+          overflowY: "auto", // Scroll se necessário
+          p: 3,
+          display: 'flex',
+          flexDirection: "column",
+          gap: "1rem",
+        }}
+      >
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
           <Stack>
             <Typography variant="h6">Anexos</Typography>
             <Typography>
               Acessório {selectedAccessory?.id_acessorio_patrimonio}
             </Typography>
           </Stack>
-          <IconButton
-            onClick={handleCloseInnerModal}
-            // sx={{
-            //   color: "red",
-            //   width: "10px",
-            //   right: "10px",
-            // }}
-          >
+          <IconButton onClick={handleCloseInnerModal} sx={{ color: "red" }}>
             <CloseIcon />
           </IconButton>
         </Stack>
 
-        <Button
-          component="label"
-          role={undefined}
-          variant="contained"
-          tabIndex={-1}
-          startIcon={<CloudUploadIcon />}
-        >
-          Anexar
-          <VisuallyHiddenInput
-            onChange={handleUploadFile} // Descomente ou implemente essa função
-            type="file"
-          />
-        </Button>
-        {isLoading && (
-          <Stack
-            direction="row"
-            justifyContent="center"
-            alignItems="center"
-            sx={{ mt: 2 }}
+        <Stack direction={"column"} spacing={4}>
+          <Button
+            component="label"
+            variant="contained"
+            startIcon={<CloudUploadIcon />}
+            sx={{
+              mt: 2,
+              width: isMobile ? "100%" : "auto", // Responsividade no botão
+            }}
           >
-            <CircularProgress />
-            <Typography sx={{ ml: 2 }}>Enviando...</Typography>
-          </Stack>
-        )}
-        {patrimonyAccessoryFiles && (
-          <FixedSizeList
-            height={400}
-            width="100%"
-            itemSize={46}
-            itemCount={patrimonyAccessoryFiles.length}
-            overscanCount={5}
-          >
-            {({ index, style }) => (
-              <RenderRowAccessoryFile
-                index={index}
-                style={style}
-                files={patrimonyAccessoryFiles}
-                data={undefined} // Passe os dados adequados aqui se necessário
-              />
-            )}
-          </FixedSizeList>
-        )}
+            Anexar
+            <VisuallyHiddenInput onChange={handleUploadFile} type="file" />
+          </Button>
+
+          {isLoading && (
+            <Stack
+              direction="row"
+              justifyContent="center"
+              alignItems="center"
+              sx={{ mt: 2 }}
+            >
+              <CircularProgress />
+              <Typography sx={{ ml: 2 }}>Enviando...</Typography>
+            </Stack>
+          )}
+
+          {patrimonyAccessoryFiles && (
+            <FixedSizeList
+              height={400}
+              width="100%"
+              itemSize={isMobile ? 120 : 60}
+              itemCount={patrimonyAccessoryFiles.length}
+              overscanCount={5}
+            >
+              {({ index, style }) => (
+                <RenderRowAccessoryFile
+                  index={index}
+                  style={style}
+                  files={patrimonyAccessoryFiles}
+                  data={undefined}
+                />
+              )}
+            </FixedSizeList>
+          )}
+        </Stack>
 
         <Modal
           open={deletingPatrimonyAccessoryFile[0]}
@@ -243,17 +250,18 @@ const PatrimonyAccessoryFileModal: React.FC<
               display: "flex",
               flexDirection: "column",
               gap: "1rem",
+              maxWidth: isMobile ? "90%" : "400px", // Responsividade para o modal de deletar
+              p: 2,
             }}
           >
             <Typography id="modal-modal-title" variant="h6" component="h2">
-              tem certeza de que deseja deletar este anexo do acessório?{" "}
+              Tem certeza de que deseja deletar este anexo do acessório?
             </Typography>
 
             <Stack direction="row" justifyContent="center" spacing={2}>
               <Button
                 variant="outlined"
                 color="primary"
-                sx={{ borderColor: "blue", color: "blue" }}
                 onClick={handleDeleteFile}
               >
                 Sim
@@ -261,7 +269,6 @@ const PatrimonyAccessoryFileModal: React.FC<
               <Button
                 variant="outlined"
                 color="error"
-                sx={{ borderColor: "red", color: "red" }}
                 onClick={handleCloseDeleteFileModal}
               >
                 Não
