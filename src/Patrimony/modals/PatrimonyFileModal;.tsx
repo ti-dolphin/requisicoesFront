@@ -147,18 +147,16 @@ export default function PatrimonyFileModal() {
             }}
           >
             <DeletePatrimonyFileModal />
-            <Stack direction="row" justifyContent="end">
-              <Button
-                variant="outlined"
+            <Stack direction="row" justifyContent="space-between">
+              <Typography variant="h6">Anexos</Typography>
+              <IconButton
                 onClick={handleClose}
                 sx={{
                   color: "red",
-                  width: "10px",
-                  right: "10px",
                 }}
               >
                 <CloseIcon />
-              </Button>
+              </IconButton>
             </Stack>
 
             {allowedToAttachFile() ? (
@@ -176,9 +174,6 @@ export default function PatrimonyFileModal() {
               ""
             )}
 
-            <h2 id="transition-modal-title" className="modal-title">
-              Anexos
-            </h2>
             {isLoading && (
               <Stack
                 direction="row"

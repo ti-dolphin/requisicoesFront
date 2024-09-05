@@ -168,18 +168,21 @@ const allowedToAttachFile = ( ) => {
           >
             <DeleteMovimentationFileModal />
 
-            <Stack direction="row" justifyContent="end">
-              <Button
-                variant="outlined"
+            <Stack direction="row" justifyContent="space-between">
+              <Stack>
+                <Typography variant="h6">Anexos</Typography>
+                <Typography>
+                  Movimentação: {movementationFileOpen[1]}
+                </Typography>
+              </Stack>
+              <IconButton
                 onClick={handleClose}
                 sx={{
                   color: "red",
-                  width: "10px",
-                  right: "10px",
                 }}
               >
                 <CloseIcon />
-              </Button>
+              </IconButton>
             </Stack>
 
             {allowedToAttachFile() ? (
@@ -197,9 +200,6 @@ const allowedToAttachFile = ( ) => {
               ""
             )}
 
-            <h2 id="transition-modal-title" className="modal-title">
-              Anexos
-            </h2>
             {isLoading && (
               <Stack
                 direction="row"
