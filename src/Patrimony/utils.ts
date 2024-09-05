@@ -75,6 +75,16 @@ export const createPatrimonyAccessoryFile = async (id : number, file : FormData 
     console.log(e);
   }
 };
+
+export const deletePatrimonyAccessory = async (id : number) => {
+  try{
+    const response = await api.delete(`accessory/${id}`);
+    return response;
+  }catch(e){
+    console.log(e);
+  }
+};
+
 export const deletePatrimonyAccessoryFile = async(id : number, filename: string ) =>  {
   try{ 
     const response = await api.delete(`accessory/files/${filename}/${id}`);

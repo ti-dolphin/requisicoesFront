@@ -143,7 +143,7 @@ const PatrimonyDetails = () => {
               <IconButton onClick={handleBack}>
                 <ArrowLeftIcon />
               </IconButton>
-              <Typography className="text-gray-[#2B3990]" variant="h6">
+              <Typography textTransform="capitalize" className="text-gray-[#2B3990]" variant="h6">
                 {patrimonyData?.descricao}
               </Typography>
             </Box>

@@ -13,12 +13,13 @@ import {
   useMediaQuery,
   useTheme,
   Theme,
+  Button,
 } from "@mui/material";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { PatrimonyInfoContext } from "../context/patrimonyInfoContext";
-import { getAccessoriesByPatrimonyId } from "../utils"; // Assuming this function exists
+import { deletePatrimonyAccessory, getAccessoriesByPatrimonyId } from "../utils"; // Assuming this function exists
 import { PatrimonyAccessory } from "../types";
 import { FixedSizeList, ListChildComponentProps } from "react-window";
 import HomeRepairServiceIcon from "@mui/icons-material/HomeRepairService";
@@ -44,6 +45,17 @@ const modalStyle = (theme: Theme) => ({
   },
 });
 
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "fit-content",
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
+};
+
 const innerModalStyle = (theme: Theme) => ({
   position: "absolute" as const,
   top: "50%",
@@ -61,8 +73,13 @@ const innerModalStyle = (theme: Theme) => ({
 
 export default function PatrimonyAccessoryModal() {
   const { id_patrimonio } = useParams();
-  const { toggleCreatingPatrimonyAccessory, refreshPatrimonyAccessory } =
-    useContext(PatrimonyInfoContext);
+  const {
+    deletingPatrimonyAccessory,
+    refreshPatrimonyAccessory,
+    toggleCreatingPatrimonyAccessory,
+    toggleDeletingPatrimonyAccessory,
+    toggleRefreshPatrimonyAccessory,
+  } = useContext(PatrimonyInfoContext);
   const [accessories, setAccessories] = useState<PatrimonyAccessory[]>([]);
   const [selectedAccessory, setSelectedAccessory] =
     useState<PatrimonyAccessory | null>(null);
@@ -133,7 +150,21 @@ export default function PatrimonyAccessoryModal() {
   const handleOpen = () => {
     setOpen(true);
   };
+  const handleCloseDeletePatrimonyAccessory = () => {
+    toggleDeletingPatrimonyAccessory(false);
+  };
 
+  const handleDeletePatrimonyAccessory = async( ) => {
+   if(deletingPatrimonyAccessory[1]){ 
+     const response = await deletePatrimonyAccessory(
+       deletingPatrimonyAccessory[1]?.id_acessorio_patrimonio
+     );
+     if (response && response.status === 200) {
+       toggleRefreshPatrimonyAccessory();
+       toggleDeletingPatrimonyAccessory(false);
+     }
+   }
+  };
   return (
     <div>
       <Badge>
@@ -181,6 +212,45 @@ export default function PatrimonyAccessoryModal() {
             />
           )}
           <CreatePatrimonyAccessoryModal />
+          <Modal
+            open={deletingPatrimonyAccessory[0]}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box
+              sx={{
+                ...style,
+                display: "flex",
+                flexDirection: "column",
+                gap: "1rem",
+              }}
+            >
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                Tem erteza de que deseja deletar este acessório?{" "}
+              </Typography>
+
+              <Stack direction="row" justifyContent="center" spacing={2}>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={handleDeletePatrimonyAccessory}
+                  sx={{ borderColor: "blue", color: "blue" }}
+                
+                >
+                  Sim
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  sx={{ borderColor: "red", color: "red" }}
+                  onClick={handleCloseDeletePatrimonyAccessory}
+                >
+                  Não
+                </Button>
+              </Stack>
+            </Box>
+          </Modal>
         </Box>
       </Modal>
     </div>
