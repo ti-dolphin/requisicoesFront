@@ -17,7 +17,7 @@ import "dayjs/locale/pt-br";
 import { PatrimonyInfoContext } from "../context/patrimonyInfoContext";
 import SaveIcon from "@mui/icons-material/Save";
 import { createMovementation } from "../utils";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { MovimentationContext } from "../context/movementationContext";
 import { userContext } from "../../Requisitions/context/userContext";
 
@@ -63,6 +63,7 @@ export default function CreateMovementation({
     setCurrentFilter,
   } = React.useContext(PatrimonyInfoContext);
   const { user } = React.useContext(userContext);
+  const navigate =  useNavigate();
   const {
     toggleRefreshMovimentation,
     toggleCreatingMovementation,
@@ -93,7 +94,7 @@ export default function CreateMovementation({
           ["id_patrimonio"]: insertIdPatrimony,
         });
         if (insertIdMovementation) {
-          console.log("insertIdMovementation: ", insertIdMovementation);
+          navigate(`/patrimony/details/${insertIdPatrimony}`);
           setCurrentFilter("Ativos");
           toggleRefreshPatrimonyInfo();
           toggleCreatingPatrimonyInfo();
@@ -107,8 +108,10 @@ export default function CreateMovementation({
       ["id_patrimonio"]: Number(id_patrimonio),
     });
     if (insertIdMovementation) {
+      console.log("insertIdMovementation: ", insertIdMovementation);
       toggleRefreshPatrimonyInfo();
       toggleRefreshMovimentation();
+
       toggleCreatingMovementation();
     }
     // no caso de estar criando a movimentação para o patrimonio já existente, o id virá do contexto de criação da movimentação, que irá receber o id do patrimônio
