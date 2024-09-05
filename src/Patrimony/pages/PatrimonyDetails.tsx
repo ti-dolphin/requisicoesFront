@@ -131,7 +131,7 @@ const PatrimonyDetails = () => {
         <MovementationFileContextProvider>
           <PatrimonyFileContextProvider>
             <Box
-              className="border border-slate-300"
+              // className="border border-slate-300"
               overflow="auto"
               display="flex"
               sx={{
@@ -150,6 +150,7 @@ const PatrimonyDetails = () => {
 
             <Stack direction="row" spacing={1} height="90%" flexWrap="wrap">
               <Box
+                sx={{borderRadius: '15px', padding :2 }}
                 className="border border-slate-300"
                 paddingY="2rem"
                 height="100%"
@@ -234,9 +235,10 @@ const PatrimonyDetails = () => {
               </Box>
 
               <Box
-                className="border border-slate-300"
+                 className="border border-slate-300"
+                 sx={{borderRadius: '15px'}}
                 height="100%"
-                paddingY="2rem"
+                // paddingY="2rem"
                 paddingX="1rem"
                 width={{ xs: "100%", lg: "78%" }}
               >
@@ -246,7 +248,7 @@ const PatrimonyDetails = () => {
                   overflow="auto"
                   spacing={2}
                 >
-                  <Box position="relative" height="5%">
+                  { <Box position="relative" height="5%">
                     <Stack
                       direction="row"
                       justifyContent="space-between"
@@ -267,7 +269,7 @@ const PatrimonyDetails = () => {
                       </Typography>
                       <CreateMovementation responsable={responsable} />
                     </Stack>
-                  </Box>
+                  </Box> }
                   <MovimentationTable />
                 </Stack>
               </Box>

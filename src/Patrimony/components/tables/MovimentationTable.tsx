@@ -7,7 +7,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { TableVirtuoso, TableComponents } from "react-virtuoso";
-import { IconButton, Stack, Typography } from "@mui/material";
+import { Box, IconButton, Stack, Typography } from "@mui/material";
 import { Movementation } from "../../types";
 import MovimentationFileModal from "../../modals/MovimentationFileModal";
 import EditIcon from "@mui/icons-material/Edit";
@@ -32,13 +32,13 @@ interface ColumnData {
 
 const columns: ColumnData[] = [
   {
-    width: 170, // 28.33% do total
+    width: 190, // 28.33% do total
     label: "Projeto",
     dataKey: "projeto",
     numeric: false,
   },
   {
-    width: 170, // 28.33% do total
+    width: 100, // 28.33% do total
     label: "Observação",
     dataKey: "observacao",
     numeric: false,
@@ -50,7 +50,7 @@ const columns: ColumnData[] = [
     numeric: false,
   },
   {
-    width: 110, // 18.33% do total
+    width: 100, // 18.33% do total
     label: "Responsável",
     dataKey: "responsavel",
     numeric: false,
@@ -76,7 +76,7 @@ const VirtuosoTableComponents: TableComponents<Movementation> = {
     />
   ),
   TableHead: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
-    <TableHead {...props} ref={ref} />
+    <TableHead sx={{boxShadow: 'none', border: 'none'}} {...props} ref={ref} />
   )),
   TableRow,
   TableBody: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
@@ -95,6 +95,7 @@ function fixedHeaderContent() {
           style={{ width: column.width }}
           sx={{
             backgroundColor: "background.paper",
+            border: 'none'
           }}
         >
           {column.label}
@@ -139,7 +140,7 @@ const RowContent = ({
     <React.Fragment>
       {columns.map((column) => (
         <TableCell
-          sx={{ paddingY: "0" }}
+          sx={{ paddingY: "6px", border: "none" }}
           key={column.dataKey}
           align={column.numeric ? "right" : "left"}
         >
@@ -147,23 +148,22 @@ const RowContent = ({
             direction="row"
             spacing={1}
             alignItems="center"
-            flexWrap="wrap"
             justifyContent={
               column.dataKey === "id_movimentacao" ? "end" : "space-between"
             }
           >
-            <Typography
-              sx={{
-                fontSize: "12px",
-                textAlign: "left",
-                textTransform: "capitalize",
-              }}
-            >
-              {column.dataKey === "data"
-                ? dateTimeRenderer(row.data)
-                : String(row[column.dataKey])}
-            </Typography>
-
+              <Typography
+                sx={{
+                  fontSize: "12px",
+                  textAlign: "left",
+                  textTransform: "capitalize",
+                }}
+              >
+                {column.dataKey === "data"
+                  ? dateTimeRenderer(row.data)
+                  : String(row[column.dataKey])}
+              </Typography>
+       
             {column.dataKey === "projeto" ? (
               <MovimentationFileModal movementationId={row.id_movimentacao} />
             ) : column.dataKey === "observacao" ? (
@@ -217,11 +217,11 @@ export default function DetailMovementsTable() {
   }, [refreshMovimentation]);
 
   return (
-    <Paper
-      className="border bg-slate-300"
-      style={{ height: "90%", width: "100%" }}
+    <Box
+      sx={{ height: "90%", width: "100%", padding: 2, boxShadow: "none", dropShadow: "none" }}
     >
       <TableVirtuoso
+        style={{border: 'none', boxShadow: 'none'}}
         data={movementations}
         components={VirtuosoTableComponents}
         fixedHeaderContent={fixedHeaderContent}
@@ -231,6 +231,6 @@ export default function DetailMovementsTable() {
       />
       <DeleteMovementationModal />
       <EditMovimentationObservationModal />
-    </Paper>
+    </Box>
   );
 }
