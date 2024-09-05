@@ -10,6 +10,19 @@ export type Patrimony = {
   id_projeto?: number;
   nome_tipo: string;
 };
+export  type PatrimonyAccessory = {
+  descricao : string;
+  id_acessorio_patrimonio: number;
+  nome: string;
+  id_patrimonio: number;
+}
+export interface PatrimonyAccessoryFile {
+  id_anexo_acessorio_patrimonio: number;
+  id_acessorio_patrimonio: number;
+  nome: string;
+  arquivo: string; // Use string para URLs ou caminhos de arquivos
+}
+
 
 export type patrimonyType = { 
   id_tipo_patrimonio : number;

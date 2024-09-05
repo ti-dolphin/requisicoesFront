@@ -29,7 +29,8 @@ export default function DeletePatrimonyFileModal() {
     console.log("\nhandleDelete");
     if (deletingPatrimonyFile[0] && deletingPatrimonyFile[1]) {
       const response = await deletePatrimonyFileModal(
-        deletingPatrimonyFile[1].id_anexo_patrimonio
+        deletingPatrimonyFile[1].id_anexo_patrimonio,
+        deletingPatrimonyFile[1].nome_arquivo
       );
       if (response && response.status === 200) {
         toggleRefreshPatrimonyFile();

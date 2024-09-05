@@ -23,7 +23,8 @@ export default function DeleteMovimentationFileModal() {
   const handleDelete = async( ) => { 
     if (deletingMovimentationFile[0] && deletingMovimentationFile[1]) {
       const response = await deleteMovementationFileModal(
-        deletingMovimentationFile[1].id_anexo_movimentacao
+        deletingMovimentationFile[1].id_anexo_movimentacao,
+        deletingMovimentationFile[1].nome_arquivo
       );
       console.log('response status: ', response?.status)
       if (response && response.status === 200) {

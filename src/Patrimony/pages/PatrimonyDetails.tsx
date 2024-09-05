@@ -22,6 +22,7 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs, { Dayjs } from "dayjs";
 import { ArrowLeftIcon } from "@mui/x-date-pickers/icons";
+import PatrimonyAccessoryModal from "../modals/PatrimonyAccessoriesModal";
 // import { userContext } from "../../Requisitions/context/userContext";
 
 
@@ -126,151 +127,154 @@ const PatrimonyDetails = () => {
 
   return (
     <Box sx={{ height: "98vh", overflow: "auto" }}>
-        <MovimentationContextProvider>
-          <MovementationFileContextProvider>
-            <PatrimonyFileContextProvider>
+      <MovimentationContextProvider>
+        <MovementationFileContextProvider>
+          <PatrimonyFileContextProvider>
+            <Box
+              className="border border-slate-300"
+              overflow="auto"
+              display="flex"
+              sx={{
+                height: "5%",
+                paddingX: "2rem",
+                alignItems: "center",
+              }}
+            >
+              <IconButton onClick={handleBack}>
+                <ArrowLeftIcon />
+              </IconButton>
+              <Typography className="text-gray-[#2B3990]" variant="h6">
+                {patrimonyData?.descricao}
+              </Typography>
+            </Box>
+
+            <Stack direction="row" spacing={1} height="90%" flexWrap="wrap">
               <Box
                 className="border border-slate-300"
-                overflow="auto"
-                display="flex"
-                sx={{
-                  height: "5%",
-                  paddingX: "2rem",
-                  alignItems: "center",
-                }}
+                paddingY="2rem"
+                height="100%"
+                width={{ xs: "100%", lg: "20%" }}
               >
-                <IconButton onClick={handleBack}>
-                  <ArrowLeftIcon />
-                </IconButton>
-                <Typography className="text-gray-[#2B3990]" variant="h6">
-                  {patrimonyData?.descricao}
-                </Typography>
+                <Stack
+                  direction="column"
+                  justifyContent="start"
+                  gap="1rem"
+                  padding="0.5rem"
+                  height="100%"
+                  overflow="auto"
+                >
+                  <Typography
+                    className="text-gray-[#2B3990]"
+                    variant="h6"
+                    textAlign="center"
+                  >
+                    Detalhes
+                  </Typography>
+                  <Stack direction="row" spacing={2}>
+                    <PatrimonyFileModal />
+                    <PatrimonyAccessoryModal />
+                  </Stack>
+                  {patrimonyData &&
+                    Object.keys(patrimonyData).map((key) => (
+                      <Box display="flex" flexDirection="column" gap="0.5rem">
+                        <Typography
+                          className="text-gray-600"
+                          textTransform="capitalize"
+                        >
+                          {renderLabel(key)}
+                        </Typography>
+                        {key === "data_compra" ? (
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DemoContainer components={["DateField"]}>
+                              <DateField
+                                onClick={() => setEditing([true, key])}
+                                onChange={(e) => handleChangeDate(e)}
+                                defaultValue={dayjs(patrimonyData[key])}
+                                label="Data de Compra"
+                              />
+                            </DemoContainer>
+                          </LocalizationProvider>
+                        ) : (
+                          <TextField
+                            onChange={(e) => handleChange(e, key)}
+                            onClick={() => handleClickTextField(key)}
+                            disabled={key === "nome_tipo"}
+                            fullWidth
+                            id="outlined-basic"
+                            multiline
+                            value={renderLabelValue(key)}
+                            variant="outlined"
+                          />
+                        )}
+                        {editing[0] && editing[1] === key && (
+                          <Stack direction="row" spacing={1}>
+                            <Button
+                              variant="outlined"
+                              onClick={() => handleSave()}
+                              sx={{ width: "1rem", marginX: "1rem" }}
+                            >
+                              <SaveIcon />
+                            </Button>
+                            <Button
+                              variant="outlined"
+                              onClick={() => setEditing([false])} //refresh to get the default values back
+                              sx={{
+                                width: "1rem",
+                                marginX: "1rem",
+                                color: "red",
+                              }}
+                            >
+                              <CancelIcon />
+                            </Button>
+                          </Stack>
+                        )}
+                      </Box>
+                    ))}
+                </Stack>
               </Box>
 
-              <Stack direction="row" spacing={1} height="90%" flexWrap="wrap">
-                <Box
-                  className="border border-slate-300"
-                  paddingY="2rem"
+              <Box
+                className="border border-slate-300"
+                height="100%"
+                paddingY="2rem"
+                paddingX="1rem"
+                width={{ xs: "100%", lg: "78%" }}
+              >
+                <Stack
+                  direction="column"
                   height="100%"
-                  width={{ xs: "100%", lg: "20%" }}
+                  overflow="auto"
+                  spacing={2}
                 >
-                  <Stack
-                    direction="column"
-                    justifyContent="start"
-                    gap="1rem"
-                    padding="0.5rem"
-                    height="100%"
-                    overflow="auto"
-                  >
-                    <Typography
-                      className="text-gray-[#2B3990]"
-                      variant="h6"
-                      textAlign="center"
+                  <Box position="relative" height="5%">
+                    <Stack
+                      direction="row"
+                      justifyContent="space-between"
+                      alignItems="center"
                     >
-                      Detalhes
-                    </Typography>
-                    <PatrimonyFileModal />
-                    {patrimonyData &&
-                      Object.keys(patrimonyData).map((key) => (
-                        <Box display="flex" flexDirection="column" gap="0.5rem">
-                          <Typography
-                            className="text-gray-600"
-                            textTransform="capitalize"
-                          >
-                            {renderLabel(key)}
-                          </Typography>
-                          {key === "data_compra" ? (
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                              <DemoContainer components={["DateField"]}>
-                                <DateField
-                                  onClick={() => setEditing([true, key])}
-                                  onChange={(e) => handleChangeDate(e)}
-                                  defaultValue={dayjs(patrimonyData[key])}
-                                  label="Data de Compra"
-                                />
-                              </DemoContainer>
-                            </LocalizationProvider>
-                          ) : (
-                            <TextField
-                              onChange={(e) => handleChange(e, key)}
-                              onClick={() => handleClickTextField(key)}
-                              disabled={key === "nome_tipo"}
-                              fullWidth
-                              id="outlined-basic"
-                              multiline
-                              value={renderLabelValue(key)}
-                              variant="outlined"
-                            />
-                          )}
-                          {editing[0] && editing[1] === key && (
-                            <Stack direction="row" spacing={1}>
-                              <Button
-                                variant="outlined"
-                                onClick={() => handleSave()}
-                                sx={{ width: "1rem", marginX: "1rem" }}
-                              >
-                                <SaveIcon />
-                              </Button>
-                              <Button
-                                variant="outlined"
-                                onClick={() => setEditing([false])} //refresh to get the default values back
-                                sx={{
-                                  width: "1rem",
-                                  marginX: "1rem",
-                                  color: "red",
-                                }}
-                              >
-                                <CancelIcon />
-                              </Button>
-                            </Stack>
-                          )}
-                        </Box>
-                      ))}
-                  </Stack>
-                </Box>
-
-                <Box
-                  className="border border-slate-300"
-                  height="100%"
-                  paddingY="2rem"
-                  paddingX="1rem"
-                  width={{ xs: "100%", lg: "78%" }}
-                >
-                  <Stack
-                    direction="column"
-                    height="100%"
-                    overflow="auto"
-                    spacing={2}
-                  >
-                    <Box position="relative" height="5%">
-                      <Stack
-                        direction="row"
-                        justifyContent="space-between"
+                      <Typography
+                        display="flex"
                         alignItems="center"
+                        fontSize={{
+                          lg: "1.5rem",
+                          sm: "1rem",
+                          xs: "14px",
+                        }}
+                        className="text-gray-[#2B3990]"
+                        textAlign="center"
                       >
-                        <Typography
-                          display="flex"
-                          alignItems="center"
-                          fontSize={{
-                            lg: "1.5rem",
-                            sm: "1rem",
-                            xs: "14px",
-                          }}
-                          className="text-gray-[#2B3990]"
-                          textAlign="center"
-                        >
-                          Histórico de Movimentacões
-                        </Typography>
-                        <CreateMovementation responsable={responsable} />
-                      </Stack>
-                    </Box>
-                    <MovimentationTable />
-                  </Stack>
-                </Box>
-              </Stack>
-            </PatrimonyFileContextProvider>
-          </MovementationFileContextProvider>
-        </MovimentationContextProvider>
+                        Histórico de Movimentacões
+                      </Typography>
+                      <CreateMovementation responsable={responsable} />
+                    </Stack>
+                  </Box>
+                  <MovimentationTable />
+                </Stack>
+              </Box>
+            </Stack>
+          </PatrimonyFileContextProvider>
+        </MovementationFileContextProvider>
+      </MovimentationContextProvider>
     </Box>
   );
 };

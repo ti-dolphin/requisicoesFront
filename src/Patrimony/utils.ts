@@ -15,6 +15,94 @@ export const getPatrimonyInfo = async( ) =>  {
         console.log("error getPatrimonyInfo: ", e);
    }
 }
+import axios from "axios";
+import { PatrimonyAccessory } from "./types";
+
+// Function to create a new accessory
+export const createAccessory = async (accessory: PatrimonyAccessory) => {
+  try {
+    const response = await api.post("/accessory", accessory);
+    return response.data;
+  } catch (error) {
+    throw new Error(`Failed to create accessory: ${error}`);
+  }
+};
+
+// Function to get an accessory by its ID
+export const getAccessoryById = async (id: number) => {
+  try {
+    const response = await api.get(`/accessory/${id}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(`Failed to get accessory by ID: ${error}`);
+  }
+};
+
+// Function to update an accessory by its ID
+export const updateAccessory = async (
+  id: number,
+  accessory: PatrimonyAccessory
+) => {
+  try {
+    const response = await axios.put(`/accessory/${id}`, accessory);
+    return response.data;
+  } catch (error) {
+    throw new Error(`Failed to update accessory: ${error}`);
+  }
+};
+
+// Function to delete an accessory by its ID
+export const deleteAccessory = async (id: number) => {
+  try {
+    const response = await axios.delete(`/accessory/${id}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(`Failed to delete accessory: ${error}`);
+  }
+};
+
+export const createPatrimonyAccessoryFile = async (id : number, file : FormData ) =>  {
+  const config: AxiosRequestConfig = {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+    data: file,
+  };
+  try{ 
+    const response = await api.post(`accessory/files/${id}`, file, config);
+    return response;
+  }catch(e){ 
+    console.log(e);
+  }
+};
+export const deletePatrimonyAccessoryFile = async(id : number, filename: string ) =>  {
+  try{ 
+    const response = await api.delete(`accessory/files/${filename}/${id}`);
+    return response;
+  }catch(e){ 
+    console.log(e);
+  }
+};
+export const getPatrimonyAccessoryFiles = async( id : number) => { 
+  try{ 
+    const response = await api.get(`accessory/files/${id}`);
+    return response.data;
+  }catch(e){ 
+      console.log(e);
+  }
+}
+// Function to get accessories by patrimony ID
+export const getAccessoriesByPatrimonyId = async (id_patrimonio: number) => {
+  try {
+    const response = await api.get(
+      `accessory/patrimony-accessory/${id_patrimonio}`
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(`Failed to get accessories by patrimony ID: ${error}`);
+  }
+};
+
 export const createPatrimony = async (newPatrimony : Patrimony ) =>  {
    try{ 
       const response = await api.post(`/patrimony`, newPatrimony);
@@ -124,10 +212,12 @@ export const createMovementation = async ( newMovementation  : Movementation) =>
          console.log(e);
       }
 }
-export const deletePatrimonyFileModal = async (patrimonyFileId: number) => {
+export const deletePatrimonyFileModal = async (patrimonyFileId: number, filename: string) => {
    console.log("deletePatrimonyFileModal");
   try {
-    const response = await api.delete(`/patrimony/files/${patrimonyFileId}`);
+    const response = await api.delete(
+      `/patrimony/files/${filename}/${patrimonyFileId}`
+    );
     console.log("response status: ", response.status);
     return response;
   } catch (e) {
@@ -136,10 +226,10 @@ export const deletePatrimonyFileModal = async (patrimonyFileId: number) => {
 };
 
 
-export const deleteMovementationFileModal = async ( movementationFileId : number) =>  { 
+export const deleteMovementationFileModal = async ( movementationFileId : number, filename: string) =>  { 
    try{ 
       const response = await api.delete(
-        `/movementation/files/${movementationFileId}`,
+        `/movementation/files/${filename}/${movementationFileId}`
       );
       console.log('response status: ', response.status)
       return response;
