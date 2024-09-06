@@ -168,9 +168,9 @@ const allowedToAttachFile = ( ) => {
           >
             <DeleteMovimentationFileModal />
 
-            <Stack direction="row" justifyContent="space-between">
-              <Stack>
-                <Typography variant="h6">Anexos</Typography>
+            <Stack direction="row" justifyContent="center">
+              <Stack >
+                <Typography variant="h6" textAlign="center">Anexos</Typography>
                 <Typography>
                   Movimentação: {movementationFileOpen[1]}
                 </Typography>
@@ -179,6 +179,9 @@ const allowedToAttachFile = ( ) => {
                 onClick={handleClose}
                 sx={{
                   color: "red",
+                  position: "absolute",
+                  right: "1rem",
+                  top: "1rem",
                 }}
               >
                 <CloseIcon />

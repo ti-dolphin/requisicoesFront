@@ -265,7 +265,7 @@ const PatrimonyDetails = () => {
                         className="text-gray-[#2B3990]"
                         textAlign="center"
                       >
-                        Histórico de Movimentacões
+                        Histórico de Movimentações
                       </Typography>
                       <CreateMovementation responsable={responsable} />
                     </Stack>

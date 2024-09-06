@@ -28,7 +28,7 @@ interface ColumnData {
    {
      width: 70,
      label: "Patrimônio",
-     dataKey: "patrimonio",
+     dataKey: "id_patrimonio",
    },
    {
      width: 130,
@@ -144,7 +144,7 @@ function RowContent(
   return (
     <React.Fragment>
       {columns.map((column) =>
-        column.dataKey !== "id_patrimonio" ? (
+        column.label !== "" ? (
           <TableCell
             sx={{
               cursor: "pointer",
