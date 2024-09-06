@@ -147,12 +147,15 @@ export default function PatrimonyFileModal() {
             }}
           >
             <DeletePatrimonyFileModal />
-            <Stack direction="row" justifyContent="space-between">
-              <Typography variant="h6">Anexos</Typography>
+            <Stack direction="row" justifyContent="center">
+              <Typography variant="h6" textAlign="center">Anexos</Typography>
               <IconButton
                 onClick={handleClose}
                 sx={{
                   color: "red",
+                  position: "absolute",
+                  right: "1rem",
+                  top: "1rem",
                 }}
               >
                 <CloseIcon />
