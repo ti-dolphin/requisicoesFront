@@ -17,7 +17,7 @@ import { userContext } from "../../Requisitions/context/userContext";
 const modules = [
   {
     image:
-      "https://firebasestorage.googleapis.com/v0/b/dolphin-8f800.appspot.com/o/_69f4380e-7447-4651-93ee-1d1529dd5c78.jpeg?alt=media&token=3c2206db-d85c-432d-bf7a-8ec79c671ecd",
+      "https://firebasestorage.googleapis.com/v0/b/dolphin-8f800.appspot.com/o/_69f4380e-7447-4651-93ee-1d1529dd5c78.jpeg?alt=media&token=c3f35b95-f67b-47a9-901f-f6f16fedfe04",
     name: "Requisições",
     Info: "Realize solicitações de materiais aplicados no projeto, materiais de consumo, EPI's, equipamentos do operacional ou TI, ferramentas e serviços.",
     path: "/requisitions",
