@@ -41,6 +41,11 @@ const PatrimonyDetails = () => {
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
     key: string
   ) => {
+   if(key === 'id_patrimonio') { 
+    window.alert('Não é permitido editar o número do Patrimônio');
+    return;
+   }
+    setEditing([true, key]);
     const { value } = e.currentTarget;
     if (patrimonyData) {
       setPatrimonyData({
@@ -49,6 +54,11 @@ const PatrimonyDetails = () => {
       });
     }
   };
+
+   const handleCancelEdition = () => {
+     setEditing([false]);
+     toggleRefreshPatrimonyInfo();
+   };
 
   const fetchPatrimonyData = async () => {
     console.log("id_patrimonio: ", id_patrimonio);
@@ -104,6 +114,7 @@ const PatrimonyDetails = () => {
 
   const handleChangeDate = (day: Dayjs | null) => {
     if (day && patrimonyData) {
+      setEditing([true, "data_compra"]);
       setPatrimonyData({
         ...patrimonyData,
         ["data_compra"]: day.toString(),
@@ -113,13 +124,13 @@ const PatrimonyDetails = () => {
   const handleBack = () => {
     navigate("/patrimony");
   };
-  const handleClickTextField = (key : string) => { 
-        if( key === "id_patrimonio" ){ 
-         window.alert("Não é permitido editar o número do patrimônio");
-         return;
-        }
-       setEditing([true, key])
-  }
+  // const handleClickTextField = (key : string) => { 
+  //       if( key === "id_patrimonio" ){ 
+  //        window.alert("Não é permitido editar o número do patrimônio");
+  //        return;
+  //       }
+  //      setEditing([true, key])
+  // }
   useEffect(() => {
     fetchPatrimonyData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -144,7 +155,7 @@ const PatrimonyDetails = () => {
                 <ArrowLeftIcon />
               </IconButton>
               <Typography textTransform="capitalize" className="text-gray-[#2B3990]" variant="h6">
-                {patrimonyData?.descricao}
+                {patrimonyData?.nome}
               </Typography>
             </Box>
 
@@ -188,7 +199,7 @@ const PatrimonyDetails = () => {
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DemoContainer components={["DateField"]}>
                               <DateField
-                                onClick={() => setEditing([true, key])}
+                                // onClick={() => setEditing([true, key])}
                                 onChange={(e) => handleChangeDate(e)}
                                 defaultValue={dayjs(patrimonyData[key])}
                                 label="Data de Compra"
@@ -198,7 +209,7 @@ const PatrimonyDetails = () => {
                         ) : (
                           <TextField
                             onChange={(e) => handleChange(e, key)}
-                            onClick={() => handleClickTextField(key)}
+                            // onClick={() => handleClickTextField(key)}
                             disabled={key === "nome_tipo"}
                             fullWidth
                             id="outlined-basic"
@@ -218,7 +229,7 @@ const PatrimonyDetails = () => {
                             </Button>
                             <Button
                               variant="outlined"
-                              onClick={() => setEditing([false])} //refresh to get the default values back
+                              onClick={handleCancelEdition} //refresh to get the default values back
                               sx={{
                                 width: "1rem",
                                 marginX: "1rem",
