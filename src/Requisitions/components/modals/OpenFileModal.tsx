@@ -26,6 +26,8 @@ import { OpenFileModalProps } from "../../types";
 import CloseIcon from "@mui/icons-material/Close";
 import { RequisitionContext } from "../../context/RequisitionContext";
 import { userContext } from "../../context/userContext";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -192,7 +194,6 @@ const OpenFileModal = ({
 
           <Stack direction="column" spacing={2}>
             <Typography
-              color="primary"
               textAlign="center"
               id="modal-modal-title"
               variant="h6"
@@ -210,13 +211,17 @@ const OpenFileModal = ({
                     refreshToggler={refreshToggler}
                   />
                   <Button
+                    component="label"
+                    role={undefined}
+                    variant="contained"
+                    tabIndex={-1}
+                    startIcon={<CloudUploadIcon />}
                     sx={{
                       "&:active": {
                         backgroundColor: "transparent", // Altere a cor de fundo ao clicar
                       },
                     }}
                     onClick={handleOpenInputLink}
-                    variant="outlined"
                   >
                     Anexar Link
                   </Button>
