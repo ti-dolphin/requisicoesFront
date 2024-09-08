@@ -179,7 +179,10 @@ export default function PatrimonyAccessoryModal() {
               Acessórios do Patrimônio
             </Typography>
             <Stack direction="row">
-              <IconButton onClick={handleOpenCreatePatrimonyAccessory}>
+              <IconButton
+                sx={{ color: "#F7941E" }}
+                onClick={handleOpenCreatePatrimonyAccessory}
+              >
                 <AddCircleIcon />
               </IconButton>
               <IconButton sx={{ color: "red" }} onClick={handleClose}>
@@ -236,7 +239,6 @@ export default function PatrimonyAccessoryModal() {
                   color="primary"
                   onClick={handleDeletePatrimonyAccessory}
                   sx={{ borderColor: "blue", color: "blue" }}
-                
                 >
                   Sim
                 </Button>

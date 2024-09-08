@@ -1,8 +1,8 @@
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
 import { postItemFile, postRequisitionFile } from "../../../utils";
 import { inputFileProps } from "../../../types";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -52,12 +52,12 @@ const InputFile = ({
     <Button
       component="label"
       role={undefined}
-      variant="outlined"
+      variant="contained"
       tabIndex={-1}
-      startIcon={<AttachFileIcon />}
+      startIcon={<CloudUploadIcon />}
     >
       Anexar Arquivo
-      <VisuallyHiddenInput   onChange={handleChange} type="file" />
+      <VisuallyHiddenInput onChange={handleChange} type="file" />
     </Button>
   );
 };

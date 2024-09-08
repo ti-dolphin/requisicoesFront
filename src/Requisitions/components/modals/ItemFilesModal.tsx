@@ -21,6 +21,7 @@ import DeleteRequisitionFileModal from "./warnings/DeleteRequisitionFileModal";
 import CloseIcon from "@mui/icons-material/Close";
 import { userContext } from "../../context/userContext";
 import CircularProgress from "@mui/material/CircularProgress";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 // import { RequisitionContext } from "../../context/RequisitionContext";
 
@@ -170,14 +171,11 @@ const ItemFilesModal = ({
             <CloseIcon />
           </button>
           <Stack direction="column" spacing={2}>
-            <Typography
-              color="primary"
-              textAlign="center"
-              id="modal-modal-title"
-              component="h2"
-            >
-              Anexos do Item
-            </Typography>
+            <Stack>
+              <Typography variant="h6" textAlign="center">
+                Anexos
+              </Typography>
+            </Stack>
 
             {attachFileAllowed() && (
               <Stack justifyContent="center" spacing={2} direction="row">
@@ -188,7 +186,14 @@ const ItemFilesModal = ({
                   refreshToggler={refreshToggler}
                   caller="ItemFilesModal"
                 />
-                <Button onClick={handleOpenInputLink} variant="outlined">
+                <Button
+                  component="label"
+                  role={undefined}
+                  variant="contained"
+                  tabIndex={-1}
+                  startIcon={<CloudUploadIcon />}
+                  onClick={handleOpenInputLink}
+                >
                   Anexar Link
                 </Button>
               </Stack>
