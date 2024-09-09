@@ -129,6 +129,7 @@ const PatrimonyDetails = () => {
     event: React.ChangeEvent<HTMLInputElement>,
     checked: boolean
   ) => {
+    console.log(event)
    if(patrimonyData){ 
      if (checked) {
        await upatePatrimony({
