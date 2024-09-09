@@ -20,34 +20,41 @@ interface ColumnData {
   dataKey: string;
   label: string;
   numeric?: boolean;
+  required?: boolean;
 }
 
 
 const columns: ColumnData[] = [
-  { 
-    label: 'Tipo',
-    dataKey : 'tipo'
-  },
   {
-    label: "Nome",
-    dataKey: "nome",
+    label: "Tipo",
+    dataKey: "tipo",
+    required: true,
   },
   {
     label: "Data de Compra",
     dataKey: "data_compra",
+    required: false,
   },
   {
-    label: "Número de Série",
-    dataKey: "nserie",
-    numeric: false
+    label: "Nome",
+    dataKey: "nome",
+    required: true,
   },
   {
     label: "Descrição",
     dataKey: "descricao",
+    required: true,
   },
-  { 
-    label: 'Código Patrimônio',
-    dataKey: 'pat_legado'
+  {
+    label: "Número de Série",
+    dataKey: "nserie",
+    numeric: false,
+    required: true,
+  },
+  {
+    label: "Código Patrimônio",
+    dataKey: "pat_legado",
+    required: false,
   },
 ];
 
@@ -197,7 +204,7 @@ export default function CreatePatrimonyInfoModal() {
             </Button>
           </Stack>
           <Form onSubmit={handleNext}>
-            <Stack direction="column-reverse" spacing={1.6}>
+            <Stack direction="column" spacing={1.6}>
               {columns.map((column) =>
                 column.dataKey === "data_compra" ? (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -223,7 +230,7 @@ export default function CreatePatrimonyInfoModal() {
                 ) : (
                   <TextField
                     type={column.numeric ? "number" : "text"}
-                    required
+                    required={column.required}
                     onChange={(e) => handleChange(e, column.dataKey)}
                     label={column.label}
                   ></TextField>
