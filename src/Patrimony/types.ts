@@ -8,6 +8,7 @@ export type Patrimony = {
   descricao: string;
   pat_legado?: string;
   id_projeto?: number;
+  ativo : number;
   nome_tipo: string;
 };
 export  type PatrimonyAccessory = {

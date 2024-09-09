@@ -39,7 +39,7 @@ const columns: ColumnData[] = [
   {
     label: "Número de Série",
     dataKey: "nserie",
-    numeric: true
+    numeric: false
   },
   {
     label: "Descrição",
@@ -77,7 +77,8 @@ export default function CreatePatrimonyInfoModal() {
     nserie: "",
     descricao: "",
     pat_legado: "",
-    nome_tipo: ''
+    nome_tipo: '',
+    ativo : 1
   });
 
   const [typeOptions, setTypes ] = useState<patrimonyType[]>([]);

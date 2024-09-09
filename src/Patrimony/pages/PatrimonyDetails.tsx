@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, FormControlLabel, IconButton, Stack, Switch, TextField, Typography } from "@mui/material";
 import MovimentationTable from "../components/tables/MovimentationTable";
 import { Patrimony } from "../types";
 import React, { useContext, useEffect, useState } from "react";
@@ -124,13 +124,30 @@ const PatrimonyDetails = () => {
   const handleBack = () => {
     navigate("/patrimony");
   };
-  // const handleClickTextField = (key : string) => { 
-  //       if( key === "id_patrimonio" ){ 
-  //        window.alert("Não é permitido editar o número do patrimônio");
-  //        return;
-  //       }
-  //      setEditing([true, key])
-  // }
+
+  const handleActiveChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    checked: boolean
+  ) => {
+   if(patrimonyData){ 
+     if (checked) {
+       await upatePatrimony({
+         ...patrimonyData,
+         ["ativo"]: 1,
+       });
+         toggleRefreshPatrimonyInfo();
+       return;
+     }else{ 
+            await upatePatrimony({
+              ...patrimonyData,
+              ["ativo"]: 0,
+            });
+              toggleRefreshPatrimonyInfo();
+            return;
+     }
+   }
+  };
+
   useEffect(() => {
     fetchPatrimonyData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -154,14 +171,18 @@ const PatrimonyDetails = () => {
               <IconButton onClick={handleBack}>
                 <ArrowLeftIcon />
               </IconButton>
-              <Typography textTransform="capitalize" className="text-gray-[#2B3990]" variant="h6">
+              <Typography
+                textTransform="capitalize"
+                className="text-gray-[#2B3990]"
+                variant="h6"
+              >
                 {patrimonyData?.nome}
               </Typography>
             </Box>
 
             <Stack direction="row" spacing={1} height="90%" flexWrap="wrap">
               <Box
-                sx={{borderRadius: '15px', padding :2 }}
+                sx={{ borderRadius: "15px", padding: 2 }}
                 className="border border-slate-300"
                 paddingY="2rem"
                 height="100%"
@@ -206,6 +227,11 @@ const PatrimonyDetails = () => {
                               />
                             </DemoContainer>
                           </LocalizationProvider>
+                        ) : key === "ativo" ? (
+                          <FormControlLabel
+                            control={<Switch onChange={handleActiveChange} defaultChecked={patrimonyData[key] > 0} />}
+                            label="Ativo"
+                          />
                         ) : (
                           <TextField
                             onChange={(e) => handleChange(e, key)}
@@ -246,8 +272,8 @@ const PatrimonyDetails = () => {
               </Box>
 
               <Box
-                 className="border border-slate-300"
-                 sx={{borderRadius: '15px'}}
+                className="border border-slate-300"
+                sx={{ borderRadius: "15px" }}
                 height="100%"
                 // paddingY="2rem"
                 paddingX="1rem"
@@ -259,28 +285,30 @@ const PatrimonyDetails = () => {
                   overflow="auto"
                   spacing={2}
                 >
-                  { <Box position="relative" height="5%">
-                    <Stack
-                      direction="row"
-                      justifyContent="space-between"
-                      alignItems="center"
-                    >
-                      <Typography
-                        display="flex"
+                  {
+                    <Box position="relative" height="5%">
+                      <Stack
+                        direction="row"
+                        justifyContent="space-between"
                         alignItems="center"
-                        fontSize={{
-                          lg: "1.5rem",
-                          sm: "1rem",
-                          xs: "14px",
-                        }}
-                        className="text-gray-[#2B3990]"
-                        textAlign="center"
                       >
-                        Histórico de Movimentações
-                      </Typography>
-                      <CreateMovementation responsable={responsable} />
-                    </Stack>
-                  </Box> }
+                        <Typography
+                          display="flex"
+                          alignItems="center"
+                          fontSize={{
+                            lg: "1.5rem",
+                            sm: "1rem",
+                            xs: "14px",
+                          }}
+                          className="text-gray-[#2B3990]"
+                          textAlign="center"
+                        >
+                          Histórico de Movimentações
+                        </Typography>
+                        <CreateMovementation responsable={responsable} />
+                      </Stack>
+                    </Box>
+                  }
                   <MovimentationTable />
                 </Stack>
               </Box>
