@@ -307,6 +307,7 @@ const RequisitionDetail: React.FC = () => {
       <Box sx={{ padding: "0.5rem" }}>
         {requisitionData && (
           <HorizontalLinearStepper
+            items={requisitionItems}
             requisitionData={requisitionData}
             setRequisitionData={setRequisitionData}
           />

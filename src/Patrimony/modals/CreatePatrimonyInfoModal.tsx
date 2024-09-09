@@ -202,7 +202,6 @@ export default function CreatePatrimonyInfoModal() {
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={["DateField"]}>
                       <DateField
-                        required
                         format="DD/MM/YYYY"
                         onChange={(e) => handleChangeDate(e)}
                         label="Data de Compra"
