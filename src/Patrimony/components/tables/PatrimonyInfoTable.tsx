@@ -164,7 +164,8 @@ function RowContent(
   
             ) : (
               <Typography fontSize="small">
-                {String(row[column.dataKey]).toLowerCase()}
+                {column.dataKey === 'projeto' ?String(row[column.dataKey])
+                 :  String(row[column.dataKey]).toLowerCase() }
               </Typography>
             )}
           </TableCell>
