@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from "react";
-import { Project, fetchAllProjects } from "../../../utils";
+import { Project, fetchAllProjects, fetchAllTypes } from "../../../utils";
 import { postRequisition } from "../../../utils";
 import {
   Autocomplete,
   AutocompleteChangeDetails,
   AutocompleteChangeReason,
+  Box,
   Button,
   TextField,
 } from "@mui/material";
@@ -13,24 +15,33 @@ import { ProductsTableModal } from "../../../components/modals/ProductsTableModa
 import { useContext } from "react";
 import { ItemsContext } from "../../../context/ItemsContext";
 import { userContext } from "../../../context/userContext";
+import { RequisitionType } from "../../../types";
 
 interface RequisitionFields {
   ID_RESPONSAVEL: number;
   ID_PROJETO: number;
   DESCRIPTION: string;
+  TIPO : number;
 }
 interface ProjectOption {
   label: string;
   id: number;
 }
-
+interface TypeOption{ 
+  label: string;
+  id: number;
+}
 const AddRequisitionForm: React.FC = () => {
   useEffect(() => {
     async function performAsync() {
       const projectData = await fetchAllProjects();
+      const typeData = await fetchAllTypes();
       if (projectData) {
         setProjects(projectData);
       }
+      if(typeData) {
+        setTypes(typeData);
+      } 
     }
     performAsync();
   }, []);
@@ -39,9 +50,12 @@ const AddRequisitionForm: React.FC = () => {
     ID_RESPONSAVEL: 0,
     ID_PROJETO: 0,
     DESCRIPTION: "",
+    TIPO: 0,
   });
   const { user } = useContext(userContext);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [types, setTypes] = useState<RequisitionType[]>([]);
+
   const [currentId, setCurrentId] = useState<number>(0);
   const { toggleAdding } = useContext(ItemsContext);
 
@@ -63,6 +77,35 @@ const AddRequisitionForm: React.FC = () => {
       });
     }
   };
+  const handleSelectType = (
+    event: React.SyntheticEvent<Element, Event>,
+    value: TypeOption | null,
+    reason: AutocompleteChangeReason,
+    details?: AutocompleteChangeDetails<ProjectOption> | undefined
+  ) => {
+     console.log("Selecionado:", value, event, reason, details);
+     console.log({
+       ...fields,
+       TIPO: Number(value?.id),
+     });
+    setFields({ 
+      ...fields,
+        TIPO: Number(value?.id),
+      });
+    }
+
+
+  const renderTypeOptions = () => {
+    const typesArray: { label: string; id: number }[] = [];
+    types.forEach((type) => {
+      typesArray.push({
+        label: String(type.nome_tipo),
+        id: type.id_tipo_requisicao,
+      });
+    });
+    return typesArray;
+  }
+
   const renderProjectOptions = () => {
     const projectsArray: { label: string; id: number }[] = [];
     projects.forEach((project) => {
@@ -105,7 +148,7 @@ const AddRequisitionForm: React.FC = () => {
 
   return (
     <form className="max-w-sm mx-auto mt-5 w-[90%]" onSubmit={handleSubmit}>
-      <div className="mb-5">
+      <Box className="mb-5">
         <label
           htmlFor="repeat-password"
           className="block mb-2 text-sm font-medium text-gray-900"
@@ -120,39 +163,42 @@ const AddRequisitionForm: React.FC = () => {
           onChange={handleSelect}
           renderInput={(params) => <TextField {...params} label="Projeto" />}
         />
+      </Box>
 
-        {/* <select
-          id="ID_PROJETO"
-          className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-          required
-          onChange={(e) => handleSelect(e)}
+      <Box className="mb-5">
+        <label
+          htmlFor="repeat-password"
+          className="block mb-2 text-sm font-medium text-gray-900"
         >
-          <option value=""></option>
-          {projects.map((project) => (
-            <option value={project.ID}>{project.DESCRICAO}</option>
-          ))}
-        </select> */}
-      </div>
-      <div className="mb-5">
+          Tipo da Requisição
+        </label>
+        <Autocomplete
+          disablePortal
+          id="selectProject"
+          options={renderTypeOptions()}
+          getOptionLabel={(option) => option.label}
+          onChange={handleSelectType}
+          renderInput={(params) => <TextField {...params} label="Tipo" />}
+        />
+      </Box>
+
+      <Box className="mb-5">
         <label
           htmlFor="repeat-password"
           className="block mb-2 text-sm font-medium text-gray-900"
         >
           Descrição
         </label>
-        <input
+        <TextField
+          multiline
+          sx={{ width: "100%" }}
           type="text"
           id="DESCRIPTION"
           placeholder="Descrição..."
-          className="shadow-sm
-           bg-gray-50 border
-            border-gray-300
-             text-gray-900 text-sm
-              rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-6"
           required
           onChange={handleChange}
         />
-      </div>
+      </Box>
       <Button onClick={() => handleSubmit} type="submit">
         Seguir
       </Button>

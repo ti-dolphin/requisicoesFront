@@ -12,6 +12,8 @@ export interface Requisition {
   LAST_UPDATE_ON: string | number;
   LAST_MODIFIED_BY_NAME: string;
   CREATED_ON: string | number;
+  TIPO? : number;
+  nome_tipo ? : string;
 }
 export interface RequisitionPost {
   STATUS: string;
@@ -42,6 +44,10 @@ export interface Product {
 export interface Person {
   NOME: string;
   CODPESSOA: number;
+}
+export interface RequisitionType{ 
+  id_tipo_requisicao : number;
+  nome_tipo : string;
 }
 export interface Project {
   DESCRICAO: ReactNode;

@@ -223,7 +223,7 @@ const PatrimonyDetails = () => {
                               <DateField
                                 // onClick={() => setEditing([true, key])}
                                 onChange={(e) => handleChangeDate(e)}
-                                defaultValue={dayjs(patrimonyData[key]).local()}
+                                defaultValue={dayjs.utc(patrimonyData[key])  }
                                 label="Data de Compra"
                               />
                             </DemoContainer>

@@ -65,6 +65,7 @@ const RequisitionDetail: React.FC = () => {
   const fetchRequisitionData = async () => {
     const data = await fetchRequsitionById(Number(id));
     if (data) {
+      console.log('data', data);
       const personData = await fetchPersonById(data.ID_RESPONSAVEL);
       if (personData) {
         setRequisitionData({ ...data, ["RESPONSAVEL"]: personData?.NOME });
@@ -179,6 +180,7 @@ const RequisitionDetail: React.FC = () => {
     { label: "Observação", key: "OBSERVACAO" },
     { label: "Ultima atualização", key: "LAST_UPDATE_ON" },
     { label: "Data de Criação", key: "CREATED_ON" },
+    { label: 'Tipo', key: 'nome_tipo'}
   ];
 
   const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({

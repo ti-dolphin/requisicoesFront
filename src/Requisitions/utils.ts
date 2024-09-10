@@ -160,7 +160,15 @@ const postRequisition = async (requistions: RequisitionPost[]) => {
     console.log(e);
   }
 };
-
+const fetchAllTypes = async () => {
+  try{
+    const response = await api.get(`requisition/types`);
+    return response.data;
+  } 
+  catch(e){ 
+    console.log(e);
+  }
+};
 const fetchAllProjects = async () => {
   try {
     const response = await api.get<Project[]>("/project");
@@ -325,6 +333,7 @@ export {
   deleteItemFile,
   postItemLinkFile,
   postRequisitionLinkFile,
+  fetchAllTypes,
   logIn,
 };
 export type {
