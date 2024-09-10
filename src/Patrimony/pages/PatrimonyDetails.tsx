@@ -221,9 +221,9 @@ const PatrimonyDetails = () => {
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DemoContainer components={["DateField"]}>
                               <DateField
-                                // onClick={() => setEditing([true, key])}
+                                format="DD/MM/YYYY"
                                 onChange={(e) => handleChangeDate(e)}
-                                defaultValue={dayjs.utc(patrimonyData[key])  }
+                                defaultValue={dayjs.utc(patrimonyData[key])} 
                                 label="Data de Compra"
                               />
                             </DemoContainer>
