@@ -14,6 +14,7 @@ import {
   MenuItem,
   Modal,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import CreatePatrimonyInfoModal from "../modals/CreatePatrimonyInfoModal";
@@ -300,16 +301,18 @@ export default function SearchAppBar({
             )}
 
             {user?.PERM_CADASTRAR_PAT && (
-              <IconButton
-                onClick={toggleCreatingPatrimonyInfo}
-                sx={{
-                  backgroundColor: "#F7941E",
-                  color: "white",
-                  "&:hover": { backgroundColor: "#f1b963" },
-                }}
-              >
-                <AddIcon sx={{ color: "#2B3990" }} />
-              </IconButton>
+              <Tooltip title="Novo Patrimônio">
+                <IconButton
+                  onClick={toggleCreatingPatrimonyInfo}
+                  sx={{
+                    backgroundColor: "#F7941E",
+                    color: "white",
+                    "&:hover": { backgroundColor: "#f1b963" },
+                  }}
+                >
+                  <AddIcon sx={{ color: "#2B3990" }} />
+                </IconButton>
+              </Tooltip>
             )}
           </Stack>
         </Toolbar>

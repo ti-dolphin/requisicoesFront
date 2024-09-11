@@ -128,6 +128,7 @@ export interface RequisitionTableProps {
 
 export interface ProductsTableProps {
   ID_REQUISICAO: number;
+  TIPO ? : number;
 }
 
 export const motionItemsVariants = {

@@ -11,11 +11,26 @@ import { TableVirtuoso, TableComponents } from "react-virtuoso";
 import { PatrimonyInfo } from "../../types";
 import SearchAppBar from "../SearchAppBar";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
-import { dateTimeRenderer, getInactivePatrimonyInfo, getPatrimonyInfo } from "../../utils";
+import { acceptMovementation, createMovementationfile, dateTimeRenderer, getInactivePatrimonyInfo, getPatrimonyInfo } from "../../utils";
 import { PatrimonyInfoContext } from "../../context/patrimonyInfoContext";
 import { ResponsableContext } from "../../context/responsableContext";
-import { Checkbox, Typography } from "@mui/material";
+import { Alert, Box, Button, Checkbox, CircularProgress, IconButton, Modal, Stack, styled, Tooltip, Typography } from "@mui/material";
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import CloseIcon from "@mui/icons-material/Close";
 
+
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
 interface ColumnData {
   dataKey: keyof PatrimonyInfo;
   label: string;
@@ -67,6 +82,18 @@ interface ColumnData {
    },
  ];
 
+ const style = {
+   position: "absolute" as const,
+   top: "50%",
+   left: "50%",
+   transform: "translate(-50%, -50%)",
+   width: 400,
+   bgcolor: "background.paper",
+   border: "0.5px solid #000",
+   boxShadow: 24,
+   p: 4,
+ };
+
 const VirtuosoTableComponents: TableComponents<PatrimonyInfo> = {
   Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
     <TableContainer component={Paper} {...props} ref={ref} />
@@ -111,35 +138,41 @@ function RowContent(
   _index: number,
   row: PatrimonyInfo,
   setSelectedItems: Dispatch<SetStateAction<PatrimonyInfo[]>>,
-  selectedItems: PatrimonyInfo[]
+  selectedItems: PatrimonyInfo[],
+  setAcceptMovementationodalOpen : ( value : number) => void
 ) {
-        const { setResponsable } = useContext(ResponsableContext);
+  const { setResponsable } = useContext(ResponsableContext);
 
-        const handleSelectItem = (e : React.ChangeEvent<HTMLInputElement> ,row : PatrimonyInfo) => {
-          if(e.target.checked){ 
-              const currentSelectedItems = [...selectedItems];
-              currentSelectedItems.push( 
-                row
-              );
-              setSelectedItems([...currentSelectedItems]);
-              console.log("currentSelected: \n", currentSelectedItems);
-              return;
-          }
-            const currentSelectedItems = [...selectedItems];
-            currentSelectedItems.splice(currentSelectedItems.indexOf(row), 1);
-            setSelectedItems([...currentSelectedItems]);
-        };
+  const handleSelectItem = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    row: PatrimonyInfo
+  ) => {
+    if (e.target.checked) {
+      const currentSelectedItems = [...selectedItems];
+      currentSelectedItems.push(row);
+      setSelectedItems([...currentSelectedItems]);
+      console.log("currentSelected: \n", currentSelectedItems);
+      return;
+    }
+    const currentSelectedItems = [...selectedItems];
+    currentSelectedItems.splice(currentSelectedItems.indexOf(row), 1);
+    setSelectedItems([...currentSelectedItems]);
+  };
+  const handleOpenPatrimonyDetail = (id_patrimonio: number) => {
+    setResponsable(row.id_responsavel);
+    window.location.href = `/patrimony/details/${id_patrimonio}`;
+  };
 
-        const handleOpenPatrimonyDetail = (id_patrimonio: number) => {
-          setResponsable(row.id_responsavel);
-          window.location.href = `/patrimony/details/${id_patrimonio}`;
-        };
-        const isOnSelectedItems = ( row : PatrimonyInfo) => { 
-          if(selectedItems.find((item) => row === item)){ 
-            return true;
-          }
-          return false;
-        };
+  const isOnSelectedItems = (row: PatrimonyInfo) => {
+    if (selectedItems.find((item) => row === item)) {
+      return true;
+    }
+    return false;
+  };
+
+  const handleAcceptMovementation = (movemnetationId: number) => {
+    setAcceptMovementationodalOpen(movemnetationId);
+  };
 
   return (
     <React.Fragment>
@@ -150,28 +183,44 @@ function RowContent(
               cursor: "pointer",
               paddingX: "0.2",
               textTransform: "capitalize",
-         
             }}
             key={column.dataKey}
             onClick={() => handleOpenPatrimonyDetail(row.id_patrimonio)}
             align={column.numeric ? "center" : "left"}
           >
             {column.dataKey === "dataMovimentacao" ? (
-       
-                <Typography fontSize="small">
-                  {dateTimeRenderer(row[column.dataKey])}
-                </Typography>
-  
+              <Typography fontSize="small">
+                {dateTimeRenderer(row[column.dataKey])}
+              </Typography>
             ) : (
               <Typography fontSize="small">
-                {column.dataKey === 'projeto' ?String(row[column.dataKey])
-                 :  String(row[column.dataKey]).toLowerCase() }
+                {column.dataKey === "projeto"
+                  ? String(row[column.dataKey])
+                  : String(row[column.dataKey]).toLowerCase()}
               </Typography>
             )}
           </TableCell>
         ) : (
-          <TableCell align="center" >
-            <Checkbox checked={isOnSelectedItems(row)}  onChange={(e) => handleSelectItem(e, row)} sx={{ margin: "0", padding: "0" }} />
+          <TableCell align="center">
+            <Stack direction="row">
+              {row["aceito"] === 0 ? (
+                <Tooltip title="aceitar movimentação">
+                  <ErrorOutlineIcon
+                    onClick={() =>
+                      handleAcceptMovementation(row["numeroMovimentacao"])
+                    }
+                    sx={{ color: "#F7941E", cursor: "pointer" }}
+                  />
+                </Tooltip>
+              ) : (
+                ""
+              )}
+              <Checkbox
+                checked={isOnSelectedItems(row)}
+                onChange={(e) => handleSelectItem(e, row)}
+                sx={{ margin: "0", padding: "0" }}
+              />
+            </Stack>
           </TableCell>
         )
       )}
@@ -181,12 +230,14 @@ function RowContent(
 
 
 export default function MovementsTable() {
-  const {refreshPatrimonyInfo, currentFilter}= useContext(PatrimonyInfoContext);
+  const {refreshPatrimonyInfo, currentFilter, toggleRefreshPatrimonyInfo}= useContext(PatrimonyInfoContext);
+  const [acceptMovementationModalOpen,setAcceptMovementationodalOpen] = useState<number>(0);
+  const [movementationAcceptedAlert, setMovementationAcceptedAlert] = useState<boolean>(false);
 
   const [rows, setRows] = useState<PatrimonyInfo[]>();
   const [filteredRows, setFilteredRows] = useState<PatrimonyInfo[]>();
   const [selectedItems, setSelectedItems ] = useState<PatrimonyInfo[]>([]);
-
+  const [loading, setIsLoading] = useState<boolean>(false);
   const fetchData = async ( ) => { 
      if(currentFilter === 'Ativos'){ 
        const patrimonyInfoData = await getPatrimonyInfo();
@@ -204,6 +255,37 @@ export default function MovementsTable() {
         setFilteredRows(patrimonyInfoData);
       }
   }
+  const displayMovementationAcceptedAlert = ( ) => { 
+     setTimeout(() => {
+       setMovementationAcceptedAlert(false);
+     }, 3 * 1000);
+     console.log("alert false");
+     setMovementationAcceptedAlert(true);
+  }
+   const handleUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+     if (e.target.files && acceptMovementationModalOpen !== 0) {
+       setIsLoading(true);
+       console.log(": ");
+       const file = e.target.files[0];
+       const formData = new FormData();
+       formData.append("file", file);
+       const response = await createMovementationfile(
+         acceptMovementationModalOpen,
+         formData
+       );
+       if (response && response.status === 200) {
+         const responseAccept = await acceptMovementation(acceptMovementationModalOpen);
+         if (responseAccept && responseAccept.status === 200) {
+           setIsLoading(false);
+           displayMovementationAcceptedAlert();
+           toggleRefreshPatrimonyInfo();
+           setAcceptMovementationodalOpen(0);
+           return;
+         }
+       }
+       window.alert("Erro ao fazer upload!");
+     }
+   };
 
   const handleSearch = (e : React.KeyboardEvent<HTMLInputElement> ) =>  {
     const { value } = e.currentTarget;
@@ -236,6 +318,81 @@ export default function MovementsTable() {
  
   return (
     <Paper style={{ height: "86%", width: "100%" }}>
+      {movementationAcceptedAlert && (
+        <Alert
+          variant="filled"
+          className="drop-shadow-lg"
+          severity="success"
+          sx={{
+            width: "400px",
+            position: "absolute",
+            left: "50%",
+            marginLeft: "-200px",
+            zIndex: 20,
+          }}
+        >
+          A Movimentação foi aceita por você
+        </Alert>
+      )}
+
+      <Modal
+        open={acceptMovementationModalOpen !== 0}
+        // onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <IconButton
+            sx={{
+              color: "red",
+              position: "absolute",
+              right: "1rem",
+              top: "1rem",
+            }}
+            onClick={() => setAcceptMovementationodalOpen(0)}
+          >
+            <CloseIcon />
+          </IconButton>
+          <Stack spacing={2}>
+            <Typography
+              textAlign="center"
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+            >
+              Registre o Recebimento
+            </Typography>
+            <Typography
+              textAlign="center"
+              id="modal-modal-description"
+              sx={{ mt: 2 }}
+            >
+              Foto com patrimonio e acessórios
+            </Typography>
+            <Button
+              component="label"
+              role={undefined}
+              variant="contained"
+              tabIndex={-1}
+              startIcon={<CloudUploadIcon />}
+            >
+              Anexar
+              <VisuallyHiddenInput onChange={handleUploadFile} type="file" />
+            </Button>
+            {loading && (
+              <Stack
+                direction="row"
+                justifyContent="center"
+                alignItems="center"
+                sx={{ mt: 2 }}
+              >
+                <CircularProgress />
+                <Typography sx={{ ml: 2 }}>Enviando...</Typography>
+              </Stack>
+            )}
+          </Stack>
+        </Box>
+      </Modal>
       <SearchAppBar
         setFilteredRows={setFilteredRows}
         selectedItems={selectedItems}
@@ -247,7 +404,13 @@ export default function MovementsTable() {
         components={VirtuosoTableComponents}
         fixedHeaderContent={fixedHeaderContent}
         itemContent={(index, row) =>
-        RowContent(index, row, setSelectedItems, selectedItems)
+          RowContent(
+            index,
+            row,
+            setSelectedItems,
+            selectedItems,
+            setAcceptMovementationodalOpen
+          )
         }
       />
     </Paper>

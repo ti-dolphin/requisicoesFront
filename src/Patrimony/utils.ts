@@ -299,6 +299,15 @@ export const createPatrimonyfile = async (patrimonyId : number, file : FormData 
       console.log(e);
     }
 }
+export const acceptMovementation = async(movementationId : number) =>  {
+    try{ 
+      const response = await api.put(`movementation/accept/${movementationId}`);
+      return response;
+    }catch(e){ 
+      console.log(e);
+    }
+
+};
 
  export const upatePatrimony = async (patrimony: Patrimony) => {
    try {

@@ -90,6 +90,7 @@ export interface PatrimonyInfo {
   projeto: string; //aparece
   responsavel: string; // aparece
   descricao: string; // aparece
+  aceito : number;
   numeroMovimentacao: number; // aparece
   dataMovimentacao: string; //aparece Data da movimentação no formato ISO (YYYY-MM-DD)
 }

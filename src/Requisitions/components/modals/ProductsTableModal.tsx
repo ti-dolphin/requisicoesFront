@@ -107,7 +107,7 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
               </Button>
             </Stack>
 
-            <ProductsTable ID_REQUISICAO={requisitionID} />
+            <ProductsTable TIPO={requisitionData?.TIPO} ID_REQUISICAO={requisitionID} />
           </Stack>
         </Box>
       </Modal>

@@ -97,7 +97,7 @@ const RowContent: React.FC<{
   );
 };
 
-const ProductsTable: React.FC<ProductsTableProps> = ({ ID_REQUISICAO }) => {
+const ProductsTable: React.FC<ProductsTableProps> = ({ ID_REQUISICAO, TIPO }) => {
   const [currentSelectedItem, setCurrentSelectedItem] = useState<Product>();
   const [filteredRows, setFilteredRows] = useState<Product[]>([]);
   const [openQuantityInput, setOpenQuantityInput] = useState(false);
@@ -125,6 +125,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ ID_REQUISICAO }) => {
 
   useEffect(() => {
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshToggler, refreshItems]);
 
   const handleAddItem = (
@@ -151,9 +152,13 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ ID_REQUISICAO }) => {
   const handleSearchItem = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && e.currentTarget.value) {
       const { value } = e.currentTarget;
-      const searchResults = await searchProducts(value.toUpperCase());
-      console.log("searchResults: ", searchResults);
-      if (searchResults) setFilteredRows([...searchResults.data]);
+      if(TIPO)  {
+        const searchResults = await searchProducts(value.toUpperCase(), TIPO);
+        console.log("searchResults: ", searchResults);
+        if (searchResults) setFilteredRows([...searchResults.data]);
+      }
+
+
     }
   };
 
