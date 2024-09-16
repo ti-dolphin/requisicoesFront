@@ -44,6 +44,7 @@ export const style = {
 };
 
 
+
 const RowContent: React.FC<{
   row: Product;
   columns: { width: number; label: string; dataKey: keyof Product }[];

@@ -60,6 +60,7 @@ export interface Movementation {
   id_responsavel: number;
   numeroMovimentacao?: number;
   observacao: string;
+  aceito : number;
 }
 
 export type PatrimonyFile = {

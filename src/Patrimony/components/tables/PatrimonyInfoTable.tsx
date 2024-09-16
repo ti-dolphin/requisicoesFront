@@ -18,6 +18,7 @@ import { Alert, Box, Button, Checkbox, CircularProgress, IconButton, Modal, Stac
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import CloseIcon from "@mui/icons-material/Close";
+import { userContext } from "../../../Requisitions/context/userContext";
 
 
 const VisuallyHiddenInput = styled("input")({
@@ -134,106 +135,14 @@ function fixedHeaderContent() {
   );
 }
 
-function RowContent(
-  _index: number,
-  row: PatrimonyInfo,
-  setSelectedItems: Dispatch<SetStateAction<PatrimonyInfo[]>>,
-  selectedItems: PatrimonyInfo[],
-  setAcceptMovementationodalOpen : ( value : number) => void
-) {
-  const { setResponsable } = useContext(ResponsableContext);
 
-  const handleSelectItem = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    row: PatrimonyInfo
-  ) => {
-    if (e.target.checked) {
-      const currentSelectedItems = [...selectedItems];
-      currentSelectedItems.push(row);
-      setSelectedItems([...currentSelectedItems]);
-      console.log("currentSelected: \n", currentSelectedItems);
-      return;
-    }
-    const currentSelectedItems = [...selectedItems];
-    currentSelectedItems.splice(currentSelectedItems.indexOf(row), 1);
-    setSelectedItems([...currentSelectedItems]);
-  };
-  const handleOpenPatrimonyDetail = (id_patrimonio: number) => {
-    setResponsable(row.id_responsavel);
-    window.location.href = `/patrimony/details/${id_patrimonio}`;
-  };
-
-  const isOnSelectedItems = (row: PatrimonyInfo) => {
-    if (selectedItems.find((item) => row === item)) {
-      return true;
-    }
-    return false;
-  };
-
-  const handleAcceptMovementation = (movemnetationId: number) => {
-    setAcceptMovementationodalOpen(movemnetationId);
-  };
-
-  return (
-    <React.Fragment>
-      {columns.map((column) =>
-        column.label !== "" ? (
-          <TableCell
-            sx={{
-              cursor: "pointer",
-              paddingX: "0.2",
-              textTransform: "capitalize",
-            }}
-            key={column.dataKey}
-            onClick={() => handleOpenPatrimonyDetail(row.id_patrimonio)}
-            align={column.numeric ? "center" : "left"}
-          >
-            {column.dataKey === "dataMovimentacao" ? (
-              <Typography fontSize="small">
-                {dateTimeRenderer(row[column.dataKey])}
-              </Typography>
-            ) : (
-              <Typography fontSize="small">
-                {column.dataKey === "projeto"
-                  ? String(row[column.dataKey])
-                  : String(row[column.dataKey]).toLowerCase()}
-              </Typography>
-            )}
-          </TableCell>
-        ) : (
-          <TableCell align="center">
-            <Stack direction="row">
-              {row["aceito"] === 0 ? (
-                <Tooltip title="aceitar movimentação">
-                  <ErrorOutlineIcon
-                    onClick={() =>
-                      handleAcceptMovementation(row["numeroMovimentacao"])
-                    }
-                    sx={{ color: "#F7941E", cursor: "pointer" }}
-                  />
-                </Tooltip>
-              ) : (
-                ""
-              )}
-              <Checkbox
-                checked={isOnSelectedItems(row)}
-                onChange={(e) => handleSelectItem(e, row)}
-                sx={{ margin: "0", padding: "0" }}
-              />
-            </Stack>
-          </TableCell>
-        )
-      )}
-    </React.Fragment>
-  );
-}
 
 
 export default function MovementsTable() {
   const {refreshPatrimonyInfo, currentFilter, toggleRefreshPatrimonyInfo}= useContext(PatrimonyInfoContext);
   const [acceptMovementationModalOpen,setAcceptMovementationodalOpen] = useState<number>(0);
   const [movementationAcceptedAlert, setMovementationAcceptedAlert] = useState<boolean>(false);
-
+  const {user} = useContext(userContext);
   const [rows, setRows] = useState<PatrimonyInfo[]>();
   const [filteredRows, setFilteredRows] = useState<PatrimonyInfo[]>();
   const [selectedItems, setSelectedItems ] = useState<PatrimonyInfo[]>([]);
@@ -254,6 +163,100 @@ export default function MovementsTable() {
         setRows(patrimonyInfoData);
         setFilteredRows(patrimonyInfoData);
       }
+  }
+
+  function RowContent(
+    _index: number,
+    row: PatrimonyInfo,
+    setSelectedItems: Dispatch<SetStateAction<PatrimonyInfo[]>>,
+    selectedItems: PatrimonyInfo[],
+    setAcceptMovementationodalOpen: (value: number) => void
+  ) {
+    const { setResponsable } = useContext(ResponsableContext);
+
+    const handleSelectItem = (
+      e: React.ChangeEvent<HTMLInputElement>,
+      row: PatrimonyInfo
+    ) => {
+      if (e.target.checked) {
+        const currentSelectedItems = [...selectedItems];
+        currentSelectedItems.push(row);
+        setSelectedItems([...currentSelectedItems]);
+        console.log("currentSelected: \n", currentSelectedItems);
+        return;
+      }
+      const currentSelectedItems = [...selectedItems];
+      currentSelectedItems.splice(currentSelectedItems.indexOf(row), 1);
+      setSelectedItems([...currentSelectedItems]);
+    };
+    const handleOpenPatrimonyDetail = (id_patrimonio: number) => {
+      setResponsable(row.id_responsavel);
+      window.location.href = `/patrimony/details/${id_patrimonio}`;
+    };
+
+    const isOnSelectedItems = (row: PatrimonyInfo) => {
+      if (selectedItems.find((item) => row === item)) {
+        return true;
+      }
+      return false;
+    };
+
+    const handleAcceptMovementation = (movemnetationId: number) => {
+      setAcceptMovementationodalOpen(movemnetationId);
+    };
+
+    return (
+      <React.Fragment>
+        {columns.map((column) =>
+          column.label !== "" ? (
+            <TableCell
+              sx={{
+                cursor: "pointer",
+                paddingX: "0.2",
+                textTransform: "capitalize",
+              }}
+              key={column.dataKey}
+              onClick={() => handleOpenPatrimonyDetail(row.id_patrimonio)}
+              align={column.numeric ? "center" : "left"}
+            >
+              {column.dataKey === "dataMovimentacao" ? (
+                <Typography fontSize="small">
+                  {dateTimeRenderer(row[column.dataKey])}
+                </Typography>
+              ) : (
+                <Typography fontSize="small">
+                  {column.dataKey === "projeto"
+                    ? String(row[column.dataKey])
+                    : String(row[column.dataKey]).toLowerCase()}
+                </Typography>
+              )}
+            </TableCell>
+          ) : (
+            <TableCell align="center">
+              <Stack direction="row">
+                {row["aceito"] === 0 && row.id_responsavel === user?.CODPESSOA ? (
+                  <Tooltip title="aceitar movimentação">
+                    <ErrorOutlineIcon
+                      onClick={() =>
+                        handleAcceptMovementation(row["numeroMovimentacao"])
+                      }
+                      sx={{ color: "#F7941E", cursor: "pointer" }}
+                    />
+                  </Tooltip>
+                ) : (
+                  ""
+                )}
+                <Checkbox
+                  checked={isOnSelectedItems(row)}
+                  onChange={(e) => handleSelectItem(e, row)}
+                  sx={{ margin: "0", padding: "0" }}
+                />
+              </Stack>
+            </TableCell>
+          )
+        )}
+      </React.Fragment>
+    );
   }
   const displayMovementationAcceptedAlert = ( ) => { 
      setTimeout(() => {

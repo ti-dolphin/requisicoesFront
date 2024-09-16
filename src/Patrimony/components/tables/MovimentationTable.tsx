@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import * as React from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -7,18 +8,21 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { TableVirtuoso, TableComponents } from "react-virtuoso";
-import { Box, IconButton, Stack, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, IconButton, Modal, Stack, styled, Tooltip, Typography } from "@mui/material";
 import { Movementation } from "../../types";
 import MovimentationFileModal from "../../modals/MovimentationFileModal";
 import EditIcon from "@mui/icons-material/Edit";
 import { MovimentationContext } from "../../context/movementationContext";
-import { useContext } from "react";
+import { SetStateAction, useContext, useState } from "react";
 import EditMovimentationObservationModal from "../../modals/EditMovimentationObservationModal";
-import { dateTimeRenderer, getMovementationsByPatrimonyId } from "../../utils";
+import { acceptMovementation, createMovementationfile, dateTimeRenderer, getMovementationsByPatrimonyId } from "../../utils";
 import { useParams } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DeleteMovementationModal from "../../modals/DeleteMovementationModal";
 import { userContext } from "../../../Requisitions/context/userContext";
+import CloseIcon from "@mui/icons-material/Close";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 // Define the interface for the new data structure
 
@@ -64,6 +68,28 @@ const columns: ColumnData[] = [
 ];
 
 // Sample dummy data
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
+ const acceptModalStyle = {
+   position: "absolute" as const,
+   top: "50%",
+   left: "50%",
+   transform: "translate(-50%, -50%)",
+   width: 400,
+   bgcolor: "background.paper",
+   border: "0.5px solid #000",
+   boxShadow: 24,
+   p: 4,
+ };
 
 const VirtuosoTableComponents: TableComponents<Movementation> = {
   Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
@@ -108,9 +134,11 @@ function fixedHeaderContent() {
 const RowContent = ({
   row,
   singleMovementation,
+  setAcceptMovementationodalOpen,
 }: {
   row: Movementation;
   singleMovementation: () => boolean;
+  setAcceptMovementationodalOpen: React.Dispatch<SetStateAction<number>>;
 }) => {
   const { togglEditingMovementationObservation, toggleDeletingMovementation } =
     useContext(MovimentationContext);
@@ -122,20 +150,25 @@ const RowContent = ({
       alert("Não é permitido excluir a única movimentação!");
     }
     if (notAllowedToCreateMovementation()) {
-      alert("Apenas quem criou ou o administrador pode excluir a movimentação!");
+      alert(
+        "Apenas quem criou ou o administrador pode excluir a movimentação!"
+      );
       return;
     }
     toggleDeletingMovementation(row);
   };
 
-  const notAllowedToCreateMovementation = ( ) => { 
+  const notAllowedToCreateMovementation = () => {
     return !isWhoCreated() && !user?.PERM_ADMINISTRADOR;
-  }
+  };
 
   const isWhoCreated = () => {
     return user?.CODPESSOA === row.id_ultimo_responsavel;
   };
 
+  const handleAcceptMovementation = (movemnetationId: number) => {
+    setAcceptMovementationodalOpen(movemnetationId);
+  };
   return (
     <React.Fragment>
       {columns.map((column) => (
@@ -152,18 +185,18 @@ const RowContent = ({
               column.dataKey === "id_movimentacao" ? "end" : "space-between"
             }
           >
-              <Typography
-                sx={{
-                  fontSize: "12px",
-                  textAlign: "left",
-                  textTransform: "capitalize",
-                }}
-              >
-                {column.dataKey === "data"
-                  ? dateTimeRenderer(row.data)
-                  : String(row[column.dataKey])}
-              </Typography>
-       
+            <Typography
+              sx={{
+                fontSize: "12px",
+                textAlign: "left",
+                textTransform: "capitalize",
+              }}
+            >
+              {column.dataKey === "data"
+                ? dateTimeRenderer(row.data)
+                : String(row[column.dataKey])}
+            </Typography>
+
             {column.dataKey === "projeto" ? (
               <MovimentationFileModal movementationId={row.id_movimentacao} />
             ) : column.dataKey === "observacao" ? (
@@ -175,9 +208,21 @@ const RowContent = ({
                 <EditIcon sx={{ color: "#F7941E" }} />
               </IconButton>
             ) : column.dataKey === "id_movimentacao" ? (
-              <IconButton onClick={() => handleClickDeleteMovimentation(row)}>
-                <DeleteIcon sx={{ color: "#F7941E" }} />
-              </IconButton>
+              <>
+                <IconButton onClick={() => handleClickDeleteMovimentation(row)}>
+                  <DeleteIcon sx={{ color: "#F7941E" }} />
+                </IconButton>
+                {row["aceito"] === 0 && user?.CODPESSOA === row.id_responsavel && (
+                  <Tooltip title="aceitar movimentação">
+                    <ErrorOutlineIcon
+                      onClick={() =>
+                        handleAcceptMovementation(row["id_movimentacao"])
+                      }
+                      sx={{ color: "#F7941E", cursor: "pointer" }}
+                    />
+                  </Tooltip>
+                )}
+              </>
             ) : (
               ""
             )}
@@ -194,7 +239,10 @@ export default function DetailMovementsTable() {
   const [movementations, setMovementations] = React.useState<Movementation[]>(
     []
   );
-  const { refreshMovimentation } = useContext(MovimentationContext);
+    const [acceptMovementationModalOpen, setAcceptMovementationodalOpen] = useState<number>(0);
+    const [movementationAcceptedAlert, setMovementationAcceptedAlert] = useState<boolean>(false);
+    const [loading, setIsLoading] = useState<boolean>(false);
+    const { refreshMovimentation, toggleRefreshMovimentation } = useContext(MovimentationContext);
   // const { user }= useContext(userContext);
 
   const fetchMovementations = async () => {
@@ -210,7 +258,31 @@ export default function DetailMovementsTable() {
   const singleMovementation = () => {
     return movementations.length === 0;
   };
-
+   const handleUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+     if (e.target.files && acceptMovementationModalOpen !== 0) {
+       setIsLoading(true);
+       console.log(": ");
+       const file = e.target.files[0];
+       const formData = new FormData();
+       formData.append("file", file);
+       const response = await createMovementationfile(
+         acceptMovementationModalOpen,
+         formData
+       );
+       if (response && response.status === 200) {
+         const responseAccept = await acceptMovementation(
+           acceptMovementationModalOpen
+         );
+         if (responseAccept && responseAccept.status === 200) {
+           setIsLoading(false);
+           toggleRefreshMovimentation();
+           setAcceptMovementationodalOpen(0);
+           return;
+         }
+       }
+       window.alert("Erro ao fazer upload!");
+     }
+   };
   React.useEffect(() => {
     fetchMovementations();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -218,19 +290,88 @@ export default function DetailMovementsTable() {
 
   return (
     <Box
-      sx={{ height: "90%", width: "100%", padding: 2, boxShadow: "none", dropShadow: "none" }}
+      sx={{
+        height: "90%",
+        width: "100%",
+        padding: 2,
+        boxShadow: "none",
+        dropShadow: "none",
+      }}
     >
       <TableVirtuoso
-        style={{border: 'none', boxShadow: 'none'}}
+        style={{ border: "none", boxShadow: "none" }}
         data={movementations}
         components={VirtuosoTableComponents}
         fixedHeaderContent={fixedHeaderContent}
         itemContent={(_index, row) => (
-          <RowContent row={row} singleMovementation={singleMovementation} />
+          <RowContent
+            row={row}
+            setAcceptMovementationodalOpen={setAcceptMovementationodalOpen}
+            singleMovementation={singleMovementation}
+          />
         )}
       />
+
       <DeleteMovementationModal />
       <EditMovimentationObservationModal />
+      <Modal
+        open={acceptMovementationModalOpen !== 0}
+        // onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={acceptModalStyle}>
+          <IconButton
+            sx={{
+              color: "red",
+              position: "absolute",
+              right: "1rem",
+              top: "1rem",
+            }}
+            onClick={() => setAcceptMovementationodalOpen(0)}
+          >
+            <CloseIcon />
+          </IconButton>
+          <Stack spacing={2}>
+            <Typography
+              textAlign="center"
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+            >
+              Registre o Recebimento
+            </Typography>
+            <Typography
+              textAlign="center"
+              id="modal-modal-description"
+              sx={{ mt: 2 }}
+            >
+              Foto com patrimonio e acessórios
+            </Typography>
+            <Button
+              component="label"
+              role={undefined}
+              variant="contained"
+              tabIndex={-1}
+              startIcon={<CloudUploadIcon />}
+            >
+              Anexar
+              <VisuallyHiddenInput onChange={handleUploadFile} type="file" />
+            </Button>
+            {loading && (
+              <Stack
+                direction="row"
+                justifyContent="center"
+                alignItems="center"
+                sx={{ mt: 2 }}
+              >
+                <CircularProgress />
+                <Typography sx={{ ml: 2 }}>Enviando...</Typography>
+              </Stack>
+            )}
+          </Stack>
+        </Box>
+      </Modal>
     </Box>
   );
 }
