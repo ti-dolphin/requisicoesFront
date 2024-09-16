@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -5,12 +6,14 @@ import Toolbar from "@mui/material/Toolbar";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import React, { useContext, useEffect, useState } from "react";
-import { SearchAppBarProps, motionItemsVariants } from "../../../types";
+import { Requisition, SearchAppBarProps, motionItemsVariants } from "../../../types";
 import AddedItemsModal from "../../../components/modals/AddedItemsModal";
-import { Button, Stack, Typography } from "@mui/material";
+import { Button, Menu, MenuItem, Stack, Typography } from "@mui/material";
 import { RequisitionContext } from "../../../context/RequisitionContext";
 import { userContext } from "../../../context/userContext";
 import AddRequisitionModal from "../../../components/modals/AddRequisitionModal";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
+
 //HELPER Components
 
 const Search = styled("div")(({ theme }) => ({
@@ -65,13 +68,63 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
   addedItems,
   refreshToggler,
   setRefreshTooggler,
+  setFilteredRows,
+  filteredRows
 }) => {
   const { currentKanbanFilter, changeKanbanFilter } = useContext(RequisitionContext);
   const { user } = useContext(userContext);
   const [availableKanbanFilters, setAvailableKanbanFilter] = useState<string[]>(
     []
   );
+   const [allRowsInTheCurrentKanbanFilter, setAllRowsInTheCurrentKanbanFilter] = useState<Requisition[]>(filteredRows ? filteredRows : [],);
+    const subFilters = [ 
+      'Minhas',
+      'Todas'
+    ];
+    const [currentSubFilter, setCurrentSubFilter] = useState('Minhas');
+
+    const [filterMenu, setFilterMenu] = React.useState<null | HTMLElement>(
+      null
+    );
+  const filterMenuOpen = Boolean(filterMenu);
   const { innerWidth: width } = window;
+
+  
+  const handleClickFilter = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setFilterMenu(event.currentTarget);
+  };
+  
+  const handleCloseFilter = () => {
+    setFilterMenu(null);
+  };
+  
+  const handleSelectFilter = async (filter: string) => {
+    console.log('handleSelectFilter', filter);
+    setCurrentSubFilter(filter);
+    console.log({
+      filteredRows,
+      setFilteredRows,
+      user,
+      allRowsInTheCurrentKanbanFilter
+    });
+    if (filteredRows && setFilteredRows && allRowsInTheCurrentKanbanFilter && user) {
+      if (filter === subFilters[0] && user) {
+        setFilteredRows(
+          allRowsInTheCurrentKanbanFilter?.filter(
+            (row) => row.LAST_MODIFIED_BY_NAME === user.NOME?.toUpperCase()
+          )
+        );
+        return;
+      }
+      if (filter === subFilters[1]) {
+        setCurrentSubFilter(filter);
+        setFilteredRows(allRowsInTheCurrentKanbanFilter);
+        return;
+      }
+    }
+    handleCloseFilter();
+  };
+
 
   const defineAvailableKanbanFilters = () => {
     console.log("user: ", user);
@@ -85,8 +138,28 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
   useEffect(() => {
     console.log("width: ", width);
     defineAvailableKanbanFilters();
+    console.log({ 
+      user,
+      currentKanbanFilter,
+      filteredRows,
+      setFilteredRows,
+      allRowsInTheCurrentKanbanFilter
+    })
+    if(setFilteredRows && allRowsInTheCurrentKanbanFilter && user) {
+          console.log(
+            "filterResult: ",
+            allRowsInTheCurrentKanbanFilter?.filter(
+              (row) => row.LAST_MODIFIED_BY_NAME === user.NOME?.toUpperCase()
+            )
+          );
+          setFilteredRows(
+            allRowsInTheCurrentKanbanFilter?.filter(
+              (row) => row.LAST_MODIFIED_BY_NAME === user.NOME?.toUpperCase()
+            )
+          );
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [currentKanbanFilter]);
 
   const handleChangeKanbanFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
     changeKanbanFilter({ label: e.currentTarget.id });
@@ -172,6 +245,44 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
                     </Typography>
                   </Button>
                 ))}
+                <Button
+                  id="basic-button"
+                  aria-controls={filterMenuOpen ? "basic-menu" : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={filterMenuOpen ? "true" : undefined}
+                  onClick={handleClickFilter}
+                  sx={{
+                    color: "white",
+                    backgroundColor: "#F7941E",
+                    "&:hover": {
+                      backgroundColor: "#f1b963",
+                    },
+                  }}
+                >
+                  <Typography textTransform="capitalize">Filtros</Typography>
+                  <FilterAltIcon sx={{ color: "white" }} />
+                </Button>
+                <Menu
+                  id="basic-menu"
+                  anchorEl={filterMenu}
+                  open={filterMenuOpen}
+                  onClose={handleCloseFilter}
+                  MenuListProps={{
+                    "aria-labelledby": "basic-button",
+                  }}
+                >
+                  {subFilters.map((filter) => (
+                    <MenuItem
+                      key={filter}
+                      sx={{ 
+                        backgroundColor: filter === currentSubFilter ? '#e3e3e3' : 'white'
+                      }}
+                      onClick={() => handleSelectFilter(filter)}
+                    >
+                      {filter}
+                    </MenuItem>
+                  ))}
+                </Menu>
               </Stack>
             )}
             {caller !== "ItemsTable" && <AddRequisitionModal />}

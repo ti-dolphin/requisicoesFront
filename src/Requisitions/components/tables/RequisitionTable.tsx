@@ -244,7 +244,11 @@ export default function EnhancedTable() {
   const [dense, setDense] = React.useState(true);
   const [rowsPerPage, setRowsPerPage] = React.useState(50);
   const [filteredRows, setFilteredRows] = useState<Requisition[]>([]);
+
+
+  
   const navigate = useNavigate();
+
   const {
     refreshRequisition,
     currentKanbanFilter,
@@ -380,6 +384,8 @@ export default function EnhancedTable() {
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
         <SearchAppBar
+          filteredRows={filteredRows}
+          setFilteredRows={setFilteredRows}
           caller="requisitionTable"
           handleSearch={handleSearch}
           refreshToggler={RefreshToggler}

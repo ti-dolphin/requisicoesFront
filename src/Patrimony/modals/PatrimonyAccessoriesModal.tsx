@@ -167,7 +167,7 @@ export default function PatrimonyAccessoryModal() {
   };
   return (
     <div>
-      <Badge>
+      <Badge badgeContent={accessories.length} color="primary">
         <IconButton onClick={handleOpen}>
           <HomeRepairServiceIcon sx={{ color: "#F7941E" }} />
         </IconButton>

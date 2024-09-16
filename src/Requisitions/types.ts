@@ -168,7 +168,8 @@ export interface SearchAppBarProps {
   openQuantityInput?: boolean;
   setIsCreating?: (value: boolean) => void;
   refreshToggler: boolean;
-
+  setFilteredRows ? :(requisitions: Requisition[]) => void;
+  filteredRows?: Requisition[];
   setRefreshTooggler: (value: boolean) => void;
 }
 
