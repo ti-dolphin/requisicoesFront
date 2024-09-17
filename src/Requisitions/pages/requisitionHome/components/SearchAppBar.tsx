@@ -6,7 +6,7 @@ import Toolbar from "@mui/material/Toolbar";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import React, { useContext, useEffect, useState } from "react";
-import { Requisition, SearchAppBarProps, motionItemsVariants } from "../../../types";
+import {  SearchAppBarProps, motionItemsVariants } from "../../../types";
 import AddedItemsModal from "../../../components/modals/AddedItemsModal";
 import { Button, Menu, MenuItem, Stack, Typography } from "@mui/material";
 import { RequisitionContext } from "../../../context/RequisitionContext";

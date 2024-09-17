@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect, useState } from "react";
 import {
@@ -14,13 +15,19 @@ import {
   useTheme,
   Theme,
   Button,
+  BadgeProps,
+  styled,
 } from "@mui/material";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { PatrimonyInfoContext } from "../context/patrimonyInfoContext";
-import { deletePatrimonyAccessory, getAccessoriesByPatrimonyId } from "../utils"; // Assuming this function exists
-import { PatrimonyAccessory } from "../types";
+import {
+  deletePatrimonyAccessory,
+  getAccessoriesByPatrimonyId,
+  getPatrimonyAccessoryFiles,
+} from "../utils"; // Assuming this function exists
+import { PatrimonyAccessory, PatrimonyAccessoryFile } from "../types";
 import { FixedSizeList, ListChildComponentProps } from "react-window";
 import HomeRepairServiceIcon from "@mui/icons-material/HomeRepairService";
 import { useParams } from "react-router-dom";
@@ -71,11 +78,21 @@ const innerModalStyle = (theme: Theme) => ({
   },
 });
 
+const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
+  "& .MuiBadge-badge": {
+    right: -3,
+    top: 13,
+    border: `2px solid ${theme.palette.background.paper}`,
+    padding: "0 4px",
+  },
+}));
+
 export default function PatrimonyAccessoryModal() {
   const { id_patrimonio } = useParams();
   const {
     deletingPatrimonyAccessory,
     refreshPatrimonyAccessory,
+    refreshPatrimonyAccessoryFiles,
     toggleCreatingPatrimonyAccessory,
     toggleDeletingPatrimonyAccessory,
     toggleRefreshPatrimonyAccessory,
@@ -84,18 +101,39 @@ export default function PatrimonyAccessoryModal() {
   const [selectedAccessory, setSelectedAccessory] =
     useState<PatrimonyAccessory | null>(null);
   const [open, setOpen] = useState<boolean>(false);
+  const [accessoryFileMap, setAccessoryFileMap] =
+    useState<Map<number, PatrimonyAccessoryFile[]>>();
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
+  const fetchPatrimonyAccessoryFiles = async (patrimonyAccessoryId: number) => {
+    const data = await getPatrimonyAccessoryFiles(patrimonyAccessoryId);
+    if (data) {
+      return data;
+    }
+  };
+
+  const setFilesAccordingToAccessory = async (data: PatrimonyAccessory[]) => {
+    const tempMap = new Map(accessoryFileMap);
+    for (const accessory of data) {
+      const files = await fetchPatrimonyAccessoryFiles(
+        accessory.id_acessorio_patrimonio
+      );
+      if (files) {
+        tempMap.set(accessory.id_acessorio_patrimonio, files);
+      }
+    }
+    setAccessoryFileMap(tempMap);
+  };
   useEffect(() => {
     const fetchData = async () => {
       const data = await getAccessoriesByPatrimonyId(Number(id_patrimonio));
-      console.log("data: ", data);
       setAccessories(data);
+      setFilesAccordingToAccessory(data);
     };
     fetchData();
-  }, [refreshPatrimonyAccessory]);
+  }, [refreshPatrimonyAccessory, refreshPatrimonyAccessoryFiles]);
 
   const handleClose = () => setOpen(false);
 
@@ -113,7 +151,12 @@ export default function PatrimonyAccessoryModal() {
     const { index, style, accessories } = props;
     const { toggleDeletingPatrimonyAccessory } =
       useContext(PatrimonyInfoContext);
-
+    const filesCounter = () => {
+      console.log(accessoryFileMap);
+      if (accessoryFileMap)
+        return accessoryFileMap.get(accessories[index].id_acessorio_patrimonio)
+          ?.length;
+    };
     return (
       <ListItem style={style} key={index} component="div">
         <ListItemButton>
@@ -128,7 +171,9 @@ export default function PatrimonyAccessoryModal() {
               <IconButton
                 onClick={() => handleOpenInnerModal(accessories[index])}
               >
-                <AttachFileIcon sx={{ color: "#F7941E" }} />
+                <StyledBadge badgeContent={filesCounter()} color="secondary">
+                  <AttachFileIcon sx={{ color: "#F7941E" }} />
+                </StyledBadge>
               </IconButton>
               <IconButton
                 onClick={() =>
@@ -154,16 +199,16 @@ export default function PatrimonyAccessoryModal() {
     toggleDeletingPatrimonyAccessory(false);
   };
 
-  const handleDeletePatrimonyAccessory = async( ) => {
-   if(deletingPatrimonyAccessory[1]){ 
-     const response = await deletePatrimonyAccessory(
-       deletingPatrimonyAccessory[1]?.id_acessorio_patrimonio
-     );
-     if (response && response.status === 200) {
-       toggleRefreshPatrimonyAccessory();
-       toggleDeletingPatrimonyAccessory(false);
-     }
-   }
+  const handleDeletePatrimonyAccessory = async () => {
+    if (deletingPatrimonyAccessory[1]) {
+      const response = await deletePatrimonyAccessory(
+        deletingPatrimonyAccessory[1]?.id_acessorio_patrimonio
+      );
+      if (response && response.status === 200) {
+        toggleRefreshPatrimonyAccessory();
+        toggleDeletingPatrimonyAccessory(false);
+      }
+    }
   };
   return (
     <div>

@@ -81,6 +81,7 @@ export default function CreateMovementation({
     id_responsavel: 0, // Default value for string
     numeroMovimentacao: 0, // Default value for number
     observacao: "",
+    aceito : 0
   });
 
   const handleSaveMovementation = async () => {

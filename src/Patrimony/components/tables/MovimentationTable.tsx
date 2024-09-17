@@ -240,7 +240,6 @@ export default function DetailMovementsTable() {
     []
   );
     const [acceptMovementationModalOpen, setAcceptMovementationodalOpen] = useState<number>(0);
-    const [movementationAcceptedAlert, setMovementationAcceptedAlert] = useState<boolean>(false);
     const [loading, setIsLoading] = useState<boolean>(false);
     const { refreshMovimentation, toggleRefreshMovimentation } = useContext(MovimentationContext);
   // const { user }= useContext(userContext);
