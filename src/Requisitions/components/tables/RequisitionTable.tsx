@@ -254,6 +254,7 @@ export default function EnhancedTable() {
     currentKanbanFilter,
     toggleRefreshRequisition,
     changeKanbanFilter,
+    currentSubFilter
   } = useContext(RequisitionContext);
   const { user } = useContext(userContext);
 
@@ -287,17 +288,26 @@ export default function EnhancedTable() {
     if (user && currentKanbanFilter) {
       const data = await fecthRequisitions(user, currentKanbanFilter.label);
       if (data) {
-        console.log("data: ", data);
+        if(currentSubFilter?.label === 'Minhas' && currentKanbanFilter.label !== 'A Fazer'){ 
+          const filtered = data.filter(
+            (requisition) =>
+              requisition.LAST_MODIFIED_BY_NAME.toUpperCase() === user.NOME?.toUpperCase()
+          );
+          console.log('filtered ', filtered);
+          setFilteredRows(filtered);
+          return;
+        }
+
         setFilteredRows(data);
       } else {
         setFilteredRows([]);
       }
     }
-  }, [currentKanbanFilter, user]);
+  }, [currentKanbanFilter, user, currentSubFilter]);
 
   useEffect(() => {
     fetchRequisitionData();
-  }, [refreshRequisition, currentKanbanFilter, fetchRequisitionData]);
+  }, [refreshRequisition, currentKanbanFilter, fetchRequisitionData, currentSubFilter]);
 
   const handleOpenDeleteModal = (id: number) => {
     setCurrentSelectedId(id);

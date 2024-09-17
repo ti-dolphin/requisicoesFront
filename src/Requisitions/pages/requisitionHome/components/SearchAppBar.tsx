@@ -68,21 +68,17 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
   addedItems,
   refreshToggler,
   setRefreshTooggler,
-  setFilteredRows,
-  filteredRows
 }) => {
-  const { currentKanbanFilter, changeKanbanFilter } = useContext(RequisitionContext);
+  const { currentKanbanFilter, changeKanbanFilter, changeSubFilter, currentSubFilter } = useContext(RequisitionContext);
   const { user } = useContext(userContext);
   const [availableKanbanFilters, setAvailableKanbanFilter] = useState<string[]>(
     []
   );
-   const [allRowsInTheCurrentKanbanFilter, setAllRowsInTheCurrentKanbanFilter] = useState<Requisition[]>(filteredRows ? filteredRows : [],);
     const subFilters = [ 
       'Minhas',
       'Todas'
     ];
-    const [currentSubFilter, setCurrentSubFilter] = useState('Minhas');
-
+   
     const [filterMenu, setFilterMenu] = React.useState<null | HTMLElement>(
       null
     );
@@ -99,30 +95,7 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
   };
   
   const handleSelectFilter = async (filter: string) => {
-    console.log('handleSelectFilter', filter);
-    setCurrentSubFilter(filter);
-    console.log({
-      filteredRows,
-      setFilteredRows,
-      user,
-      allRowsInTheCurrentKanbanFilter
-    });
-    if (filteredRows && setFilteredRows && allRowsInTheCurrentKanbanFilter && user) {
-      if (filter === subFilters[0] && user) {
-        setFilteredRows(
-          allRowsInTheCurrentKanbanFilter?.filter(
-            (row) => row.LAST_MODIFIED_BY_NAME === user.NOME?.toUpperCase()
-          )
-        );
-        return;
-      }
-      if (filter === subFilters[1]) {
-        setCurrentSubFilter(filter);
-        setFilteredRows(allRowsInTheCurrentKanbanFilter);
-        return;
-      }
-    }
-    handleCloseFilter();
+    changeSubFilter({label : filter});
   };
 
 
@@ -136,28 +109,8 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
   };
 
   useEffect(() => {
-    console.log("width: ", width);
     defineAvailableKanbanFilters();
-    console.log({ 
-      user,
-      currentKanbanFilter,
-      filteredRows,
-      setFilteredRows,
-      allRowsInTheCurrentKanbanFilter
-    })
-    if(setFilteredRows && allRowsInTheCurrentKanbanFilter && user) {
-          console.log(
-            "filterResult: ",
-            allRowsInTheCurrentKanbanFilter?.filter(
-              (row) => row.LAST_MODIFIED_BY_NAME === user.NOME?.toUpperCase()
-            )
-          );
-          setFilteredRows(
-            allRowsInTheCurrentKanbanFilter?.filter(
-              (row) => row.LAST_MODIFIED_BY_NAME === user.NOME?.toUpperCase()
-            )
-          );
-    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentKanbanFilter]);
 
@@ -275,7 +228,7 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
                     <MenuItem
                       key={filter}
                       sx={{ 
-                        backgroundColor: filter === currentSubFilter ? '#e3e3e3' : 'white'
+                        backgroundColor: filter === currentSubFilter?.label ? '#e3e3e3' : 'white'
                       }}
                       onClick={() => handleSelectFilter(filter)}
                     >
