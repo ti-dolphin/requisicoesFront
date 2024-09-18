@@ -355,7 +355,11 @@ export default function DetailMovementsTable() {
               startIcon={<CloudUploadIcon />}
             >
               Anexar
-              <VisuallyHiddenInput onChange={handleUploadFile} type="file" />
+              <VisuallyHiddenInput
+                accept="image/*,application/pdf"
+                onChange={handleUploadFile}
+                type="file"
+              />
             </Button>
             {loading && (
               <Stack

@@ -203,7 +203,9 @@ const PatrimonyAccessoryFileModal: React.FC<
             }}
           >
             Anexar
-            <VisuallyHiddenInput onChange={handleUploadFile} type="file" />
+            <VisuallyHiddenInput
+              accept="image/*,application/pdf"
+             onChange={handleUploadFile} type="file" />
           </Button>
 
           {isLoading && (

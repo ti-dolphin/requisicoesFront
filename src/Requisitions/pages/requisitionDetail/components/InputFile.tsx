@@ -57,7 +57,11 @@ const InputFile = ({
       startIcon={<CloudUploadIcon />}
     >
       Anexar Arquivo
-      <VisuallyHiddenInput onChange={handleChange} type="file" />
+      <VisuallyHiddenInput
+        accept="image/*,application/pdf"
+        onChange={handleChange}
+        type="file"
+      />
     </Button>
   );
 };
