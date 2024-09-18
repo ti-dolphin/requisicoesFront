@@ -148,7 +148,9 @@ export default function PatrimonyFileModal() {
           >
             <DeletePatrimonyFileModal />
             <Stack direction="row" justifyContent="center">
-              <Typography variant="h6" textAlign="center">Anexos</Typography>
+              <Typography variant="h6" textAlign="center">
+                Anexos
+              </Typography>
               <IconButton
                 onClick={handleClose}
                 sx={{
@@ -171,7 +173,11 @@ export default function PatrimonyFileModal() {
                 startIcon={<CloudUploadIcon />}
               >
                 Anexar
-                <VisuallyHiddenInput onChange={handleUploadFile} type="file" />
+                <VisuallyHiddenInput
+                  accept="image/*,application/pdf"
+                  onChange={handleUploadFile}
+                  type="file"
+                />
               </Button>
             ) : (
               ""
