@@ -288,7 +288,9 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
                           handleActivateItems={handleActivateItems}
                           handleCopyContent={handleCopyContent}
                         />
-                        <Checkbox onChange={(e) => handleSelectAll(e)}></Checkbox>
+                        <Checkbox
+                          onChange={(e) => handleSelectAll(e)}
+                        ></Checkbox>
                       </Stack>
                     </Stack>
                   ) : (
@@ -299,7 +301,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {items.map((item) => (
+            {items.map((item, index) => (
               <TableRow
                 key={item.ID}
                 sx={{
@@ -322,7 +324,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
                           },
                         }}
                       >
-                        {item.nome_fantasia}
+                        {`${index + 1} - ${item.nome_fantasia}`}
                       </Typography>
                       <IconButton
                         onClick={() =>
