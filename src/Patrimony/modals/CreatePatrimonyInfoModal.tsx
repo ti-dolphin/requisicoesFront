@@ -49,7 +49,7 @@ const columns: ColumnData[] = [
     label: "Número de Série",
     dataKey: "nserie",
     numeric: false,
-    required: true,
+    required: false,
   },
   {
     label: "Código Patrimônio",
@@ -115,7 +115,7 @@ export default function CreatePatrimonyInfoModal() {
   const handleNext = async () => {
    const { data_compra, tipo } = patrimonyInfo;
    console.log('data_compra', data_compra);
-   
+
   if(data_compra.length){ 
      if (!data_compra || !dayjs(data_compra).isValid()) {
        alert("Por favor, insira uma data de compra válida.");
