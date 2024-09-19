@@ -45,6 +45,7 @@ const RequisitionItemsTable: React.FC<requisitionItemsTableProps> = ({
   useEffect(() => {
     setEditItemsAllowed(currentStatus === "Em edição" || user?.PERM_COMPRADOR  ? true : false);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStatus]);
 
   const columns = ["Materiais / Serviços", "Observação" , "Codigo", "OC", "Quantidade"];

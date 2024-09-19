@@ -114,23 +114,24 @@ export default function CreatePatrimonyInfoModal() {
 
   const handleNext = async () => {
    const { data_compra, tipo } = patrimonyInfo;
+   console.log('data_compra', data_compra);
+   
+  if(data_compra.length){ 
+     if (!data_compra || !dayjs(data_compra).isValid()) {
+       alert("Por favor, insira uma data de compra válida.");
+       return;
+     }
 
-   if (!data_compra || !dayjs(data_compra).isValid()) {
-     alert("Por favor, insira uma data de compra válida.");
-     return;
-   }
-
-   if (!tipo) {
-     alert("Por favor, selecione um tipo de patrimônio.");
-     return;
-   }
-
-   // Verifica se a data não é futura
-   if (dayjs(data_compra).isAfter(dayjs())) {
-     alert("A data de compra não pode ser uma data futura.");
-     return;
-   }
-
+     if (!tipo) {
+       alert("Por favor, selecione um tipo de patrimônio.");
+       return;
+     }
+     // Verifica se a data não é futura
+     if (dayjs(data_compra).isAfter(dayjs())) {
+       alert("A data de compra não pode ser uma data futura.");
+       return;
+     }
+  } 
    changeCreatingPatrimonyInfo({
      ...patrimonyInfo,
    });
