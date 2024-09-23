@@ -218,8 +218,6 @@ export default function SearchAppBar({
                 onKeyDown={handleSearch}
               />
             </Search>
-
-            {user?.PERM_ADMINISTRADOR && (
               <Stack
                 className="MenuList"
                 flexWrap="wrap"
@@ -227,7 +225,9 @@ export default function SearchAppBar({
                 direction="row"
                 spacing={2}
               >
-                <Button
+            
+               { 
+                 user?.PERM_ADMINISTRADOR && <><Button
                   id="basic-button"
                   aria-controls={actionsMenuOpen ? "basic-menu" : undefined}
                   aria-haspopup="true"
@@ -243,8 +243,7 @@ export default function SearchAppBar({
                 >
                   <Typography textTransform="capitalize">Ações</Typography>
                   <ArrowDropDownCircleIcon sx={{ color: "white" }} />
-                </Button>
-                <Menu
+                </Button><Menu
                   id="basic-menu"
                   anchorEl={actionsMenu}
                   open={actionsMenuOpen}
@@ -253,15 +252,32 @@ export default function SearchAppBar({
                     "aria-labelledby": "basic-button",
                   }}
                 >
-                  {["Inativar", "Ativar", "Excluir"].map((action) => (
-                    <MenuItem
-                      key={action}
-                      onClick={() => handleOpenActionModal(action)}
-                    >
-                      {action}
-                    </MenuItem>
-                  ))}
-                </Menu>
+                    {["Inativar", "Ativar", "Excluir"].map((action) => (
+                      <MenuItem
+                        key={action}
+                        onClick={() => handleOpenActionModal(action)}
+                      >
+                        {action}
+                      </MenuItem>
+                    ))}
+                  </Menu></>
+
+               }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                 <Button
                   id="basic-button"
@@ -293,14 +309,17 @@ export default function SearchAppBar({
                     <MenuItem
                       key={filter}
                       onClick={() => handleSelectFilter(filter)}
-                      sx={{backgroundColor: currentFilter === filter ? 'whitesmoke' : 'white'}}
+                      sx={{
+                        backgroundColor:
+                          currentFilter === filter ? "whitesmoke" : "white",
+                      }}
                     >
                       {filter}
                     </MenuItem>
                   ))}
                 </Menu>
               </Stack>
-            )}
+            
 
             {user?.PERM_CADASTRAR_PAT && (
               <Tooltip title="Novo Patrimônio">
