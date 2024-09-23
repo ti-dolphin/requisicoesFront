@@ -95,6 +95,7 @@ export default function SearchAppBar({
     toggleCreatingPatrimonyInfo,
     toggleRefreshPatrimonyInfo,
     setCurrentFilter,
+    currentFilter,
   } = useContext(PatrimonyInfoContext);
   const { user } = useContext(userContext);
   const [actionsMenu, setActionsMenu] = React.useState<null | HTMLElement>(
@@ -288,10 +289,11 @@ export default function SearchAppBar({
                     "aria-labelledby": "basic-button",
                   }}
                 >
-                  {["Ativos", "Inativos"].map((filter) => (
+                  {["Meus", "Todos"].map((filter) => (
                     <MenuItem
                       key={filter}
                       onClick={() => handleSelectFilter(filter)}
+                      sx={{backgroundColor: currentFilter === filter ? 'whitesmoke' : 'white'}}
                     >
                       {filter}
                     </MenuItem>

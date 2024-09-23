@@ -11,7 +11,7 @@ import { TableVirtuoso, TableComponents } from "react-virtuoso";
 import { PatrimonyInfo } from "../../types";
 import SearchAppBar from "../SearchAppBar";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
-import { acceptMovementation, createMovementationfile, dateTimeRenderer, getInactivePatrimonyInfo, getPatrimonyInfo } from "../../utils";
+import { acceptMovementation, createMovementationfile, dateTimeRenderer, getPatrimonyInfo } from "../../utils";
 import { PatrimonyInfoContext } from "../../context/patrimonyInfoContext";
 import { ResponsableContext } from "../../context/responsableContext";
 import { Alert, Box, Button, Checkbox, CircularProgress, IconButton, Modal, Stack, styled, Tooltip, Typography } from "@mui/material";
@@ -148,21 +148,22 @@ export default function MovementsTable() {
   const [selectedItems, setSelectedItems ] = useState<PatrimonyInfo[]>([]);
   const [loading, setIsLoading] = useState<boolean>(false);
   const fetchData = async ( ) => { 
-     if(currentFilter === 'Ativos'){ 
-       const patrimonyInfoData = await getPatrimonyInfo();
+     const patrimonyInfoData = await getPatrimonyInfo();
+     if(currentFilter === 'Todos'){ 
        if (patrimonyInfoData) {
-         console.log("patrimonyInfoData ACTIVE: ", patrimonyInfoData);
-         setRows(patrimonyInfoData);
          setFilteredRows(patrimonyInfoData);
        }
        return
      }
-     const patrimonyInfoData = await getInactivePatrimonyInfo();
+     if(currentFilter === 'Meus'){ 
       if (patrimonyInfoData) {
-        console.log("patrimonyInfoData INACTIVE: ", patrimonyInfoData);
-        setRows(patrimonyInfoData);
-        setFilteredRows(patrimonyInfoData);
+        setFilteredRows(patrimonyInfoData.filter((register ) =>  (
+          register.responsavel.toUpperCase() === user?.NOME?.toUpperCase()
+        )));
       }
+      return;
+     }
+    setRows(patrimonyInfoData);
   }
 
   function RowContent(
