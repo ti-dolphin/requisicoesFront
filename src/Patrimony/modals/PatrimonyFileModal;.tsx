@@ -90,9 +90,11 @@ export default function PatrimonyFileModal() {
   }
 
    const handleUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("handleUploadFile");
+    console.log('e.target.files: ', e.target.files);
+    console.log('id_patrimonio: ', id_patrimonio);
      if (e.target.files && id_patrimonio) {
-        setIsLoading(true);
-       console.log("id_patrimonio : ", id_patrimonio);
+       setIsLoading(true);
        const file = e.target.files[0];
        const formData = new FormData();
        formData.append("file", file);
@@ -100,6 +102,7 @@ export default function PatrimonyFileModal() {
          Number(id_patrimonio),
          formData
        );
+       console.log('tentou enviar ao backend')
        if (response && response.status === 200) {
           setIsLoading(false);
          toggleRefreshPatrimonyFile();

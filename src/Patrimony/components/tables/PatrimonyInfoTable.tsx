@@ -382,9 +382,9 @@ export default function MovementsTable() {
             >
               Anexar
               <VisuallyHiddenInput
+                type="file"
                 accept="image/*,application/pdf"
                 onChange={handleUploadFile}
-                type="file"
               />
             </Button>
             {loading && (

@@ -140,6 +140,12 @@ const PatrimonyAccessoryFileModal: React.FC<
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+       console.log("handleUploadFile");
+       console.log("e.target.files: ", e.target.files);
+       console.log(
+         "selectedAccessory?.id_acessorio_patrimonio: ",
+         selectedAccessory?.id_acessorio_patrimonio
+       );
     if (e.target.files && selectedAccessory?.id_acessorio_patrimonio) {
       setIsLoading(true);
       const file = e.target.files[0];

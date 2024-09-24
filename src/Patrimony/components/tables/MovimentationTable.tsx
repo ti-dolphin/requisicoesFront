@@ -258,6 +258,12 @@ export default function DetailMovementsTable() {
     return movementations.length === 0;
   };
    const handleUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+       console.log("handleUploadFile");
+       console.log("e.target.files: ", e.target.files);
+       console.log(
+         "acceptMovementationModalOpen: ",
+         acceptMovementationModalOpen
+       );
      if (e.target.files && acceptMovementationModalOpen !== 0) {
        setIsLoading(true);
        console.log(": ");

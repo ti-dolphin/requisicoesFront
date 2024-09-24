@@ -108,6 +108,10 @@ export default function MovimentationFileModal({
   };
 
   const handleUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+       console.log("handleUploadFile");
+       console.log("e.target.files: ", e.target.files);
+       console.log("movementationId: ", movementationId);
+       
     if (e.target.files && movementationId) {
       setIsLoading(true);
       console.log("movementationId: ", movementationId);
