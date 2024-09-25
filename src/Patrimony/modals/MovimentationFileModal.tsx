@@ -111,22 +111,6 @@ export default function MovimentationFileModal({
     setIsLoading(true);
     if (movementationId && file) {
       try {
-        const fileEntry = file.get("file") as File;
-        const isImage = fileEntry.type.startsWith("image/");
-        let newFile = fileEntry;
-        if (isImage && fileEntry.name.length > 20) {
-          const fileExtension = fileEntry.name.split(".").pop();
-          const shortenedName = `${fileEntry.name.substring(
-            0,
-            15
-          )}.${fileExtension}`;
-          newFile = new File([fileEntry], shortenedName, {
-            type: fileEntry.type,
-          });
-          const newFormData = new FormData();
-          newFormData.append("file", newFile);
-          setFile(newFormData);
-        }
         await createMovementationfile(movementationId, file);
         setFile(undefined);
         toggleRefreshMovementationFile();
@@ -139,15 +123,23 @@ export default function MovimentationFileModal({
   };
 
 
-  const handleChangeFile = async (e: React.ChangeEvent<HTMLInputElement>) => {    
-    if (e.target.files) {
-      const file = e.target.files[0];
-      const formData = new FormData();
-      formData.append("file", file);
-      setFile(formData);
-  }
-
-};
+ const handleChangeFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+   if (e.target.files) {
+     const file = e.target.files[0];
+     const isImage = file.type.startsWith("image/");
+     let newFile = file;
+     if (isImage && file.name.length > 20) {
+       const fileExtension = file.name.split(".").pop();
+       const shortenedName = `${file.name.substring(0, 15)}.${fileExtension}`;
+       newFile = new File([file], shortenedName, {
+         type: file.type,
+       });
+     }
+     const formData = new FormData();
+     formData.append("file", newFile);
+     setFile(formData);
+   }
+ };
 
 const allowedToAttachFile = ( ) => { 
     return user?.CODPESSOA === responsable || user?.PERM_ADMINISTRADOR;
@@ -192,7 +184,7 @@ const allowedToAttachFile = ( ) => {
           >
             <DeleteMovimentationFileModal />
 
-            <Stack direction="row" justifyContent="center">
+            <Stack direction="row" justifyContent="center" padding={0.6}>
               <Stack>
                 <Typography variant="h6" textAlign="center">
                   Anexos
