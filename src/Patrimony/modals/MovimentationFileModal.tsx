@@ -224,7 +224,7 @@ const allowedToAttachFile = ( ) => {
               </Stack>
             )}
             {file && (
-              <Stack direction="row" alignItems="center" spacing={2}>
+              <Stack direction="row" flexWrap={'wrap'} alignItems="center" spacing={2}>
                 <Typography>
                   {file.get("file") instanceof File &&
                     (file.get("file") as File).name}
