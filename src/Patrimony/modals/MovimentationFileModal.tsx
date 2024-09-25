@@ -16,7 +16,7 @@ import { MovementationFile } from '../types';
 import { useState } from 'react';
 import { userContext } from '../../Requisitions/context/userContext';
 import { useParams } from 'react-router-dom';
-
+import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -87,6 +87,7 @@ export default function MovimentationFileModal({
   const handleClose = () => toggleMovementationFileOpen();
   const [fileData, setFileData] = useState<MovementationFile[]>();
   const [responsable, setResponsable] = useState<number>(0);
+  const [file, setFile] = useState<FormData>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
 
@@ -106,26 +107,28 @@ export default function MovimentationFileModal({
       }
     }
   };
+  const handleUploadFile = async () => { 
+    setIsLoading(true);
+   if (movementationId && file) {
+     try {
+       await createMovementationfile(movementationId, file);
+       setFile(undefined)
+       toggleRefreshMovementationFile();
+     } catch (error) {
+       alert("Error uploading file: \n" + error);
+     } finally {
+       setIsLoading(false);
+     }
+   }
+  }
 
-  const handleUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-       console.log("handleUploadFile");
-       console.log("e.target.files: ", e.target.files);
-       console.log("movementationId: ", movementationId);
-       
-    if (e.target.files && movementationId) {
-      setIsLoading(true);
-      console.log("movementationId: ", movementationId);
+  const handleChangeFile = async (e: React.ChangeEvent<HTMLInputElement>) => {    
+    if (e.target.files) {
       const file = e.target.files[0];
       const formData = new FormData();
       formData.append("file", file);
-      const response = await createMovementationfile(movementationId, formData);
-      if(response && response.status === 200){ 
-        setIsLoading(false);
-        toggleRefreshMovementationFile();
-        return;
-      }
-      window.alert('Erro ao fazer upload!')
-    }
+      setFile(formData);
+  }
 
 };
 
@@ -173,8 +176,10 @@ const allowedToAttachFile = ( ) => {
             <DeleteMovimentationFileModal />
 
             <Stack direction="row" justifyContent="center">
-              <Stack >
-                <Typography variant="h6" textAlign="center">Anexos</Typography>
+              <Stack>
+                <Typography variant="h6" textAlign="center">
+                  Anexos
+                </Typography>
                 <Typography>
                   Movimentação: {movementationFileOpen[1]}
                 </Typography>
@@ -201,7 +206,7 @@ const allowedToAttachFile = ( ) => {
                 startIcon={<CloudUploadIcon />}
               >
                 Anexar
-                <VisuallyHiddenInput onChange={handleUploadFile} type="file" />
+                <VisuallyHiddenInput onChange={handleChangeFile} type="file" />
               </Button>
             ) : (
               ""
@@ -216,6 +221,17 @@ const allowedToAttachFile = ( ) => {
               >
                 <CircularProgress />
                 <Typography sx={{ ml: 2 }}>Enviando...</Typography>
+              </Stack>
+            )}
+            {file && (
+              <Stack direction="row" alignItems="center" spacing={2}>
+                <Typography>
+                  {file.get("file") instanceof File &&
+                    (file.get("file") as File).name}
+                </Typography>
+                <IconButton onClick={handleUploadFile}>
+                  <UploadFileIcon />
+                </IconButton>
               </Stack>
             )}
             <FixedSizeList
