@@ -18,7 +18,7 @@ interface PatrimonyInfoContextType {
   toggleRefreshPatrimonyAccessory: () => void;
   toggleRefreshPatrimonyAccessoryFiles: () => void; // Nova função
   toggleCreatingPatrimonyInfo: () => void;
-  changeCreatingPatrimonyInfo: (patrimony: Patrimony) => void;
+  changeCreatingPatrimonyInfo: (patrimony?: Patrimony) => void;
   setCurrentFilter: (filter: string) => void;
   toggleCreatingPatrimonyAccessory: () => void;
   toggleDeletingPatrimonyAccessory: (
@@ -77,8 +77,12 @@ export const PatrimonyInfoContextProvider = ({
     setCreatingPatrimonyInfo(creatingPatrimonyInfo[0] ? [false] : [true]);
   };
 
-  const changeCreatingPatrimonyInfo = (patrimony: Patrimony) => {
-    setCreatingPatrimonyInfo([true, patrimony]);
+  const changeCreatingPatrimonyInfo = (patrimony?: Patrimony) => {
+    if(patrimony){ 
+      setCreatingPatrimonyInfo([true, patrimony]);
+      return 
+    }
+    setCreatingPatrimonyInfo([true]);
   };
 
   const toggleRefreshPatrimonyInfo = () => {

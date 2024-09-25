@@ -61,6 +61,7 @@ export default function CreateMovementation({
     toggleCreatingPatrimonyInfo,
     toggleRefreshPatrimonyInfo,
     setCurrentFilter,
+    changeCreatingPatrimonyInfo
   } = React.useContext(PatrimonyInfoContext);
   const { user } = React.useContext(userContext);
   const navigate =  useNavigate();
@@ -132,7 +133,7 @@ export default function CreateMovementation({
 
   const handleClose = () => {
     creatingPatrimonyInfo[0]
-      ? toggleCreatingPatrimonyInfo()
+      ? changeCreatingPatrimonyInfo()
       : toggleCreatingMovementation();
   };
 
