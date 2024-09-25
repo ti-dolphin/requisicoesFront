@@ -205,7 +205,9 @@ export default function MovementsTable() {
     const handleAcceptMovementation = (movemnetationId: number) => {
       setAcceptMovementationodalOpen(movemnetationId);
     };
-
+    const hasToAcceptMovement = ( ) => { 
+       return row["aceito"] === 0 && row.id_responsavel === user?.CODPESSOA
+    }
     return (
       <React.Fragment>
         {columns.map((column) =>
@@ -228,14 +230,17 @@ export default function MovementsTable() {
                 <Typography fontSize="small">
                   {column.dataKey === "projeto"
                     ? String(row[column.dataKey])
-                    : String(row[column.dataKey]).toLowerCase()}
+                    : column.dataKey === 'id_patrimonio' ? 
+                      String(row[column.dataKey]).padStart(6, '0') : 
+                      String(row[column.dataKey]).toLowerCase()
+                  } 
                 </Typography>
               )}
             </TableCell>
           ) : (
             <TableCell align="center">
               <Stack direction="row">
-                {row["aceito"] === 0 && row.id_responsavel === user?.CODPESSOA ? (
+                {hasToAcceptMovement() ? (
                   <Tooltip title="aceitar movimentação">
                     <ErrorOutlineIcon
                       onClick={() =>
