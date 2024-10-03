@@ -9,7 +9,6 @@ import { Dispatch, SetStateAction, useContext, useEffect } from "react";
 import { PatrimonyInfoContext } from "../context/patrimonyInfoContext";
 import AddIcon from "@mui/icons-material/Add";
 import {
-  Badge,
   Button,
   IconButton,
   Menu,
@@ -26,7 +25,6 @@ import { PatrimonyInfo } from "../types";
 import { deleteMultiplePatrimonies, updateMultiplePatrimonies } from "../utils";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import { userContext } from "../../Requisitions/context/userContext";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -180,6 +178,7 @@ export default function SearchAppBar({
   useEffect(() => { 
     console.log('PERM_ADMINISTRADOR: ', user?.PERM_ADMINISTRADOR);
     console.log("PERM_CADASTRAR_PAT: ", user?.PERM_CADASTRAR_PAT);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -199,6 +198,7 @@ export default function SearchAppBar({
             width="100%"
             flexWrap="wrap"
             justifyContent="space-between"
+            gap={1}
           >
             <Search>
               <SearchIconWrapper>
@@ -213,10 +213,10 @@ export default function SearchAppBar({
             <Stack
               className="MenuList"
               flexWrap="wrap"
-              justifyContent="end"
+              justifyContent="start"
               direction="row"
               alignItems="center"
-              spacing={2}
+              gap={2}
             >
               {user?.PERM_ADMINISTRADOR && (
                 <>
@@ -296,11 +296,11 @@ export default function SearchAppBar({
                   </MenuItem>
                 ))}
               </Menu>
-              <Badge badgeContent={4} color="primary">
+              {/* <Badge badgeContent={4} color="primary">
                 <IconButton>
                   <NotificationsIcon sx={{ color: "white" }} />
                 </IconButton>
-              </Badge>
+              </Badge> */}
             </Stack>
 
             {user?.PERM_CADASTRAR_PAT && (

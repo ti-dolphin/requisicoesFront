@@ -181,7 +181,7 @@ const PatrimonyDetails = () => {
               </Typography>
             </Box>
 
-            <Stack direction="row" spacing={1} height="90%" flexWrap="wrap">
+            <Stack direction="row" gap={1} height="90%" flexWrap="wrap">
               <Box
                 sx={{ borderRadius: "15px", padding: 2 }}
                 className="border border-slate-300"

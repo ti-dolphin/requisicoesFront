@@ -173,9 +173,9 @@ const allowedToAttachFile = ( ) => {
           <ModalContent
             sx={{
               ...style,
-              minWidth: "300px",
+              minWidth: "260px",
               width: {
-                xs: "300px",
+                xs: "260px",
                 sm: "400px",
                 md: "500px",
                 lg: "600px",
