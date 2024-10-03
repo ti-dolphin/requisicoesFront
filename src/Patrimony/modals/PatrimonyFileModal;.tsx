@@ -178,6 +178,7 @@ export default function PatrimonyFileModal() {
                 Anexar
                 <VisuallyHiddenInput
                   accept="image/*,application/pdf"
+                  capture="environment"
                   onChange={handleUploadFile}
                   type="file"
                 />

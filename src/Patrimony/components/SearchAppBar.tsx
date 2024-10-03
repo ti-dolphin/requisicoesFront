@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -8,6 +9,7 @@ import { Dispatch, SetStateAction, useContext, useEffect } from "react";
 import { PatrimonyInfoContext } from "../context/patrimonyInfoContext";
 import AddIcon from "@mui/icons-material/Add";
 import {
+  Badge,
   Button,
   IconButton,
   Menu,
@@ -24,6 +26,7 @@ import { PatrimonyInfo } from "../types";
 import { deleteMultiplePatrimonies, updateMultiplePatrimonies } from "../utils";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import { userContext } from "../../Requisitions/context/userContext";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -107,24 +110,19 @@ export default function SearchAppBar({
   const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
   const [openInactivateModal, setOpenInactivateModal] = React.useState(false);
   const [openActivateModal, setOpenActivateModal] = React.useState(false);
-
+  // const [notifications, setNotifications] = React.useState(false);
   const handleOpenActivateModal = () => setOpenActivateModal(true);
   const handleCloseActivateModal = () => setOpenActivateModal(false);
-
   const handleOpenDeleteModal = () => setOpenDeleteModal(true);
   const handleCloseDeleteModal = () => setOpenDeleteModal(false);
-
   const handleOpenInactivateModal = () => setOpenInactivateModal(true);
-  const handleCloseInactivateModal = () => setOpenInactivateModal(false);
-
+  const handleCloseInactivateModal = () => setOpenInactivateModal(false)
   const handleClickAction = (event: React.MouseEvent<HTMLButtonElement>) => {
     setActionsMenu(event.currentTarget);
   };
-
   const handleClickFilter = (event: React.MouseEvent<HTMLButtonElement>) => {
     setFilterMenu(event.currentTarget);
   };
-
   const handleOpenActionModal = (action: string) => {
     if (action === "Excluir" && selectedItems?.length) {
       handleOpenDeleteModal();
@@ -136,20 +134,16 @@ export default function SearchAppBar({
       alert("Selecione pelo menos um item");
     }
   };
-
   const handleSelectFilter = async (filter: string) => {
     handleCloseFilter();
     setCurrentFilter(filter);
   };
-
   const handleCloseFilter = () => {
     setFilterMenu(null);
   };
-
   const handleCloseActions = () => {
     setActionsMenu(null);
   };
-
   const handleDeletePatrimony = async () => {
     if (selectedItems) {
       await deleteMultiplePatrimonies(selectedItems);
@@ -159,7 +153,6 @@ export default function SearchAppBar({
       handleCloseActions();
     }
   };
-
   const handleActivatePatrimony = async () => {
     if (selectedItems) {
       const response = await updateMultiplePatrimonies(selectedItems, {
@@ -173,7 +166,6 @@ export default function SearchAppBar({
       }
     }
   };
-
   const handleInactivatePatrimony = async () => {
     if (selectedItems) {
       const response = await updateMultiplePatrimonies(selectedItems);
@@ -218,40 +210,42 @@ export default function SearchAppBar({
                 onKeyDown={handleSearch}
               />
             </Search>
-              <Stack
-                className="MenuList"
-                flexWrap="wrap"
-                justifyContent="end"
-                direction="row"
-                spacing={2}
-              >
-            
-               { 
-                 user?.PERM_ADMINISTRADOR && <><Button
-                  id="basic-button"
-                  aria-controls={actionsMenuOpen ? "basic-menu" : undefined}
-                  aria-haspopup="true"
-                  aria-expanded={actionsMenuOpen ? "true" : undefined}
-                  onClick={handleClickAction}
-                  sx={{
-                    color: "white",
-                    backgroundColor: "#F7941E",
-                    "&:hover": {
-                      backgroundColor: "#f1b963",
-                    },
-                  }}
-                >
-                  <Typography textTransform="capitalize">Ações</Typography>
-                  <ArrowDropDownCircleIcon sx={{ color: "white" }} />
-                </Button><Menu
-                  id="basic-menu"
-                  anchorEl={actionsMenu}
-                  open={actionsMenuOpen}
-                  onClose={handleCloseActions}
-                  MenuListProps={{
-                    "aria-labelledby": "basic-button",
-                  }}
-                >
+            <Stack
+              className="MenuList"
+              flexWrap="wrap"
+              justifyContent="end"
+              direction="row"
+              alignItems="center"
+              spacing={2}
+            >
+              {user?.PERM_ADMINISTRADOR && (
+                <>
+                  <Button
+                    id="basic-button"
+                    aria-controls={actionsMenuOpen ? "basic-menu" : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={actionsMenuOpen ? "true" : undefined}
+                    onClick={handleClickAction}
+                    sx={{
+                      color: "white",
+                      backgroundColor: "#F7941E",
+                      "&:hover": {
+                        backgroundColor: "#f1b963",
+                      },
+                    }}
+                  >
+                    <Typography textTransform="capitalize">Ações</Typography>
+                    <ArrowDropDownCircleIcon sx={{ color: "white" }} />
+                  </Button>
+                  <Menu
+                    id="basic-menu"
+                    anchorEl={actionsMenu}
+                    open={actionsMenuOpen}
+                    onClose={handleCloseActions}
+                    MenuListProps={{
+                      "aria-labelledby": "basic-button",
+                    }}
+                  >
                     {["Inativar", "Ativar", "Excluir"].map((action) => (
                       <MenuItem
                         key={action}
@@ -260,66 +254,54 @@ export default function SearchAppBar({
                         {action}
                       </MenuItem>
                     ))}
-                  </Menu></>
-
-               }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                <Button
-                  id="basic-button"
-                  aria-controls={filterMenuOpen ? "basic-menu" : undefined}
-                  aria-haspopup="true"
-                  aria-expanded={filterMenuOpen ? "true" : undefined}
-                  onClick={handleClickFilter}
-                  sx={{
-                    color: "white",
-                    backgroundColor: "#F7941E",
-                    "&:hover": {
-                      backgroundColor: "#f1b963",
-                    },
-                  }}
-                >
-                  <Typography textTransform="capitalize">Filtros</Typography>
-                  <FilterAltIcon sx={{ color: "white" }} />
-                </Button>
-                <Menu
-                  id="basic-menu"
-                  anchorEl={filterMenu}
-                  open={filterMenuOpen}
-                  onClose={handleCloseFilter}
-                  MenuListProps={{
-                    "aria-labelledby": "basic-button",
-                  }}
-                >
-                  {["Meus", "Todos"].map((filter) => (
-                    <MenuItem
-                      key={filter}
-                      onClick={() => handleSelectFilter(filter)}
-                      sx={{
-                        backgroundColor:
-                          currentFilter === filter ? "whitesmoke" : "white",
-                      }}
-                    >
-                      {filter}
-                    </MenuItem>
-                  ))}
-                </Menu>
-              </Stack>
-            
+                  </Menu>
+                </>
+              )}
+              <Button
+                id="basic-button"
+                aria-controls={filterMenuOpen ? "basic-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={filterMenuOpen ? "true" : undefined}
+                onClick={handleClickFilter}
+                sx={{
+                  color: "white",
+                  backgroundColor: "#F7941E",
+                  "&:hover": {
+                    backgroundColor: "#f1b963",
+                  },
+                }}
+              >
+                <Typography textTransform="capitalize">Filtros</Typography>
+                <FilterAltIcon sx={{ color: "white" }} />
+              </Button>
+              <Menu
+                id="basic-menu"
+                anchorEl={filterMenu}
+                open={filterMenuOpen}
+                onClose={handleCloseFilter}
+                MenuListProps={{
+                  "aria-labelledby": "basic-button",
+                }}
+              >
+                {["Meus", "Todos"].map((filter) => (
+                  <MenuItem
+                    key={filter}
+                    onClick={() => handleSelectFilter(filter)}
+                    sx={{
+                      backgroundColor:
+                        currentFilter === filter ? "whitesmoke" : "white",
+                    }}
+                  >
+                    {filter}
+                  </MenuItem>
+                ))}
+              </Menu>
+              <Badge badgeContent={4} color="primary">
+                <IconButton>
+                  <NotificationsIcon sx={{ color: "white" }} />
+                </IconButton>
+              </Badge>
+            </Stack>
 
             {user?.PERM_CADASTRAR_PAT && (
               <Tooltip title="Novo Patrimônio">
