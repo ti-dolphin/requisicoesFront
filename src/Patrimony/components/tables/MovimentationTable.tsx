@@ -8,7 +8,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { TableVirtuoso, TableComponents } from "react-virtuoso";
-import { Box, IconButton, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, IconButton, Stack, Typography } from "@mui/material";
 import { Movementation } from "../../types";
 import MovimentationFileModal from "../../modals/MovimentationFileModal";
 import EditIcon from "@mui/icons-material/Edit";
@@ -20,8 +20,7 @@ import { useParams } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DeleteMovementationModal from "../../modals/DeleteMovementationModal";
 import { userContext } from "../../../Requisitions/context/userContext";
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
-import AcceptMovementationModal from "../../modals/AcceptMovementationModal";
+
 
 // Define the interface for the new data structure
 
@@ -120,7 +119,6 @@ const RowContent = ({
   const {
     togglEditingMovementationObservation,
     toggleDeletingMovementation,
-    toggleAcceptingMovimentation,
   } = useContext(MovimentationContext);
   const { user } = useContext(userContext);
 
@@ -146,9 +144,6 @@ const RowContent = ({
     return user?.CODPESSOA === row.id_ultimo_responsavel;
   };
 
-  const handleAcceptMovementation = (movementation: Movementation) => {
-    toggleAcceptingMovimentation(movementation);
-  };
   return (
     <React.Fragment>
       {columns.map((column) => (
@@ -192,16 +187,6 @@ const RowContent = ({
                 <IconButton onClick={() => handleClickDeleteMovimentation(row)}>
                   <DeleteIcon sx={{ color: "#F7941E" }} />
                 </IconButton>
-                {row["aceito"] === 0 && user?.CODPESSOA === row.id_responsavel && (
-                  <Tooltip title="aceitar movimentação">
-                    <ErrorOutlineIcon
-                      onClick={() =>
-                        handleAcceptMovementation(row)
-                      }
-                      sx={{ color: "#F7941E", cursor: "pointer" }}
-                    />
-                  </Tooltip>
-                )}
               </>
             ) : (
               ""
@@ -263,7 +248,6 @@ export default function DetailMovementsTable() {
           />
         )}
       />
-       <AcceptMovementationModal/>
       <DeleteMovementationModal />
       <EditMovimentationObservationModal />
     </Box>

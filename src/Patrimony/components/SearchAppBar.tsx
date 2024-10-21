@@ -5,10 +5,11 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
-import { Dispatch, SetStateAction, useContext, useEffect } from "react";
+import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import { PatrimonyInfoContext } from "../context/patrimonyInfoContext";
 import AddIcon from "@mui/icons-material/Add";
 import {
+  Badge,
   Button,
   IconButton,
   Menu,
@@ -21,64 +22,15 @@ import {
 import CreatePatrimonyInfoModal from "../modals/CreatePatrimonyInfoModal";
 import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
 import React from "react";
-import { PatrimonyInfo } from "../types";
-import { deleteMultiplePatrimonies, updateMultiplePatrimonies } from "../utils";
+import { MovementationChecklist, PatrimonyInfo } from "../types";
+import { deleteMultiplePatrimonies, getPatrimonyNotifications, updateMultiplePatrimonies } from "../utils";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import { userContext } from "../../Requisitions/context/userContext";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import { checklistContext } from "../context/checklistContext";
+import { useNavigate } from "react-router-dom";
 
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(1),
-    width: "auto",
-  },
-}));
 
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  width: "100%",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    [theme.breakpoints.up("sm")]: {
-      width: "12ch",
-      "&:focus": {
-        width: "20ch",
-      },
-    },
-  },
-}));
-
-const style = {
-  position: "absolute" as const,
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
 
 interface SearchAppBarProps {
   handleSearch: (e: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -98,17 +50,24 @@ export default function SearchAppBar({
     setCurrentFilter,
     currentFilter,
   } = useContext(PatrimonyInfoContext);
+  const {
+    toggleChecklistOpen
+  } = useContext(checklistContext);
   const { user } = useContext(userContext);
   const [actionsMenu, setActionsMenu] = React.useState<null | HTMLElement>(
     null
   );
   const actionsMenuOpen = Boolean(actionsMenu);
   const [filterMenu, setFilterMenu] = React.useState<null | HTMLElement>(null);
+  const [notificationsMenu, setNotificationsMenu] = React.useState<null | HTMLElement>(
+    null
+  );
+  const [notifications, setNotifications] = useState<MovementationChecklist[]>()
+  const notificationsMenuOpen = Boolean(notificationsMenu);
   const filterMenuOpen = Boolean(filterMenu);
   const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
   const [openInactivateModal, setOpenInactivateModal] = React.useState(false);
   const [openActivateModal, setOpenActivateModal] = React.useState(false);
-  // const [notifications, setNotifications] = React.useState(false);
   const handleOpenActivateModal = () => setOpenActivateModal(true);
   const handleCloseActivateModal = () => setOpenActivateModal(false);
   const handleOpenDeleteModal = () => setOpenDeleteModal(true);
@@ -118,9 +77,13 @@ export default function SearchAppBar({
   const handleClickAction = (event: React.MouseEvent<HTMLButtonElement>) => {
     setActionsMenu(event.currentTarget);
   };
+  const navigate = useNavigate();
   const handleClickFilter = (event: React.MouseEvent<HTMLButtonElement>) => {
     setFilterMenu(event.currentTarget);
   };
+  const handleClickNotifications = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setNotificationsMenu(event.currentTarget);
+  }
   const handleOpenActionModal = (action: string) => {
     if (action === "Excluir" && selectedItems?.length) {
       handleOpenDeleteModal();
@@ -138,6 +101,9 @@ export default function SearchAppBar({
   };
   const handleCloseFilter = () => {
     setFilterMenu(null);
+  };
+  const handleCloseNotificationsMenu = () => {
+    setNotificationsMenu(null);
   };
   const handleCloseActions = () => {
     setActionsMenu(null);
@@ -175,10 +141,52 @@ export default function SearchAppBar({
       }
     }
   };
-  useEffect(() => { 
+  const handleSelectNotification = (checklist: MovementationChecklist) => {
+    toggleChecklistOpen(checklist);
+    navigate(`checklist/${checklist.id_movimentacao}`);
+  };
+  const getNotifications = async () => {
+    console.log("getNotifications");
+    if (user) {
+      const notifications = await getPatrimonyNotifications(user);
+      const filteredNotifications = notifications.filter((notification: MovementationChecklist) => { 
+        if (responsableForTypeNotification(notification)) {
+          return notification;
+        }
+        if (responsableForPatrimonyNotification(notification)) {
+          return notification;
+        }
+      });
+      setNotifications(filteredNotifications);
+    }
+  };
+  const responsableForPatrimonyNotification = (notification : MovementationChecklist ) =>  { 
+    return isMovimentationResponsable(notification) && !notification.realizado;
+  } 
+
+  const responsableForTypeNotification = (notification : MovementationChecklist ) => { 
+    return (
+      isTypeResponsable(notification) &&
+      !notification.aprovado &&
+      notification.realizado
+    );
+  }
+
+  const isTypeResponsable = (checklist: MovementationChecklist) => {
+    return checklist.responsavel_tipo === user?.responsavel_tipo;
+  };
+  const isMovimentationResponsable = (checklist: MovementationChecklist) => {
+    console.log(
+      "isMoveRespnsable: ",
+      checklist.responsavel_movimentacao === user?.CODPESSOA
+    );
+    return checklist.responsavel_movimentacao === user?.CODPESSOA;
+  };
+  useEffect(() => {
     console.log('PERM_ADMINISTRADOR: ', user?.PERM_ADMINISTRADOR);
     console.log("PERM_CADASTRAR_PAT: ", user?.PERM_CADASTRAR_PAT);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    getNotifications();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -303,20 +311,72 @@ export default function SearchAppBar({
               </Badge> */}
             </Stack>
 
-            {user?.PERM_CADASTRAR_PAT && (
+            <Stack direction="row" alignItems="center" gap={2}>
+              {user?.PERM_CADASTRAR_PAT && (
+                <Tooltip title="Novo Patrimônio">
+                  <IconButton
+                    onClick={toggleCreatingPatrimonyInfo}
+                    sx={{
+                      backgroundColor: "#F7941E",
+                      color: "white",
+                      "&:hover": { backgroundColor: "#f1b963" },
+                    }}
+                  >
+                    <AddIcon sx={{ color: "#2B3990" }} />
+                  </IconButton>
+                </Tooltip>
+              )}
               <Tooltip title="Novo Patrimônio">
                 <IconButton
-                  onClick={toggleCreatingPatrimonyInfo}
+                  onClick={handleClickNotifications}
                   sx={{
                     backgroundColor: "#F7941E",
                     color: "white",
                     "&:hover": { backgroundColor: "#f1b963" },
                   }}
                 >
-                  <AddIcon sx={{ color: "#2B3990" }} />
+                  <Badge badgeContent={notifications?.length} color="primary">
+                    <NotificationsIcon sx={{ color: "white" }} />
+                  </Badge>
                 </IconButton>
               </Tooltip>
-            )}
+            </Stack>
+            <Menu
+              id="basic-menu"
+              anchorEl={notificationsMenu}
+              open={notificationsMenuOpen}
+              onClose={handleCloseNotificationsMenu}
+              sx={{
+                marginTop: "0.4rem",
+                whiteSpace: "normal", // Permite que o texto quebre
+                display: "block", // Garante que o conteúdo fique em bloco no menu
+                width: "100%", // Garante que o item ocupe toda a largura disponível
+              }}
+              MenuListProps={{
+                "aria-labelledby": "basic-button",
+              }}
+            >
+              {notifications &&
+                notifications.map((notification) => (
+                  <MenuItem
+                    onClick={() => handleSelectNotification(notification)}
+                    key={notification.id_checklist_movimentacao}
+                    sx={{ overFlowX: "scroll" }}
+                  >
+                    <Typography
+                      fontSize="small"
+                      sx={{
+                        maxWidth: "100%",
+                        whiteSpace: "normal",
+                        wordBreak: "break-word",
+                      }}
+                    >
+                      Você deve verificar ou realizar o checklist do patrimônio{" "}
+                      {notification.nome}
+                    </Typography>
+                  </MenuItem>
+                ))}
+            </Menu>
           </Stack>
         </Toolbar>
       </AppBar>
@@ -416,3 +476,60 @@ export default function SearchAppBar({
     </Box>
   );
 }
+
+const Search = styled("div")(({ theme }) => ({
+  position: "relative",
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  "&:hover": {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginLeft: 0,
+  width: "100%",
+  [theme.breakpoints.up("sm")]: {
+    marginLeft: theme.spacing(1),
+    width: "auto",
+  },
+}));
+
+const SearchIconWrapper = styled("div")(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: "100%",
+  position: "absolute",
+  pointerEvents: "none",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: "inherit",
+  width: "100%",
+  "& .MuiInputBase-input": {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create("width"),
+    [theme.breakpoints.up("sm")]: {
+      width: "12ch",
+      "&:focus": {
+        width: "20ch",
+      },
+    },
+  },
+}));
+
+const style = {
+  position: "absolute" as const,
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+
+
+

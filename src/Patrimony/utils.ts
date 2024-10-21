@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from "axios";
 import api from "../api"
-import { Movementation, Patrimony, PatrimonyFile, PatrimonyInfo } from "./types";
+import { ChecklistItem, ChecklistItemFile, Movementation, MovementationChecklist, Patrimony, PatrimonyFile, PatrimonyInfo } from "./types";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import dayjs from "dayjs";
@@ -17,6 +17,7 @@ export const getPatrimonyInfo = async( ) =>  {
 }
 import axios from "axios";
 import { PatrimonyAccessory } from "./types";
+import { User } from "../Requisitions/context/userContext";
 
 // Function to create a new accessory
 export const createAccessory = async (accessory: PatrimonyAccessory) => {
@@ -170,6 +171,7 @@ export const getTypesOfPatrimony = async ( ) => {
 
 export const getInactivePatrimonyInfo = async ( ) => { 
    try{ 
+
       const response = await api.get(`patrimony/inactive`);
       console.log('respoonse data: ', response.data)
       return response.data;
@@ -177,6 +179,50 @@ export const getInactivePatrimonyInfo = async ( ) => {
       console.log(e);
    }
 };
+export const getChecklistDataByMovementationID = async (id_movimentacao : number ) =>{ 
+  try{
+    const response = await api.get(`checklist/${id_movimentacao}`);
+    return response.data;
+  }catch(e){ 
+     console.log(e);
+  }
+};
+export const getChecklistItemsMapByPatrimonyID = async(id_patrimonio : number, id_movimentacao: number, id_checklist_movimentacao: number) => { 
+  try{ 
+    const response = await api.get(`checklist/checklistItems/${id_patrimonio}/${id_movimentacao}/${id_checklist_movimentacao}`);
+    return response.data;
+  }catch(e){ 
+    console.log(e);
+  }
+};
+export const sendChecklistItems = async (
+  checklistItemMaps: {
+    checklistItem: ChecklistItem;
+    checklistItemFile: ChecklistItemFile;
+  }[]
+) => {
+  const items = checklistItemMaps.map(checklistItem => checklistItem.checklistItemFile);
+  try {
+    const response = await api.put("/checklist/checklistItems", {
+      checklistItems: items,
+    });
+    return response;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const getPatrimonyNotifications = async (user : User ) => { 
+  try{
+     const queryParams = new URLSearchParams({
+       CODPESSOA: String(user.CODPESSOA), // Assuming `id` is a property of user
+     });
+     const response = await api.get(`checklist/notifications?${queryParams.toString()}`);
+     return response.data;
+   }catch(e){
+     console.log(e);
+   }
+}
 
 export const updateMultiplePatrimonies = async (selectedItems : PatrimonyInfo[], options? : { active : boolean } ) => { 
    try{ 
@@ -217,7 +263,7 @@ export const createMovementation = async ( newMovementation  : Movementation) =>
       try{ 
          const response = await api.post(`/movementation`, newMovementation);
          console.log("createMovementation - responsa.data: \n", response.data);
-         return response.data.insertId
+         return response;
       }catch(e){ 
          console.log(e);
       }
@@ -234,7 +280,14 @@ export const deletePatrimonyFileModal = async (patrimonyFileId: number, filename
     console.log(e);
   }
 };
-
+export const sendChecklist = async (checklist: MovementationChecklist) => {
+  try {
+    const response = await api.post(`/checklist`, checklist)
+    return response;
+  } catch (e) {
+    console.log(e);
+  }
+};
 
 export const deleteMovementationFileModal = async ( movementationFileId : number, filename: string) =>  { 
    try{ 
@@ -271,6 +324,45 @@ export const getSinglePatrimony = async (patrimonyId : number ) =>  {
       console.log(e);
    }
 }
+export const createChecklistItem = async (checklistItemFile: ChecklistItemFile, formData : FormData ) => { 
+  console.log("createChecklistItem");
+  try{ 
+     const config: AxiosRequestConfig = {
+       headers: {
+         "Content-Type": "multipart/form-data",
+       },
+     };
+     formData.append("checklistItemFile", JSON.stringify(checklistItemFile));
+
+    const response = await api.post("/checklist/checklistItems/file", formData, config);
+    if(response) return response;
+  }catch(e){ 
+    console.log(e);
+  }
+};
+
+export const uploadFileToChecklistItemFile = async (
+  id_item_checklist_movimentacao: number,
+  file: FormData
+) => {
+  console.log("uploadFileToChecklistItemFile");
+  try {
+    const config: AxiosRequestConfig = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      data: file,
+    };
+    const response = await api.put(
+      `/checklist/checklistItems/file/${id_item_checklist_movimentacao}`,
+      file,
+      config
+    );
+    return response.data.fileUrl;
+  } catch (e) {
+    console.log(e);
+  }
+};
 
 export const getPatrimonyFiles = async (patrimonyId : number ) => { 
    try{ 

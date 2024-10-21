@@ -11,20 +11,15 @@ import { TableVirtuoso, TableComponents } from "react-virtuoso";
 import { PatrimonyInfo } from "../../types";
 import SearchAppBar from "../SearchAppBar";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
-import {
-  dateTimeRenderer,
-  getPatrimonyInfo,
-} from "../../utils";
+import { dateTimeRenderer, getPatrimonyInfo } from "../../utils";
 import { PatrimonyInfoContext } from "../../context/patrimonyInfoContext";
 import { ResponsableContext } from "../../context/responsableContext";
-import {
-  Checkbox,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Checkbox, IconButton, Stack, Typography } from "@mui/material";
 import { userContext } from "../../../Requisitions/context/userContext";
 import { MovimentationContext } from "../../context/movementationContext";
-
+import ChecklistIcon from "@mui/icons-material/Checklist";
+import LoopIcon from "@mui/icons-material/Loop";
+import { useNavigate } from "react-router-dom";
 interface ColumnData {
   dataKey: keyof PatrimonyInfo;
   label: string;
@@ -34,47 +29,46 @@ interface ColumnData {
 
 const columns: ColumnData[] = [
   {
-    width: 70,
+    width: 60, // Reduzi um pouco para economizar espaço
     label: "Patrimônio",
     dataKey: "id_patrimonio",
   },
   {
-    width: 130,
+    width: 90, // Mantive um tamanho razoável para a visualização do nome
     label: "Nome",
     dataKey: "nome",
   },
   {
-    width: 200,
+    width: 150, // Reduzi para economizar espaço, mantendo a descrição legível
     label: "Descrição",
     dataKey: "descricao",
   },
   {
-    width: 130,
+    width: 100, // Mantido similar ao nome
     label: "Responsável",
     dataKey: "responsavel",
   },
   {
-    width: 130,
+    width: 100, // Mantido igual ao responsável
     label: "Gerente",
     dataKey: "gerente",
   },
   {
-    width: 300,
+    width: 150, // Projeto precisa de um pouco mais de espaço
     label: "Projeto",
     dataKey: "projeto",
   },
   {
-    width: 140,
+    width: 80, // Reduzido um pouco para última movimentação
     label: "Ultima Movimentação",
     dataKey: "dataMovimentacao",
   },
   {
-    width: 40,
+    width: 70, // Coluna vazia para possíveis ações, mantive um valor baixo
     label: "",
     dataKey: "id_patrimonio",
   },
 ];
-
 
 const VirtuosoTableComponents: TableComponents<PatrimonyInfo> = {
   Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
@@ -102,7 +96,7 @@ function fixedHeaderContent() {
         <TableCell
           key={column.dataKey}
           variant="head"
-          align={column.numeric ? "right" : "left"}
+          align={column.numeric ? "left" : "center"}
           style={{ width: column.width }}
           sx={{
             backgroundColor: "background.paper",
@@ -123,18 +117,19 @@ export default function MovementsTable() {
     useContext(PatrimonyInfoContext);
   useContext(MovimentationContext);
 
-    useState<boolean>(false);
+  useState<boolean>(false);
   const { user } = useContext(userContext);
   const [rows, setRows] = useState<PatrimonyInfo[]>();
   const [filteredRows, setFilteredRows] = useState<PatrimonyInfo[]>();
   const [selectedItems, setSelectedItems] = useState<PatrimonyInfo[]>([]);
- 
+  const navigate = useNavigate();
+
   const fetchData = async () => {
     const patrimonyInfoData = await getPatrimonyInfo();
     if (currentFilter === "Todos") {
       if (patrimonyInfoData) {
         setFilteredRows(patrimonyInfoData);
-         setRows(patrimonyInfoData);
+        setRows(patrimonyInfoData);
       }
       return;
     }
@@ -144,21 +139,21 @@ export default function MovementsTable() {
           (register) =>
             register.responsavel.toUpperCase() === user?.NOME?.toUpperCase()
         );
-        setFilteredRows(
-         filtered
-        );
-         setRows(filtered);
+        setFilteredRows(filtered);
+        setRows(filtered);
       }
       return;
     }
-
+  };
+  const handleOpenChecklists = ( row : PatrimonyInfo) => {
+      navigate('/patrimony/checklist/' + row.numeroMovimentacao);
   };
 
   function RowContent(
     _index: number,
     row: PatrimonyInfo,
     setSelectedItems: Dispatch<SetStateAction<PatrimonyInfo[]>>,
-    selectedItems: PatrimonyInfo[],
+    selectedItems: PatrimonyInfo[]
   ) {
     const { setResponsable } = useContext(ResponsableContext);
 
@@ -189,8 +184,6 @@ export default function MovementsTable() {
       return false;
     };
 
-
-
     return (
       <React.Fragment>
         {columns.map((column) =>
@@ -198,19 +191,19 @@ export default function MovementsTable() {
             <TableCell
               sx={{
                 cursor: "pointer",
-                paddingX: "0.2",
+                paddingX: "0.2rem",
+                paddingY: "0.1rem",
                 textTransform: "capitalize",
               }}
               key={column.dataKey}
-              onClick={() => handleOpenPatrimonyDetail(row.id_patrimonio)}
-              align={column.numeric ? "center" : "left"}
+              align={column.numeric ? "left" : "center"}
             >
               {column.dataKey === "dataMovimentacao" ? (
                 <Typography fontSize="small">
                   {dateTimeRenderer(row[column.dataKey])}
                 </Typography>
               ) : (
-                <Typography fontSize="small">
+                <Typography fontSize="12px">
                   {column.dataKey === "projeto"
                     ? String(row[column.dataKey])
                     : column.dataKey === "id_patrimonio"
@@ -220,11 +213,25 @@ export default function MovementsTable() {
               )}
             </TableCell>
           ) : (
-            <TableCell align="center">
+            <TableCell
+              sx={{
+                cursor: "pointer",
+                paddingX: "0.2",
+                paddingY: "0.1rem",
+                textTransform: "capitalize",
+              }}
+              align="center"
+            >
               <Stack direction="row">
-                {(
-                  ""
-                )}
+                {""}
+                <IconButton
+                  onClick={() => handleOpenPatrimonyDetail(row.id_patrimonio)}
+                >
+                  <LoopIcon />
+                </IconButton>
+                <IconButton onClick={( ) => handleOpenChecklists(row)}>
+                  <ChecklistIcon />
+                </IconButton>
                 <Checkbox
                   checked={isOnSelectedItems(row)}
                   onChange={(e) => handleSelectItem(e, row)}
@@ -237,8 +244,6 @@ export default function MovementsTable() {
       </React.Fragment>
     );
   }
- 
-  
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const { value } = e.currentTarget;
@@ -273,10 +278,7 @@ export default function MovementsTable() {
   }, [refreshPatrimonyInfo, currentFilter]);
 
   return (
-    <Paper style={{ height: "86%", width: "100%" }}>
-     
-
-    
+    <Paper style={{ height: "86%", width: "100%", padding: 2 }}>
       <SearchAppBar
         setFilteredRows={setFilteredRows}
         selectedItems={selectedItems}
@@ -288,13 +290,7 @@ export default function MovementsTable() {
         components={VirtuosoTableComponents}
         fixedHeaderContent={fixedHeaderContent}
         itemContent={(index, row) =>
-          RowContent(
-            index,
-            row,
-            setSelectedItems,
-            selectedItems,
-            
-          )
+          RowContent(index, row, setSelectedItems, selectedItems)
         }
       />
     </Paper>

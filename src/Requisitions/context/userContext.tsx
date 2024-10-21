@@ -9,6 +9,7 @@ export interface User {
   PERM_COMPRADOR?: number;
   PERM_ADMINISTRADOR? : number;
   NOME? : string;
+  responsavel_tipo?: number;
 }
 interface userContextType {
   logedIn: boolean;

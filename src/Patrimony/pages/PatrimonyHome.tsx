@@ -7,9 +7,9 @@ import { useNavigate } from "react-router-dom";
 const PatrimonyHome = () => {
   const navigate= useNavigate();
   return (
-    <Box border="1px solid #eeeeee" padding={1} height="95vh">
-      <Box>
-        <Stack direction="row" flexWrap="wrap" spacing={1} alignItems="center">
+    <Box   height="95vh">
+      <Box padding={1}>
+        <Stack direction="row" flexWrap="wrap" alignItems="center">
           <IconButton onClick={() => navigate("/home")}>
             <ArrowLeftIcon />
           </IconButton>

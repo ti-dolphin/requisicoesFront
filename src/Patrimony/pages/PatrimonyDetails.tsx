@@ -155,7 +155,7 @@ const PatrimonyDetails = () => {
   }, [refreshPatrimonyInfo]);
 
   return (
-    <Box sx={{ height: "98vh", overflow: "auto" }}>
+    <Box sx={{ height: "98vh", overflow: "auto", padding: 2 }}>
       <MovimentationContextProvider>
         <MovementationFileContextProvider>
           <PatrimonyFileContextProvider>

@@ -13,6 +13,7 @@ import { ptBR } from '@mui/material/locale';
 import { RequisitionContextProvider } from "./Requisitions/context/RequisitionContext.tsx";
 import { UserContextProvider } from "./Requisitions/context/userContext.tsx";
 import { PatrimonyInfoContextProvider } from './Patrimony/context/patrimonyInfoContext.tsx';
+import { ChecklistContextProvider } from './Patrimony/context/checklistContext.tsx';
 
 const theme = createTheme(
   {
@@ -33,9 +34,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <UserContextProvider>
         <RequisitionContextProvider>
           <PatrimonyInfoContextProvider>
-            <QueryClientProvider client={queryClient}>
-              <RouterProvider router={router} />
-            </QueryClientProvider>
+            <ChecklistContextProvider>
+              <QueryClientProvider client={queryClient}>
+                <RouterProvider router={router} />
+              </QueryClientProvider>
+            </ChecklistContextProvider>
           </PatrimonyInfoContextProvider>
         </RequisitionContextProvider>
       </UserContextProvider>

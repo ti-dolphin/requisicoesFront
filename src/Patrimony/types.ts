@@ -70,6 +70,36 @@ export type PatrimonyFile = {
   id_patrimonio: number;
 };
 
+export interface ChecklistItem {
+  id_items_checklist_tipo: number;
+  id_tipo_patrimonio: number;
+  nome_item_checklist: string;
+  created_at: string;
+  updated_at: string;
+}
+export interface ChecklistItemFile {
+  id_item_checklist_movimentacao: number;
+  id_checklist_movimentacao: number;
+  nome_item_checklist: string;
+  arquivo: string | null;
+  problema: number;
+  observacao? : string;
+}
+export interface MovementationChecklist {
+  id_checklist_movimentacao: number;
+  id_movimentacao: number;
+  data_criacao: string; // Date in ISO format
+  realizado: number; // Assuming 0 or 1 for boolean values
+  data_realizado: string | null; // Can be null or a date in ISO format
+  aprovado: number; // Assuming 0 or 1 for boolean values
+  data_aprovado: string | null; // Can be null or a date in ISO format
+  observacao: string | null;
+  nome: string;
+  responsavel_tipo?: number;
+  id_patrimonio: number;
+  responsavel_movimentacao? :number;
+}
+
 export type Fabricante = {
   id_fabricante: number;
   nome: string;

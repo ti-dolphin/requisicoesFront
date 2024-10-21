@@ -1,21 +1,19 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import * as React from "react";
 import { styled, css } from "@mui/system";
 import { Modal as BaseModal } from "@mui/base/Modal";
 import Fade from "@mui/material/Fade";
 import {
   Badge,
+  Box,
   Button,
   CircularProgress,
   IconButton,
-  ListItem,
-  ListItemButton,
-  ListItemText,
   Stack,
   Typography,
 } from "@mui/material";
 import AttachFile from "@mui/icons-material/AttachFile";
 import CloseIcon from "@mui/icons-material/Close";
-import { FixedSizeList, ListChildComponentProps } from "react-window";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useParams } from "react-router-dom";
@@ -38,31 +36,7 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-function RenderRow(props: ListChildComponentProps & {fileData  : PatrimonyFile[] }) {
-  const { index, style, fileData } = props;
-  const handleOpenLink = (url: string) => {
-    window.open(url, "_blank");
-  };
-  const {toggleDeletingPatrimonyFile } = useContext(PatrimonyFileContext);
-  return (
-    <ListItem style={style} key={index} component="div">
-      <ListItemButton> 
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <ListItemText
-            onClick={() => handleOpenLink(fileData[index].arquivo)}
-            sx={{ textTransform: "underline", color: "blue" }}
-            primary={`${fileData[index].nome_arquivo}`}
-          />
-          <IconButton
-            onClick={() => toggleDeletingPatrimonyFile(true, fileData[index])}
-          >
-            <DeleteIcon sx={{ color: "#F7941E" }} />
-          </IconButton>
-        </Stack>
-      </ListItemButton>
-    </ListItem>
-  );
-}
+
 
 //MAIN COMPONENT
 export default function PatrimonyFileModal() {
@@ -73,6 +47,7 @@ export default function PatrimonyFileModal() {
   const handleClose = () => setOpen(false);
   const [fileData, setFileData] = useState<PatrimonyFile[]>();
   const {refreshPatrimonyFile, toggleRefreshPatrimonyFile } = useContext(PatrimonyFileContext);
+  const {toggleDeletingPatrimonyFile} = useContext(PatrimonyFileContext);
   const [responsable, setResponsable] = useState<number>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -88,11 +63,10 @@ export default function PatrimonyFileModal() {
       setFileData(data);
     }
   }
-
+   const handleOpenLink = (url: string) => {
+     window.open(url, "_blank");
+   };
    const handleUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("handleUploadFile");
-    console.log('e.target.files: ', e.target.files);
-    console.log('id_patrimonio: ', id_patrimonio);
      if (e.target.files && id_patrimonio) {
        setIsLoading(true);
        const file = e.target.files[0];
@@ -141,6 +115,8 @@ export default function PatrimonyFileModal() {
             sx={{
               ...style,
               minWidth: "260px",
+              maxHeight: "650px",
+              overflow: "scroll",
               width: {
                 xs: "260px",
                 sm: "400px",
@@ -198,7 +174,78 @@ export default function PatrimonyFileModal() {
                 <Typography sx={{ ml: 2 }}>Enviando...</Typography>
               </Stack>
             )}
-            <FixedSizeList
+            {fileData?.map((file) => (
+              <Box
+                sx={{ borderRadius: "10px" }}
+                className="border border-gray-300"
+              >
+                <Stack
+                  direction="row"
+                  gap={1}
+                  flexWrap="wrap"
+                  padding={1}
+                  height="fit-content"
+                  sx={{
+                    cursor: "pointer",
+                    color: "blue",
+                    textDecoration: "underline",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      height: {
+                        xs: "100px",
+                        sm: "150px",
+                        md: "200px",
+                        lg: "300px",
+                      },
+                      borderRadius: "10px",
+                      width: {
+                        xs: "100%",
+                        sm: "100%",
+                        lg: "100%",
+                      },
+                      background: `url('${file.arquivo}')`,
+                      backgroundPosition: "center",
+                      backgroundSize: "cover",
+                      backgroundRepeat: "no-repeat",
+                    }}
+                  ></Box>
+                  <Box
+                    sx={{
+                      borderRadius: "10px",
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      flexWrap: "wrap",
+                      width: {
+                        xs: "100%",
+                        lg: "50%",
+                      },
+                    }}
+                  >
+                    <Typography
+                      onClick={() => handleOpenLink(file.arquivo)}
+                      fontSize="small"
+                      overflow={"hidden"}
+                    >
+                      {file.nome_arquivo}
+                    </Typography>
+                    <IconButton
+                      onClick={() => toggleDeletingPatrimonyFile(true, file)}
+                      sx={{
+                        color: "blue",
+                        textTransform: "underline",
+                        marginLeft: 1,
+                      }}
+                    >
+                      <DeleteIcon sx={{ color: "#F7941E" }} />
+                    </IconButton>
+                  </Box>
+                </Stack>
+              </Box>
+            ))}
+            {/* <FixedSizeList
               height={400}
               width="100%"
               itemSize={46}
@@ -213,7 +260,7 @@ export default function PatrimonyFileModal() {
                   data={fileData}
                 />
               )}
-            </FixedSizeList>
+            </FixedSizeList> */}
           </ModalContent>
         </Fade>
       </Modal>

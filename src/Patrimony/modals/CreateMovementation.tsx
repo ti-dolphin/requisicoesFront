@@ -72,7 +72,6 @@ export default function CreateMovementation({
   } = React.useContext(MovimentationContext);
   const [projectOptions, setProjectOptions] = useState<Project[]>([]);
   const [personOptions, setPersonOptions] = useState<Person[]>();
-
   const [newMovementation, setNewMovementation] = useState<Movementation>({
     id_movimentacao: 0, // Default value for number
     id_projeto: 0,
@@ -87,8 +86,8 @@ export default function CreateMovementation({
 
   const handleSaveMovementation = async () => {
     if (creatingPatrimonyInfo[0] && handleSave) {
-      //CREATING PATRIMONY AND FIRST MOVEMENTATION
-      console.log("a patrimony is being created, it will be saved firts");
+
+      
       const insertIdPatrimony = await handleSave();
       if (insertIdPatrimony) {
         const insertIdMovementation = await createMovementation({
@@ -105,17 +104,18 @@ export default function CreateMovementation({
       }
       return;
     }
-    const insertIdMovementation = await createMovementation({
+    const response = await createMovementation({
       ...newMovementation,
       ["id_patrimonio"]: Number(id_patrimonio),
     });
-    if (insertIdMovementation) {
-      console.log("insertIdMovementation: ", insertIdMovementation);
+    if (response?.status === 200) {
       toggleRefreshPatrimonyInfo();
       toggleRefreshMovimentation();
-
       toggleCreatingMovementation();
+      return;
     }
+    console.log('response: ', response)
+    alert("Houve um erro ao criar a movimentação: \n" + response?.data.message);
     // no caso de estar criando a movimentação para o patrimonio já existente, o id virá do contexto de criação da movimentação, que irá receber o id do patrimônio
   };
 
@@ -126,11 +126,11 @@ export default function CreateMovementation({
     }
     toggleCreatingMovementation();
   };
+
   const notAllowedToCreateMovementation = ( ) => { 
     return Number(responsable) !== Number(user?.CODPESSOA) && !user?.PERM_ADMINISTRADOR;
   }
  
-
   const handleClose = () => {
     creatingPatrimonyInfo[0]
       ? changeCreatingPatrimonyInfo()
