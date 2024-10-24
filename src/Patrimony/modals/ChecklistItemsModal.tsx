@@ -35,6 +35,7 @@ import { TextareaAutosize as BaseTextareaAutosize } from "@mui/base/TextareaAuto
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { CircularProgress } from "@mui/material";
 
 const ChecklistItemsModal = () => {
   const {
@@ -54,6 +55,7 @@ const ChecklistItemsModal = () => {
   >();
   const [isMobile, setIsMobile] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const sliderRef = useRef<Slider | null>(null);
   
@@ -117,6 +119,7 @@ const ChecklistItemsModal = () => {
           checkListMap.checklistItemFile.id_item_checklist_movimentacao,
           file
         );
+        setIsLoading(false);
         toggleRefreshChecklist();
         return;
       }
@@ -131,11 +134,13 @@ const ChecklistItemsModal = () => {
       };
       const response = await createChecklistItem(newItemFile, file);
       if (response && response.status === 200) {
+        setIsLoading(false);
         toggleRefreshChecklist();
       }
       return;
     }
   };
+
   const updateChecklistItemToOkay = (checkListMap: {
     checklistItem: ChecklistItem;
     checklistItemFile: ChecklistItemFile;
@@ -171,7 +176,7 @@ const ChecklistItemsModal = () => {
     if (isMovimentationResponsable() && file && toBeDone()) {
       const formData = new FormData();
       formData.append("file", file);
-
+      setIsLoading(true);
       handleUploadImage(checklistMap, formData); // Atualiza a imagem no estado
       return;
     }
@@ -547,15 +552,14 @@ const ChecklistItemsModal = () => {
 
         <Box
           sx={{
-             display: "flex",
-             flexDirection: "column",
-            
-             alignItems: { 
-              
+            display: "flex",
+            flexDirection: "column",
+
+            alignItems: {
               md: "center",
-             },
-             justifyContent: "center",
-             gap: "4rem",
+            },
+            justifyContent: "center",
+            gap: "4rem",
           }}
         >
           {checklistItemsMap && !isMobile ? ( //desktop
@@ -578,7 +582,7 @@ const ChecklistItemsModal = () => {
                     }}
                     image={renderItemImage(checklistMap)}
                     title="checklist image"
-                  />
+                  ></CardMedia>
                   <CardContent>
                     <Stack gap={1}>
                       <Typography fontSize="small">
@@ -632,40 +636,9 @@ const ChecklistItemsModal = () => {
                         onChange={(e) =>
                           handleChangeItemObservation(e, checklistMap)
                         }
-                        defaultValue={''}
+                        defaultValue={""}
                         value={renderObservation(checklistMap)}
                       />
-                      {
-                        <label>
-                          <input
-                            type="file"
-                            id="fileUpload"
-                            accept="image/*"
-                            capture="environment"
-                            style={{ display: "none" }}
-                            onChange={(e) => handleFileChange(e, checklistMap)}
-                          />
-                          <Button
-                            component="span"
-                            sx={{
-                              height: "20px",
-                              width: "fit-content",
-                              padding: "0",
-                            }}
-                          >
-                            <Stack
-                              direction="row"
-                              alignItems="center"
-                              gap={0.5}
-                            >
-                              <Typography fontSize="small">
-                                Carregar nova foto
-                              </Typography>
-                              <CloudUploadIcon sx={{ fontSize: "16px" }} />
-                            </Stack>
-                          </Button>
-                        </label>
-                      }
                     </Stack>
                   </CardContent>
                 </Card>
@@ -691,9 +664,20 @@ const ChecklistItemsModal = () => {
                       sx={{
                         height: 200,
                       }}
-                      image={renderItemImage(checklistMap)}
+                      image={isLoading ? "" : renderItemImage(checklistMap)}
                       title="checklist image"
-                    />
+                    >
+                      {isLoading && (
+                        <Stack
+                          direction="row"
+                          justifyContent="center"
+                          alignItems="center"
+                          sx={{ mt: 2, height: "100%" }}
+                        >
+                          <CircularProgress />
+                        </Stack>
+                      )}
+                    </CardMedia>
                     <CardContent>
                       <Stack gap={1}>
                         <Typography fontSize="small">
@@ -747,10 +731,10 @@ const ChecklistItemsModal = () => {
                           onChange={(e) =>
                             handleChangeItemObservation(e, checklistMap)
                           }
-                          defaultValue={''}
+                          defaultValue={""}
                           value={renderObservation(checklistMap)}
                         />
-                        {
+                        {toBeDone() && isMovimentationResponsable() &&
                           <label>
                             <input
                               type="file"
@@ -797,7 +781,7 @@ const ChecklistItemsModal = () => {
             </Stack>
           )}
         </Box>
-        
+
         <Box display="flex" justifyContent="center" gap={2} marginTop="1rem">
           {toBeDone() &&
             isMovimentationResponsable() &&

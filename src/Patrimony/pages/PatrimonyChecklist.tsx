@@ -92,7 +92,6 @@ const PatrimonyChecklist = () => {
       
       display="flex"
       flexDirection="column"
-      border="1px solid black"
       padding={{
         xs: 0.2,
         sm: 2,
