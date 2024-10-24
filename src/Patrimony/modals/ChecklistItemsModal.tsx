@@ -60,8 +60,6 @@ const ChecklistItemsModal = () => {
   const sliderRef = useRef<Slider | null>(null);
   
   const next = async () => {
-   
-    console.log("currentSlideIndex", currentSlideIndex);
     if (
        (toBeDone() || toBeAproved()) &&
         checklistItemsMap &&
@@ -82,6 +80,7 @@ const ChecklistItemsModal = () => {
       }
       return;
     } 
+    sliderRef.current?.slickPrev();
     alert("preencha o item para avançar!");
 }
 
@@ -91,11 +90,15 @@ const ChecklistItemsModal = () => {
      }
   };
   const settings = {
+    swipe: false,
+    arrows: false,
+    accessibility: false,
     dots: true,
     infinite: false,
     speed: 200,
     slidesToShow: 1,
     slidesToScroll: 1,
+    draggable : false,
     afterChange: (current: number) => setCurrentSlideIndex(current),
   };
 
@@ -734,7 +737,7 @@ const ChecklistItemsModal = () => {
                           defaultValue={""}
                           value={renderObservation(checklistMap)}
                         />
-                        {toBeDone() && isMovimentationResponsable() &&
+                        {toBeDone() && isMovimentationResponsable() && (
                           <label>
                             <input
                               type="file"
@@ -766,7 +769,7 @@ const ChecklistItemsModal = () => {
                               </Stack>
                             </Button>
                           </label>
-                        }
+                        )}
                       </Stack>
                     </CardContent>
                   </Card>
@@ -776,8 +779,16 @@ const ChecklistItemsModal = () => {
           )}
           {isMobile && (
             <Stack direction="row" justifyContent="space-between">
-              <Button onClick={previous}>Voltar</Button>
-              <Button onClick={next}>Avançar</Button>
+              <Button onClick={next}>
+                <Typography fontSize="medium" textTransform="capitalize">
+                  Voltar
+                </Typography>
+              </Button>
+              <Button onClick={next}>
+                <Typography fontSize="medium" textTransform="capitalize">
+                  Avançar
+                </Typography>
+              </Button>
             </Stack>
           )}
         </Box>
@@ -785,15 +796,24 @@ const ChecklistItemsModal = () => {
         <Box display="flex" justifyContent="center" gap={2} marginTop="1rem">
           {toBeDone() &&
             isMovimentationResponsable() &&
-            (lastItem() || !isMobile) && toBeDone() && (
+            (lastItem() || !isMobile) &&
+            toBeDone() && (
               <Button onClick={handleSendChecklistItems}>Finalizar</Button>
             )}
 
           {toBeAproved() && (lastItem() || !isMobile) && (
-            <Button onClick={handleAproveChecklist}>Aprovar</Button>
+            <Button onClick={handleAproveChecklist}>
+              <Typography fontSize="medium" textTransform="capitalize">
+                Aprovar
+              </Typography>
+            </Button>
           )}
           {toBeAproved() && (lastItem() || !isMobile) && (
-            <Button onClick={handleReproveChecklist}>Reprovar</Button>
+            <Button onClick={handleReproveChecklist}>
+              <Typography fontSize="medium" textTransform="capitalize">
+                Aprovar
+              </Typography>
+            </Button>
           )}
         </Box>
       </Box>
