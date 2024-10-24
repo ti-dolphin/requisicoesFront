@@ -785,7 +785,7 @@ const ChecklistItemsModal = () => {
         <Box display="flex" justifyContent="center" gap={2} marginTop="1rem">
           {toBeDone() &&
             isMovimentationResponsable() &&
-            (lastItem() || !isMobile) && (
+            (lastItem() || !isMobile) && toBeDone() && (
               <Button onClick={handleSendChecklistItems}>Finalizar</Button>
             )}
 
