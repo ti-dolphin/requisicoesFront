@@ -17,7 +17,7 @@ const router = createBrowserRouter([
   { path: "/requisitions", element: <RequisitionHome /> },
   { path: "/patrimony", element: <PatrimonyHome /> },
   {
-    path: "patrimony/checklist/:id_movimentacao",
+    path: "patrimony/checklist/:id_patrimonio",
     element: (
         <PatrimonyChecklist />
     ),

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
   Modal,
   Box,
@@ -10,7 +10,7 @@ import {
   CardMedia,
   Stack,
   Button,
-  TextField,
+  styled,
 } from "@mui/material";
 import { checklistContext } from "../context/checklistContext";
 import CloseIcon from "@mui/icons-material/Close";
@@ -31,30 +31,10 @@ import {
 } from "../types";
 import CameraFileLogo from "../../../dist/assets/cameraFileLogo-Chy76Qi9.png";
 import { userContext } from "../../Requisitions/context/userContext";
-
-const style = {
-  position: "absolute" as const,
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  height: "90%",
-  width: {
-    xs: "94%",
-    md: "60%",
-    lg: "40%",
-    xl: "80%",
-  },
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: {
-    xs: 0,
-    md: 3,
-    lg: 4,
-    xl: 5,
-  },
-  borderRadius: "8px", // Bordas arredondadas para um visual mais clean
-  outline: "none", // Remover as bordas do modal
-};
+import { TextareaAutosize as BaseTextareaAutosize } from "@mui/base/TextareaAutosize";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const ChecklistItemsModal = () => {
   const {
@@ -72,8 +52,50 @@ const ChecklistItemsModal = () => {
       checklistItemFile: ChecklistItemFile;
     }[]
   >();
-    const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
+  const sliderRef = useRef<Slider | null>(null);
+  
+  const next = async () => {
+   
+    console.log("currentSlideIndex", currentSlideIndex);
+    if (
+       (toBeDone() || toBeAproved()) &&
+        checklistItemsMap &&
+        checklistItemsMap[currentSlideIndex].checklistItemFile
+    ) {
+      const filledChecklistItems = checklistItemsMap.filter(
+        (item) => item.checklistItemFile !== undefined
+      );
+      console.log('filledChecklistItems', filledChecklistItems);
+      const response = await sendChecklistItems(filledChecklistItems);
+      if (response && response.status !== 200) {
+        alert("Erro ao salvar item!");
+        return;
+      }
+      if (sliderRef.current) {
+        setCurrentSlideIndex(currentSlideIndex + 1);
+        sliderRef.current.slickNext();
+      }
+      return;
+    } 
+    alert("preencha o item para avançar!");
+}
+
+  const previous = () => {
+     if (sliderRef.current) {
+      sliderRef.current.slickPrev();
+     }
+  };
+  const settings = {
+    dots: true,
+    infinite: false,
+    speed: 200,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    afterChange: (current: number) => setCurrentSlideIndex(current),
+  };
 
   const handleClose = () => {
     toggleChecklistOpen();
@@ -90,8 +112,8 @@ const ChecklistItemsModal = () => {
     if (checklistItemsMap) {
       if (checkListMap.checklistItemFile) {
         const updatedItems = updateChecklistItemToOkay(checkListMap);
-          await sendChecklistItems(updatedItems);
-          await uploadFileToChecklistItemFile(
+        await sendChecklistItems(updatedItems);
+        await uploadFileToChecklistItemFile(
           checkListMap.checklistItemFile.id_item_checklist_movimentacao,
           file
         );
@@ -118,21 +140,23 @@ const ChecklistItemsModal = () => {
     checklistItem: ChecklistItem;
     checklistItemFile: ChecklistItemFile;
   }) => {
-    return checklistItemsMap?.map((itemMap) => {
-      if (itemMap.checklistItemFile) {
-        return itemMap.checklistItemFile.id_item_checklist_movimentacao ===
-          checkListMap.checklistItemFile.id_item_checklist_movimentacao
-          ? {
-              ...itemMap,
-              checklistItemFile: {
-                ...itemMap.checklistItemFile,
-                problema: 0,
-              },
-            }
-          : itemMap;
-      }
-      return itemMap;
-    }) || [];
+    return (
+      checklistItemsMap?.map((itemMap) => {
+        if (itemMap.checklistItemFile) {
+          return itemMap.checklistItemFile.id_item_checklist_movimentacao ===
+            checkListMap.checklistItemFile.id_item_checklist_movimentacao
+            ? {
+                ...itemMap,
+                checklistItemFile: {
+                  ...itemMap.checklistItemFile,
+                  problema: 0,
+                },
+              }
+            : itemMap;
+        }
+        return itemMap;
+      }) || []
+    );
   };
 
   // Função para lidar com a seleção de um novo arquivo de imagem
@@ -243,6 +267,18 @@ const ChecklistItemsModal = () => {
 
   const handleReproveChecklist = async () => {
     if (checklistOpen[1] && checklistItemsMap) {
+      const problemItem =
+        checklistItemsMap &&
+        checklistItemsMap.find(
+          (checklistItemMap) =>
+            checklistItemMap.checklistItemFile.problema === 1
+        );
+        if (!problemItem){ 
+          alert(
+            "Por favor, marque o item com problema antes de reprovar o checklist"
+          );
+          return;
+        }
       const response = await sendChecklistItems(checklistItemsMap);
       if (response && response.status === 200) {
         const currentChecklist = {
@@ -294,31 +330,40 @@ const ChecklistItemsModal = () => {
       ]);
     }
   };
+
   const handleChangeItemObservation = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    checklistMap: {
+    receivedChecklistMap: {
       checklistItem: ChecklistItem;
       checklistItemFile: ChecklistItemFile;
     }
   ) => {
     const { value } = e.target;
-    const updatedChecklistMap = { ...checklistMap };
-    updatedChecklistMap.checklistItemFile.observacao = value;
-    const updatedChecklistItemsMap = checklistItemsMap?.filter(
-      (checklistMap) => {
+
+    
+    const updatedChecklistItemsMap = checklistItemsMap?.map(
+      (internalChecklistMap) => {
         if (
-          checklistMap.checklistItemFile.id_item_checklist_movimentacao ===
-          updatedChecklistMap.checklistItemFile.id_item_checklist_movimentacao
+          internalChecklistMap.checklistItemFile &&
+          receivedChecklistMap.checklistItemFile
+            .id_item_checklist_movimentacao ===
+            internalChecklistMap.checklistItemFile
+              .id_item_checklist_movimentacao
         ) {
+          const updatedChecklistMap = { ...receivedChecklistMap };
+          updatedChecklistMap.checklistItemFile.observacao = value;
           return { ...updatedChecklistMap };
         }
         return {
-          ...checklistMap,
+          ...internalChecklistMap,
         };
       }
     );
+    console.log("updatedChecklistItemsMap: ", updatedChecklistItemsMap);
     setChecklistItemsMap(updatedChecklistItemsMap);
   };
+
+
 
   const getChecklistItemsMap = async () => {
     console.log("getChecklistItemsMap");
@@ -411,15 +456,64 @@ const ChecklistItemsModal = () => {
       setIsMobile(false);
     }
   };
+
+
+  const lastItem = ( ) => { 
+    if (checklistItemsMap && currentSlideIndex === checklistItemsMap.length - 1){ 
+      return true;
+    }
+    return false;
+  };
+
+  const renderObservation = (checklistMap : { 
+    checklistItem: ChecklistItem;
+    checklistItemFile: ChecklistItemFile;
+  } ) => { 
+      if(checklistMap.checklistItemFile){ 
+        return checklistMap.checklistItemFile.observacao ? checklistMap.checklistItemFile.observacao : ''
+      }
+      return '';
+  };
+
   useEffect(() => {
     checkIfMobile();
     getChecklistItemsMap();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checklistOpen[0], refreshChecklist]);
 
   return (
     <Modal open={checklistOpen[0]} onClose={handleClose}>
-      <Box sx={style}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "4rem",
+          justifyContent: "start",
+
+          position: "absolute" as const,
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          height: "96%",
+          width: {
+            xs: "90%",
+            md: "60%",
+            lg: "40%",
+            xl: "80%",
+          },
+          bgcolor: "background.paper",
+          boxShadow: 24,
+          p: {
+            xs: 0.5,
+            md: 3,
+            lg: 4,
+            xl: 5,
+          },
+          overflowY: "scroll",
+          borderRadius: "8px", // Bordas arredondadas para um visual mais clean
+          outline: "none", // Remover as bordas do modal
+        }}
+      >
         <IconButton
           onClick={handleClose}
           sx={{
@@ -431,7 +525,12 @@ const ChecklistItemsModal = () => {
           <CloseIcon sx={{ color: "red" }} />
         </IconButton>
 
-        <Stack direction={"row"} alignItems={"center"} spacing={1} padding={1}>
+        <Stack
+          direction={"column"}
+          alignItems={"center"}
+          spacing={1}
+          padding={1}
+        >
           <Typography
             variant="h6"
             component="h2"
@@ -440,147 +539,276 @@ const ChecklistItemsModal = () => {
           >
             Checklist
           </Typography>
-          <Typography textAlign="center">
+          <Typography textAlign="center" fontSize="small">
             Patrimônio {checklistOpen[1]?.id_patrimonio} (
             {checklistOpen[1]?.nome})
           </Typography>
         </Stack>
 
-        <Stack
-          direction="row"
-          flexWrap="wrap"
-          alignItems="center"
-          justifyContent="center"
-          border="1px solid #eeeeee"
+        <Box
           sx={{
-            height: "80%",
-            paddingY: "1rem",
-            overflowY: "scroll",
-            width: {
-              xs: "100%",
-            },
-            gap: 2,
+             display: "flex",
+             flexDirection: "column",
+            
+             alignItems: { 
+              
+              md: "center",
+             },
+             justifyContent: "center",
+             gap: "4rem",
           }}
         >
-          {checklistItemsMap &&
-            checklistItemsMap.map((checklistMap) => (
-              <Card
-                key={checklistMap.checklistItem.id_items_checklist_tipo}
-                sx={{
-                  width: {
-                    xs: 240,
-                    md: 300,
-                  },
-                  minHeight: 320,
-                  borderRadius: "10px",
-                }}
-              >
-                <CardMedia
+          {checklistItemsMap && !isMobile ? ( //desktop
+            <Stack direction="row" flexWrap="wrap" width="90%" gap={1}>
+              {checklistItemsMap.map((checklistMap) => (
+                <Card
+                  key={checklistMap.checklistItem.id_items_checklist_tipo}
                   sx={{
-                    height: 200,
+                    width: {
+                      xs: 240,
+                      md: 300,
+                    },
+                    minHeight: 320,
+                    borderRadius: "10px",
                   }}
-                  image={renderItemImage(checklistMap)}
-                  title="checklist image"
-                />
-                <CardContent>
-                  <Stack gap={1}>
-                    <Typography fontSize="small">
-                      {checklistMap.checklistItem.nome_item_checklist}
-                    </Typography>
-                    <Button
-                      onClick={() => handleChangeProblem(checklistMap)}
-                      sx={{ width: "fit-content" }}
-                    >
-                      <Stack direction="row" alignItems="center" gap={1}>
-                        <ErrorIcon
-                          sx={{
-                            color: renderErrorColor(checklistMap),
-                          }}
-                        />
-                        <Typography
-                          sx={{
-                            color: renderErrorColor(checklistMap),
-                          }}
-                          variant="body2"
-                          fontSize="small"
-                        >
-                          Problema
-                        </Typography>
-                      </Stack>
-                    </Button>
+                >
+                  <CardMedia
+                    sx={{
+                      height: 200,
+                    }}
+                    image={renderItemImage(checklistMap)}
+                    title="checklist image"
+                  />
+                  <CardContent>
+                    <Stack gap={1}>
+                      <Typography fontSize="small">
+                        {checklistMap.checklistItem.nome_item_checklist}
+                      </Typography>
+                      <Button
+                        onClick={() => handleChangeProblem(checklistMap)}
+                        sx={{ width: "fit-content" }}
+                      >
+                        <Stack direction="row" alignItems="center" gap={1}>
+                          <ErrorIcon
+                            sx={{
+                              color: renderErrorColor(checklistMap),
+                            }}
+                          />
+                          <Typography
+                            sx={{
+                              color: renderErrorColor(checklistMap),
+                            }}
+                            variant="body2"
+                            fontSize="small"
+                          >
+                            Problema
+                          </Typography>
+                        </Stack>
+                      </Button>
 
-                    <Button
-                      id="notProblem"
-                      onClick={() => handleChangeOkay(checklistMap)}
-                      sx={{ width: "fit-content" }}
-                    >
-                      <Stack direction="row" alignItems="center" gap={1}>
-                        <CheckCircleIcon
-                          sx={{
-                            color: renderOkayColor(checklistMap),
-                          }}
-                        />
-                        <Typography
-                          sx={{
-                            color: renderOkayColor(checklistMap),
-                          }}
-                          variant="body2"
-                          fontSize="small"
-                        >
-                          Okay
-                        </Typography>
-                      </Stack>
-                    </Button>
-                    <TextField
-                      multiline
-                      id="outlined-basic"
-                      onChange={(e) =>
-                        handleChangeItemObservation(e, checklistMap)
+                      <Button
+                        id="notProblem"
+                        onClick={() => handleChangeOkay(checklistMap)}
+                        sx={{ width: "fit-content" }}
+                      >
+                        <Stack direction="row" alignItems="center" gap={1}>
+                          <CheckCircleIcon
+                            sx={{
+                              color: renderOkayColor(checklistMap),
+                            }}
+                          />
+                          <Typography
+                            sx={{
+                              color: renderOkayColor(checklistMap),
+                            }}
+                            variant="body2"
+                            fontSize="small"
+                          >
+                            Okay
+                          </Typography>
+                        </Stack>
+                      </Button>
+                      <TextareaAutosize
+                        onChange={(e) =>
+                          handleChangeItemObservation(e, checklistMap)
+                        }
+                        defaultValue={''}
+                        value={renderObservation(checklistMap)}
+                      />
+                      {
+                        <label>
+                          <input
+                            type="file"
+                            id="fileUpload"
+                            accept="image/*"
+                            capture="environment"
+                            style={{ display: "none" }}
+                            onChange={(e) => handleFileChange(e, checklistMap)}
+                          />
+                          <Button
+                            component="span"
+                            sx={{
+                              height: "20px",
+                              width: "fit-content",
+                              padding: "0",
+                            }}
+                          >
+                            <Stack
+                              direction="row"
+                              alignItems="center"
+                              gap={0.5}
+                            >
+                              <Typography fontSize="small">
+                                Carregar nova foto
+                              </Typography>
+                              <CloudUploadIcon sx={{ fontSize: "16px" }} />
+                            </Stack>
+                          </Button>
+                        </label>
                       }
-                      variant="outlined"
-                      value={checklistMap.checklistItemFile.observacao}
+                    </Stack>
+                  </CardContent>
+                </Card>
+              ))}
+            </Stack>
+          ) : (
+            //mobile
+            checklistItemsMap && (
+              <Slider ref={sliderRef} {...settings}>
+                {checklistItemsMap.map((checklistMap) => (
+                  <Card
+                    key={checklistMap.checklistItem.id_items_checklist_tipo}
+                    sx={{
+                      width: {
+                        xs: 240,
+                        md: 300,
+                      },
+                      minHeight: 320,
+                      borderRadius: "10px",
+                    }}
+                  >
+                    <CardMedia
+                      sx={{
+                        height: 200,
+                      }}
+                      image={renderItemImage(checklistMap)}
+                      title="checklist image"
                     />
-                    {isMobile && (
-                      <label>
-                        <input
-                          type="file"
-                          id="fileUpload"
-                          accept="image/*"
-                          capture="environment"
-                          style={{ display: "none" }}
-                          onChange={(e) => handleFileChange(e, checklistMap)}
-                        />
+                    <CardContent>
+                      <Stack gap={1}>
+                        <Typography fontSize="small">
+                          {checklistMap.checklistItem.nome_item_checklist}
+                        </Typography>
                         <Button
-                          component="span"
-                          sx={{
-                            height: "20px",
-                            width: "fit-content",
-                            padding: "0",
-                          }}
+                          onClick={() => handleChangeProblem(checklistMap)}
+                          sx={{ width: "fit-content" }}
                         >
-                          <Stack direction="row" alignItems="center" gap={0.5}>
-                            <Typography fontSize="small">
-                              Carregar nova foto
+                          <Stack direction="row" alignItems="center" gap={1}>
+                            <ErrorIcon
+                              sx={{
+                                color: renderErrorColor(checklistMap),
+                              }}
+                            />
+                            <Typography
+                              sx={{
+                                color: renderErrorColor(checklistMap),
+                              }}
+                              variant="body2"
+                              fontSize="small"
+                            >
+                              Problema
                             </Typography>
-                            <CloudUploadIcon sx={{ fontSize: "16px" }} />
                           </Stack>
                         </Button>
-                      </label>
-                    )}
-                  </Stack>
-                </CardContent>
-              </Card>
-            ))}
-        </Stack>
-        <Box display="flex" justifyContent="center" gap={2} marginTop="1rem">
-          {toBeDone() && isMovimentationResponsable() && (
-            <Button onClick={handleSendChecklistItems}>Enviar</Button>
-          )}
 
-          {toBeAproved() && isTypeResponsable() && (
+                        <Button
+                          id="notProblem"
+                          onClick={() => handleChangeOkay(checklistMap)}
+                          sx={{ width: "fit-content" }}
+                        >
+                          <Stack direction="row" alignItems="center" gap={1}>
+                            <CheckCircleIcon
+                              sx={{
+                                color: renderOkayColor(checklistMap),
+                              }}
+                            />
+                            <Typography
+                              sx={{
+                                color: renderOkayColor(checklistMap),
+                              }}
+                              variant="body2"
+                              fontSize="small"
+                            >
+                              Okay
+                            </Typography>
+                          </Stack>
+                        </Button>
+                        <TextareaAutosize
+                          onChange={(e) =>
+                            handleChangeItemObservation(e, checklistMap)
+                          }
+                          defaultValue={''}
+                          value={renderObservation(checklistMap)}
+                        />
+                        {
+                          <label>
+                            <input
+                              type="file"
+                              id="fileUpload"
+                              accept="image/*"
+                              capture="environment"
+                              style={{ display: "none" }}
+                              onChange={(e) =>
+                                handleFileChange(e, checklistMap)
+                              }
+                            />
+                            <Button
+                              component="span"
+                              sx={{
+                                height: "20px",
+                                width: "fit-content",
+                                padding: "0",
+                              }}
+                            >
+                              <Stack
+                                direction="row"
+                                alignItems="center"
+                                gap={0.5}
+                              >
+                                <Typography fontSize="small">
+                                  Carregar nova foto
+                                </Typography>
+                                <CloudUploadIcon sx={{ fontSize: "16px" }} />
+                              </Stack>
+                            </Button>
+                          </label>
+                        }
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                ))}
+              </Slider>
+            )
+          )}
+          {isMobile && (
+            <Stack direction="row" justifyContent="space-between">
+              <Button onClick={previous}>Voltar</Button>
+              <Button onClick={next}>Avançar</Button>
+            </Stack>
+          )}
+        </Box>
+        
+        <Box display="flex" justifyContent="center" gap={2} marginTop="1rem">
+          {toBeDone() &&
+            isMovimentationResponsable() &&
+            (lastItem() || !isMobile) && (
+              <Button onClick={handleSendChecklistItems}>Finalizar</Button>
+            )}
+
+          {toBeAproved() && (lastItem() || !isMobile) && (
             <Button onClick={handleAproveChecklist}>Aprovar</Button>
           )}
-          {toBeAproved() && isTypeResponsable() && (
+          {toBeAproved() && (lastItem() || !isMobile) && (
             <Button onClick={handleReproveChecklist}>Reprovar</Button>
           )}
         </Box>
@@ -588,5 +816,62 @@ const ChecklistItemsModal = () => {
     </Modal>
   );
 };
+
+const blue = {
+  100: "#DAECFF",
+  200: "#b6daff",
+  400: "#3399FF",
+  500: "#007FFF",
+  600: "#0072E5",
+  900: "#003A75",
+};
+
+const grey = {
+  50: "#F3F6F9",
+  100: "#E5EAF2",
+  200: "#DAE2ED",
+  300: "#C7D0DD",
+  400: "#B0B8C4",
+  500: "#9DA8B7",
+  600: "#6B7A90",
+  700: "#434D5B",
+  800: "#303740",
+  900: "#1C2025",
+};
+
+const TextareaAutosize = styled(BaseTextareaAutosize)(
+  ({ theme }) => `
+  box-sizing: border-box;
+  width: '100%';
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: ${theme.palette.mode === "dark" ? grey[300] : grey[900]};
+  background: ${theme.palette.mode === "dark" ? grey[900] : "#fff"};
+  border: 1px solid ${theme.palette.mode === "dark" ? grey[700] : grey[200]};
+  box-shadow: 0px 2px 2px ${
+    theme.palette.mode === "dark" ? grey[900] : grey[50]
+  };
+
+  &:hover {
+    border-color: ${blue[400]};
+  }
+
+  &:focus {
+    border-color: ${blue[400]};
+    box-shadow: 0 0 0 3px ${
+      theme.palette.mode === "dark" ? blue[600] : blue[200]
+    };
+  }
+
+  // firefox
+  &:focus-visible {
+    outline: 0;
+  }
+`
+);
 
 export default ChecklistItemsModal;

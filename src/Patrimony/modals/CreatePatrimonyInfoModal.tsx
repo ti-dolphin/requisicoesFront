@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import React, { useContext, useEffect, useState } from "react";
 import { PatrimonyInfoContext } from "../context/patrimonyInfoContext";
-import { Autocomplete, Button, Stack, TextField } from "@mui/material";
+import { Autocomplete, Button, IconButton, Stack, TextField } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { Patrimony, patrimonyType } from "../types";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -58,19 +58,7 @@ const columns: ColumnData[] = [
   },
 ];
 
-const style = {
-  position: "absolute" as const,
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 'fit-content',
-  bgcolor: "background.paper",
-  display: 'flex',
-  flexDirection: 'column',
-  flexSruink: 1,
-  boxShadow: 24,
-  p: 4,
-};
+
 
 export default function CreatePatrimonyInfoModal() {
 
@@ -190,19 +178,50 @@ export default function CreatePatrimonyInfoModal() {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={{ ...style, gap: "1rem" }}>
+        <Box
+          sx={{
+            position: "absolute" as const,
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: {
+              xs: "90%",
+              sm: "70%",
+              md: "50%",
+              lg: "30%",
+              xl: "20%",
+            },
+            bgcolor: "background.paper",
+            display: "flex",
+            flexDirection: "column",
+            gap: '1rem',
+            alignItems: "center",
+            flexSruink: 1,
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
           <CreateMovementation handleSave={handleSave} />
           <Stack direction="row" justifyContent="end" spacing={4}>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              fontSize="medium"
+            >
               Novo Patrimônio
             </Typography>
-            <Button
+            <IconButton
               onClick={toggleCreatingPatrimonyInfo}
-              variant="outlined"
-              sx={{ color: "red" }}
+              sx={{
+                color: "red",
+                position: "absolute",
+                top: "10px",
+                right: "10px",
+              }}
             >
               <CloseIcon />
-            </Button>
+            </IconButton>
           </Stack>
           <Form onSubmit={handleNext}>
             <Stack direction="column" spacing={1.6}>
@@ -223,13 +242,16 @@ export default function CreatePatrimonyInfoModal() {
                     id="combo-box-demo"
                     options={renderTypeOptions()}
                     onChange={handleSelectType} // Adiciona essa linha para chamar a função ao selecionar um item
-                    sx={{ width: 300 }}
+                    
                     renderInput={(params) => (
                       <TextField {...params} label={column.label} />
                     )}
                   />
                 ) : (
                   <TextField
+                  sx={{ 
+                    width: '100%'
+                  }}
                     type={column.numeric ? "number" : "text"}
                     required={column.required}
                     onChange={(e) => handleChange(e, column.dataKey)}
@@ -238,6 +260,7 @@ export default function CreatePatrimonyInfoModal() {
                 )
               )}
             </Stack>
+
             <Button
               type="submit"
               sx={{ width: "1rem", marginX: "1rem", marginTop: "1rem" }}

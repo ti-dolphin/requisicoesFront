@@ -143,7 +143,7 @@ export default function SearchAppBar({
   };
   const handleSelectNotification = (checklist: MovementationChecklist) => {
     toggleChecklistOpen(checklist);
-    navigate(`checklist/${checklist.id_movimentacao}`);
+    navigate(`checklist/${checklist.id_patrimonio}`);
   };
   const getNotifications = async () => {
     console.log("getNotifications");

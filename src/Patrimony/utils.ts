@@ -179,9 +179,9 @@ export const getInactivePatrimonyInfo = async ( ) => {
       console.log(e);
    }
 };
-export const getChecklistDataByMovementationID = async (id_movimentacao : number ) =>{ 
+export const getChecklistDataByPatrimonyId = async (id_patrimonio : number ) =>{ 
   try{
-    const response = await api.get(`checklist/${id_movimentacao}`);
+    const response = await api.get(`checklist/${id_patrimonio}`);
     return response.data;
   }catch(e){ 
      console.log(e);

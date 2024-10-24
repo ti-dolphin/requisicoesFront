@@ -146,7 +146,7 @@ export default function MovementsTable() {
     }
   };
   const handleOpenChecklists = ( row : PatrimonyInfo) => {
-      navigate('/patrimony/checklist/' + row.numeroMovimentacao);
+      navigate('/patrimony/checklist/' + row.id_patrimonio); //
   };
 
   function RowContent(

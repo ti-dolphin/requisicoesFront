@@ -91,14 +91,14 @@ const Home = () => {
           height: "10%",
         }}
       >
-        <IconButton sx={{ position: "absolute", right: "4rem" }}>
+        <IconButton sx={{ position: "absolute", right: "1rem" }}>
           <Dropdown>
             <BaseMenuButton>
               {" "}
               <AccountCircleIcon sx={{ color: "#F7941E" }} />
             </BaseMenuButton>
             <Menu>
-              <Button onClick={() => handleLogOut()}>Log out</Button>
+              <Button sx={{marginTop: '0.5rem'}} onClick={() => handleLogOut()}><Typography fontSize="small" textTransform="lowercase" color="blue">Sair</Typography></Button>
             </Menu>
           </Dropdown>
         </IconButton>

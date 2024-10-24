@@ -9,9 +9,6 @@ body::-webkit-scrollbar {
   width: 8px;               /* width of the entire scrollbar */
 }
 
-body::-webkit-scrollbar-track {
-       /* color of the tracking area */
-}
 
 body::-webkit-scrollbar-thumb {
   background-color: #bdbdbd;    /* color of the scroll thumb */

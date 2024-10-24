@@ -23,17 +23,7 @@ import { userContext } from "../../Requisitions/context/userContext";
 
 dayjs.locale("pt-br");
 
-const style = {
-  position: "absolute" as const,
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 'fit-content',
-  flexShrink : 1,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-};
+
 
 interface ProjectOption {
   label: string;
@@ -250,18 +240,46 @@ export default function CreateMovementation({
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box display="flex" flexDirection="column" gap="1rem" sx={style}>
+        <Box
+          display="flex"
+          flexDirection="column"
+          gap="1rem"
+          sx={{
+            position: "absolute" as const,
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: {
+              xs: "85%",
+              sm: "65%",
+              md: "45%",
+              lg: "25%",
+              xl: "15%",
+            },
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            flexShrink: 1,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
           <Stack direction="row" justifyContent="end" spacing={2}>
             <Typography id="modal-modal-title" variant="h6" component="h2">
               Nova Movimentação
             </Typography>
-            <Button
+            <IconButton
               onClick={handleClose}
-              variant="outlined"
-              sx={{ color: "red", width: "0.5rem", alignSelf: "flex-end" }}
+              sx={{
+                color: "red",
+                position: "absolute",
+                top: "10px",
+                right: "10px",
+              }}
             >
               <CloseIcon />
-            </Button>
+            </IconButton>
           </Stack>
           <Stack spacing={2}>
             {getMovementationKeys().map((column) =>
@@ -270,7 +288,6 @@ export default function CreateMovementation({
                   disablePortal
                   id="combo-box-demo"
                   options={renderProjectOptions()}
-                  sx={{ width: 300 }}
                   onChange={handleSelectProject}
                   renderInput={(params) => (
                     <TextField {...params} label={column.label} />
@@ -292,7 +309,7 @@ export default function CreateMovementation({
                   disablePortal
                   id="combo-box-demo"
                   options={renderPersonOptions()}
-                  sx={{ width: 300 }}
+                  
                   onChange={handleSelectReponsable}
                   renderInput={(params) => (
                     <TextField {...params} label={column.label} />

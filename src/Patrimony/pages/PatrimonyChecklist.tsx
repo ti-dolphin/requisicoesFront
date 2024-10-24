@@ -22,14 +22,13 @@ import { MovementationChecklist } from "../types";
 import { checklistContext } from "../context/checklistContext";
 import { ArrowLeftIcon } from "@mui/x-date-pickers/icons";
 import { useNavigate, useParams } from "react-router-dom";
-import Search from "@mui/icons-material/Search";
 import SearchIcon from "@mui/icons-material/Search";
 import ChecklistItemsModal from "../modals/ChecklistItemsModal";
-import { getChecklistDataByMovementationID } from "../utils";
+import { getChecklistDataByPatrimonyId } from "../utils";
 
 const PatrimonyChecklist = () => {
   const navigate = useNavigate();
-  const { id_movimentacao } = useParams();
+  const { id_patrimonio } = useParams();
   const { toggleChecklistOpen } = useContext(checklistContext);
   const [checklistData, setChecklistData] =
     useState<MovementationChecklist[]>();
@@ -45,8 +44,8 @@ const PatrimonyChecklist = () => {
   };
 
   const getChecklistData = async () => {
-    const checkListData = await getChecklistDataByMovementationID(
-      Number(id_movimentacao)
+    const checkListData = await getChecklistDataByPatrimonyId(
+      Number(id_patrimonio)
     );
     if (checkListData) {
       console.log('checklist data: ', checkListData);
@@ -90,10 +89,12 @@ const PatrimonyChecklist = () => {
   return (
     <Box
       height="100vh"
+      
       display="flex"
       flexDirection="column"
+      border="1px solid black"
       padding={{
-        xs: 0.5,
+        xs: 0.2,
         sm: 2,
         md: 3,
         lg: 4,
@@ -135,18 +136,16 @@ const PatrimonyChecklist = () => {
             paddingX: "2rem",
           }}
         >
-          <Box display="flex">
-            <Typography variant="h6" textAlign="center" padding={2}>
+          <Box display="flex" flexWrap="wrap">
+            <Typography variant="h6" textAlign="center" fontSize="medium" padding={2}>
               Histórico de Checklists
             </Typography>
             <Stack direction="row" alignItems="center">
               <Toolbar>
                 <Stack direction="row" alignItems="center">
-                  <Search>
                     <SearchIconWrapper>
                       <SearchIcon />
                     </SearchIconWrapper>
-                  </Search>
                   <StyledInputBase
                     placeholder="Search…"
                     inputProps={{ "aria-label": "search" }}
