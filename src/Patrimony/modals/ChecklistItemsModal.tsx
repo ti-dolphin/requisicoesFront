@@ -29,7 +29,7 @@ import {
   ChecklistItemFile,
   MovementationChecklist,
 } from "../types";
-import CameraFileLogo from "../../../dist/assets/cameraFileLogo-Chy76Qi9.png";
+import CameraFileLogo from "../assets/cameraFileLogo-Chy76Qi9-Chy76Qi9.png";
 import { userContext } from "../../Requisitions/context/userContext";
 import { TextareaAutosize as BaseTextareaAutosize } from "@mui/base/TextareaAutosize";
 import Slider from "react-slick";
