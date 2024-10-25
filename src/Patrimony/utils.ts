@@ -411,9 +411,9 @@ export const acceptMovementation = async(movementationId : number) =>  {
    }
  };
 
-export const deleteMovementation = async (movimentationId : number ) => { 
+export const deleteMovementation = async (movimentationId : number, patrimonyId: number ) => { 
    try{ 
-      const response = await api.delete(`movementation/${movimentationId}`);
+      const response = await api.delete(`movementation//${patrimonyId}/${movimentationId}`);
       return response;
    }catch(e){ 
       console.log(e);

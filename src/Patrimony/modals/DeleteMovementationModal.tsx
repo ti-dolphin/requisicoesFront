@@ -30,13 +30,14 @@ export default function DeleteMovementationModal() {
   const handleDelete = async () => {
     if (deletingMovementation[0] && deletingMovementation[1]) {
       const response = await deleteMovementation(
-        deletingMovementation[1].id_movimentacao
+        deletingMovementation[1].id_movimentacao, deletingMovementation[1].id_patrimonio
       );
-      console.log("response status: ", response?.status);
       if (response && response.status === 200) {
         toggleRefreshMovimentation();
         toggleDeletingMovementation();
+        return;
       }
+      alert(response?.data.message);
     }
   };
 

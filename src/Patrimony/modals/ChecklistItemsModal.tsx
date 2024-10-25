@@ -36,6 +36,8 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { CircularProgress } from "@mui/material";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 
 const ChecklistItemsModal = () => {
   const {
@@ -60,28 +62,25 @@ const ChecklistItemsModal = () => {
   const sliderRef = useRef<Slider | null>(null);
   
   const next = async () => {
-    if (
-       (toBeDone() || toBeAproved()) &&
-        checklistItemsMap &&
-        checklistItemsMap[currentSlideIndex].checklistItemFile
-    ) {
-      const filledChecklistItems = checklistItemsMap.filter(
-        (item) => item.checklistItemFile !== undefined
-      );
-      console.log('filledChecklistItems', filledChecklistItems);
-      const response = await sendChecklistItems(filledChecklistItems);
-      if (response && response.status !== 200) {
-        alert("Erro ao salvar item!");
-        return;
-      }
+    // if (
+    //    (toBeDone() || toBeAproved()) &&
+    //     checklistItemsMap &&
+    //     checklistItemsMap[currentSlideIndex].checklistItemFile
+    // ) {
+      // const filledChecklistItems = checklistItemsMap.filter(
+      //   (item) => item.checklistItemFile !== undefined
+      // );
+      // console.log('filledChecklistItems', filledChecklistItems);
+      // const response = await sendChecklistItems(filledChecklistItems);
+      // if (response && response.status !== 200) {
+      //   alert("Erro ao salvar item!");
+      //   return;
+      // }
       if (sliderRef.current) {
-        setCurrentSlideIndex(currentSlideIndex + 1);
         sliderRef.current.slickNext();
       }
       return;
-    } 
-    sliderRef.current?.slickPrev();
-    alert("preencha o item para avançar!");
+    
 }
 
   const previous = () => {
@@ -89,8 +88,9 @@ const ChecklistItemsModal = () => {
       sliderRef.current.slickPrev();
      }
   };
+
   const settings = {
-    swipe: false,
+    swipe: true,
     arrows: false,
     accessibility: false,
     dots: true,
@@ -99,6 +99,18 @@ const ChecklistItemsModal = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
     draggable : false,
+    beforeChange: async (oldIndex: number) => { 
+      if(checklistItemsMap && checklistItemsMap[oldIndex].checklistItemFile){ 
+         const filledChecklistItems = checklistItemsMap.filter(
+           (item) => item.checklistItemFile !== undefined
+         );
+         console.log("filledChecklistItems", filledChecklistItems);
+         await sendChecklistItems(filledChecklistItems);
+         console.log('saved it');
+          return;
+      }
+      console.log('dont save it because theres no item')
+    },
     afterChange: (current: number) => setCurrentSlideIndex(current),
   };
 
@@ -779,16 +791,12 @@ const ChecklistItemsModal = () => {
           )}
           {isMobile && (
             <Stack direction="row" justifyContent="space-between">
-              <Button onClick={next}>
-                <Typography fontSize="medium" textTransform="capitalize">
-                  Voltar
-                </Typography>
-              </Button>
-              <Button onClick={next}>
-                <Typography fontSize="medium" textTransform="capitalize">
-                  Avançar
-                </Typography>
-              </Button>
+              <IconButton onClick={previous}>
+                <NavigateBeforeIcon sx={{ color: "blue" }} />
+              </IconButton>
+              <IconButton onClick={next}>
+                <NavigateNextIcon sx={{ color: "blue" }} />
+              </IconButton>
             </Stack>
           )}
         </Box>
@@ -798,7 +806,16 @@ const ChecklistItemsModal = () => {
             isMovimentationResponsable() &&
             (lastItem() || !isMobile) &&
             toBeDone() && (
-              <Button onClick={handleSendChecklistItems}>Finalizar</Button>
+              <Button onClick={handleSendChecklistItems}>
+                <Typography
+                  fontSize="medium"
+                  fontFamily="revert-layer"
+                  textTransform="capitalize"
+                >
+                  {" "}
+                  Finalizar
+                </Typography>
+              </Button>
             )}
 
           {toBeAproved() && (lastItem() || !isMobile) && (
@@ -811,7 +828,7 @@ const ChecklistItemsModal = () => {
           {toBeAproved() && (lastItem() || !isMobile) && (
             <Button onClick={handleReproveChecklist}>
               <Typography fontSize="medium" textTransform="capitalize">
-                Aprovar
+                Reprovar
               </Typography>
             </Button>
           )}
