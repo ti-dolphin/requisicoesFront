@@ -62,25 +62,10 @@ const ChecklistItemsModal = () => {
   const sliderRef = useRef<Slider | null>(null);
   
   const next = async () => {
-    // if (
-    //    (toBeDone() || toBeAproved()) &&
-    //     checklistItemsMap &&
-    //     checklistItemsMap[currentSlideIndex].checklistItemFile
-    // ) {
-      // const filledChecklistItems = checklistItemsMap.filter(
-      //   (item) => item.checklistItemFile !== undefined
-      // );
-      // console.log('filledChecklistItems', filledChecklistItems);
-      // const response = await sendChecklistItems(filledChecklistItems);
-      // if (response && response.status !== 200) {
-      //   alert("Erro ao salvar item!");
-      //   return;
-      // }
       if (sliderRef.current) {
         sliderRef.current.slickNext();
       }
       return;
-    
 }
 
   const previous = () => {
