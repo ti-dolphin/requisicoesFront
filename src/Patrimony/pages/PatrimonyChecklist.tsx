@@ -29,7 +29,7 @@ import { getChecklistDataByPatrimonyId } from "../utils";
 const PatrimonyChecklist = () => {
   const navigate = useNavigate();
   const { id_patrimonio } = useParams();
-  const { toggleChecklistOpen } = useContext(checklistContext);
+  const { toggleChecklistOpen, refreshChecklist } = useContext(checklistContext);
   const [checklistData, setChecklistData] =
     useState<MovementationChecklist[]>();
 
@@ -84,7 +84,7 @@ const PatrimonyChecklist = () => {
   
   useEffect(() => {
     getChecklistData();
-  }, []);
+  }, [refreshChecklist]);
 
   return (
     <Box

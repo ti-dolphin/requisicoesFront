@@ -56,6 +56,11 @@ const columns: ColumnData[] = [
     dataKey: "pat_legado",
     required: false,
   },
+  { 
+    label: 'Fabricante',
+    dataKey: 'fabricante',
+    required: false,
+  }
 ];
 
 
@@ -73,7 +78,9 @@ export default function CreatePatrimonyInfoModal() {
     descricao: "",
     pat_legado: "",
     nome_tipo: '',
-    ativo : 1
+    ativo : 1,
+    fabricante: ''
+    // TODO: Add other fields as needed
   });
 
   const [typeOptions, setTypes ] = useState<patrimonyType[]>([]);

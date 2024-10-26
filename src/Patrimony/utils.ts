@@ -115,6 +115,7 @@ export const getAccessoriesByPatrimonyId = async (id_patrimonio: number) => {
 };
 
 export const createPatrimony = async (newPatrimony : Patrimony ) =>  {
+  console.log("newPatrimony: ", newPatrimony);
    try{ 
       const response = await api.post(`/patrimony`, newPatrimony);
       return response.data.insertId;

@@ -101,6 +101,8 @@ const PatrimonyDetails = () => {
         return "Código Patrimônio";
       case "nome_tipo": 
         return "Tipo"
+      case "fabricante" : 
+      return 'Fabricante';
     }
   };
 
