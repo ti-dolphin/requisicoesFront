@@ -125,7 +125,7 @@ export const createPatrimony = async (newPatrimony : Patrimony ) =>  {
 }
 export const dateTimeRenderer = (value?: string | number) => {
   if (typeof value === "string") {
-    const brazilianDateTime = dayjs.utc(value).tz("America/Sao_Paulo");
+    const brazilianDateTime = dayjs.utc(value);
     const formattedDate = brazilianDateTime.format("DD/MM/YYYY");
     const formattedTime = brazilianDateTime.format("HH:mm:ss");
     return `${formattedDate}, ${formattedTime}`;

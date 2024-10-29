@@ -24,12 +24,13 @@ import { ArrowLeftIcon } from "@mui/x-date-pickers/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 import ChecklistItemsModal from "../modals/ChecklistItemsModal";
-import { getChecklistDataByPatrimonyId } from "../utils";
+import { dateTimeRenderer, getChecklistDataByPatrimonyId } from "../utils";
 
 const PatrimonyChecklist = () => {
   const navigate = useNavigate();
   const { id_patrimonio } = useParams();
-  const { toggleChecklistOpen, refreshChecklist } = useContext(checklistContext);
+  const { toggleChecklistOpen, refreshChecklist } =
+    useContext(checklistContext);
   const [checklistData, setChecklistData] =
     useState<MovementationChecklist[]>();
 
@@ -48,7 +49,7 @@ const PatrimonyChecklist = () => {
       Number(id_patrimonio)
     );
     if (checkListData) {
-      console.log('checklist data: ', checkListData);
+      console.log("checklist data: ", checkListData);
       setChecklistData(checkListData);
     }
   };
@@ -63,25 +64,28 @@ const PatrimonyChecklist = () => {
     }
   };
 
-  const renderColumnValue = (dataKey : string, value : string | number | null |undefined ) =>  {
-    if(dataKey === 'aprovado'){ 
-      return value === 1? "Sim" : "Não";
+  const renderColumnValue = (
+    dataKey: string,
+    value: string | number | null | undefined
+  ) => {
+    if (dataKey === "aprovado") {
+      return value === 1 ? "Sim" : "Não";
     }
-    if(dataKey === 'realizado') { 
-      return value === 1? "Sim" : "Não";
+    if (dataKey === "realizado") {
+      return value === 1 ? "Sim" : "Não";
     }
-    if(dataKey === 'data_criacao'){ 
+    if (dataKey === "data_criacao") {
       return dateRenderer(value);
     }
-    if(dataKey === 'data_aprovado'){ 
+    if (dataKey === "data_aprovado") {
       return dateRenderer(value);
     }
-    if(dataKey === 'data_realizado'){ 
-      return dateRenderer(value);
+    if (dataKey === "data_realizado") {
+      return dateTimeRenderer(value || "");
     }
     return value;
   };
-  
+
   useEffect(() => {
     getChecklistData();
   }, [refreshChecklist]);
@@ -89,7 +93,6 @@ const PatrimonyChecklist = () => {
   return (
     <Box
       height="100vh"
-      
       display="flex"
       flexDirection="column"
       padding={{
@@ -136,15 +139,20 @@ const PatrimonyChecklist = () => {
           }}
         >
           <Box display="flex" flexWrap="wrap">
-            <Typography variant="h6" textAlign="center" fontSize="medium" padding={2}>
+            <Typography
+              variant="h6"
+              textAlign="center"
+              fontSize="medium"
+              padding={2}
+            >
               Histórico de Checklists
             </Typography>
             <Stack direction="row" alignItems="center">
               <Toolbar>
                 <Stack direction="row" alignItems="center">
-                    <SearchIconWrapper>
-                      <SearchIcon />
-                    </SearchIconWrapper>
+                  <SearchIconWrapper>
+                    <SearchIcon />
+                  </SearchIconWrapper>
                   <StyledInputBase
                     placeholder="Search…"
                     inputProps={{ "aria-label": "search" }}
@@ -195,7 +203,7 @@ const PatrimonyChecklist = () => {
                       sx={{ paddingY: "0.5rem" }}
                     >
                       <Typography fontSize="small" textAlign="center">
-                        {renderColumnValue(column.dataKey, row[column.dataKey]) }
+                        {renderColumnValue(column.dataKey, row[column.dataKey])}
                       </Typography>
                     </TableCell>
                   ))}

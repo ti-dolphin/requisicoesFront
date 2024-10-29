@@ -145,8 +145,8 @@ export default function MovementsTable() {
       return;
     }
   };
-  const handleOpenChecklists = ( row : PatrimonyInfo) => {
-      navigate('/patrimony/checklist/' + row.id_patrimonio); //
+  const handleOpenChecklists = (row: PatrimonyInfo) => {
+    navigate("/patrimony/checklist/" + row.id_patrimonio); //
   };
 
   function RowContent(
@@ -229,7 +229,7 @@ export default function MovementsTable() {
                 >
                   <LoopIcon />
                 </IconButton>
-                <IconButton onClick={( ) => handleOpenChecklists(row)}>
+                <IconButton onClick={() => handleOpenChecklists(row)}>
                   <ChecklistIcon />
                 </IconButton>
                 <Checkbox

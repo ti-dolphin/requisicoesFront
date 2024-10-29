@@ -165,7 +165,7 @@ const ChecklistItemsModal = () => {
   };
 
   // Função para lidar com a seleção de um novo arquivo de imagem
-  const handleFileChange = (
+  const handleFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
     checklistMap: {
       checklistItem: ChecklistItem;
@@ -177,7 +177,7 @@ const ChecklistItemsModal = () => {
       const formData = new FormData();
       formData.append("file", file);
       setIsLoading(true);
-      handleUploadImage(checklistMap, formData); // Atualiza a imagem no estado
+      await handleUploadImage(checklistMap, formData); // Atualiza a imagem no estado
       return;
     }
     alert("Editar checklist não é permitido!");
@@ -367,9 +367,6 @@ const ChecklistItemsModal = () => {
     console.log("updatedChecklistItemsMap: ", updatedChecklistItemsMap);
     setChecklistItemsMap(updatedChecklistItemsMap);
   };
-
-
-
   const getChecklistItemsMap = async () => {
     console.log("getChecklistItemsMap");
     if (checklistOpen[1]) {
