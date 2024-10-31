@@ -749,7 +749,7 @@ const ChecklistItemsModal = () => {
                               type="file"
                               id="fileUpload"
                               accept="image/*"
-                              capture="environment"
+                              
                               style={{ display: "none" }}
                               onChange={(e) =>
                                 handleFileChange(e, checklistMap)
