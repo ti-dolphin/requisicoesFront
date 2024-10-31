@@ -58,8 +58,16 @@ const ChecklistItemsModal = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
+  const [isIOS, setIsIOS] = useState(false);
   const sliderRef = useRef<Slider | null>(null);
+
+  function verifyIsIOS() {
+    if(navigator.userAgent.toLowerCase().includes('iphone')){ 
+      setIsIOS(true);
+      return;
+    }
+    setIsIOS(false);
+  }
   
   const next = async () => {
       if (sliderRef.current) {
@@ -490,6 +498,7 @@ const ChecklistItemsModal = () => {
   };
 
   useEffect(() => {
+    verifyIsIOS()
     checkIfMobile();
     getChecklistItemsMap();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -749,7 +758,7 @@ const ChecklistItemsModal = () => {
                               type="file"
                               id="fileUpload"
                               accept="image/*"
-                              
+                              capture={isIOS ?  undefined : 'environment'}
                               style={{ display: "none" }}
                               onChange={(e) =>
                                 handleFileChange(e, checklistMap)
