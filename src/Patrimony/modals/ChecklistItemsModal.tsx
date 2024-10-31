@@ -83,27 +83,39 @@ const ChecklistItemsModal = () => {
     speed: 200,
     slidesToShow: 1,
     slidesToScroll: 1,
-    draggable : false,
-    beforeChange: async (oldIndex: number) => { 
-      if(checklistItemsMap && checklistItemsMap[oldIndex].checklistItemFile){ 
-         const filledChecklistItems = checklistItemsMap.filter(
-           (item) => item.checklistItemFile !== undefined
-         );
-         console.log("filledChecklistItems", filledChecklistItems);
-         await sendChecklistItems(filledChecklistItems);
-         console.log('saved it');
-          return;
+    draggable: false,
+    beforeChange: (oldIndex : number) => {
+      if (checklistItemsMap && checklistItemsMap[oldIndex]?.checklistItemFile) {
+        (async () => {
+          const filledChecklistItems = checklistItemsMap.filter(
+            (item) => item.checklistItemFile !== undefined
+          );
+          await sendChecklistItems(filledChecklistItems);
+          console.log("saved it");
+        })();
+      } else {
+        console.log("dont save it because there's no item");
       }
-      console.log('dont save it because theres no item')
     },
-    afterChange: (current: number) => setCurrentSlideIndex(current),
+    // beforeChange: async (oldIndex: number) => {
+    //   if(checklistItemsMap && checklistItemsMap[oldIndex].checklistItemFile){
+    //      const filledChecklistItems = checklistItemsMap.filter(
+    //        (item) => item.checklistItemFile !== undefined
+    //      );
+    //      console.log("filledChecklistItems", filledChecklistItems);
+    //      await sendChecklistItems(filledChecklistItems);
+    //      console.log('saved it');
+    //       return;
+    //   }
+    //   console.log('dont save it because theres no item')
+    // },
+     afterChange: (current: number) => setCurrentSlideIndex(current),
   };
 
   const handleClose = () => {
     toggleChecklistOpen();
   };
 
-  // Função para atualizar a imagem de um item específico
   const handleUploadImage = async (
     checkListMap: {
       checklistItem: ChecklistItem;
@@ -136,6 +148,7 @@ const ChecklistItemsModal = () => {
       if (response && response.status === 200) {
         setIsLoading(false);
         toggleRefreshChecklist();
+        return;
       }
       return;
     }
@@ -164,7 +177,6 @@ const ChecklistItemsModal = () => {
     );
   };
 
-  // Função para lidar com a seleção de um novo arquivo de imagem
   const handleFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
     checklistMap: {
@@ -175,8 +187,8 @@ const ChecklistItemsModal = () => {
     const file = e.target.files?.[0];
     if (isMovimentationResponsable() && file && toBeDone()) {
       const formData = new FormData();
-      formData.append("file", file);
       setIsLoading(true);
+      formData.append("file", file);
       await handleUploadImage(checklistMap, formData); // Atualiza a imagem no estado
       return;
     }
