@@ -24,6 +24,7 @@ import { PatrimonyFileContext } from "../context/patrimonyFileContext";
 import DeletePatrimonyFileModal from "./DeletePatrimonyFileModal";
 import { userContext } from "../../Requisitions/context/userContext";
 
+
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
   clipPath: "inset(50%)",
@@ -35,7 +36,6 @@ const VisuallyHiddenInput = styled("input")({
   whiteSpace: "nowrap",
   width: 1,
 });
-
 
 
 //MAIN COMPONENT
@@ -88,6 +88,13 @@ export default function PatrimonyFileModal() {
    const allowedToAttachFile = ( ) => { 
     return user?.CODPESSOA === responsable || user?.PERM_ADMINISTRADOR;
    };
+   const isImage = (file: PatrimonyFile) => {
+     return /\.(jpg|jpeg|png|gif)$/i.test(file.arquivo);
+   };
+
+   const isPDF = (file : PatrimonyFile ) => { 
+    return /\.pdf$/i.test(file.arquivo);
+   }
    useEffect(() => {
 
      console.log('teste');
@@ -153,7 +160,7 @@ export default function PatrimonyFileModal() {
               >
                 Anexar
                 <VisuallyHiddenInput
-                  accept="image/*"
+                  accept="image/*, application/pdf"
                   capture="environment"
                   onChange={handleUploadFile}
                   type="file"
@@ -205,12 +212,24 @@ export default function PatrimonyFileModal() {
                         sm: "100%",
                         lg: "100%",
                       },
-                      background: `url('${file.arquivo}')`,
+                      background: isImage(file)
+                        ? `url('${file.arquivo}')`
+                        : "none",
                       backgroundPosition: "center",
                       backgroundSize: "cover",
                       backgroundRepeat: "no-repeat",
                     }}
-                  ></Box>
+                  >
+                    {isPDF(file) && (
+                      <object
+                        data={file.arquivo}
+                        type="application/pdf"
+                        width="100%"
+                        height="100%"
+                      >
+                      </object>
+                    )}
+                  </Box>
                   <Box
                     sx={{
                       borderRadius: "10px",
