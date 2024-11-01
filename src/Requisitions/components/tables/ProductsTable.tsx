@@ -31,6 +31,7 @@ import { ProductsTableProps } from "../../types";
 import { ItemsContext } from "../../context/ItemsContext";
 import AddIcon from "@mui/icons-material/Add";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const style = {
   position: "absolute",
   borderRadius: "25px",

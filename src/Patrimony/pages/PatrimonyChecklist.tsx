@@ -81,7 +81,11 @@ const PatrimonyChecklist = () => {
       return dateRenderer(value);
     }
     if (dataKey === "data_realizado") {
-      return dateTimeRenderer(value || "");
+      const date = dateTimeRenderer(value || "")
+      if(date === 'Invalid Date, Invalid Date'){ 
+        return 'Não Realizado';
+      }
+      return 
     }
     return value;
   };
