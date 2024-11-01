@@ -14,15 +14,12 @@ import {
   Stack,
   IconButton,
   AppBar,
-  styled,
-  InputBase,
   Toolbar,
 } from "@mui/material";
 import { MovementationChecklist } from "../types";
 import { checklistContext } from "../context/checklistContext";
 import { ArrowLeftIcon } from "@mui/x-date-pickers/icons";
 import { useNavigate, useParams } from "react-router-dom";
-import SearchIcon from "@mui/icons-material/Search";
 import ChecklistItemsModal from "../modals/ChecklistItemsModal";
 import { dateTimeRenderer, getChecklistDataByPatrimonyId } from "../utils";
 
@@ -154,13 +151,13 @@ const PatrimonyChecklist = () => {
             <Stack direction="row" alignItems="center">
               <Toolbar>
                 <Stack direction="row" alignItems="center">
-                  <SearchIconWrapper>
+                  {/* <SearchIconWrapper>
                     <SearchIcon />
                   </SearchIconWrapper>
                   <StyledInputBase
                     placeholder="Search…"
                     inputProps={{ "aria-label": "search" }}
-                  />
+                  /> */}
                 </Stack>
               </Toolbar>
             </Stack>
@@ -270,31 +267,31 @@ const columns: Column[] = [
   },
 ];
 
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
+// const SearchIconWrapper = styled("div")(({ theme }) => ({
+//   padding: theme.spacing(0, 2),
+//   height: "100%",
+//   position: "absolute",
+//   pointerEvents: "none",
+//   display: "flex",
+//   alignItems: "center",
+//   justifyContent: "center",
+// }));
 
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  width: "100%",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    [theme.breakpoints.up("sm")]: {
-      width: "12ch",
-      "&:focus": {
-        width: "20ch",
-      },
-    },
-  },
-}));
+// const StyledInputBase = styled(InputBase)(({ theme }) => ({
+//   color: "inherit",
+//   width: "100%",
+//   "& .MuiInputBase-input": {
+//     padding: theme.spacing(1, 1, 1, 0),
+//     // vertical padding + font size from searchIcon
+//     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+//     transition: theme.transitions.create("width"),
+//     [theme.breakpoints.up("sm")]: {
+//       width: "12ch",
+//       "&:focus": {
+//         width: "20ch",
+//       },
+//     },
+//   },
+// }));
 
 export default PatrimonyChecklist;
