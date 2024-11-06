@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from "axios";
 import api from "../api"
-import { ChecklistItem, ChecklistItemFile, Movementation, MovementationChecklist, Patrimony, PatrimonyFile, PatrimonyInfo } from "./types";
+import { ChecklistItemFile, Movementation, MovementationChecklist, Patrimony, PatrimonyFile, PatrimonyInfo } from "./types";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import dayjs from "dayjs";
@@ -188,7 +188,7 @@ export const getChecklistDataByPatrimonyId = async (id_patrimonio : number ) =>{
      console.log(e);
   }
 };
-export const getChecklistItemsMapByPatrimonyID = async(id_patrimonio : number, id_movimentacao: number, id_checklist_movimentacao: number) => { 
+export const getChecklistItems = async(id_patrimonio : number, id_movimentacao: number, id_checklist_movimentacao: number) => { 
   try{ 
     const response = await api.get(`checklist/checklistItems/${id_patrimonio}/${id_movimentacao}/${id_checklist_movimentacao}`);
     return response.data;
@@ -196,16 +196,10 @@ export const getChecklistItemsMapByPatrimonyID = async(id_patrimonio : number, i
     console.log(e);
   }
 };
-export const sendChecklistItems = async (
-  checklistItemMaps: {
-    checklistItem: ChecklistItem;
-    checklistItemFile: ChecklistItemFile;
-  }[]
-) => {
-  const items = checklistItemMaps.map(checklistItem => checklistItem.checklistItemFile);
+export const sendChecklistItems = async (checklistItems: ChecklistItemFile[]) => {
   try {
     const response = await api.put("/checklist/checklistItems", {
-      checklistItems: items,
+      checklistItems: checklistItems,
     });
     return response;
   } catch (e) {

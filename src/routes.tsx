@@ -9,6 +9,8 @@ import Home from "./pages/home/Home";
 import PatrimonyHome from "./Patrimony/pages/PatrimonyHome";
 import PatrimonyDetails from "./Patrimony/pages/PatrimonyDetails";
 import PatrimonyChecklist from "./Patrimony/pages/PatrimonyChecklist";
+import CrmHome from "./crm/pages/CrmHome";
+import ChecklistTasks from "./Patrimony/pages/ChecklistTasks";
 // import { ChecklistContextProvider } from "./Patrimony/context/checklistContext";
 
 const router = createBrowserRouter([
@@ -31,6 +33,16 @@ const router = createBrowserRouter([
       </ItemsContextProvider>
     ),
   },
+  { 
+    path: 'tasks',
+    element: ( 
+      <ChecklistTasks />
+    )
+  },
+  { 
+    path : '/crm',
+    element: <CrmHome />
+  }
 ]);
 // eslint-disable-next-line react-refresh/only-export-components
 export {router, RouterProvider}

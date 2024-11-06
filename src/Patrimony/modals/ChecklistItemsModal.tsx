@@ -18,14 +18,12 @@ import ErrorIcon from "@mui/icons-material/Error";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {
-  createChecklistItem,
-  getChecklistItemsMapByPatrimonyID,
+  getChecklistItems,
   sendChecklist,
   sendChecklistItems,
   uploadFileToChecklistItemFile,
 } from "../utils";
 import {
-  ChecklistItem,
   ChecklistItemFile,
   MovementationChecklist,
 } from "../types";
@@ -48,13 +46,8 @@ const ChecklistItemsModal = () => {
     toggleRefreshChecklist,
   } = useContext(checklistContext);
   const { user } = useContext(userContext);
-  // Estado do checklist
-  const [checklistItemsMap, setChecklistItemsMap] = useState<
-    {
-      checklistItem: ChecklistItem;
-      checklistItemFile: ChecklistItemFile;
-    }[]
-  >();
+
+  const [ChecklistItems, setChecklistItems] = useState<ChecklistItemFile[]>();
   const [isMobile, setIsMobile] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -93,12 +86,9 @@ const ChecklistItemsModal = () => {
     slidesToScroll: 1,
     draggable: false,
     beforeChange: (oldIndex : number) => {
-      if (checklistItemsMap && checklistItemsMap[oldIndex]?.checklistItemFile) {
+      if (ChecklistItems && ChecklistItems[oldIndex]) {
         (async () => {
-          const filledChecklistItems = checklistItemsMap.filter(
-            (item) => item.checklistItemFile !== undefined
-          );
-          await sendChecklistItems(filledChecklistItems);
+          await sendChecklistItems(ChecklistItems);
           console.log("saved it");
         })();
       } else {
@@ -125,214 +115,154 @@ const ChecklistItemsModal = () => {
   };
 
   const handleUploadImage = async (
-    checkListMap: {
-      checklistItem: ChecklistItem;
-      checklistItemFile: ChecklistItemFile;
-    },
+    checklistItem : ChecklistItemFile,
     file: FormData
   ) => {
-    if (checklistItemsMap) {
-      if (checkListMap.checklistItemFile) {
-        const updatedItems = updateChecklistItemToOkay(checkListMap);
+    if (checklistItem) {
+    
+        const updatedItems = updateChecklistItemToOkay(checklistItem);
         await sendChecklistItems(updatedItems);
-        await uploadFileToChecklistItemFile(
-          checkListMap.checklistItemFile.id_item_checklist_movimentacao,
-          file
-        );
+        await uploadFileToChecklistItemFile(checklistItem.id_item_checklist_movimentacao, file);
         setIsLoading(false);
         toggleRefreshChecklist();
         return;
-      }
-      //create checkListItemFile
-      const newItemFile: ChecklistItemFile = {
-        id_item_checklist_movimentacao: 0,
-        arquivo: "",
-        problema: 0,
-        id_checklist_movimentacao:
-          checklistOpen[1]?.id_checklist_movimentacao || 0,
-        nome_item_checklist: checkListMap.checklistItem.nome_item_checklist,
-      };
-      const response = await createChecklistItem(newItemFile, file);
-      if (response && response.status === 200) {
-        setIsLoading(false);
-        toggleRefreshChecklist();
-        return;
-      }
-      return;
+      
     }
   };
 
-  const updateChecklistItemToOkay = (checkListMap: {
-    checklistItem: ChecklistItem;
-    checklistItemFile: ChecklistItemFile;
-  }) => {
+  const updateChecklistItemToOkay = (checklistItemReceived : ChecklistItemFile) => {
     return (
-      checklistItemsMap?.map((itemMap) => {
-        if (itemMap.checklistItemFile) {
-          return itemMap.checklistItemFile.id_item_checklist_movimentacao ===
-            checkListMap.checklistItemFile.id_item_checklist_movimentacao
+      ChecklistItems?.map((checklistItem) => {
+        if (checklistItem) {
+          return checklistItem.id_item_checklist_movimentacao ===
+            checklistItemReceived.id_item_checklist_movimentacao
             ? {
-                ...itemMap,
-                checklistItemFile: {
-                  ...itemMap.checklistItemFile,
-                  problema: 0,
-                },
+                ...checklistItemReceived,
+                problema: 0,
               }
-            : itemMap;
+            : checklistItem;
         }
-        return itemMap;
+        return checklistItem;
       }) || []
     );
   };
 
   const handleFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
-    checklistMap: {
-      checklistItem: ChecklistItem;
-      checklistItemFile: ChecklistItemFile;
-    }
+    checklistItem : ChecklistItemFile
   ) => {
     const file = e.target.files?.[0];
     if (isMovimentationResponsable() && file && toBeDone()) {
       const formData = new FormData();
       setIsLoading(true);
       formData.append("file", file);
-      await handleUploadImage(checklistMap, formData); // Atualiza a imagem no estado
+      await handleUploadImage(checklistItem, formData); // Atualiza a imagem no estado
       return;
     }
     alert("Editar checklist não é permitido!");
   };
 
-  const handleChangeProblem = (checklistMap: {
-    checklistItem: ChecklistItem;
-    checklistItemFile: ChecklistItemFile;
-  }) => {
-    if (checklistMap.checklistItemFile && checklistItemsMap) {
-      const problem = checklistMap.checklistItemFile.problema;
+  const handleChangeProblem = (checklistItemReceived : ChecklistItemFile) => {
+    if (checklistItemReceived) {
+      const problem = checklistItemReceived.problema;
       if (!problem && isTypeResponsable()) {
-        const updatedItems = checklistItemsMap.map((itemMap) => {
-          if (itemMap.checklistItemFile) {
-            return itemMap.checklistItemFile.id_item_checklist_movimentacao ===
-              checklistMap.checklistItemFile.id_item_checklist_movimentacao
-              ? {
-                  ...itemMap,
-                  checklistItemFile: {
-                    ...itemMap.checklistItemFile,
-                    problema: 1,
-                  },
-                }
-              : itemMap;
-          }
-          return itemMap;
-        });
-        setChecklistItemsMap(updatedItems);
+        const updatedItems = ChecklistItems?.map((checklistItem) =>
+          checklistItem.id_item_checklist_movimentacao ===
+          checklistItemReceived.id_item_checklist_movimentacao
+            ? {
+                ...checklistItem,
+                problema: 1,
+              }
+            : checklistItem
+        );
+
+        setChecklistItems(updatedItems);
       }
     }
   };
 
-  const handleChangeOkay = (checklistMap: {
-    checklistItem: ChecklistItem;
-    checklistItemFile: ChecklistItemFile;
-  }) => {
-    if (checklistMap.checklistItemFile && checklistItemsMap) {
-      console.log("handleChangeOkay");
-      const problem = checklistMap.checklistItemFile.problema;
-      console.log("problem: ", problem);
-      if (problem) {
-        const updatedItems = checklistItemsMap.map((itemMap) => {
-          if (itemMap.checklistItemFile) {
-            return itemMap.checklistItemFile.id_item_checklist_movimentacao ===
-              checklistMap.checklistItemFile.id_item_checklist_movimentacao
-              ? {
-                  ...itemMap,
-                  checklistItemFile: {
-                    ...itemMap.checklistItemFile,
-                    problema: 0,
-                  },
-                }
-              : itemMap;
-          }
-          return itemMap;
-        });
-        console.log("updatedItems: ", updatedItems);
-        setChecklistItemsMap(updatedItems);
-      }
+const handleChangeOkay = (checklistItemReceived: ChecklistItemFile) => {
+  if (checklistItemReceived) {
+    const problem = checklistItemReceived.problema;
+    if (problem && isTypeResponsable()) {
+      const updatedItems = ChecklistItems?.map((checklistItem) =>
+        checklistItem.id_item_checklist_movimentacao ===
+        checklistItemReceived.id_item_checklist_movimentacao
+          ? {
+              ...checklistItem,
+              problema: 0,
+            }
+          : checklistItem
+      );
+
+      setChecklistItems(updatedItems);
     }
-  };
+  }
+};
 
   const handleAproveChecklist = async () => {
-    if (checklistOpen[1] && checklistItemsMap) {
+    if (checklistOpen[1]) {
       const currentChecklist = {
         ...checklistOpen[1],
       };
-      const problemItem =
-        checklistItemsMap &&
-        checklistItemsMap.find(
-          (checklistItemMap) =>
-            checklistItemMap.checklistItemFile.problema === 1
-        );
+      //envia os itens
+      const problemItem = ChecklistItems?.find(checklistItem => checklistItem.problema);
       if (problemItem) {
         alert(
           "Existem itens com problemas, todos devem estar Okay para aprovar!"
         );
         return;
       }
-      const response = await sendChecklistItems(checklistItemsMap);
+      const response = ChecklistItems && await sendChecklistItems(ChecklistItems);
+      //muda checklist para aprovado e define data de aprovação
       if (response && response.status === 200) {
         currentChecklist.aprovado = 1;
         currentChecklist.data_aprovado = new Date().toISOString();
         const response = await sendChecklist(currentChecklist);
         if (response && response.status === 200) {
+          setChecklistOpen([true, currentChecklist]);
           toggleRefreshChecklist();
           alert("Checklist Aprovado!");
         }
       }
     }
   };
+const handleReproveChecklist = async () => {
+  if (checklistOpen[1]) {
+    const currentChecklist = {
+      ...checklistOpen[1],
+    };
+    // Verifica se há algum item marcado como problema
+    const problemItem = ChecklistItems?.find(
+      (checklistItem) => checklistItem.problema === 1
+    );
+    if (!problemItem) {
+      alert(
+        "Por favor, marque o item com problema antes de reprovar o checklist"
+      );
+      return;
+    }
+    // Envia os itens de checklist com os problemas marcados
+    const response =
+      ChecklistItems && (await sendChecklistItems(ChecklistItems));
+    // Muda o status do checklist para reprovado e reseta a data de aprovação
+    if (response && response.status === 200) {
+      currentChecklist.aprovado = 0;
+      currentChecklist.realizado = 0; // Remove a data de aprovação, pois foi reprovado
 
-  const handleReproveChecklist = async () => {
-    if (checklistOpen[1] && checklistItemsMap) {
-      const problemItem =
-        checklistItemsMap &&
-        checklistItemsMap.find(
-          (checklistItemMap) =>
-            checklistItemMap.checklistItemFile.problema === 1
-        );
-        if (!problemItem){ 
-          alert(
-            "Por favor, marque o item com problema antes de reprovar o checklist"
-          );
-          return;
-        }
-      const response = await sendChecklistItems(checklistItemsMap);
-      if (response && response.status === 200) {
-        const currentChecklist = {
-          ...checklistOpen[1],
-        };
-        currentChecklist.aprovado = 0;
-        currentChecklist.realizado = 0;
-        const response = await sendChecklist(currentChecklist);
-        if (response && response.status === 200) {
-          setChecklistOpen([true, currentChecklist]);
-        }
+      const checklistResponse = await sendChecklist(currentChecklist);
+      if (checklistResponse && checklistResponse.status === 200) {
+        setChecklistOpen([true, currentChecklist]);
         toggleRefreshChecklist();
         alert("Checklist Reprovado!");
       }
     }
-  };
+  }
+};
 
   const handleSendChecklistItems = async () => {
-    if (checklistItemsMap) {
-      const noFileItem = checklistItemsMap.find(
-        (item) => item.checklistItemFile === undefined
-      );
-      if (noFileItem) {
-        alert(
-          "Você deve preencher todos os itens antes de enviar o checklist!"
-        );
-        return;
-      }
-      const response = await sendChecklistItems(checklistItemsMap);
+    if (ChecklistItems) {
+      const response = await sendChecklistItems(ChecklistItems);
       if (response && response.status === 200 && checklistOpen[1]) {
         const currentChecklist = { ...checklistOpen[1] };
         currentChecklist.realizado = 1;
@@ -358,79 +288,62 @@ const ChecklistItemsModal = () => {
 
   const handleChangeItemObservation = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    receivedChecklistMap: {
-      checklistItem: ChecklistItem;
-      checklistItemFile: ChecklistItemFile;
-    }
+    checklistItemReceived : ChecklistItemFile
   ) => {
     const { value } = e.target;
-
-    
-    const updatedChecklistItemsMap = checklistItemsMap?.map(
-      (internalChecklistMap) => {
+    const updatedChecklistItems = ChecklistItems?.map(
+      (checklistItem) => {
         if (
-          internalChecklistMap.checklistItemFile &&
-          receivedChecklistMap.checklistItemFile
-            .id_item_checklist_movimentacao ===
-            internalChecklistMap.checklistItemFile
-              .id_item_checklist_movimentacao
+          checklistItemReceived.id_item_checklist_movimentacao ===
+          checklistItem.id_item_checklist_movimentacao
         ) {
-          const updatedChecklistMap = { ...receivedChecklistMap };
-          updatedChecklistMap.checklistItemFile.observacao = value;
+          const updatedChecklistMap = { ...checklistItemReceived };
+          updatedChecklistMap.observacao = value;
           return { ...updatedChecklistMap };
         }
         return {
-          ...internalChecklistMap,
+          ...checklistItem,
         };
       }
     );
-    console.log("updatedChecklistItemsMap: ", updatedChecklistItemsMap);
-    setChecklistItemsMap(updatedChecklistItemsMap);
+    setChecklistItems(updatedChecklistItems);
   };
   const getChecklistItemsMap = async () => {
-    console.log("getChecklistItemsMap");
     if (checklistOpen[1]) {
       const { id_patrimonio, id_movimentacao, id_checklist_movimentacao } =
         checklistOpen[1];
-      const checklistItemsMap = await getChecklistItemsMapByPatrimonyID(
+      const checklistItems = await getChecklistItems(
         id_patrimonio,
         id_movimentacao,
         id_checklist_movimentacao
       );
-      if (checklistItemsMap) {
-        console.log(checklistItemsMap);
-        setChecklistItemsMap(checklistItemsMap);
+      if (checklistItems) {
+        console.log(checklistItems);
+        setChecklistItems(checklistItems);
         return;
       }
     }
   };
 
-  const renderItemImage = (checklistMap: {
-    checklistItem: ChecklistItem;
-    checklistItemFile: ChecklistItemFile;
-  }) => {
-    if (checklistMap.checklistItemFile) {
-      return `${checklistMap.checklistItemFile.arquivo}`;
+  const renderItemImage = (checklistItem: ChecklistItemFile) => {
+    if (checklistItem.arquivo) {
+
+      return `${checklistItem.arquivo}`;
     }
     return CameraFileLogo;
   };
 
-  const renderErrorColor = (checklistMap: {
-    checklistItem: ChecklistItem;
-    checklistItemFile: ChecklistItemFile;
-  }) => {
-    if (checklistMap.checklistItemFile) {
-      return checklistMap.checklistItemFile.problema ? "red" : "gray";
+  const renderErrorColor = (
+    checklistItem : ChecklistItemFile) => {
+    if (checklistItem) {
+      return checklistItem.problema ? "red" : "gray";
     }
     return "gray";
   };
 
-  const renderOkayColor = (checklistMap: {
-    checklistItem: ChecklistItem;
-    checklistItemFile: ChecklistItemFile;
-  }) => {
-    if (checklistMap.checklistItemFile) {
-      return !checklistMap.checklistItemFile.problema ? "green" : "gray";
+  const renderOkayColor = (checklistItem: ChecklistItemFile) => {
+    if (checklistItem) {
+      return !checklistItem.problema ? "green" : "gray";
     }
     return "gray";
   };
@@ -481,20 +394,19 @@ const ChecklistItemsModal = () => {
 
 
   const lastItem = ( ) => { 
-    if (checklistItemsMap && currentSlideIndex === checklistItemsMap.length - 1){ 
+    if (ChecklistItems && currentSlideIndex === ChecklistItems.length - 1){ 
       return true;
     }
     return false;
   };
 
-  const renderObservation = (checklistMap : { 
-    checklistItem: ChecklistItem;
-    checklistItemFile: ChecklistItemFile;
-  } ) => { 
-      if(checklistMap.checklistItemFile){ 
-        return checklistMap.checklistItemFile.observacao ? checklistMap.checklistItemFile.observacao : ''
-      }
-      return '';
+  const renderObservation = (checklistItem: ChecklistItemFile) => {
+    if (checklistItem) {
+      return checklistItem.observacao
+        ? checklistItem.observacao
+        : "";
+    }
+    return "";
   };
 
   useEffect(() => {
@@ -577,14 +489,14 @@ const ChecklistItemsModal = () => {
               md: "center",
             },
             justifyContent: "center",
-            gap: "4rem",
+            gap: "2rem",
           }}
         >
-          {checklistItemsMap && !isMobile ? ( //desktop
+          {ChecklistItems && !isMobile ? ( //desktop
             <Stack direction="row" flexWrap="wrap" width="90%" gap={1}>
-              {checklistItemsMap.map((checklistMap) => (
+              {ChecklistItems.map((checklistItem) => (
                 <Card
-                  key={checklistMap.checklistItem.id_items_checklist_tipo}
+                  key={checklistItem.id_checklist_movimentacao}
                   sx={{
                     width: {
                       xs: 240,
@@ -592,33 +504,34 @@ const ChecklistItemsModal = () => {
                     },
                     minHeight: 320,
                     borderRadius: "10px",
+                    
                   }}
                 >
                   <CardMedia
                     sx={{
                       height: 200,
                     }}
-                    image={renderItemImage(checklistMap)}
+                    image={renderItemImage(checklistItem)}
                     title="checklist image"
                   ></CardMedia>
                   <CardContent>
                     <Stack gap={1}>
                       <Typography fontSize="small">
-                        {checklistMap.checklistItem.nome_item_checklist}
+                        {checklistItem.nome_item_checklist}
                       </Typography>
                       <Button
-                        onClick={() => handleChangeProblem(checklistMap)}
+                        onClick={() => handleChangeProblem(checklistItem)}
                         sx={{ width: "fit-content" }}
                       >
                         <Stack direction="row" alignItems="center" gap={1}>
                           <ErrorIcon
                             sx={{
-                              color: renderErrorColor(checklistMap),
+                              color: renderErrorColor(checklistItem),
                             }}
                           />
                           <Typography
                             sx={{
-                              color: renderErrorColor(checklistMap),
+                              color: renderErrorColor(checklistItem),
                             }}
                             variant="body2"
                             fontSize="small"
@@ -630,18 +543,18 @@ const ChecklistItemsModal = () => {
 
                       <Button
                         id="notProblem"
-                        onClick={() => handleChangeOkay(checklistMap)}
+                        onClick={() => handleChangeOkay(checklistItem)}
                         sx={{ width: "fit-content" }}
                       >
                         <Stack direction="row" alignItems="center" gap={1}>
                           <CheckCircleIcon
                             sx={{
-                              color: renderOkayColor(checklistMap),
+                              color: renderOkayColor(checklistItem),
                             }}
                           />
                           <Typography
                             sx={{
-                              color: renderOkayColor(checklistMap),
+                              color: renderOkayColor(checklistItem),
                             }}
                             variant="body2"
                             fontSize="small"
@@ -652,10 +565,10 @@ const ChecklistItemsModal = () => {
                       </Button>
                       <TextareaAutosize
                         onChange={(e) =>
-                          handleChangeItemObservation(e, checklistMap)
+                          handleChangeItemObservation(e, checklistItem)
                         }
                         defaultValue={""}
-                        value={renderObservation(checklistMap)}
+                        value={renderObservation(checklistItem)}
                       />
                     </Stack>
                   </CardContent>
@@ -664,11 +577,11 @@ const ChecklistItemsModal = () => {
             </Stack>
           ) : (
             //mobile
-            checklistItemsMap && (
+            ChecklistItems && (
               <Slider ref={sliderRef} {...settings}>
-                {checklistItemsMap.map((checklistMap) => (
+                {ChecklistItems.map((checklistItem) => (
                   <Card
-                    key={checklistMap.checklistItem.id_items_checklist_tipo}
+                    key={checklistItem.id_checklist_movimentacao}
                     sx={{
                       width: {
                         xs: 240,
@@ -682,7 +595,7 @@ const ChecklistItemsModal = () => {
                       sx={{
                         height: 200,
                       }}
-                      image={isLoading ? "" : renderItemImage(checklistMap)}
+                      image={isLoading ? "" : renderItemImage(checklistItem)}
                       title="checklist image"
                     >
                       {isLoading && (
@@ -699,21 +612,21 @@ const ChecklistItemsModal = () => {
                     <CardContent>
                       <Stack gap={1}>
                         <Typography fontSize="small">
-                          {checklistMap.checklistItem.nome_item_checklist}
+                          {checklistItem.nome_item_checklist}
                         </Typography>
                         <Button
-                          onClick={() => handleChangeProblem(checklistMap)}
+                          onClick={() => handleChangeProblem(checklistItem)}
                           sx={{ width: "fit-content" }}
                         >
                           <Stack direction="row" alignItems="center" gap={1}>
                             <ErrorIcon
                               sx={{
-                                color: renderErrorColor(checklistMap),
+                                color: renderErrorColor(checklistItem),
                               }}
                             />
                             <Typography
                               sx={{
-                                color: renderErrorColor(checklistMap),
+                                color: renderErrorColor(checklistItem),
                               }}
                               variant="body2"
                               fontSize="small"
@@ -725,18 +638,18 @@ const ChecklistItemsModal = () => {
 
                         <Button
                           id="notProblem"
-                          onClick={() => handleChangeOkay(checklistMap)}
+                          onClick={() => handleChangeOkay(checklistItem)}
                           sx={{ width: "fit-content" }}
                         >
                           <Stack direction="row" alignItems="center" gap={1}>
                             <CheckCircleIcon
                               sx={{
-                                color: renderOkayColor(checklistMap),
+                                color: renderOkayColor(checklistItem),
                               }}
                             />
                             <Typography
                               sx={{
-                                color: renderOkayColor(checklistMap),
+                                color: renderOkayColor(checklistItem),
                               }}
                               variant="body2"
                               fontSize="small"
@@ -747,10 +660,10 @@ const ChecklistItemsModal = () => {
                         </Button>
                         <TextareaAutosize
                           onChange={(e) =>
-                            handleChangeItemObservation(e, checklistMap)
+                            handleChangeItemObservation(e, checklistItem)
                           }
                           defaultValue={""}
-                          value={renderObservation(checklistMap)}
+                          value={renderObservation(checklistItem)}
                         />
                         {toBeDone() && isMovimentationResponsable() && (
                           <label>
@@ -758,10 +671,10 @@ const ChecklistItemsModal = () => {
                               type="file"
                               id="fileUpload"
                               accept="image/*"
-                              capture={isIOS ?  undefined : 'environment'}
+                              capture={isIOS ? false : "environment"}
                               style={{ display: "none" }}
                               onChange={(e) =>
-                                handleFileChange(e, checklistMap)
+                                handleFileChange(e, checklistItem)
                               }
                             />
                             <Button
@@ -804,7 +717,9 @@ const ChecklistItemsModal = () => {
           )}
         </Box>
 
-        <Box display="flex" justifyContent="center" gap={2} marginTop="1rem">
+        <Box display="flex" justifyContent="center" gap={2} marginTop="1rem" sx={{
+          transform : 'translateY(-4rem)'
+        }}>
           {toBeDone() &&
             isMovimentationResponsable() &&
             (lastItem() || !isMobile) &&

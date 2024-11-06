@@ -81,9 +81,6 @@ export default function SearchAppBar({
   const handleClickFilter = (event: React.MouseEvent<HTMLButtonElement>) => {
     setFilterMenu(event.currentTarget);
   };
-  const handleClickNotifications = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setNotificationsMenu(event.currentTarget);
-  }
   const handleOpenActionModal = (action: string) => {
     if (action === "Excluir" && selectedItems?.length) {
       handleOpenDeleteModal();
@@ -160,6 +157,7 @@ export default function SearchAppBar({
       setNotifications(filteredNotifications);
     }
   };
+
   const responsableForPatrimonyNotification = (notification : MovementationChecklist ) =>  { 
     return isMovimentationResponsable(notification) && !notification.realizado;
   } 
@@ -175,6 +173,7 @@ export default function SearchAppBar({
   const isTypeResponsable = (checklist: MovementationChecklist) => {
     return checklist.responsavel_tipo === user?.responsavel_tipo;
   };
+
   const isMovimentationResponsable = (checklist: MovementationChecklist) => {
     console.log(
       "isMoveRespnsable: ",
@@ -182,12 +181,16 @@ export default function SearchAppBar({
     );
     return checklist.responsavel_movimentacao === user?.CODPESSOA;
   };
+  const handleOpenChecklistTasks = ( ) => { 
+      navigate(`/tasks`);
+  }; 
   useEffect(() => {
     console.log('PERM_ADMINISTRADOR: ', user?.PERM_ADMINISTRADOR);
     console.log("PERM_CADASTRAR_PAT: ", user?.PERM_CADASTRAR_PAT);
     getNotifications();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -304,11 +307,48 @@ export default function SearchAppBar({
                   </MenuItem>
                 ))}
               </Menu>
-              {/* <Badge badgeContent={4} color="primary">
-                <IconButton>
+
+              <Button
+                id="basic-button"
+                aria-controls={filterMenuOpen ? "basic-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={filterMenuOpen ? "true" : undefined}
+                onClick={handleOpenChecklistTasks}
+                sx={{
+                  color: "white",
+                  backgroundColor: "#F7941E",
+                  "&:hover": {
+                    backgroundColor: "#f1b963",
+                  },
+                }}
+              >
+                <Typography textTransform="capitalize">Checklists</Typography>
+                <Badge badgeContent={notifications?.length} color="primary">
                   <NotificationsIcon sx={{ color: "white" }} />
-                </IconButton>
-              </Badge> */}
+                </Badge>
+              </Button>
+              <Menu
+                id="basic-menu"
+                anchorEl={filterMenu}
+                open={filterMenuOpen}
+                onClose={handleCloseFilter}
+                MenuListProps={{
+                  "aria-labelledby": "basic-button",
+                }}
+              >
+                {["Meus", "Todos"].map((filter) => (
+                  <MenuItem
+                    key={filter}
+                    onClick={() => handleSelectFilter(filter)}
+                    sx={{
+                      backgroundColor:
+                        currentFilter === filter ? "whitesmoke" : "white",
+                    }}
+                  >
+                    {filter}
+                  </MenuItem>
+                ))}
+              </Menu>
             </Stack>
 
             <Stack direction="row" alignItems="center" gap={2}>
@@ -326,7 +366,7 @@ export default function SearchAppBar({
                   </IconButton>
                 </Tooltip>
               )}
-              <Tooltip title="Novo Patrimônio">
+              {/* <Tooltip title="Novo Patrimônio">
                 <IconButton
                   onClick={handleClickNotifications}
                   sx={{
@@ -339,7 +379,7 @@ export default function SearchAppBar({
                     <NotificationsIcon sx={{ color: "white" }} />
                   </Badge>
                 </IconButton>
-              </Tooltip>
+              </Tooltip> */}
             </Stack>
             <Menu
               id="basic-menu"
