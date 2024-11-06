@@ -1,14 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Box, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
+import { AppBar, Box, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
 import React, { useContext, useEffect, useState } from 'react'
 import { userContext } from '../../Requisitions/context/userContext';
 import { MovementationChecklist } from '../types';
 import { dateTimeRenderer, getPatrimonyNotifications } from '../utils';
 import { TableVirtuoso, TableComponents } from "react-virtuoso";
 import ErrorIcon from "@mui/icons-material/Error";
+import { ArrowLeftIcon } from "@mui/x-date-pickers/icons";
 
 import { checklistContext } from '../context/checklistContext';
 import ChecklistItemsModal from '../modals/ChecklistItemsModal';
+import { useNavigate } from 'react-router-dom';
 
 interface ColumnData {
   dataKey: keyof MovementationChecklist;
@@ -133,7 +135,7 @@ const ChecklistTasks = () => {
    const [notifications, setNotifications] = useState<MovementationChecklist[]>();
    const { user } = useContext(userContext);
    const { toggleChecklistOpen, refreshChecklist } = useContext(checklistContext);
-
+  const navigate = useNavigate();
    const getNotifications = async () => {
      console.log("getNotifications");
      if (user) {
@@ -179,6 +181,10 @@ const ChecklistTasks = () => {
      );
      return checklist.responsavel_movimentacao === user?.CODPESSOA;
    };
+
+     const handleBack = () => {
+       navigate("/patrimony");
+     };
 
    function rowContent(_index: number, row: MovementationChecklist) {
      const isDateValue = (column: ColumnData) => {
@@ -242,6 +248,7 @@ const ChecklistTasks = () => {
       threeDaysAgo.setDate(today.getDate() - 3);
       return creationDate < threeDaysAgo;
     }
+  
 
     // const isCurrentResponsable = (row : MovementationChecklist) => { 
     //     return row.responsavel_movimentacao === user?.CODPESSOA;
@@ -274,8 +281,66 @@ const ChecklistTasks = () => {
 
 
   return (
-    <Box sx={{ height: "95vh", width: "100%", padding: "2rem" }}>
-      <Stack sx={{}}></Stack>
+    <Box
+      sx={{
+        height: "85vh",
+        width: "100%",
+        padding: {
+          xs: 0.2,
+          sm: 2,
+          md: 3,
+          lg: 2,
+          xl: 1,
+        },
+      }}
+    >
+      <Box>
+        <AppBar
+          position="static"
+          sx={{
+            boxShadow: "none",
+            backgroundColor: "#2B3990",
+            height: {
+              xs: "5rem",
+              sm: "4rem",
+              md: "4rem",
+              lg: "4rem",
+              xl: "4rem",
+            },
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            paddingY: "0.4rem",
+            paddingX: "2rem",
+            border: "1px solid white",
+          }}
+        >
+          <Box display="flex" alignItems="center" flexGrow={1} flexShrink={1}>
+            <IconButton
+              onClick={handleBack}
+              sx={{
+                color: "#F7941E",
+                cursor: "pointer",
+                "&:hover": {
+                  backgroundColor: "rgba(0, 0, 0, 0.05)",
+                },
+                zIndex: 1000, // Coloca o ícone acima do modal
+              }}
+            >
+              <ArrowLeftIcon />
+            </IconButton>
+            <Typography
+              variant="h6"
+              textAlign="center"
+              fontSize="medium"
+              padding={2}
+            >
+              Checklists pendentes
+            </Typography>
+          </Box>
+        </AppBar>
+      </Box>
       <TableVirtuoso
         data={notifications}
         components={{
@@ -293,6 +358,23 @@ const ChecklistTasks = () => {
         fixedHeaderContent={fixedHeaderContent}
         itemContent={rowContent}
       />
+      <Box
+        display="flex"
+        justifyContent="flex-end"
+        paddingY="0.4rem"
+        paddingX="2rem"
+      >
+        {notifications && (
+          <Typography
+            variant="body2"
+            color="blue"
+            fontWeight="semibold"
+            fontFamily="Roboto"
+          >
+            Total de Checklists: {notifications.length}
+          </Typography>
+        )}
+      </Box>
       <ChecklistItemsModal />
     </Box>
   );

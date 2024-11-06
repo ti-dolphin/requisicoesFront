@@ -14,7 +14,7 @@ import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { dateTimeRenderer, getPatrimonyInfo } from "../../utils";
 import { PatrimonyInfoContext } from "../../context/patrimonyInfoContext";
 import { ResponsableContext } from "../../context/responsableContext";
-import { Checkbox, IconButton, Stack, Typography } from "@mui/material";
+import { Box, Checkbox, IconButton, Stack, Typography } from "@mui/material";
 import { userContext } from "../../../Requisitions/context/userContext";
 import { MovimentationContext } from "../../context/movementationContext";
 import ChecklistIcon from "@mui/icons-material/Checklist";
@@ -87,6 +87,7 @@ const VirtuosoTableComponents: TableComponents<PatrimonyInfo> = {
   TableBody: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
     <TableBody {...props} ref={ref} />
   )),
+  
 };
 
 function fixedHeaderContent() {
@@ -278,7 +279,7 @@ export default function MovementsTable() {
   }, [refreshPatrimonyInfo, currentFilter]);
 
   return (
-    <Paper style={{ height: "86%", width: "100%", padding: 2 }}>
+    <Paper style={{ height: "80%", width: "100%", padding: 2 }}>
       <SearchAppBar
         setFilteredRows={setFilteredRows}
         selectedItems={selectedItems}
@@ -293,6 +294,23 @@ export default function MovementsTable() {
           RowContent(index, row, setSelectedItems, selectedItems)
         }
       />
+      <Box
+        display="flex"
+        justifyContent="flex-end"
+        paddingY="0.4rem"
+        paddingX="2rem"
+      >
+        {filteredRows && (
+          <Typography
+            variant="body2"
+            color="blue"
+            fontWeight="semibold"
+            fontFamily="Roboto"
+          >
+            {filteredRows.length} Itens encontrados
+          </Typography>
+        )}
+      </Box>
     </Paper>
   );
 }

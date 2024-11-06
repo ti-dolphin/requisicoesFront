@@ -11,10 +11,8 @@ import {
   Paper,
   Typography,
   Box,
-  Stack,
   IconButton,
   AppBar,
-  Toolbar,
 } from "@mui/material";
 import { MovementationChecklist } from "../types";
 import { checklistContext } from "../context/checklistContext";
@@ -26,8 +24,7 @@ import { dateTimeRenderer, getChecklistDataByPatrimonyId } from "../utils";
 const PatrimonyChecklist = () => {
   const navigate = useNavigate();
   const { id_patrimonio } = useParams();
-  const { toggleChecklistOpen, refreshChecklist } =
-    useContext(checklistContext);
+  const { toggleChecklistOpen, refreshChecklist } =useContext(checklistContext);
   const [checklistData, setChecklistData] =
     useState<MovementationChecklist[]>();
 
@@ -82,7 +79,7 @@ const PatrimonyChecklist = () => {
       if(date === 'Invalid Date, Invalid Date'){ 
         return 'Não Realizado';
       }
-      return 
+      return date;
     }
     return value;
   };
@@ -100,37 +97,23 @@ const PatrimonyChecklist = () => {
         xs: 0.2,
         sm: 2,
         md: 3,
-        lg: 4,
-        xl: 5,
+        lg: 2,
+        xl: 1,
       }}
-      gap={4}
     >
-      <IconButton
-        sx={{
-          position: "absolute",
-          top: 8,
-          left: 8,
-          color: "#2B3990",
-          fontSize: "small",
-          fontWeight: "bold",
-          cursor: "pointer",
-          "&:hover": {
-            backgroundColor: "rgba(0, 0, 0, 0.05)",
-          },
-          zIndex: 1000, // Coloca o ícone acima do modal
-        }}
-        onClick={handleBack}
-      >
-        <ArrowLeftIcon />
-      </IconButton>
-
-      <Stack></Stack>
       <Box>
         <AppBar
           position="static"
           sx={{
             boxShadow: "none",
             backgroundColor: "#2B3990",
+            height: {
+              xs: "5rem",
+              sm: "4rem",
+              md: "4rem",
+              lg: "4rem",
+              xl: "4rem",
+            },
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
@@ -139,7 +122,20 @@ const PatrimonyChecklist = () => {
             paddingX: "2rem",
           }}
         >
-          <Box display="flex" flexWrap="wrap">
+          <Box display="flex" alignItems="center" flexGrow={1} flexShrink={1}>
+            <IconButton
+              sx={{
+                color: "#F7941E",
+                cursor: "pointer",
+                "&:hover": {
+                  backgroundColor: "rgba(0, 0, 0, 0.05)",
+                },
+                zIndex: 1000, // Coloca o ícone acima do modal
+              }}
+              onClick={handleBack}
+            >
+              <ArrowLeftIcon />
+            </IconButton>
             <Typography
               variant="h6"
               textAlign="center"
@@ -148,19 +144,6 @@ const PatrimonyChecklist = () => {
             >
               Histórico de Checklists
             </Typography>
-            <Stack direction="row" alignItems="center">
-              <Toolbar>
-                <Stack direction="row" alignItems="center">
-                  {/* <SearchIconWrapper>
-                    <SearchIcon />
-                  </SearchIconWrapper>
-                  <StyledInputBase
-                    placeholder="Search…"
-                    inputProps={{ "aria-label": "search" }}
-                  /> */}
-                </Stack>
-              </Toolbar>
-            </Stack>
           </Box>
         </AppBar>
       </Box>
@@ -170,13 +153,13 @@ const PatrimonyChecklist = () => {
       >
         <Table>
           <TableHead>
-            <TableRow>
+            <TableRow sx={{ backgroundColor: "#2B3990" }}>
               {columns.map((column) => (
                 <TableCell key={column.dataKey} width={column.width}>
                   <Typography
                     fontSize="small"
-                    fontWeight="bold"
-                    textAlign="center"
+                    fontFamily="Roboto"
+                    color="white"
                   >
                     {column.label}
                   </Typography>
@@ -203,7 +186,7 @@ const PatrimonyChecklist = () => {
                       width={column.width}
                       sx={{ paddingY: "0.5rem" }}
                     >
-                      <Typography fontSize="small" textAlign="center">
+                      <Typography fontSize="small" >
                         {renderColumnValue(column.dataKey, row[column.dataKey])}
                       </Typography>
                     </TableCell>
@@ -212,6 +195,18 @@ const PatrimonyChecklist = () => {
               ))}
           </TableBody>
         </Table>
+        <Box
+          display="flex"
+          justifyContent="flex-end"
+          paddingY="0.4rem"
+          paddingX="2rem"
+        >
+          {checklistData && (
+            <Typography variant="body2" color="blue" fontWeight="semibold" fontFamily="Roboto">
+              Total de Checklists: {checklistData.length}
+            </Typography>
+          )}
+        </Box>
       </TableContainer>
       <ChecklistItemsModal />
     </Box>
@@ -267,31 +262,6 @@ const columns: Column[] = [
   },
 ];
 
-// const SearchIconWrapper = styled("div")(({ theme }) => ({
-//   padding: theme.spacing(0, 2),
-//   height: "100%",
-//   position: "absolute",
-//   pointerEvents: "none",
-//   display: "flex",
-//   alignItems: "center",
-//   justifyContent: "center",
-// }));
 
-// const StyledInputBase = styled(InputBase)(({ theme }) => ({
-//   color: "inherit",
-//   width: "100%",
-//   "& .MuiInputBase-input": {
-//     padding: theme.spacing(1, 1, 1, 0),
-//     // vertical padding + font size from searchIcon
-//     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-//     transition: theme.transitions.create("width"),
-//     [theme.breakpoints.up("sm")]: {
-//       width: "12ch",
-//       "&:focus": {
-//         width: "20ch",
-//       },
-//     },
-//   },
-// }));
 
 export default PatrimonyChecklist;
