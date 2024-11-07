@@ -52,10 +52,10 @@ export const RequisitionContextProvider = ({
   const [currentKanbanFilter, setCurrentKanbanFilter] = useState<{
     label: string;
   }>(
-    JSON.parse(localStorage.getItem("currentKanbanFilter") || `{ label: "" }`)
+    JSON.parse(localStorage.getItem("currentKanbanFilter") || `{ "label": "" }`)
   );
   const [currentSubFilter, setCurrentSubFilter] = useState<{ label: string }>(
-    JSON.parse(localStorage.getItem("currentSubFilter") || `{ label: "" }`)
+    JSON.parse(localStorage.getItem("currentSubFilter") || `{ "label": "" }`)
   ); // New state for sub-filter
 
   // Functions for modifying state
