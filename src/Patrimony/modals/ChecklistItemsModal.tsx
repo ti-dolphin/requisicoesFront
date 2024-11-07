@@ -36,7 +36,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { CircularProgress } from "@mui/material";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
-
+import CircleIcon from '@mui/icons-material/Circle';
 const ChecklistItemsModal = () => {
   const {
     checklistOpen,
@@ -79,7 +79,7 @@ const ChecklistItemsModal = () => {
     swipe: true,
     arrows: false,
     accessibility: false,
-    dots: true,
+    dots: false,
     infinite: false,
     speed: 200,
     slidesToShow: 1,
@@ -504,7 +504,6 @@ const handleReproveChecklist = async () => {
                     },
                     minHeight: 320,
                     borderRadius: "10px",
-                    
                   }}
                 >
                   <CardMedia
@@ -706,20 +705,60 @@ const handleReproveChecklist = async () => {
             )
           )}
           {isMobile && (
-            <Stack direction="row" justifyContent="space-between">
-              <IconButton onClick={previous}>
-                <NavigateBeforeIcon sx={{ color: "blue" }} />
-              </IconButton>
-              <IconButton onClick={next}>
-                <NavigateNextIcon sx={{ color: "blue" }} />
-              </IconButton>
-            </Stack>
+            <Box className="space-y-8">
+              <Stack direction="row" justifyContent="space-between">
+                <IconButton onClick={previous}>
+                  <NavigateBeforeIcon sx={{ color: "blue" }} />
+                </IconButton>
+                <IconButton onClick={next}>
+                  <NavigateNextIcon sx={{ color: "blue" }} />
+                </IconButton>
+              </Stack>
+              <Stack
+                direction="row"
+                justifyContent="center"
+                flexWrap="wrap"
+                gap={1}
+              >
+                {ChecklistItems?.map((_checklistItem, index) => (
+                  <CircleIcon
+                    sx={{
+                      width: "12px",
+                      height: "12px",
+                      borderRadius: "50%",
+                      backgroundColor:
+                        index === currentSlideIndex ? "#333" : "#bbb", // Cor ativa para o slide atual
+                      transition:
+                        "transform 0.3s ease, background-color 0.3s ease",
+                      cursor: "pointer",
+                      color: "#e3e3e3",
+                      transform:
+                        index === currentSlideIndex ? "scale(1.4)" : "scale(1)", // Aumento do ponto ativo
+
+                      "&:hover": {
+                        backgroundColor: "#888", // Cor ao passar o mouse
+                        transform:
+                          index === currentSlideIndex
+                            ? "scale(1.4)"
+                            : "scale(1.2)", // Efeito de zoom ao passar o mouse
+                      },
+                    }}
+                  />
+                ))}
+              </Stack>
+            </Box>
           )}
         </Box>
 
-        <Box display="flex" justifyContent="center" gap={2} marginTop="1rem" sx={{
-          transform : 'translateY(-4rem)'
-        }}>
+        <Box
+          display="flex"
+          justifyContent="center"
+          gap={2}
+          marginTop="1rem"
+          sx={{
+            transform: "translateY(-4rem)",
+          }}
+        >
           {toBeDone() &&
             isMovimentationResponsable() &&
             (lastItem() || !isMobile) &&
