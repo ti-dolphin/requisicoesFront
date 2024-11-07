@@ -51,6 +51,7 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
   };
   
   const handleSelectFilter = async (filter: string) => {
+    localStorage.setItem('currentSubFilter', JSON.stringify({ label: filter}));
     changeSubFilter({label : filter});
   };
 
@@ -72,6 +73,10 @@ const SearchAppBar: React.FC<SearchAppBarProps> = ({
   }, [currentKanbanFilter]);
 
   const handleChangeKanbanFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
+    localStorage.setItem(
+      "currentKanbanFilter",
+      JSON.stringify({ label: e.currentTarget.id })
+    );
     changeKanbanFilter({ label: e.currentTarget.id });
   };
 

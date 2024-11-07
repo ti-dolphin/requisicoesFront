@@ -51,8 +51,12 @@ export const RequisitionContextProvider = ({
   const [activeStep, setActiveStep] = useState<number | undefined>();
   const [currentKanbanFilter, setCurrentKanbanFilter] = useState<{
     label: string;
-  }>();
-  const [currentSubFilter, setCurrentSubFilter] = useState<{ label: string }>({label : 'Minhas'}); // New state for sub-filter
+  }>(
+    JSON.parse(localStorage.getItem("currentKanbanFilter") || `{ label: "" }`)
+  );
+  const [currentSubFilter, setCurrentSubFilter] = useState<{ label: string }>(
+    JSON.parse(localStorage.getItem("currentSubFilter") || `{ label: "" }`)
+  ); // New state for sub-filter
 
   // Functions for modifying state
   const changeActiveStep = (value: number) => {

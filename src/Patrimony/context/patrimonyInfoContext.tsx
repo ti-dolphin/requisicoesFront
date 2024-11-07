@@ -71,7 +71,9 @@ export const PatrimonyInfoContextProvider = ({
   >([false]);
   const [deletingPatrimonyAccessoryFile, setDeletingPatrimonyAccessoryFile] =
     useState<[boolean, PatrimonyAccessoryFile?]>([false]);
-  const [currentFilter, setCurrentFilter] = useState<string>("Meus");
+  const [currentFilter, setCurrentFilter] = useState<string>(
+    localStorage.getItem("currentFilter") || "Meus"
+  );
 
   const toggleCreatingPatrimonyInfo = () => {
     setCreatingPatrimonyInfo(creatingPatrimonyInfo[0] ? [false] : [true]);

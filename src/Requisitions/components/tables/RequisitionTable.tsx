@@ -253,25 +253,11 @@ export default function EnhancedTable() {
     refreshRequisition,
     currentKanbanFilter,
     toggleRefreshRequisition,
-    changeKanbanFilter,
     currentSubFilter
   } = useContext(RequisitionContext);
   const { user } = useContext(userContext);
 
-  const defineDefaultKanbanFilter = () => {
-    console.log("user: ", user);
-    if (user?.PERM_COMPRADOR) {
-      // COMPRAS
-      changeKanbanFilter({ label: "A Fazer" });
-      return;
-    }
-    changeKanbanFilter({ label: "Backlog" });
-  };
 
-  useEffect(() => {
-    defineDefaultKanbanFilter();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const dateRenderer = (value?: string | number) => {
     if (typeof value === "string") {

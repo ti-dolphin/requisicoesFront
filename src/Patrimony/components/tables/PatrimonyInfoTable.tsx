@@ -93,7 +93,6 @@ const VirtuosoTableComponents: TableComponents<PatrimonyInfo> = {
 
 export default function MovementsTable() {
   const { refreshPatrimonyInfo, currentFilter } = useContext(PatrimonyInfoContext);
-  useState<boolean>(false);
   const { user } = useContext(userContext);
   const [rows, setRows] = useState<PatrimonyInfo[]>();
   const [filteredRows, setFilteredRows] = useState<PatrimonyInfo[]>();
@@ -292,6 +291,7 @@ export default function MovementsTable() {
     }
   };
   React.useEffect(() => {
+    localStorage.setItem("currentFilter", currentFilter);
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshPatrimonyInfo, currentFilter]);
