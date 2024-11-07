@@ -14,7 +14,7 @@ import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { dateTimeRenderer, getPatrimonyInfo } from "../../utils";
 import { PatrimonyInfoContext } from "../../context/patrimonyInfoContext";
 import { ResponsableContext } from "../../context/responsableContext";
-import { Box, Checkbox, IconButton, Stack, Typography } from "@mui/material";
+import { Box, Checkbox, IconButton, Stack, TextField, Typography } from "@mui/material";
 import { userContext } from "../../../Requisitions/context/userContext";
 import { MovimentationContext } from "../../context/movementationContext";
 import ChecklistIcon from "@mui/icons-material/Checklist";
@@ -29,7 +29,7 @@ interface ColumnData {
 
 const columns: ColumnData[] = [
   {
-    width: 60, // Reduzi um pouco para economizar espaço
+    width: 90, // Reduzi um pouco para economizar espaço
     label: "Patrimônio",
     dataKey: "id_patrimonio",
   },
@@ -90,34 +90,10 @@ const VirtuosoTableComponents: TableComponents<PatrimonyInfo> = {
   
 };
 
-function fixedHeaderContent() {
-  return (
-    <TableRow>
-      {columns.map((column) => (
-        <TableCell
-          key={column.dataKey}
-          variant="head"
-          align={column.numeric ? "left" : "center"}
-          style={{ width: column.width }}
-          sx={{
-            backgroundColor: "background.paper",
-            padding: "0.2",
-          }}
-        >
-          <Typography fontSize="small" sx={{ fontWeight: "bold" }}>
-            {column.label}
-          </Typography>
-        </TableCell>
-      ))}
-    </TableRow>
-  );
-}
+
 
 export default function MovementsTable() {
-  const { refreshPatrimonyInfo, currentFilter } =
-    useContext(PatrimonyInfoContext);
-  useContext(MovimentationContext);
-
+  const { refreshPatrimonyInfo, currentFilter } = useContext(PatrimonyInfoContext);
   useState<boolean>(false);
   const { user } = useContext(userContext);
   const [rows, setRows] = useState<PatrimonyInfo[]>();
@@ -146,6 +122,7 @@ export default function MovementsTable() {
       return;
     }
   };
+
   const handleOpenChecklists = (row: PatrimonyInfo) => {
     navigate("/patrimony/checklist/" + row.id_patrimonio); //
   };
@@ -246,6 +223,49 @@ export default function MovementsTable() {
     );
   }
 
+  function fixedHeaderContent() {
+    return (
+      <TableRow>
+        {columns.map((column) => (
+          <TableCell
+            key={column.dataKey}
+            variant="head"
+            align={column.numeric ? "left" : "center"}
+            style={{ width: column.width }}
+            sx={{
+              backgroundColor: "background.paper",
+              padding: "0.2",
+            }}
+          >
+            <Typography fontSize="small" sx={{ fontWeight: "bold" }}>
+              {column.label}
+            </Typography>
+            {column.label !== "" && (
+              <TextField
+                id="standard-basic"
+                label=""
+                variant="standard"
+                sx={{ fontSize: "10px", color: "red" }}
+                onChange={(e) => handleFilterByColumn(e, column)}
+              />
+            )}
+          </TableCell>
+        ))}
+      </TableRow>
+    );
+  }
+
+  const handleFilterByColumn = (e : React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, column : ColumnData ) =>  { 
+    const {value} = e.target;
+    if(value !== ''){ 
+      const newFilteredRows = rows && rows.filter((row) => String(row[column.dataKey]).toLowerCase().includes(value.toLowerCase()) )
+      console.log('newFilteredRows', newFilteredRows)
+      setFilteredRows(newFilteredRows);
+      return;
+    }
+    setFilteredRows(rows);
+  };  
+
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const { value } = e.currentTarget;
     if (e.key === "Enter") {
@@ -273,7 +293,6 @@ export default function MovementsTable() {
     }
   };
   React.useEffect(() => {
-    console.log("fetchData");
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshPatrimonyInfo, currentFilter]);
