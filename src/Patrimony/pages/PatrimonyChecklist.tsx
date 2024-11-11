@@ -143,9 +143,9 @@ const PatrimonyChecklist = () => {
               fontFamily={"Roboto"}
               padding={2}
             >
-              Histórico de Checklists | Patrimonio{" "}
-              {checklistData && checklistData[0].nome_patrimonio} |{" "}
-              {checklistData && checklistData[0].id_patrimonio}
+              {checklistData?.length
+                ? `Historico de Checklists do Patrimônio | ${checklistData[0].nome_patrimonio} | 000${checklistData[0].id_patrimonio}`
+                : "Não há checklsits para este patrimônio"}
             </Typography>
           </Box>
         </AppBar>
