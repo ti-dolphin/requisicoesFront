@@ -350,7 +350,7 @@ const ChecklistTasks = () => {
         data={notifications}
         components={{
           ...VirtuosoTableComponents,
-          TableRow: (props, index) => (
+          TableRow: (props) => (
             <TableRow
               {...props}
               sx={{
