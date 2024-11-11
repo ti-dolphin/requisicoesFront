@@ -145,7 +145,7 @@ const PatrimonyChecklist = () => {
             >
               {checklistData?.length
                 ? `Historico de Checklists do Patrimônio | ${checklistData[0].nome_patrimonio} | 000${checklistData[0].id_patrimonio}`
-                : "Não há checklsits para este patrimônio"}
+                : "Não há checklists para este patrimônio"}
             </Typography>
           </Box>
         </AppBar>

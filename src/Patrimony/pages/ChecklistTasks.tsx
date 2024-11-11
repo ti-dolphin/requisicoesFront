@@ -131,6 +131,7 @@ const ChecklistTasks = () => {
      console.log("getNotifications");
      if (user) {
        const notifications = await getPatrimonyNotifications(user);
+       console.log('notifications: ', notifications);
        const filteredNotifications = notifications.filter(
          (notification: MovementationChecklist) => {
            if (responsableForTypeNotification(notification)) {
@@ -154,11 +155,21 @@ const ChecklistTasks = () => {
    const responsableForTypeNotification = (
      notification: MovementationChecklist
    ) => {
-     return (
-       isTypeResponsable(notification) &&
-       !notification.aprovado &&
-       notification.realizado
-     );
+      if (isTypeResponsable(notification)) {
+        if (!notification.aprovado && notification.realizado) {
+          return true; //para aprovação
+        }
+        //para aprovar
+        if (
+          !notification.aprovado &&
+          !notification.realizado && 
+          isLate(notification)
+        ) {
+          return true;
+        }
+      }
+      return false;
+     
    };
 
    const isTypeResponsable = (checklist: MovementationChecklist) => {
@@ -176,6 +187,13 @@ const ChecklistTasks = () => {
      const handleBack = () => {
        navigate("/patrimony");
      };
+     const isLate = (row : MovementationChecklist ) => { 
+      const creationDate = new Date(row.data_criacao);
+      const today = new Date();
+      const threeDaysAgo = new Date();
+      threeDaysAgo.setDate(today.getDate() - 3);
+      return creationDate < threeDaysAgo;
+    }
 
    function rowContent(_index: number, row: MovementationChecklist) {
      const isDateValue = (column: ColumnData) => {
@@ -210,7 +228,7 @@ const ChecklistTasks = () => {
               sx={{
                 color:
                   toBeDone(row)
-                    ? isLate()
+                    ? isLate(row)
                       ? "red"
                       : "#ff9a3c"
                     : "gray",
@@ -232,14 +250,7 @@ const ChecklistTasks = () => {
         return row.realizado && !row.aprovado;
     }
 
-    const isLate = ( ) => { 
-      const creationDate = new Date(row.data_criacao);
-      const today = new Date();
-      const threeDaysAgo = new Date();
-      threeDaysAgo.setDate(today.getDate() - 3);
-      return creationDate < threeDaysAgo;
-    }
-
+  
      return (
        <React.Fragment>
          {columns.map((column) => (
@@ -326,7 +337,10 @@ const ChecklistTasks = () => {
               fontFamily="Roboto"
               padding={2}
             >
-              Checklists pendentes 
+              { 
+                notifications?.length ? `Checklists Pendentes do Patrimônio: ${notifications[0].nome_patrimonio} | 000${notifications[0].id_patrimonio}` : 
+                `Não há checklists pendentes`
+              }
              
             </Typography>
           </Box>
@@ -336,7 +350,7 @@ const ChecklistTasks = () => {
         data={notifications}
         components={{
           ...VirtuosoTableComponents,
-          TableRow: (props) => (
+          TableRow: (props, index) => (
             <TableRow
               {...props}
               sx={{
