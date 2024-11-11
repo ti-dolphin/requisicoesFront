@@ -1,22 +1,33 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import * as React from 'react';
-import { styled, css } from '@mui/system';
-import { Modal as BaseModal } from '@mui/base/Modal';
-import Fade from '@mui/material/Fade';
-import { Badge, BadgeProps, Button, CircularProgress, IconButton, ListItem, ListItemButton, ListItemText, Stack, Typography } from '@mui/material';
-import AttachFile from '@mui/icons-material/AttachFile';
+import * as React from "react";
+import { styled, css } from "@mui/system";
+import { Modal as BaseModal } from "@mui/base/Modal";
+import Fade from "@mui/material/Fade";
+import {
+  Badge,
+  BadgeProps,
+  Box,
+  Button,
+  CircularProgress,
+  IconButton,
+  Stack,
+  Typography
+} from "@mui/material";
+import AttachFile from "@mui/icons-material/AttachFile";
 import CloseIcon from "@mui/icons-material/Close";
-import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { MovementationFileContext } from '../context/movementationFileContext';
-import DeleteMovimentationFileModal from './DeleteMovimentationFileModal';
-import { createMovementationfile, getMovementationFiles, getResponsableForPatrimony } from '../utils';
-import { MovementationFile } from '../types';
-import { useState } from 'react';
-import { userContext } from '../../Requisitions/context/userContext';
-import { useParams } from 'react-router-dom';
-import UploadFileIcon from "@mui/icons-material/UploadFile";
+import { MovementationFileContext } from "../context/movementationFileContext";
+import DeleteMovimentationFileModal from "./DeleteMovimentationFileModal";
+import {
+  createMovementationfile,
+  getMovementationFiles,
+  getResponsableForPatrimony,
+} from "../utils";
+import { MovementationFile } from "../types";
+import { useState } from "react";
+import { userContext } from "../../Requisitions/context/userContext";
+import { useParams } from "react-router-dom";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -39,67 +50,37 @@ const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
   },
 }));
 
-function RenderRow( props: ListChildComponentProps & { fileData: MovementationFile[] }) {
- const { index, style, fileData } = props;
- const { toggleDeletingMovimentationFile } = React.useContext(MovementationFileContext);
-  const handleOpenLink = (url : string ) =>  { 
-      window.open(url, '_blank')
-  };
-  return (
-    <ListItem style={style} key={index} component="div" disablePadding>
-      <ListItemButton>
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <ListItemText
-             onClick={() =>
-               handleOpenLink(fileData[index].arquivo)
-             }
-            sx={{ textTransform: "underline", color: "blue" }}
-            primary={`${fileData[index].nome_arquivo}`}
-          />
-          <IconButton
-             onClick={() =>
-               toggleDeletingMovimentationFile(
-                 true,
-                 fileData[index]
-               )
-             }
-          >
-            <DeleteIcon />
-          </IconButton>
-        </Stack>
-      </ListItemButton>
-    </ListItem>
-  );
-}
 
-
-interface MovimentationFileModalProps{ 
-  movementationId? : number;
+interface MovimentationFileModalProps {
+  movementationId?: number;
 }
 //MAIN COMPONENT
 export default function MovimentationFileModal({
   movementationId,
 }: MovimentationFileModalProps) {
-  const {toggleMovementationFileOpen, movementationFileOpen, refreshMovementationFile, toggleRefreshMovementationFile } = React.useContext(MovementationFileContext);
-  const {user } = React.useContext(userContext);
+  const {
+    toggleMovementationFileOpen,
+    movementationFileOpen,
+    refreshMovementationFile,
+    toggleRefreshMovementationFile,
+    toggleDeletingMovimentationFile
+  } = React.useContext(MovementationFileContext);
+  const { user } = React.useContext(userContext);
   const { id_patrimonio } = useParams();
   const handleOpen = () => toggleMovementationFileOpen(movementationId);
   const handleClose = () => toggleMovementationFileOpen();
   const [fileData, setFileData] = useState<MovementationFile[]>();
   const [responsable, setResponsable] = useState<number>(0);
-  const [file, setFile] = useState<FormData>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-
   const fetchFileData = async () => {
-   
-    if(movementationId){ 
+    if (movementationId) {
       console.log("movementationId: ", movementationId);
       const fileData = await getMovementationFiles(movementationId);
       const responsable = await getResponsableForPatrimony(
         Number(id_patrimonio)
       );
-      if(responsable){ 
+      if (responsable) {
         setResponsable(responsable[0].id_responsavel);
       }
       if (fileData) {
@@ -107,12 +88,14 @@ export default function MovimentationFileModal({
       }
     }
   };
-  const handleUploadFile = async () => {
+  const handleUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsLoading(true);
-    if (movementationId && file) {
+    if (movementationId && e.target.files) {
+        const file = e.target.files[0];
+        const formData = new FormData();
+        formData.append("file", file);
       try {
-        await createMovementationfile(movementationId, file);
-        setFile(undefined);
+        await createMovementationfile(movementationId, formData);
         toggleRefreshMovementationFile();
       } catch (error) {
         alert("Error uploading file: \n" + error);
@@ -123,33 +106,25 @@ export default function MovimentationFileModal({
   };
 
 
- const handleChangeFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-   if (e.target.files) {
-     const file = e.target.files[0];
-     const isImage = file.type.startsWith("image/");
-     let newFile = file;
-     if (isImage && file.name.length > 20) {
-       const fileExtension = file.name.split(".").pop();
-       const shortenedName = `${file.name.substring(0, 15)}.${fileExtension}`;
-       newFile = new File([file], shortenedName, {
-         type: file.type,
-       });
-     }
-     const formData = new FormData();
-     formData.append("file", newFile);
-     setFile(formData);
-   }
- };
-
-const allowedToAttachFile = ( ) => { 
+  const allowedToAttachFile = () => {
     return user?.CODPESSOA === responsable || user?.PERM_ADMINISTRADOR;
-};
+  };
+  const isPDF = (file: MovementationFile) => {
+    return /\.pdf$/i.test(file.arquivo);
+  };
 
- React.useEffect(() => {
+  const isImage = (file: MovementationFile) => {
+    return /\.(jpg|jpeg|png|gif)$/i.test(file.arquivo);
+  };
 
-  fetchFileData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
- }, [refreshMovementationFile]);
+     const handleOpenLink = (url: string) => {
+       window.open(url, "_blank");
+     };
+
+  React.useEffect(() => {
+    fetchFileData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshMovementationFile]);
 
   return (
     <div>
@@ -215,7 +190,7 @@ const allowedToAttachFile = ( ) => {
                 startIcon={<CloudUploadIcon />}
               >
                 Anexar
-                <VisuallyHiddenInput onChange={handleChangeFile} type="file" />
+                <VisuallyHiddenInput onChange={handleUploadFile} type="file" />
               </Button>
             ) : (
               ""
@@ -232,18 +207,94 @@ const allowedToAttachFile = ( ) => {
                 <Typography sx={{ ml: 2 }}>Enviando...</Typography>
               </Stack>
             )}
-            {file && (
-              <Stack direction="row" flexWrap={'wrap'} alignItems="center" spacing={2}>
-                <Typography>
-                  {file.get("file") instanceof File &&
-                    (file.get("file") as File).name}
-                </Typography>
-                <IconButton onClick={handleUploadFile}>
-                  <UploadFileIcon />
-                </IconButton>
-              </Stack>
-            )}
-            <FixedSizeList
+
+            {
+              fileData?.map((file) => (
+                <Box
+                  sx={{ borderRadius: "10px" }}
+                  className="border border-gray-300"
+                >
+                  <Stack
+                    direction="row"
+                    gap={1}
+                    flexWrap="wrap"
+                    padding={1}
+                    height="fit-content"
+                    sx={{
+                      cursor: "pointer",
+                      color: "blue",
+                      textDecoration: "underline",
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        height: {
+                          xs: "100px",
+                          sm: "150px",
+                          md: "200px",
+                          lg: "300px",
+                        },
+                        borderRadius: "10px",
+                        width: {
+                          xs: "100%",
+                          sm: "100%",
+                          lg: "100%",
+                        },
+                        background: isImage(file)
+                          ? `url('${file.arquivo}')`
+                          : "none",
+                        backgroundPosition: "center",
+                        backgroundSize: "cover",
+                        backgroundRepeat: "no-repeat",
+                      }}
+                    >
+                      {isPDF(file) && (
+                        <object
+                          data={file.arquivo}
+                          type="application/pdf"
+                          width="100%"
+                          height="100%"
+                        ></object>
+                      )}
+                    </Box>
+                    <Box
+                      sx={{
+                        borderRadius: "10px",
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        flexWrap: "wrap",
+                        width: {
+                          xs: "100%",
+                          lg: "50%",
+                        },
+                      }}
+                    >
+                      <Typography
+                        onClick={() => handleOpenLink(file.arquivo)}
+                        fontSize="small"
+                        overflow={"hidden"}
+                      >
+                        {file.nome_arquivo}
+                      </Typography>
+                      <IconButton
+                        onClick={() =>
+                          toggleDeletingMovimentationFile(true, file)
+                        }
+                        sx={{
+                          color: "blue",
+                          textTransform: "underline",
+                          marginLeft: 1,
+                        }}
+                      >
+                        <DeleteIcon sx={{ color: "#F7941E" }} />
+                      </IconButton>
+                    </Box>
+                  </Stack>
+                </Box>
+              ))
+
+              /* <FixedSizeList
               height={400}
               width="100%"
               itemSize={46}
@@ -258,7 +309,8 @@ const allowedToAttachFile = ( ) => {
                   data={fileData}
                 />
               )}
-            </FixedSizeList>
+            </FixedSizeList> */
+            }
           </ModalContent>
         </Fade>
       </Modal>
@@ -266,7 +318,6 @@ const allowedToAttachFile = ( ) => {
   );
 }
 //MAIN COMPONENT
-
 
 const Backdrop = React.forwardRef<HTMLDivElement, { open?: boolean }>(
   (props, ref) => {
@@ -276,20 +327,20 @@ const Backdrop = React.forwardRef<HTMLDivElement, { open?: boolean }>(
         <div ref={ref} {...other} />
       </Fade>
     );
-  },
+  }
 );
 
 const grey = {
-  50: '#F3F6F9',
-  100: '#E5EAF2',
-  200: '#DAE2ED',
-  300: '#C7D0DD',
-  400: '#B0B8C4',
-  500: '#9DA8B7',
-  600: '#6B7A90',
-  700: '#434D5B',
-  800: '#303740',
-  900: '#1C2025',
+  50: "#F3F6F9",
+  100: "#E5EAF2",
+  200: "#DAE2ED",
+  300: "#C7D0DD",
+  400: "#B0B8C4",
+  500: "#9DA8B7",
+  600: "#6B7A90",
+  700: "#434D5B",
+  800: "#303740",
+  900: "#1C2025",
 };
 
 const Modal = styled(BaseModal)`
@@ -310,19 +361,19 @@ const StyledBackdrop = styled(Backdrop)`
 `;
 
 const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '1rem',
-  overFlowX: 'scroll'
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  display: "flex",
+  flexDirection: "column",
+  gap: "1rem",
+  overFlowX: "scroll",
 };
 
 const ModalContent = styled("div")(
   ({ theme }) => css`
-    font-family: 'IBM Plex Sans', sans-serif;
+    font-family: "IBM Plex Sans", sans-serif;
     font-weight: 500;
     text-align: start;
     position: relative;
@@ -336,9 +387,7 @@ const ModalContent = styled("div")(
     border-radius: 8px;
     border: 1px solid ${theme.palette.mode === "dark" ? grey[700] : grey[200]};
     box-shadow: 0 4px 12px
-      ${
-        theme.palette.mode === "dark" ? "rgb(0 0 0 / 0.5)" : "rgb(0 0 0 / 0.2)"
-      };
+      ${theme.palette.mode === "dark" ? "rgb(0 0 0 / 0.5)" : "rgb(0 0 0 / 0.2)"};
     padding: 10px;
     color: ${theme.palette.mode === "dark" ? grey[50] : grey[900]};
     & .modal-title {
@@ -356,7 +405,3 @@ const ModalContent = styled("div")(
     }
   `
 );
-
-
-
-

@@ -96,9 +96,12 @@ export interface MovementationChecklist {
   data_aprovado: string | null; // Can be null or a date in ISO format
   observacao: string | null;
   nome: string;
+  nome_responsavel? : string;
   responsavel_tipo?: number;
   id_patrimonio: number;
   responsavel_movimentacao? :number;
+  nome_patrimonio?: string;
+  descricao_projeto? : string;
 }
 
 export type Fabricante = {
@@ -121,7 +124,8 @@ export interface PatrimonyInfo {
   nome: string;
   projeto: string; //aparece
   responsavel: string; // aparece
-  descricao: string; // aparece
+  descricao: string; // aparece7
+  nome_tipo? : string;
   aceito : number;
   numeroMovimentacao: number; // aparece
   dataMovimentacao: string; //aparece Data da movimentação no formato ISO (YYYY-MM-DD)

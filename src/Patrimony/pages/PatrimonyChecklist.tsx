@@ -77,7 +77,7 @@ const PatrimonyChecklist = () => {
     if (dataKey === "data_realizado") {
       const date = dateTimeRenderer(value || "")
       if(date === 'Invalid Date, Invalid Date'){ 
-        return 'Não Realizado';
+        return '';
       }
       return date;
     }
@@ -140,9 +140,12 @@ const PatrimonyChecklist = () => {
               variant="h6"
               textAlign="center"
               fontSize="medium"
+              fontFamily={"Roboto"}
               padding={2}
             >
-              Histórico de Checklists
+              Histórico de Checklists | Patrimonio{" "}
+              {checklistData && checklistData[0].nome_patrimonio} |{" "}
+              {checklistData && checklistData[0].id_patrimonio}
             </Typography>
           </Box>
         </AppBar>
@@ -186,7 +189,7 @@ const PatrimonyChecklist = () => {
                       width={column.width}
                       sx={{ paddingY: "0.5rem" }}
                     >
-                      <Typography fontSize="small" >
+                      <Typography fontSize="small">
                         {renderColumnValue(column.dataKey, row[column.dataKey])}
                       </Typography>
                     </TableCell>
@@ -202,7 +205,12 @@ const PatrimonyChecklist = () => {
           paddingX="2rem"
         >
           {checklistData && (
-            <Typography variant="body2" color="blue" fontWeight="semibold" fontFamily="Roboto">
+            <Typography
+              variant="body2"
+              color="blue"
+              fontWeight="semibold"
+              fontFamily="Roboto"
+            >
               Total de Checklists: {checklistData.length}
             </Typography>
           )}
@@ -255,11 +263,16 @@ const columns: Column[] = [
     dataKey: "data_aprovado",
     width: 130, // Similar a 'Data Realizado'
   },
-  {
-    label: "Observação",
-    dataKey: "observacao",
-    width: 200, // Largura maior para texto livre
+  { 
+    label: 'Projeto',
+    dataKey: 'descricao_projeto',
+    width: 150, 
   },
+  { 
+    label: 'Responsável',
+    dataKey: 'nome_responsavel',
+    width: 150, 
+  }
 ];
 
 

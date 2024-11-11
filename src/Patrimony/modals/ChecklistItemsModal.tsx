@@ -53,6 +53,7 @@ const ChecklistItemsModal = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isIOS, setIsIOS] = useState(false);
   const sliderRef = useRef<Slider | null>(null);
+  const [itemImageOpen, setItemImageOpen] = useState <ChecklistItemFile>();
 
   function verifyIsIOS() {
     if(navigator.userAgent.toLowerCase().includes('iphone')){ 
@@ -269,7 +270,7 @@ const handleReproveChecklist = async () => {
         currentChecklist.data_realizado = new Date().toISOString();
         await sendCurrentChecklist(currentChecklist);
         toggleRefreshChecklist();
-        alert("Checklist Enviado com sucesso!");
+        toggleChecklistOpen();
       }
     }
   };
@@ -308,6 +309,7 @@ const handleReproveChecklist = async () => {
     );
     setChecklistItems(updatedChecklistItems);
   };
+  
   const getChecklistItemsMap = async () => {
     if (checklistOpen[1]) {
       const { id_patrimonio, id_movimentacao, id_checklist_movimentacao } =
@@ -408,6 +410,16 @@ const handleReproveChecklist = async () => {
     }
     return "";
   };
+  const handleCloseImageModal =  () => { 
+    setItemImageOpen(undefined);
+  };
+  const handleOpenItemImage = (checklistItem  : ChecklistItemFile) => {
+    if(checklistItem.arquivo){ 
+     setItemImageOpen(checklistItem);
+     return;
+    }
+    alert("Não há arquivo!");
+  };
 
   useEffect(() => {
     verifyIsIOS()
@@ -504,7 +516,9 @@ const handleReproveChecklist = async () => {
                     },
                     minHeight: 320,
                     borderRadius: "10px",
+                    cursor: "pointer",
                   }}
+                  onClick={() => handleOpenItemImage(checklistItem)}
                 >
                   <CardMedia
                     sx={{
@@ -790,6 +804,47 @@ const handleReproveChecklist = async () => {
             </Button>
           )}
         </Box>
+        <Modal
+          open={itemImageOpen !== undefined}
+          onClose={handleCloseImageModal}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "90%",
+              height: "90%",
+              bgcolor: "background.paper",
+              border: "1px solid #000",
+              boxShadow: 24,
+              p: 2,
+            }}
+          >
+            <IconButton
+              onClick={handleCloseImageModal}
+              sx={{
+                position: "absolute",
+                top: 8,
+                right: 8,
+              }}
+            >
+              <CloseIcon sx={{ color: "red" }} />
+            </IconButton>
+            <Box
+              sx={{
+                height: "100%",
+                backgroundImage: `url(${itemImageOpen?.arquivo})`,
+                backgroundSize: "contain",
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center",
+              }}
+            ></Box>
+          </Box>
+        </Modal>
       </Box>
     </Modal>
   );

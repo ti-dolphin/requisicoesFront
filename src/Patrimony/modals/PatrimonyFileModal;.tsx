@@ -19,11 +19,14 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useParams } from "react-router-dom";
 import { PatrimonyFile } from "../types";
 import { useContext, useEffect, useState } from "react";
-import { createPatrimonyfile, getPatrimonyFiles, getResponsableForPatrimony } from "../utils";
+import {
+  createPatrimonyfile,
+  getPatrimonyFiles,
+  getResponsableForPatrimony,
+} from "../utils";
 import { PatrimonyFileContext } from "../context/patrimonyFileContext";
 import DeletePatrimonyFileModal from "./DeletePatrimonyFileModal";
 import { userContext } from "../../Requisitions/context/userContext";
-
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -37,7 +40,6 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-
 //MAIN COMPONENT
 export default function PatrimonyFileModal() {
   const { id_patrimonio } = useParams();
@@ -46,62 +48,63 @@ export default function PatrimonyFileModal() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [fileData, setFileData] = useState<PatrimonyFile[]>();
-  const {refreshPatrimonyFile, toggleRefreshPatrimonyFile } = useContext(PatrimonyFileContext);
-  const {toggleDeletingPatrimonyFile} = useContext(PatrimonyFileContext);
+  const { refreshPatrimonyFile, toggleRefreshPatrimonyFile } =
+    useContext(PatrimonyFileContext);
+  const { toggleDeletingPatrimonyFile } = useContext(PatrimonyFileContext);
   const [responsable, setResponsable] = useState<number>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-
-  const fetchPatrimonyFiles = async( ) => { 
+  const fetchPatrimonyFiles = async () => {
     const data = await getPatrimonyFiles(Number(id_patrimonio));
-    const responsableData = await getResponsableForPatrimony(Number(id_patrimonio));
-    
+    const responsableData = await getResponsableForPatrimony(
+      Number(id_patrimonio)
+    );
+
     if (responsableData) {
       setResponsable(responsableData[0].id_responsavel);
     }
-    if(data){ 
+    if (data) {
       setFileData(data);
     }
-  }
-   const handleOpenLink = (url: string) => {
-     window.open(url, "_blank");
-   };
-   const handleUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-     if (e.target.files && id_patrimonio) {
-       setIsLoading(true);
-       const file = e.target.files[0];
-       const formData = new FormData();
-       formData.append("file", file);
-       const response = await createPatrimonyfile(
-         Number(id_patrimonio),
-         formData
-       );
-       console.log('tentou enviar ao backend')
-       if (response && response.status === 200) {
-          setIsLoading(false);
-         toggleRefreshPatrimonyFile();
-         return;
-       }
-       window.alert("Erro ao fazer upload!");
-     }
-   };
-   const allowedToAttachFile = ( ) => { 
+  };
+  const handleOpenLink = (url: string) => {
+    window.open(url, "_blank");
+  };
+  const handleUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && id_patrimonio) {
+      setIsLoading(true);
+      const file = e.target.files[0];
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await createPatrimonyfile(
+        Number(id_patrimonio),
+        formData
+      );
+   
+      if (response && response.status === 200) {
+        setIsLoading(false);
+        toggleRefreshPatrimonyFile();
+        return;
+      }
+      window.alert("Erro ao fazer upload!");
+    }
+  };
+  const allowedToAttachFile = () => {
     return user?.CODPESSOA === responsable || user?.PERM_ADMINISTRADOR;
-   };
-   const isImage = (file: PatrimonyFile) => {
-     return /\.(jpg|jpeg|png|gif)$/i.test(file.arquivo);
-   };
+  };
+  const isImage = (file: PatrimonyFile) => {
+    return /\.(jpg|jpeg|png|gif)$/i.test(file.arquivo);
+  };
 
-   const isPDF = (file : PatrimonyFile ) => { 
+  const isPDF = (file: PatrimonyFile) => {
     return /\.pdf$/i.test(file.arquivo);
-   }
-   useEffect(() => {
+  };
+  useEffect(() => {
+    console.log("teste");
+    fetchPatrimonyFiles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshPatrimonyFile]);
 
-     console.log('teste');
-     fetchPatrimonyFiles();
-     // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [refreshPatrimonyFile]);
-  
   return (
     <div>
       <Badge badgeContent={fileData?.length || 0} color="primary">
@@ -226,8 +229,7 @@ export default function PatrimonyFileModal() {
                         type="application/pdf"
                         width="100%"
                         height="100%"
-                      >
-                      </object>
+                      ></object>
                     )}
                   </Box>
                   <Box
@@ -264,22 +266,7 @@ export default function PatrimonyFileModal() {
                 </Stack>
               </Box>
             ))}
-            {/* <FixedSizeList
-              height={400}
-              width="100%"
-              itemSize={46}
-              itemCount={fileData?.length || 0}
-              overscanCount={5}
-            >
-              {({ index, style }) => (
-                <RenderRow
-                  index={index}
-                  style={style}
-                  fileData={fileData || []}
-                  data={fileData}
-                />
-              )}
-            </FixedSizeList> */}
+            
           </ModalContent>
         </Fade>
       </Modal>

@@ -96,7 +96,7 @@ const PatrimonyDetails = () => {
       case "nserie":
         return "Nº de série";
       case "descricao":
-        return "Descricao";
+        return "Descrição";
       case "pat_legado":
         return "Código Patrimônio";
       case "nome_tipo": 
@@ -107,11 +107,17 @@ const PatrimonyDetails = () => {
   };
 
   const renderLabelValue = (key: string) => {
-    if (editing)
-      return patrimonyData && `${patrimonyData[key as keyof Patrimony]}`;
-    else {
+    console.log("renderLabelValue");
+    if (editing[0]) {
+      console.log("editing");
       return patrimonyData && `${patrimonyData[key as keyof Patrimony]}`;
     }
+
+    if (key === "id_patrimonio") {
+      console.log("key = id_patrimonio");
+      return patrimonyData && `000${patrimonyData[key as keyof Patrimony]}`;
+    }
+    return patrimonyData && `${patrimonyData[key as keyof Patrimony]}`;
   };
 
   const handleChangeDate = (day: Dayjs | null) => {
@@ -225,14 +231,19 @@ const PatrimonyDetails = () => {
                               <DateField
                                 format="DD/MM/YYYY"
                                 onChange={(e) => handleChangeDate(e)}
-                                defaultValue={dayjs.utc(patrimonyData[key])} 
+                                defaultValue={dayjs.utc(patrimonyData[key])}
                                 label="Data de Compra"
                               />
                             </DemoContainer>
                           </LocalizationProvider>
                         ) : key === "ativo" ? (
                           <FormControlLabel
-                            control={<Switch onChange={handleActiveChange} defaultChecked={patrimonyData[key] > 0} />}
+                            control={
+                              <Switch
+                                onChange={handleActiveChange}
+                                defaultChecked={patrimonyData[key] > 0}
+                              />
+                            }
                             label="Ativo"
                           />
                         ) : (
@@ -243,7 +254,11 @@ const PatrimonyDetails = () => {
                             fullWidth
                             id="outlined-basic"
                             multiline
-                            value={renderLabelValue(key)}
+                            value={
+                              renderLabelValue(key) === "null"
+                                ? ""
+                                : renderLabelValue(key)
+                            }
                             variant="outlined"
                           />
                         )}

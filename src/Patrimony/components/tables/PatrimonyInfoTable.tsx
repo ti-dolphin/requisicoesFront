@@ -38,6 +38,11 @@ const columns: ColumnData[] = [
     dataKey: "nome",
   },
   {
+     width: 80,
+     label: 'Tipo',
+     dataKey: "nome_tipo",
+  },
+  {
     width: 150, // Reduzi para economizar espaço, mantendo a descrição legível
     label: "Descrição",
     dataKey: "descricao",
@@ -256,7 +261,23 @@ export default function MovementsTable() {
   const handleFilterByColumn = (e : React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, column : ColumnData ) =>  { 
     const {value} = e.target;
     if(value !== ''){ 
-      const newFilteredRows = rows && rows.filter((row) => String(row[column.dataKey]).toLowerCase().includes(value.toLowerCase()) )
+      if(column.dataKey === 'id_patrimonio'){ 
+        const numericValue = Number(value); // Converte o valor digitado para número, removendo zeros à esquerda automaticamente
+        const newFilteredRows =
+          rows &&
+          rows.filter((row) => {
+            const rowNumericValue = Number(row[column.dataKey]); // Converte o valor da linha para número
+            return rowNumericValue === numericValue; // Compara numericamente
+          });
+        setFilteredRows(newFilteredRows);
+        return;
+      }
+      if(column.dataKey === 'dataMovimentacao'){
+        const newFilteredRows = rows && rows.filter((row) => dateTimeRenderer(row[column.dataKey])?.includes(value));
+        setFilteredRows(newFilteredRows);
+        return;
+      }
+      const newFilteredRows = rows && rows.filter((row) => String(row[column.dataKey]).toLowerCase().includes(value.toLowerCase()));
       console.log('newFilteredRows', newFilteredRows)
       setFilteredRows(newFilteredRows);
       return;

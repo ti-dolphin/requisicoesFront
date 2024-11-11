@@ -43,51 +43,41 @@ const columns: ColumnData[] = [
     dataKey: "realizado",
     numeric: true,
   },
-//   {
-//     width: 150,
-//     label: "Patrimônio",
-//     dataKey: "id_patrimonio",
-//     numeric: true,
-//   },
 
-     {
-       width: 180,
-       label: "Data de Realização",
-       dataKey: "data_realizado",
-     },
+  {
+    width: 180,
+    label: "Data de Realização",
+    dataKey: "data_realizado",
+  },
   {
     width: 100,
     label: "Aprovado",
     dataKey: "aprovado",
     numeric: true,
   },
-     {
-       width: 180,
-       label: "Data de Aprovação",
-       dataKey: "data_aprovado",
-     },
+  {
+    width: 180,
+    label: "Data de Aprovação",
+    dataKey: "data_aprovado",
+  },
   {
     width: 250,
     label: "Observação",
     dataKey: "observacao",
   },
-  //   {
-  //     width: 200,
-  //     label: "Nome",
-  //     dataKey: "nome",
-  //   },
-  //   {
-  //     width: 200,
-  //     label: "Responsável",
-  //     dataKey: "responsavel_movimentacao",
-  //     numeric: true,
-  //   },
-  //   {
-  //     width: 150,
-  //     label: "Responsável Tipo",
-  //     dataKey: "responsavel_tipo",
-  //     numeric: true,
-  //   },
+  { 
+    width: 200,
+    label: 'Projeto',
+    dataKey: 'descricao_projeto',
+    numeric: false
+  },
+  {
+    width: 200,
+    label: "Responsável",
+    dataKey: "nome_responsavel",
+    numeric: true,
+  },
+  
 ];
 
 const VirtuosoTableComponents: TableComponents<MovementationChecklist> = {
@@ -248,26 +238,24 @@ const ChecklistTasks = () => {
       threeDaysAgo.setDate(today.getDate() - 3);
       return creationDate < threeDaysAgo;
     }
-  
-
-    // const isCurrentResponsable = (row : MovementationChecklist) => { 
-    //     return row.responsavel_movimentacao === user?.CODPESSOA;
-    // }
 
      return (
        <React.Fragment>
          {columns.map((column) => (
            <TableCell
              sx={{
-               cursor: "pointer"
+               cursor: "pointer",
+               paddingY: "0.5rem",
              }}
              onClick={() => handleOpenChecklist(row)}
              key={column.dataKey}
              align={column.numeric || false ? "left" : "left"}
            >
-             {isDateValue(column)
-               ? renderDateValue(column)
-               : renderValue(column)}
+             <Typography fontSize="small">
+               {isDateValue(column)
+                 ? renderDateValue(column)
+                 : renderValue(column)}
+             </Typography>
            </TableCell>
          ))}
        </React.Fragment>
@@ -334,9 +322,12 @@ const ChecklistTasks = () => {
               variant="h6"
               textAlign="center"
               fontSize="medium"
+              fontFamily="Roboto"
               padding={2}
             >
-              Checklists pendentes
+              Checklists pendentes | Patrimonio{" "}
+              {notifications && notifications[0].nome_patrimonio} | Nº{" "}
+              {notifications && notifications[0].id_patrimonio}
             </Typography>
           </Box>
         </AppBar>
