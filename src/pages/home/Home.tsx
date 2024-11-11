@@ -25,30 +25,20 @@ const modules = [
   {
     image:
       "https://firebasestorage.googleapis.com/v0/b/dolphin-8f800.appspot.com/o/_6d46fa5a-0284-43eb-a5fb-bdc796ada67a.jpeg?alt=media&token=e1450447-7f7f-4610-87a7-f13b674a852d",
-    name: "Controle de Patrimônios  (Em desenvolvimento)",
+    name: "Controle de Patrimônios",
     Info: `Gerenciar a localização;
             Responsável pela guarda;
             Registro de movimentações (Obra, sede e manutenção/calibração).
             Controle dos acessórios (Cabos, bateria reserva)`,
     path: "/patrimony",
   },
-  {
-    image:
-      "https://firebasestorage.googleapis.com/v0/b/dolphin-8f800.appspot.com/o/_9a5059cb-cba2-4295-a84b-ef43505868e1.jpeg?alt=media&token=82691098-8e4c-4384-8a5b-569e00f00273",
-    name: "Banco de Currículos (Em desenvolvimento)",
-    Info: `Cadastro de currículos recebidos;
-            Triagem de currículos
-            Controle de possíveis contratações para o futuro;
-            Controle de indicações.
-            Acesso ilimitado aos gerentes/coordenadores para consultas (Exemplo prospectar currículo adequado para uma vaga específica para setor de orçamentos, projetos ou alguma vaga na obra)`,
-    path: "/home",
-  },
+ 
   {
     image:
       "https://firebasestorage.googleapis.com/v0/b/dolphin-8f800.appspot.com/o/Wavy_Bus-17_Single-07.jpg?alt=media&token=0414fe18-af22-4d9b-a669-90153972fa9b",
       name: 'CRM',
       Info: 'Gerenciamneto e acompanhamento de Projetos',
-      path: '/crm'
+      path: ''
   },
 ];
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -161,7 +151,7 @@ const Home = () => {
                 >
                   <CardMedia
                     sx={{
-                      filter: index > 0 ? "grayscale(100%)" : "none",
+                      filter: index > 1 ? "grayscale(100%)" : "none",
                     }}
                     component="img"
                     image={module.image}
