@@ -126,6 +126,7 @@ const ChecklistTasks = () => {
    const { user } = useContext(userContext);
    const { toggleChecklistOpen, refreshChecklist } = useContext(checklistContext);
   const navigate = useNavigate();
+
    const getNotifications = async () => {
      console.log("getNotifications");
      if (user) {
@@ -325,9 +326,8 @@ const ChecklistTasks = () => {
               fontFamily="Roboto"
               padding={2}
             >
-              Checklists pendentes | Patrimonio{" "}
-              {notifications && notifications[0].nome_patrimonio} | Nº{" "}
-              {notifications && notifications[0].id_patrimonio}
+              Checklists pendentes 
+             
             </Typography>
           </Box>
         </AppBar>
