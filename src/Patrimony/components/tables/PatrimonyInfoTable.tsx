@@ -14,7 +14,14 @@ import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { dateTimeRenderer, getPatrimonyInfo } from "../../utils";
 import { PatrimonyInfoContext } from "../../context/patrimonyInfoContext";
 import { ResponsableContext } from "../../context/responsableContext";
-import { Box, Checkbox, IconButton, Stack, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Checkbox,
+  IconButton,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { userContext } from "../../../Requisitions/context/userContext";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import { useNavigate } from "react-router-dom";
@@ -37,9 +44,9 @@ const columns: ColumnData[] = [
     dataKey: "nome",
   },
   {
-     width: 80,
-     label: 'Tipo',
-     dataKey: "nome_tipo",
+    width: 80,
+    label: "Tipo",
+    dataKey: "nome_tipo",
   },
   {
     width: 150, // Reduzi para economizar espaço, mantendo a descrição legível
@@ -90,9 +97,7 @@ const VirtuosoTableComponents: TableComponents<PatrimonyInfo> = {
   TableBody: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
     <TableBody {...props} ref={ref} />
   )),
-  
 };
-
 
 export default function MovementsTable() {
   const {
@@ -105,14 +110,13 @@ export default function MovementsTable() {
   } = useContext(PatrimonyInfoContext);
   const { user } = useContext(userContext);
   const [rows, setRows] = useState<PatrimonyInfo[]>();
-  // const [filteredRows, setFilteredRows] = useState<PatrimonyInfo[]>();
   const [selectedItems, setSelectedItems] = useState<PatrimonyInfo[]>([]);
-  
+
   const navigate = useNavigate();
 
   const fetchData = async () => {
     const patrimonyInfoData = await getPatrimonyInfo();
-    if(!filteredRows?.length){ 
+    if (!filteredRows?.length) {
       if (currentFilter === "Todos") {
         if (patrimonyInfoData) {
           setFilteredRows(patrimonyInfoData);
@@ -132,6 +136,7 @@ export default function MovementsTable() {
         return;
       }
     }
+     setRows(patrimonyInfoData);
   };
 
   const handleOpenChecklists = (row: PatrimonyInfo) => {
@@ -259,7 +264,11 @@ export default function MovementsTable() {
                 variant="standard"
                 sx={{ fontSize: "10px", color: "red" }}
                 onChange={(e) => handleFilterByColumn(e, column)}
-                 value={columnFilter?.find(filter => filter.dataKey === column.dataKey)?.filterValue}
+                value={
+                  columnFilter?.find(
+                    (filter) => filter.dataKey === column.dataKey
+                  )?.filterValue
+                }
               />
             )}
           </TableCell>
@@ -267,73 +276,70 @@ export default function MovementsTable() {
       </TableRow>
     );
   }
-  
 
-   const handleFilterByColumn = (
-     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
-     column: ColumnData
-   ) => {
-     const { value } = e.target;
-      const activeFilters = getActiveFilters(column, value);
+  const handleFilterByColumn = (
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
+    column: ColumnData
+  ) => {
+    const { value } = e.target;
+    const activeFilters = getActiveFilters(column, value);
 
-      let newFilteredRows = rows && [...rows];
-      if (activeFilters && newFilteredRows) {
-        console.log('activeFilters: ', activeFilters)
- 
-        for (const filter of activeFilters) {
-          if (filter.dataKey === "id_patrimonio"){ 
-             const numericValue = Number(filter.filterValue); 
-             newFilteredRows = newFilteredRows.filter(
-               (row) =>
-                 Number(row[filter.dataKey as keyof PatrimonyInfo]) ===
-                 numericValue
-             );
-             continue;
-          }
-          if (filter.dataKey === "dataMovimentacao") {
-           newFilteredRows = newFilteredRows.filter((row) =>
-             dateTimeRenderer(
-               row[filter.dataKey as keyof PatrimonyInfo]
-             )?.includes(filter.filterValue)
-           );
-           continue;
-          }
-            newFilteredRows = newFilteredRows.filter((row) =>
-              String(row[filter.dataKey as keyof PatrimonyInfo])
-                .toLowerCase()
-                .includes(filter.filterValue.toLowerCase())
-            );
+    let newFilteredRows = rows && [...rows];
+    if (activeFilters && newFilteredRows) {
+      console.log("activeFilters: ", activeFilters);
+
+      for (const filter of activeFilters) {
+        if (filter.dataKey === "id_patrimonio") {
+          const numericValue = Number(filter.filterValue);
+          newFilteredRows = newFilteredRows.filter(
+            (row) =>
+              Number(row[filter.dataKey as keyof PatrimonyInfo]) ===
+              numericValue
+          );
+          continue;
         }
-         setFilteredRows(newFilteredRows);     
-         return;
+        if (filter.dataKey === "dataMovimentacao") {
+          newFilteredRows = newFilteredRows.filter((row) =>
+            dateTimeRenderer(
+              row[filter.dataKey as keyof PatrimonyInfo]
+            )?.includes(filter.filterValue)
+          );
+          continue;
+        }
+        newFilteredRows = newFilteredRows.filter((row) =>
+          String(row[filter.dataKey as keyof PatrimonyInfo])
+            .toLowerCase()
+            .includes(filter.filterValue.toLowerCase())
+        );
       }
-      setFilteredRows(rows);
-      
-   };
+      setFilteredRows(newFilteredRows);
+      return;
+    }
+    setFilteredRows(rows);
+  };
 
-  const getActiveFilters = (column : ColumnData, value : string ) => { 
-    
-     const updatedColumnFilters = columnFilter.map((currrentColumnFilter) => {
-       if (currrentColumnFilter.dataKey === column.dataKey) {
-         return {
-           ...currrentColumnFilter,
-           filterValue: value,
-         };
-       }
-       return currrentColumnFilter;
-     });
+  const getActiveFilters = (column: ColumnData, value: string) => {
+    const updatedColumnFilters = columnFilter.map((currrentColumnFilter) => {
+      if (currrentColumnFilter.dataKey === column.dataKey) {
+        return {
+          ...currrentColumnFilter,
+          filterValue: value,
+        };
+      }
+      return currrentColumnFilter;
+    });
 
     changeColumnFilters(updatedColumnFilters);
     const activeFilters: { dataKey: string; filterValue: string }[] = [
-         ...updatedColumnFilters.filter((filter) => {
-           if (filter.filterValue !== "") {
-             return filter;
-           }
-         })
-       ];
-     
-     return activeFilters;
-  }
+      ...updatedColumnFilters.filter((filter) => {
+        if (filter.filterValue !== "") {
+          return filter;
+        }
+      }),
+    ];
+
+    return activeFilters;
+  };
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const { value } = e.currentTarget;
