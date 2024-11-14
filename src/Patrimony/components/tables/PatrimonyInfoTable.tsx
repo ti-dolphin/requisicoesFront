@@ -116,7 +116,8 @@ export default function MovementsTable() {
 
   const fetchData = async () => {
     const patrimonyInfoData = await getPatrimonyInfo();
-    if (!filteredRows?.length) {
+    console.log('fetchData');
+
       if (currentFilter === "Todos") {
         if (patrimonyInfoData) {
           setFilteredRows(patrimonyInfoData);
@@ -135,7 +136,7 @@ export default function MovementsTable() {
         }
         return;
       }
-    }
+    
      setRows(patrimonyInfoData);
   };
 
