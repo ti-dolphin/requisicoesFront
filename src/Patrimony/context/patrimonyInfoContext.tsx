@@ -3,6 +3,7 @@ import {
   Patrimony,
   PatrimonyAccessory,
   PatrimonyAccessoryFile,
+  PatrimonyInfo,
 } from "../types";
 
 interface PatrimonyInfoContextType {
@@ -14,6 +15,11 @@ interface PatrimonyInfoContextType {
   deletingPatrimonyAccessory: [boolean, PatrimonyAccessory?];
   deletingPatrimonyAccessoryFile: [boolean, PatrimonyAccessoryFile?];
   currentFilter: string;
+  columnFilter: { dataKey: string; filterValue: string }[];
+  filteredRows?: PatrimonyInfo[];
+  setFilteredRows: React.Dispatch<
+    React.SetStateAction<PatrimonyInfo[] | undefined>
+  >;
   toggleRefreshPatrimonyInfo: () => void;
   toggleRefreshPatrimonyAccessory: () => void;
   toggleRefreshPatrimonyAccessoryFiles: () => void; // Nova função
@@ -26,6 +32,9 @@ interface PatrimonyInfoContextType {
     accessory?: PatrimonyAccessory
   ) => void;
   toggleDeletingPatrimonyAccessoryFile: (file?: PatrimonyAccessoryFile) => void;
+  changeColumnFilters: (
+    columFilters: { dataKey: string; filterValue: string }[]
+  ) => void;
 }
 
 interface PatrimonyInfoContextProviderProps {
@@ -41,6 +50,19 @@ export const PatrimonyInfoContext = createContext<PatrimonyInfoContextType>({
   deletingPatrimonyAccessory: [false],
   deletingPatrimonyAccessoryFile: [false],
   currentFilter: "Ativos",
+  filteredRows : [],
+  columnFilter: [
+    { dataKey: "id_patrimonio", filterValue: "" },
+    { dataKey: "nome", filterValue: "" },
+    { dataKey: "nome_tipo", filterValue: "" },
+    { dataKey: "descricao", filterValue: "" },
+    { dataKey: "responsavel", filterValue: "" },
+    { dataKey: "gerente", filterValue: "" },
+    { dataKey: "projeto", filterValue: "" },
+    { dataKey: "dataMovimentacao", filterValue: "" },
+    { dataKey: "id_patrimonio", filterValue: "" },
+  ],
+  setFilteredRows: () => {},
   toggleRefreshPatrimonyInfo: () => {},
   toggleRefreshPatrimonyAccessory: () => {},
   toggleRefreshPatrimonyAccessoryFiles: () => {}, // Inicialize a nova função
@@ -50,6 +72,7 @@ export const PatrimonyInfoContext = createContext<PatrimonyInfoContextType>({
   toggleCreatingPatrimonyAccessory: () => {},
   toggleDeletingPatrimonyAccessory: () => {},
   toggleDeletingPatrimonyAccessoryFile: () => {},
+  changeColumnFilters : ( ) => { },
 });
 
 export const PatrimonyInfoContextProvider = ({
@@ -74,6 +97,29 @@ export const PatrimonyInfoContextProvider = ({
   const [currentFilter, setCurrentFilter] = useState<string>(
     localStorage.getItem("currentFilter") || "Meus"
   );
+  const [columnFilter, setCurrentColumnFilter] = useState<
+    { dataKey: string; filterValue: string }[]
+  >([
+    { dataKey: "id_patrimonio", filterValue: "" },
+    { dataKey: "nome", filterValue: "" },
+    { dataKey: "nome_tipo", filterValue: "" },
+    { dataKey: "descricao", filterValue: "" },
+    { dataKey: "responsavel", filterValue: "" },
+    { dataKey: "gerente", filterValue: "" },
+    { dataKey: "projeto", filterValue: "" },
+    { dataKey: "dataMovimentacao", filterValue: "" },
+
+  ]);
+  const [filteredRows, setFilteredRows] = useState<PatrimonyInfo[]>();
+
+
+  
+   const changeColumnFilters = (
+     columFilters: { dataKey: string; filterValue: string }[]
+   ) => {
+      setCurrentColumnFilter([...columFilters]);
+
+   };
 
   const toggleCreatingPatrimonyInfo = () => {
     setCreatingPatrimonyInfo(creatingPatrimonyInfo[0] ? [false] : [true]);
@@ -139,8 +185,12 @@ export const PatrimonyInfoContextProvider = ({
         toggleDeletingPatrimonyAccessory,
         deletingPatrimonyAccessoryFile,
         toggleDeletingPatrimonyAccessoryFile,
+        setFilteredRows,
         currentFilter,
         setCurrentFilter,
+        changeColumnFilters,
+        columnFilter,
+        filteredRows,
       }}
     >
       {children}

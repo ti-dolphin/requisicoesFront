@@ -119,8 +119,6 @@ function fixedHeaderContent() {
   );
 }
 
-
-
 const ChecklistTasks = () => {
    const [notifications, setNotifications] = useState<MovementationChecklist[]>();
    const { user } = useContext(userContext);

@@ -17,7 +17,6 @@ import { ResponsableContext } from "../../context/responsableContext";
 import { Box, Checkbox, IconButton, Stack, TextField, Typography } from "@mui/material";
 import { userContext } from "../../../Requisitions/context/userContext";
 import ChecklistIcon from "@mui/icons-material/Checklist";
-import LoopIcon from "@mui/icons-material/Loop";
 import { useNavigate } from "react-router-dom";
 interface ColumnData {
   dataKey: keyof PatrimonyInfo;
@@ -95,34 +94,43 @@ const VirtuosoTableComponents: TableComponents<PatrimonyInfo> = {
 };
 
 
-
 export default function MovementsTable() {
-  const { refreshPatrimonyInfo, currentFilter } = useContext(PatrimonyInfoContext);
+  const {
+    refreshPatrimonyInfo,
+    currentFilter,
+    changeColumnFilters,
+    columnFilter,
+    filteredRows,
+    setFilteredRows,
+  } = useContext(PatrimonyInfoContext);
   const { user } = useContext(userContext);
   const [rows, setRows] = useState<PatrimonyInfo[]>();
-  const [filteredRows, setFilteredRows] = useState<PatrimonyInfo[]>();
+  // const [filteredRows, setFilteredRows] = useState<PatrimonyInfo[]>();
   const [selectedItems, setSelectedItems] = useState<PatrimonyInfo[]>([]);
+  
   const navigate = useNavigate();
 
   const fetchData = async () => {
     const patrimonyInfoData = await getPatrimonyInfo();
-    if (currentFilter === "Todos") {
-      if (patrimonyInfoData) {
-        setFilteredRows(patrimonyInfoData);
-        setRows(patrimonyInfoData);
+    if(!filteredRows?.length){ 
+      if (currentFilter === "Todos") {
+        if (patrimonyInfoData) {
+          setFilteredRows(patrimonyInfoData);
+          setRows(patrimonyInfoData);
+        }
+        return;
       }
-      return;
-    }
-    if (currentFilter === "Meus") {
-      if (patrimonyInfoData) {
-        const filtered = patrimonyInfoData.filter(
-          (register) =>
-            register.responsavel.toUpperCase() === user?.NOME?.toUpperCase()
-        );
-        setFilteredRows(filtered);
-        setRows(filtered);
+      if (currentFilter === "Meus") {
+        if (patrimonyInfoData) {
+          const filtered = patrimonyInfoData.filter(
+            (register) =>
+              register.responsavel.toUpperCase() === user?.NOME?.toUpperCase()
+          );
+          setFilteredRows(filtered);
+          setRows(filtered);
+        }
+        return;
       }
-      return;
     }
   };
 
@@ -155,7 +163,7 @@ export default function MovementsTable() {
     };
     const handleOpenPatrimonyDetail = (id_patrimonio: number) => {
       setResponsable(row.id_responsavel);
-      window.location.href = `/patrimony/details/${id_patrimonio}`;
+      navigate(`/patrimony/details/${id_patrimonio}`);
     };
 
     const isOnSelectedItems = (row: PatrimonyInfo) => {
@@ -170,6 +178,7 @@ export default function MovementsTable() {
         {columns.map((column) =>
           column.label !== "" ? (
             <TableCell
+              onClick={() => handleOpenPatrimonyDetail(row.id_patrimonio)}
               sx={{
                 cursor: "pointer",
                 paddingX: "0.2rem",
@@ -205,11 +214,11 @@ export default function MovementsTable() {
             >
               <Stack direction="row">
                 {""}
-                <IconButton
+                {/* <IconButton
                   onClick={() => handleOpenPatrimonyDetail(row.id_patrimonio)}
                 >
                   <LoopIcon />
-                </IconButton>
+                </IconButton> */}
                 <IconButton onClick={() => handleOpenChecklists(row)}>
                   <ChecklistIcon />
                 </IconButton>
@@ -250,6 +259,7 @@ export default function MovementsTable() {
                 variant="standard"
                 sx={{ fontSize: "10px", color: "red" }}
                 onChange={(e) => handleFilterByColumn(e, column)}
+                 value={columnFilter?.find(filter => filter.dataKey === column.dataKey)?.filterValue}
               />
             )}
           </TableCell>
@@ -257,33 +267,73 @@ export default function MovementsTable() {
       </TableRow>
     );
   }
+  
 
-  const handleFilterByColumn = (e : React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, column : ColumnData ) =>  { 
-    const {value} = e.target;
-    if(value !== ''){ 
-      if(column.dataKey === 'id_patrimonio'){ 
-        const numericValue = Number(value); // Converte o valor digitado para número, removendo zeros à esquerda automaticamente
-        const newFilteredRows =
-          rows &&
-          rows.filter((row) => {
-            const rowNumericValue = Number(row[column.dataKey]); // Converte o valor da linha para número
-            return rowNumericValue === numericValue; // Compara numericamente
-          });
-        setFilteredRows(newFilteredRows);
-        return;
+   const handleFilterByColumn = (
+     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
+     column: ColumnData
+   ) => {
+     const { value } = e.target;
+      const activeFilters = getActiveFilters(column, value);
+
+      let newFilteredRows = rows && [...rows];
+      if (activeFilters && newFilteredRows) {
+        console.log('activeFilters: ', activeFilters)
+ 
+        for (const filter of activeFilters) {
+          if (filter.dataKey === "id_patrimonio"){ 
+             const numericValue = Number(filter.filterValue); 
+             newFilteredRows = newFilteredRows.filter(
+               (row) =>
+                 Number(row[filter.dataKey as keyof PatrimonyInfo]) ===
+                 numericValue
+             );
+             continue;
+          }
+          if (filter.dataKey === "dataMovimentacao") {
+           newFilteredRows = newFilteredRows.filter((row) =>
+             dateTimeRenderer(
+               row[filter.dataKey as keyof PatrimonyInfo]
+             )?.includes(filter.filterValue)
+           );
+           continue;
+          }
+            newFilteredRows = newFilteredRows.filter((row) =>
+              String(row[filter.dataKey as keyof PatrimonyInfo])
+                .toLowerCase()
+                .includes(filter.filterValue.toLowerCase())
+            );
+        }
+         setFilteredRows(newFilteredRows);     
+         return;
       }
-      if(column.dataKey === 'dataMovimentacao'){
-        const newFilteredRows = rows && rows.filter((row) => dateTimeRenderer(row[column.dataKey])?.includes(value));
-        setFilteredRows(newFilteredRows);
-        return;
-      }
-      const newFilteredRows = rows && rows.filter((row) => String(row[column.dataKey]).toLowerCase().includes(value.toLowerCase()));
-      console.log('newFilteredRows', newFilteredRows)
-      setFilteredRows(newFilteredRows);
-      return;
-    }
-    setFilteredRows(rows);
-  };  
+      setFilteredRows(rows);
+      
+   };
+
+  const getActiveFilters = (column : ColumnData, value : string ) => { 
+    
+     const updatedColumnFilters = columnFilter.map((currrentColumnFilter) => {
+       if (currrentColumnFilter.dataKey === column.dataKey) {
+         return {
+           ...currrentColumnFilter,
+           filterValue: value,
+         };
+       }
+       return currrentColumnFilter;
+     });
+
+    changeColumnFilters(updatedColumnFilters);
+    const activeFilters: { dataKey: string; filterValue: string }[] = [
+         ...updatedColumnFilters.filter((filter) => {
+           if (filter.filterValue !== "") {
+             return filter;
+           }
+         })
+       ];
+     
+     return activeFilters;
+  }
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const { value } = e.currentTarget;
@@ -311,6 +361,7 @@ export default function MovementsTable() {
       return;
     }
   };
+
   React.useEffect(() => {
     localStorage.setItem("currentFilter", currentFilter);
     fetchData();
