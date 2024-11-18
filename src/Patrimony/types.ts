@@ -92,16 +92,17 @@ export interface MovementationChecklist {
   data_criacao: string; // Date in ISO format
   realizado: number; // Assuming 0 or 1 for boolean values
   data_realizado: string | null; // Can be null or a date in ISO format
-  aprovado: number; // Assuming 0 or 1 for boolean values
+  aprovado: number;
+  reprovado: number; // Assuming 0 or 1 for boolean values
   data_aprovado: string | null; // Can be null or a date in ISO format
   observacao: string | null;
   nome: string;
-  nome_responsavel? : string;
+  nome_responsavel?: string;
   responsavel_tipo?: number;
   id_patrimonio: number;
-  responsavel_movimentacao? :number;
+  responsavel_movimentacao?: number;
   nome_patrimonio?: string;
-  descricao_projeto? : string;
+  descricao_projeto?: string;
 }
 
 export type Fabricante = {

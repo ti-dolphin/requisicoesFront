@@ -250,7 +250,7 @@ const handleReproveChecklist = async () => {
     if (response && response.status === 200) {
       currentChecklist.aprovado = 0;
       currentChecklist.realizado = 0; // Remove a data de aprovação, pois foi reprovado
-
+      currentChecklist.reprovado = 1;
       const checklistResponse = await sendChecklist(currentChecklist);
       if (checklistResponse && checklistResponse.status === 200) {
         setChecklistOpen([true, currentChecklist]);
