@@ -413,16 +413,35 @@ export default function MovementsTable() {
         justifyContent="flex-end"
         paddingY="0.4rem"
         paddingX="2rem"
+        gap={4}
       >
         {filteredRows && (
-          <Typography
-            variant="body2"
-            color="blue"
-            fontWeight="semibold"
-            fontFamily="Roboto"
-          >
-            {filteredRows.length} Itens encontrados
-          </Typography>
+          <>
+            <Typography
+              variant="body2"
+              color="blue"
+              fontWeight="semibold"
+              fontFamily="Roboto"
+            >
+              {`Total: ${new Intl.NumberFormat("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              }).format(
+                filteredRows.reduce(
+                  (total, row) => total + Number(row.valor_compra || 0),
+                  0
+                )
+              )}`}
+            </Typography>
+            <Typography
+              variant="body2"
+              color="blue"
+              fontWeight="semibold"
+              fontFamily="Roboto"
+            >
+              {filteredRows.length} Itens encontrados
+            </Typography>
+          </>
         )}
       </Box>
     </Paper>
