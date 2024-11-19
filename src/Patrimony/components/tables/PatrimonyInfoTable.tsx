@@ -43,8 +43,13 @@ const columns: ColumnData[] = [
     label: "Nome",
     dataKey: "nome",
   },
-  {
+  { 
     width: 80,
+    label: 'Valor de Compra',
+    dataKey: 'valor_compra'
+  },
+  {
+    width: 170,
     label: "Tipo",
     dataKey: "nome_tipo",
   },
@@ -199,11 +204,23 @@ export default function MovementsTable() {
                   {dateTimeRenderer(row[column.dataKey])}
                 </Typography>
               ) : (
-                <Typography fontSize="12px">
+                <Typography
+                  fontSize="12px"
+                  sx={{
+                    textAlign:
+                      column.dataKey === "descricao" ? "left" : "center",
+                  }}
+                >
                   {column.dataKey === "projeto"
                     ? String(row[column.dataKey])
                     : column.dataKey === "id_patrimonio"
                     ? String(row[column.dataKey]).padStart(6, "0")
+                    : column.dataKey === "valor_compra"
+                    ? new Intl.NumberFormat("pt-BR", {
+                        style: "decimal",
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }).format(Number(row[column.dataKey]))
                     : String(row[column.dataKey]).toLowerCase()}
                 </Typography>
               )}

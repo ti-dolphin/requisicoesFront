@@ -336,7 +336,7 @@ const ChecklistTasks = () => {
               padding={2}
             >
               { 
-                notifications?.length ? `Checklists Pendentes do Patrimônio: ${notifications[0].nome_patrimonio} | 000${notifications[0].id_patrimonio}` : 
+                notifications?.length ? `Checklists Pendentes` : 
                 `Não há checklists pendentes`
               }
              

@@ -107,14 +107,8 @@ const PatrimonyChecklist = () => {
           sx={{
             boxShadow: "none",
             backgroundColor: "#2B3990",
-            height: {
-              xs: "5rem",
-              sm: "4rem",
-              md: "4rem",
-              lg: "4rem",
-              xl: "4rem",
-            },
             display: "flex",
+            height: "fit-content",
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
@@ -137,8 +131,8 @@ const PatrimonyChecklist = () => {
               <ArrowLeftIcon />
             </IconButton>
             <Typography
-              variant="h6"
-              textAlign="center"
+              
+              textAlign="left"
               fontSize="medium"
               fontFamily={"Roboto"}
               padding={2}
@@ -178,7 +172,7 @@ const PatrimonyChecklist = () => {
                   sx={{
                     cursor: "pointer",
                     "&:hover": {
-                      backgroundColor: "#F5F5F5",
+                      backgroundColor: "#e7eaf6",
                     },
                   }}
                   key={row.id_checklist_movimentacao}

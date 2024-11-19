@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useContext, useEffect, useRef, useState } from "react";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 import {
   Modal,
   Box,
@@ -37,6 +40,10 @@ import { CircularProgress } from "@mui/material";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import CircleIcon from '@mui/icons-material/Circle';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 const ChecklistItemsModal = () => {
   const {
     checklistOpen,
@@ -218,7 +225,9 @@ const handleChangeOkay = (checklistItemReceived: ChecklistItemFile) => {
       //muda checklist para aprovado e define data de aprovação
       if (response && response.status === 200) {
         currentChecklist.aprovado = 1;
-        currentChecklist.data_aprovado = new Date().toISOString();
+        currentChecklist.data_aprovado = dayjs()
+          .tz("America/Sao_Paulo")
+          .format("YYYY-MM-DD HH:mm:ss");
         const response = await sendChecklist(currentChecklist);
         if (response && response.status === 200) {
           setChecklistOpen([true, currentChecklist]);
@@ -228,6 +237,7 @@ const handleChangeOkay = (checklistItemReceived: ChecklistItemFile) => {
       }
     }
   };
+
 const handleReproveChecklist = async () => {
   if (checklistOpen[1]) {
     const currentChecklist = {
@@ -267,7 +277,9 @@ const handleReproveChecklist = async () => {
       if (response && response.status === 200 && checklistOpen[1]) {
         const currentChecklist = { ...checklistOpen[1] };
         currentChecklist.realizado = 1;
-        currentChecklist.data_realizado = new Date().toISOString();
+        currentChecklist.data_realizado = dayjs()
+          .tz("America/Sao_Paulo")
+          .format("YYYY-MM-DD HH:mm:ss");
         await sendCurrentChecklist(currentChecklist);
         toggleRefreshChecklist();
         toggleChecklistOpen();
@@ -486,7 +498,15 @@ const handleReproveChecklist = async () => {
           >
             Checklist
           </Typography>
-          <Typography textAlign="center" fontSize="small">
+          <Typography
+            textAlign="center"
+            fontSize="small"
+            color="blue"
+            sx={{ textDecoration: "underline", cursor: "pointer" }}
+            onClick={() =>
+              window.open(`/patrimony/details/${checklistOpen[1]?.id_patrimonio}`)
+            }
+          >
             Patrimônio {checklistOpen[1]?.id_patrimonio} (
             {checklistOpen[1]?.nome})
           </Typography>

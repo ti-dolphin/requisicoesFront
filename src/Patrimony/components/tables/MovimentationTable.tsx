@@ -9,66 +9,47 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { TableVirtuoso, TableComponents } from "react-virtuoso";
 import { Box, IconButton, Stack, Typography } from "@mui/material";
-import { Movementation } from "../../types";
+import { useParams } from "react-router-dom";
 import MovimentationFileModal from "../../modals/MovimentationFileModal";
 import EditIcon from "@mui/icons-material/Edit";
-import { MovimentationContext } from "../../context/movementationContext";
-import { useContext } from "react";
-import EditMovimentationObservationModal from "../../modals/EditMovimentationObservationModal";
-import { dateTimeRenderer, getMovementationsByPatrimonyId } from "../../utils";
-import { useParams } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DeleteMovementationModal from "../../modals/DeleteMovementationModal";
+import EditMovimentationObservationModal from "../../modals/EditMovimentationObservationModal";
+import { MovimentationContext } from "../../context/movementationContext";
+import { dateTimeRenderer, getMovementationsByPatrimonyId } from "../../utils";
 import { userContext } from "../../../Requisitions/context/userContext";
+import { useContext } from "react";
 
-
-// Define the interface for the new data structure
-
-// Column data configuration
-interface ColumnData {
-  dataKey: keyof Movementation;
-  label: string;
-  numeric?: boolean;
-  width: number;
+// Tipo Movementation
+interface Movementation {
+  id_movimentacao: number;
+  id_projeto: number;
+  id_patrimonio: number;
+  id_ultima_movimentacao: number;
+  responsavel?: string;
+  projeto?: string;
+  data: string;
+  id_ultimo_responsavel?: number;
+  id_responsavel: number;
+  numeroMovimentacao?: number;
+  observacao: string;
+  aceito: number;
 }
 
-const columns: ColumnData[] = [
-  {
-    width: 190, // 28.33% do total
-    label: "Projeto",
-    dataKey: "projeto",
-    numeric: false,
-  },
-  {
-    width: 100, // 28.33% do total
-    label: "Observação",
-    dataKey: "observacao",
-    numeric: false,
-  },
-  {
-    width: 100, // 16.67% do total
-    label: "Data",
-    dataKey: "data",
-    numeric: false,
-  },
-  {
-    width: 100, // 18.33% do total
-    label: "Responsável",
-    dataKey: "responsavel",
-    numeric: false,
-  },
-  {
-    width: 50, // 8.33% do total
-    label: "Nº Movimentação",
-    dataKey: "id_movimentacao",
-    numeric: true,
-  },
+// Configuração das colunas
+const columns: {
+  label: string;
+  width: number;
+  dataKey: keyof Movementation;
+}[] = [
+  { label: "Projeto", width: 190, dataKey: "projeto" },
+  { label: "Observação", width: 200, dataKey: "observacao" },
+  { label: "Data", width: 150, dataKey: "data" },
+  { label: "Responsável", width: 150, dataKey: "responsavel" },
+  { label: "Nº Movimentação", width: 150, dataKey: "id_movimentacao" },
 ];
 
-// Sample dummy data
-
-
-
+// Componentes para a tabela virtualizada
 const VirtuosoTableComponents: TableComponents<Movementation> = {
   Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
     <TableContainer component={Paper} {...props} ref={ref} />
@@ -80,7 +61,11 @@ const VirtuosoTableComponents: TableComponents<Movementation> = {
     />
   ),
   TableHead: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
-    <TableHead sx={{boxShadow: 'none', border: 'none'}} {...props} ref={ref} />
+    <TableHead
+      sx={{ boxShadow: "none", border: "none" }}
+      {...props}
+      ref={ref}
+    />
   )),
   TableRow,
   TableBody: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
@@ -88,18 +73,17 @@ const VirtuosoTableComponents: TableComponents<Movementation> = {
   )),
 };
 
+// Cabeçalho fixo
 function fixedHeaderContent() {
   return (
     <TableRow>
       {columns.map((column) => (
         <TableCell
           key={column.dataKey}
-          variant="head"
-          align={column.numeric ? "right" : "left"}
-          style={{ width: column.width }}
           sx={{
+            width: column.width,
             backgroundColor: "background.paper",
-            border: 'none'
+            border: "none",
           }}
         >
           {column.label}
@@ -109,25 +93,24 @@ function fixedHeaderContent() {
   );
 }
 
+// Linha de conteúdo
 const RowContent = ({
   row,
-  singleMovementation
+  singleMovementation,
 }: {
   row: Movementation;
   singleMovementation: () => boolean;
 }) => {
-  const {
-    togglEditingMovementationObservation,
-    toggleDeletingMovementation,
-  } = useContext(MovimentationContext);
+  const { togglEditingMovementationObservation, toggleDeletingMovementation } =
+    useContext(MovimentationContext);
   const { user } = useContext(userContext);
 
   const handleClickDeleteMovimentation = (row: Movementation) => {
     if (singleMovementation()) {
-      console.log("singleMov");
       alert("Não é permitido excluir a única movimentação!");
+      return;
     }
-    if (notAllowedToCreateMovementation()) {
+    if (!isWhoCreated() && !user?.PERM_ADMINISTRADOR) {
       alert(
         "Apenas quem criou ou o administrador pode excluir a movimentação!"
       );
@@ -136,21 +119,19 @@ const RowContent = ({
     toggleDeletingMovementation(row);
   };
 
-  const notAllowedToCreateMovementation = () => {
-    return !isWhoCreated() && !user?.PERM_ADMINISTRADOR;
-  };
-
-  const isWhoCreated = () => {
-    return user?.CODPESSOA === row.id_ultimo_responsavel;
-  };
+  const isWhoCreated = () => user?.CODPESSOA === row.id_ultimo_responsavel;
 
   return (
     <React.Fragment>
       {columns.map((column) => (
         <TableCell
-          sx={{ paddingY: "6px", border: "none" }}
           key={column.dataKey}
-          align={column.numeric ? "right" : "left"}
+          sx={{
+            paddingY: "6px",
+            border: "none",
+            width: column.width,
+            
+          }}
         >
           <Stack
             direction="row"
@@ -160,36 +141,26 @@ const RowContent = ({
               column.dataKey === "id_movimentacao" ? "end" : "space-between"
             }
           >
-            <Typography
-              sx={{
-                fontSize: "12px",
-                textAlign: "left",
-                textTransform: "capitalize",
-              }}
-            >
+            <Typography sx={{ fontSize: "12px", textAlign: "left" }}>
               {column.dataKey === "data"
                 ? dateTimeRenderer(row.data)
-                : String(row[column.dataKey])}
+                : row[column.dataKey] || "-"}
             </Typography>
 
-            {column.dataKey === "projeto" ? (
+            {column.dataKey === "projeto" && (
               <MovimentationFileModal movementationId={row.id_movimentacao} />
-            ) : column.dataKey === "observacao" ? (
+            )}
+            {column.dataKey === "observacao" && (
               <IconButton
-                onClick={() => {
-                  togglEditingMovementationObservation(true, row);
-                }}
+                onClick={() => togglEditingMovementationObservation(true, row)}
               >
                 <EditIcon sx={{ color: "#F7941E" }} />
               </IconButton>
-            ) : column.dataKey === "id_movimentacao" ? (
-              <>
-                <IconButton onClick={() => handleClickDeleteMovimentation(row)}>
-                  <DeleteIcon sx={{ color: "#F7941E" }} />
-                </IconButton>
-              </>
-            ) : (
-              ""
+            )}
+            {column.dataKey === "id_movimentacao" && (
+              <IconButton onClick={() => handleClickDeleteMovimentation(row)}>
+                <DeleteIcon sx={{ color: "#F7941E" }} />
+              </IconButton>
             )}
           </Stack>
         </TableCell>
@@ -198,54 +169,47 @@ const RowContent = ({
   );
 };
 
-//MAIN COMPONENT
+// Componente principal
 export default function DetailMovementsTable() {
   const { id_patrimonio } = useParams();
   const [movementations, setMovementations] = React.useState<Movementation[]>(
     []
-  );    
+  );
   const { refreshMovimentation } = useContext(MovimentationContext);
-    // const { user }= useContext(userContext);
 
   const fetchMovementations = async () => {
     const movementationsData = await getMovementationsByPatrimonyId(
       Number(id_patrimonio)
     );
-    if (movementationsData) {
-      console.log("movementationsData: ", movementationsData);
-      setMovementations([...movementationsData]);
-    }
+    if (movementationsData) setMovementations([...movementationsData]);
   };
 
-  const singleMovementation = () => {
-    return movementations.length === 0;
-  };
-   
+  const singleMovementation = () => movementations.length === 1;
+
   React.useEffect(() => {
     fetchMovementations();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshMovimentation]);
 
   return (
-    <Box
-      sx={{
-        height: "90%",
-        width: "100%",
-        padding: 2,
-        boxShadow: "none",
-        dropShadow: "none",
-      }}
-    >
+    <Box sx={{ height: "90%", width: "100%", padding: 0, boxShadow: "none" }}>
       <TableVirtuoso
-        style={{ border: "none", boxShadow: "none" }}
+      style={{boxShadow: 'none'}}
         data={movementations}
-        components={VirtuosoTableComponents}
+        components={{
+          ...VirtuosoTableComponents,
+          TableRow: (props) => (
+            <TableRow
+              {...props}
+              sx={{
+                cursor: "pointer",
+                "&:hover": { backgroundColor: "#e7eaf6" },
+              }}
+            />
+          ),
+        }}
         fixedHeaderContent={fixedHeaderContent}
         itemContent={(_index, row) => (
-          <RowContent
-            row={row}
-            singleMovementation={singleMovementation}
-          />
+          <RowContent row={row} singleMovementation={singleMovementation} />
         )}
       />
       <DeleteMovementationModal />

@@ -103,6 +103,8 @@ const PatrimonyDetails = () => {
         return "Tipo"
       case "fabricante" : 
       return 'Fabricante';
+      case 'valor_compra' :
+        return 'Valor de Compra'
     }
   };
 
@@ -114,8 +116,17 @@ const PatrimonyDetails = () => {
     }
 
     if (key === "id_patrimonio") {
-      console.log("key = id_patrimonio");
       return patrimonyData && `000${patrimonyData[key as keyof Patrimony]}`;
+    }
+    if(key === 'valor_compra'){
+       return (
+         patrimonyData &&
+         new Intl.NumberFormat("pt-BR", {
+           style: "decimal",
+           minimumFractionDigits: 2,
+           maximumFractionDigits: 2,
+         }).format(Number(patrimonyData[key as keyof Patrimony]))
+       );
     }
     return patrimonyData && `${patrimonyData[key as keyof Patrimony]}`;
   };
@@ -168,13 +179,12 @@ const PatrimonyDetails = () => {
         <MovementationFileContextProvider>
           <PatrimonyFileContextProvider>
             <Box
-              // className="border border-slate-300"
               overflow="auto"
               display="flex"
               sx={{
-                height: "5%",
+                height: "fit-content",
                 paddingX: "2rem",
-                alignItems: "center",
+                alignItems: "center"
               }}
             >
               <IconButton onClick={handleBack}>
@@ -183,7 +193,16 @@ const PatrimonyDetails = () => {
               <Typography
                 textTransform="capitalize"
                 className="text-gray-[#2B3990]"
-                variant="h6"
+                sx={{
+                  fontSize: { 
+                    xs: '16px',
+                    sm : '16px',
+                    md: '18px',
+                    lg: '20px',
+                    xl: '22px'
+                  }
+                }}
+                fontFamily="Roboto"
               >
                 {patrimonyData?.nome}
               </Typography>

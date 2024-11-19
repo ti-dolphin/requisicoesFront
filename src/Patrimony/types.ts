@@ -11,6 +11,7 @@ export type Patrimony = {
   ativo : number;
   fabricante: string;
   nome_tipo: string;
+  valor_compra : number;
 };
 export  type PatrimonyAccessory = {
   descricao : string;
@@ -129,5 +130,7 @@ export interface PatrimonyInfo {
   nome_tipo? : string;
   aceito : number;
   numeroMovimentacao: number; // aparece
-  dataMovimentacao: string; //aparece Data da movimentação no formato ISO (YYYY-MM-DD)
+  dataMovimentacao: string; 
+  valor_compra : number;
+  //aparece Data da movimentação no formato ISO (YYYY-MM-DD)
 }

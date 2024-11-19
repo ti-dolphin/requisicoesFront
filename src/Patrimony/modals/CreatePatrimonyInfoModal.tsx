@@ -35,6 +35,12 @@ const columns: ColumnData[] = [
     dataKey: "data_compra",
     required: false,
   },
+  { 
+    label: "Valor de Compra",
+    dataKey: "valor_compra",
+    numeric: true,
+    required: false
+  },
   {
     label: "Nome",
     dataKey: "nome",
@@ -63,8 +69,6 @@ const columns: ColumnData[] = [
   }
 ];
 
-
-
 export default function CreatePatrimonyInfoModal() {
 
   const {creatingPatrimonyInfo, toggleCreatingPatrimonyInfo, changeCreatingPatrimonyInfo } = useContext(PatrimonyInfoContext);
@@ -79,7 +83,8 @@ export default function CreatePatrimonyInfoModal() {
     pat_legado: "",
     nome_tipo: '',
     ativo : 1,
-    fabricante: ''
+    fabricante: '',
+    valor_compra: 0
     // TODO: Add other fields as needed
   });
 
@@ -100,11 +105,11 @@ export default function CreatePatrimonyInfoModal() {
    };
 
   const handleSave = async () => {
-     const insertId = await createPatrimony(patrimonyInfo);
-     if (insertId) {
-       return insertId;
-     }
-
+    console.log("patrimonyInfo: ", patrimonyInfo);
+    const insertId = await createPatrimony(patrimonyInfo);
+    if (insertId) {
+      return insertId;
+    }
   };
 
   const handleNext = async () => {
