@@ -1,4 +1,13 @@
-import { Box, Button, FormControlLabel, IconButton, Stack, Switch, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormControlLabel,
+  IconButton,
+  Stack,
+  Switch,
+  TextField,
+  Typography,
+} from "@mui/material";
 import MovimentationTable from "../components/tables/MovimentationTable";
 import { Patrimony } from "../types";
 import React, { useContext, useEffect, useState } from "react";
@@ -8,14 +17,14 @@ import { MovementationFileContextProvider } from "../context/movementationFileCo
 import { MovimentationContextProvider } from "../context/movementationContext";
 import PatrimonyFileModal from "../modals/PatrimonyFileModal;";
 import CreateMovementation from "../modals/CreateMovementation";
+import { PatrimonyInfoContext } from "../context/patrimonyInfoContext";
 import {
-  PatrimonyInfoContext,
-} from "../context/patrimonyInfoContext";
-import {  getResponsableForPatrimony, getSinglePatrimony, upatePatrimony } from "../utils";
+  getResponsableForPatrimony,
+  getSinglePatrimony,
+  upatePatrimony,
+} from "../utils";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  PatrimonyFileContextProvider,
-} from "../context/patrimonyFileContext";
+import { PatrimonyFileContextProvider } from "../context/patrimonyFileContext";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateField } from "@mui/x-date-pickers/DateField";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
@@ -25,29 +34,28 @@ import { ArrowLeftIcon } from "@mui/x-date-pickers/icons";
 import PatrimonyAccessoryModal from "../modals/PatrimonyAccessoriesModal";
 // import { userContext } from "../../Requisitions/context/userContext";
 
-
 const PatrimonyDetails = () => {
-
   const { id_patrimonio } = useParams();
-  const { refreshPatrimonyInfo, toggleRefreshPatrimonyInfo } = useContext(PatrimonyInfoContext);
+  const { refreshPatrimonyInfo, toggleRefreshPatrimonyInfo } =
+    useContext(PatrimonyInfoContext);
   // const { user  } = useContext(userContext);
   const navigate = useNavigate();
   const [patrimonyData, setPatrimonyData] = useState<Patrimony>();
   const [editing, setEditing] = useState<[boolean, string?]>([false]);
   const [responsable, setResponsable] = useState<number>();
 
-
   const handleChange = (
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
     key: string
   ) => {
-   if(key === 'id_patrimonio') { 
-    window.alert('Não é permitido editar o número do Patrimônio');
-    return;
-   }
     setEditing([true, key]);
     const { value } = e.currentTarget;
     if (patrimonyData) {
+      if (key === "id_patrimonio") {
+        window.alert("Não é permitido editar o número do Patrimônio");
+        return;
+      }
+
       setPatrimonyData({
         ...patrimonyData,
         [key as keyof Patrimony]: value,
@@ -55,27 +63,35 @@ const PatrimonyDetails = () => {
     }
   };
 
-   const handleCancelEdition = () => {
-     setEditing([false]);
-     toggleRefreshPatrimonyInfo();
-   };
+  const handleCancelEdition = () => {
+    setEditing([false]);
+    toggleRefreshPatrimonyInfo();
+  };
 
   const fetchPatrimonyData = async () => {
     console.log("id_patrimonio: ", id_patrimonio);
     const data = await getSinglePatrimony(Number(id_patrimonio));
-     const responsable = await getResponsableForPatrimony(Number(id_patrimonio));
-    if (data) { 
+    const responsable = await getResponsableForPatrimony(Number(id_patrimonio));
+    if (data) {
       setResponsable(responsable[0].id_responsavel);
       console.log("patrimonyData: ", data[0]);
       setPatrimonyData(data[0]);
       console.log(`responsável é: ${responsable[0].id_responsavel}`);
     }
-  
   };
 
   const handleSave = async () => {
     if (patrimonyData) {
-      const response = await upatePatrimony(patrimonyData);
+      const formattedValorCompra = patrimonyData.valor_compra
+        ? parseFloat(
+            patrimonyData.valor_compra.toString().replace(",", ".")
+          ).toFixed(2)
+        : null;
+      const updatedData = {
+        ...patrimonyData,
+        valor_compra: formattedValorCompra ? Number(formattedValorCompra) : 0,
+      };
+      const response = await upatePatrimony(updatedData);
       console.log("response update patrimonio: \n", response);
       if (response && response.status === 200) {
         toggleRefreshPatrimonyInfo();
@@ -99,12 +115,12 @@ const PatrimonyDetails = () => {
         return "Descrição";
       case "pat_legado":
         return "Código Patrimônio";
-      case "nome_tipo": 
-        return "Tipo"
-      case "fabricante" : 
-      return 'Fabricante';
-      case 'valor_compra' :
-        return 'Valor de Compra'
+      case "nome_tipo":
+        return "Tipo";
+      case "fabricante":
+        return "Fabricante";
+      case "valor_compra":
+        return "Valor de Compra";
     }
   };
 
@@ -118,15 +134,15 @@ const PatrimonyDetails = () => {
     if (key === "id_patrimonio") {
       return patrimonyData && `000${patrimonyData[key as keyof Patrimony]}`;
     }
-    if(key === 'valor_compra'){
-       return (
-         patrimonyData &&
-         new Intl.NumberFormat("pt-BR", {
-           style: "decimal",
-           minimumFractionDigits: 2,
-           maximumFractionDigits: 2,
-         }).format(Number(patrimonyData[key as keyof Patrimony]))
-       );
+    if (key === "valor_compra") {
+      return (
+        patrimonyData &&
+        new Intl.NumberFormat("pt-BR", {
+          style: "decimal",
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(Number(patrimonyData[key as keyof Patrimony]))
+      );
     }
     return patrimonyData && `${patrimonyData[key as keyof Patrimony]}`;
   };
@@ -140,6 +156,7 @@ const PatrimonyDetails = () => {
       });
     }
   };
+
   const handleBack = () => {
     navigate("/patrimony");
   };
@@ -148,24 +165,24 @@ const PatrimonyDetails = () => {
     event: React.ChangeEvent<HTMLInputElement>,
     checked: boolean
   ) => {
-    console.log(event)
-   if(patrimonyData){ 
-     if (checked) {
-       await upatePatrimony({
-         ...patrimonyData,
-         ["ativo"]: 1,
-       });
-         toggleRefreshPatrimonyInfo();
-       return;
-     }else{ 
-            await upatePatrimony({
-              ...patrimonyData,
-              ["ativo"]: 0,
-            });
-              toggleRefreshPatrimonyInfo();
-            return;
-     }
-   }
+    console.log(event);
+    if (patrimonyData) {
+      if (checked) {
+        await upatePatrimony({
+          ...patrimonyData,
+          ["ativo"]: 1,
+        });
+        toggleRefreshPatrimonyInfo();
+        return;
+      } else {
+        await upatePatrimony({
+          ...patrimonyData,
+          ["ativo"]: 0,
+        });
+        toggleRefreshPatrimonyInfo();
+        return;
+      }
+    }
   };
 
   useEffect(() => {
@@ -184,7 +201,7 @@ const PatrimonyDetails = () => {
               sx={{
                 height: "fit-content",
                 paddingX: "2rem",
-                alignItems: "center"
+                alignItems: "center",
               }}
             >
               <IconButton onClick={handleBack}>
@@ -194,13 +211,13 @@ const PatrimonyDetails = () => {
                 textTransform="capitalize"
                 className="text-gray-[#2B3990]"
                 sx={{
-                  fontSize: { 
-                    xs: '16px',
-                    sm : '16px',
-                    md: '18px',
-                    lg: '20px',
-                    xl: '22px'
-                  }
+                  fontSize: {
+                    xs: "16px",
+                    sm: "16px",
+                    md: "18px",
+                    lg: "20px",
+                    xl: "22px",
+                  },
                 }}
                 fontFamily="Roboto"
               >

@@ -422,9 +422,11 @@ const handleReproveChecklist = async () => {
     }
     return "";
   };
+  
   const handleCloseImageModal =  () => { 
     setItemImageOpen(undefined);
   };
+
   const handleOpenItemImage = (checklistItem  : ChecklistItemFile) => {
     if(checklistItem.arquivo){ 
      setItemImageOpen(checklistItem);
