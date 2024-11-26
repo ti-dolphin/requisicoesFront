@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
@@ -54,7 +54,7 @@ const ChecklistItemsModal = () => {
   } = useContext(checklistContext);
   const { user } = useContext(userContext);
 
-  const [ChecklistItems, setChecklistItems] = useState<ChecklistItemFile[]>();
+  const [ChecklistItems, setChecklistItems] = useState<ChecklistItemFile[]>([]);
   const [isMobile, setIsMobile] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -322,7 +322,7 @@ const handleReproveChecklist = async () => {
     setChecklistItems(updatedChecklistItems);
   };
   
-  const getChecklistItemsMap = async () => {
+  const getChecklistItemsMap = useCallback(async () => {
     if (checklistOpen[1]) {
       const { id_patrimonio, id_movimentacao, id_checklist_movimentacao } =
         checklistOpen[1];
@@ -337,7 +337,7 @@ const handleReproveChecklist = async () => {
         return;
       }
     }
-  };
+  }, [checklistOpen]); 
 
   const renderItemImage = (checklistItem: ChecklistItemFile) => {
     if (checklistItem.arquivo) {
@@ -422,7 +422,7 @@ const handleReproveChecklist = async () => {
     }
     return "";
   };
-  
+
   const handleCloseImageModal =  () => { 
     setItemImageOpen(undefined);
   };
@@ -436,11 +436,10 @@ const handleReproveChecklist = async () => {
   };
 
   useEffect(() => {
-    verifyIsIOS()
+    verifyIsIOS();
     checkIfMobile();
     getChecklistItemsMap();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checklistOpen[0], refreshChecklist]);
+  }, [checklistOpen, refreshChecklist, getChecklistItemsMap]);
 
   return (
     <Modal open={checklistOpen[0]} onClose={handleClose}>
@@ -528,9 +527,9 @@ const handleReproveChecklist = async () => {
         >
           {ChecklistItems && !isMobile ? ( //desktop
             <Stack direction="row" flexWrap="wrap" width="90%" gap={1}>
-              {ChecklistItems.map((checklistItem) => (
+              {ChecklistItems.map((checklistItem) => 
                 <Card
-                  key={checklistItem.id_checklist_movimentacao}
+                  key={checklistItem.id_item_checklist_movimentacao}
                   sx={{
                     width: {
                       xs: 240,
@@ -608,7 +607,7 @@ const handleReproveChecklist = async () => {
                     </Stack>
                   </CardContent>
                 </Card>
-              ))}
+              )}
             </Stack>
           ) : (
             //mobile

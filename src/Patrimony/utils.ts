@@ -190,7 +190,19 @@ export const getChecklistDataByPatrimonyId = async (id_patrimonio : number ) =>{
 };
 export const getChecklistItems = async(id_patrimonio : number, id_movimentacao: number, id_checklist_movimentacao: number) => { 
   try{ 
-    const response = await api.get(`checklist/checklistItems/${id_patrimonio}/${id_movimentacao}/${id_checklist_movimentacao}`);
+    const response = await api.get(
+      `checklist/checklistItems/${id_patrimonio}/${id_movimentacao}/${id_checklist_movimentacao}`,
+      {
+        params: {
+          cacheBuster: Date.now(), // Parâmetro para evitar cache
+        },
+        headers: {
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          Pragma: "no-cache",
+          Expires: "0",
+        },
+      }
+    );
     return response.data;
   }catch(e){ 
     console.log(e);

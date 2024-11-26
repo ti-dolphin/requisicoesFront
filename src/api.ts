@@ -2,6 +2,7 @@ import axios from "axios";
 //PROD: https://apicontrole.dse.com.br
 //HOMOLOG: https://apicontrolehomologacao.dse.com.br
 //http://localhost:3001
+//http://localhost:3000
 
 export const api = axios.create({
   baseURL: "https://apicontrole.dse.com.br",
