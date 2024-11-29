@@ -393,6 +393,7 @@ const ChecklistTasks = () => {
     e?: React.MouseEvent<HTMLButtonElement>
 
   ) => {
+    console.log(e);
     if (checklistStatus === "atrasados" && notifications) {
       setCurrentStatusFilterSelected("atrasados");
       const filteredByStatus = notifications.filter(
@@ -519,7 +520,7 @@ const ChecklistTasks = () => {
             <Stack direction={"row"} spacing={2} alignItems="center">
               <Button
                 id="atrasados"
-                onClick={(e) => filterByStatus("atrasados")}
+                onClick={() => filterByStatus("atrasados")}
                 sx={{
                   color: "white",
                   backgroundColor:
@@ -536,7 +537,7 @@ const ChecklistTasks = () => {
                 Atrasados
               </Button>
               <Button
-                onClick={(e) => filterByStatus("aprovar")}
+                onClick={() => filterByStatus("aprovar")}
                 sx={{
                   color: "white",
                   backgroundColor:
@@ -553,7 +554,7 @@ const ChecklistTasks = () => {
                 para aprovar
               </Button>
               <Button
-                onClick={(e) => filterByStatus("problemas")}
+                onClick={() => filterByStatus("problemas")}
                 sx={{
                   color: "white",
                   backgroundColor:
@@ -570,7 +571,7 @@ const ChecklistTasks = () => {
                 Problemas
               </Button>
               <Button
-                onClick={(e) => filterByStatus("todos")}
+                onClick={() => filterByStatus("todos")}
                 sx={{
                   color: "white",
                   backgroundColor:

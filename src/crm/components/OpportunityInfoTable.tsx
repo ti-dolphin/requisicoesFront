@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import OpportunityTableSearchBar from "./OpportunityTableSearchBar";
@@ -26,7 +26,7 @@ const columns: GridColDef<OpportunityInfo>[] = [
     field: "data_fechamento",
     headerName: "Fechamento",
     width: 120,
-    valueGetter: (value, row) =>
+    valueGetter: (_value, row) =>
       row.data_fechamento ? row.data_fechamento : "—", // Exibe um traço para valores nulos
   },
   { field: "vendedor", headerName: "Vendedor", width: 150 },

@@ -40,7 +40,6 @@ import { CircularProgress } from "@mui/material";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import CircleIcon from '@mui/icons-material/Circle';
-import Loader from "../../Requisitions/components/Loader";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
