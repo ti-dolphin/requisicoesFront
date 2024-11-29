@@ -104,6 +104,8 @@ export interface MovementationChecklist {
   responsavel_movimentacao?: number;
   nome_patrimonio?: string;
   descricao_projeto?: string;
+  atrasado? : number;
+  problema? : number;
 }
 
 export type Fabricante = {

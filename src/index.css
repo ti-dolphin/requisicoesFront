@@ -16,9 +16,9 @@ body::-webkit-scrollbar-thumb {
     /* creates padding around scroll thumb */
 }
 div::-webkit-scrollbar{ 
-     width: 5px;
+     width: 10px;
      border-radius: 20px; 
-     height: 1px;
+     height: 6px;
 }
 div::-webkit-scrollbar-thumb {
   background-color: #c4c1e0;    /* color of the scroll thumb */
@@ -27,7 +27,7 @@ div::-webkit-scrollbar-thumb {
 }
 p::-webkit-scrollbar{ 
      border-radius: 20px;
-     height: 7px;
+     height: 8px;
 }
 p::-webkit-scrollbar-thumb { 
     background-color: #0008fb; 

@@ -10,13 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "^11.13.0",
+    "@emotion/react": "^11.13.5",
     "@emotion/style": "^0.8.0",
-    "@emotion/styled": "^11.13.0",
+    "@emotion/styled": "^11.13.5",
     "@fontsource/roboto": "^5.0.13",
     "@mui/base": "^5.0.0-beta.40",
     "@mui/icons-material": "^5.15.18",
     "@mui/material": "^5.16.6",
+    "@mui/x-data-grid": "^7.22.3",
     "@mui/x-date-pickers": "^7.12.1",
     "@tanstack/react-query": "^5.37.1",
     "@types/react-window": "^1.8.8",
@@ -36,6 +37,7 @@
     "react-virtualized-auto-sizer": "^1.0.24",
     "react-virtuoso": "^4.9.0",
     "react-window": "^1.8.10",
+    "recharts": "^2.13.3",
     "slick-carousel": "^1.8.1",
     "sort-by": "^0.0.2"
   },

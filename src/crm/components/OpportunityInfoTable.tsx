@@ -1,138 +1,84 @@
-import * as React from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { TableVirtuoso, TableComponents } from "react-virtuoso";
-import Chance from "chance";
-
-interface Data {
-  id: number;
-  firstName: string;
-  lastName: string;
-  age: number;
-  phone: string;
-  state: string;
-}
-
-const chance = new Chance(42);
-
-interface ColumnData {
-  dataKey: keyof Data;
-  label: string;
-  numeric?: boolean;
-  width?: number;
-}
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import Box from "@mui/material/Box";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import OpportunityTableSearchBar from "./OpportunityTableSearchBar";
+import { dummyOpportunities } from "../dummy";
+import { OpportunityInfo } from "../types";
+import { OpportunityInfoContext } from "../context/OpportunityInfoContext";
+import { getOpportunities } from "../utils";
 
 
-function createData(id: number): Data {
-  return {
-    id,
-    firstName: chance.first(),
-    lastName: chance.last(),
-    age: chance.age(),
-    phone: chance.phone(),
-    state: chance.state({ full: true }),
-  };
-}
-
-const columns: ColumnData[] = [
+const columns: GridColDef<OpportunityInfo>[] = [
+  { field: "numero_projeto", headerName: "Nº Projeto", width: 130 },
+  { field: "numero_adicional", headerName: "Nº Adicional", width: 130 },
+  { field: "status", headerName: "Status", width: 120 },
   {
-    width: 100,
-    label: "First Name",
-    dataKey: "firstName",
+    field: "descricao_projeto",
+    headerName: "Descrição",
+    width: 200,
+    editable: false,
   },
+  { field: "cliente", headerName: "Cliente", width: 150 },
+  { field: "data_cadastro", headerName: "Cadastro", width: 120 },
+  { field: "data_solicitacao", headerName: "Solicitação", width: 120 },
+  { field: "data_envio_proposta", headerName: "Envio Proposta", width: 140 },
   {
-    width: 100,
-    label: "Last Name",
-    dataKey: "lastName",
+    field: "data_fechamento",
+    headerName: "Fechamento",
+    width: 120,
+    valueGetter: (value, row) =>
+      row.data_fechamento ? row.data_fechamento : "—", // Exibe um traço para valores nulos
   },
-  {
-    width: 50,
-    label: "Age",
-    dataKey: "age",
-    numeric: true,
-  },
-  {
-    width: 110,
-    label: "State",
-    dataKey: "state",
-  },
-  {
-    width: 130,
-    label: "Phone Number",
-    dataKey: "phone",
-  },
+  { field: "vendedor", headerName: "Vendedor", width: 150 },
+  { field: "gerente", headerName: "Gerente", width: 150 },
+  { field: "coordenador", headerName: "Coordenador", width: 150 },
 ];
 
-const rows: Data[] = Array.from({ length: 200 }, (_, index) =>
-  createData(index)
-);
-
-const VirtuosoTableComponents: TableComponents<Data> = {
-  Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
-    <TableContainer component={Paper} {...props} ref={ref} />
-  )),
-  Table: (props) => (
-    <Table
-      {...props}
-      sx={{ borderCollapse: "separate", tableLayout: "fixed" }}
-    />
-  ),
-  TableHead: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
-    <TableHead {...props} ref={ref} />
-  )),
-  TableRow,
-  TableBody: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
-    <TableBody {...props} ref={ref} />
-  )),
-};
-
-function fixedHeaderContent() {
-  return (
-    <TableRow>
-      {columns.map((column) => (
-        <TableCell
-          key={column.dataKey}
-          variant="head"
-          align={column.numeric || false ? "right" : "left"}
-          style={{ width: column.width }}
-          sx={{ backgroundColor: "background.paper" }}
-        >
-          {column.label}
-        </TableCell>
-      ))}
-    </TableRow>
-  );
-}
-
-function rowContent(_index: number, row: Data) {
-  return (
-    <React.Fragment>
-      {columns.map((column) => (
-        <TableCell
-          key={column.dataKey}
-          align={column.numeric || false ? "right" : "left"}
-        >
-          {row[column.dataKey]}
-        </TableCell>
-      ))}
-    </React.Fragment>
-  );
-}
-
 export default function OpportunityInfoTable() {
+
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [rows, setRows ] = useState(dummyOpportunities || []);
+  const {refreshOpportunityInfo } = useContext(OpportunityInfoContext)
+  const fetchOpportunities = useCallback(async () => {
+    const opps = await getOpportunities();
+    if(opps){ 
+      setRows(opps);
+    }
+  }, []); 
+
+  useEffect(() => {
+    fetchOpportunities();
+  }, [getOpportunities, refreshOpportunityInfo]);
   return (
-    <Paper style={{ height: 400, width: "100%" }}>
-      <TableVirtuoso
-        data={rows}
-        components={VirtuosoTableComponents}
-        fixedHeaderContent={fixedHeaderContent}
-        itemContent={rowContent}
+    <Box
+      sx={{
+        width: "100%",
+        paddingX: 2,
+        backgroundColor: "#fff",
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
+      }}
+    >
+      <OpportunityTableSearchBar />
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        getRowId={(row) => row.numero_projeto} // Define `numero_projeto` como ID da linha
+        initialState={{
+          pagination: {
+            paginationModel: {
+              pageSize: 10,
+            },
+          },
+        }}
+        pageSizeOptions={[10, 20]}
+        disableRowSelectionOnClick
+        sx={{
+          minHeight: "300px",
+        }}
       />
-    </Paper>
+    </Box>
   );
 }

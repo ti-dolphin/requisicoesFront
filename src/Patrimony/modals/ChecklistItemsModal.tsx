@@ -40,6 +40,7 @@ import { CircularProgress } from "@mui/material";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import CircleIcon from '@mui/icons-material/Circle';
+import Loader from "../../Requisitions/components/Loader";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -61,6 +62,9 @@ const ChecklistItemsModal = () => {
   const [isIOS, setIsIOS] = useState(false);
   const sliderRef = useRef<Slider | null>(null);
   const [itemImageOpen, setItemImageOpen] = useState <ChecklistItemFile>();
+ const [isLoadingItems, setIsLoadingItems] = useState(true);
+
+
 
   function verifyIsIOS() {
     if(navigator.userAgent.toLowerCase().includes('iphone')){ 
@@ -434,6 +438,15 @@ const handleReproveChecklist = async () => {
     }
     alert("Não há arquivo!");
   };
+  useEffect(() => {
+     if (ChecklistItems?.length > 0) {
+     const timer = setTimeout(() => {
+       setIsLoadingItems(false) 
+     },ChecklistItems?.length * 200)
+
+     return () => clearTimeout(timer) 
+   }
+  });
 
   useEffect(() => {
     verifyIsIOS();
@@ -526,8 +539,10 @@ const handleReproveChecklist = async () => {
           }}
         >
           {ChecklistItems && !isMobile ? ( //desktop
-            <Stack direction="row" flexWrap="wrap" width="90%" gap={1}>
-              {ChecklistItems.map((checklistItem) => 
+            <Stack direction="row" justifyContent="center" flexWrap="wrap" width="90%" gap={1}>
+
+              {isLoadingItems ? <CircularProgress/>  : 
+              ChecklistItems.map((checklistItem) => 
                 <Card
                   key={checklistItem.id_item_checklist_movimentacao}
                   sx={{
@@ -607,7 +622,8 @@ const handleReproveChecklist = async () => {
                     </Stack>
                   </CardContent>
                 </Card>
-              )}
+              )
+              }
             </Stack>
           ) : (
             //mobile

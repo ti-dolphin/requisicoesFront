@@ -11,11 +11,15 @@ interface checklistContextType {
   toggleChecklistItemsOpen: (checklist?: MovementationChecklist) => void;
   deletingCheckListItem: boolean;
   toggleDeletingCheckListItem: (checkListItem: MovementationChecklist) => void;
-  checklistOpen: [boolean, MovementationChecklist?]; // Renamed state
-  toggleChecklistOpen: (checklist?: MovementationChecklist) => void; // Renamed function
+  checklistOpen: [boolean, MovementationChecklist?];
+  toggleChecklistOpen: (checklist?: MovementationChecklist) => void;
   setChecklistOpen: React.Dispatch<
     React.SetStateAction<[boolean, MovementationChecklist?]>
-  >; // Renamed dispatch function
+  >;
+  currentColumnFilters: { dataKey: string; filterValue: string }[]; // Novo estado
+  setCurrentColumnFilters: React.Dispatch<
+    React.SetStateAction<{ dataKey: string; filterValue: string }[]>
+  >; // Atualizador para o estado
 }
 
 interface checklistContextProviderProps {
@@ -31,9 +35,11 @@ export const checklistContext = createContext<checklistContextType>({
   toggleChecklistItemsOpen: () => {},
   deletingCheckListItem: false,
   toggleDeletingCheckListItem: () => {},
-  checklistOpen: [false], // Updated default value
-  toggleChecklistOpen: () => {}, // Renamed default no-op function
-  setChecklistOpen: () => {}, // Updated default no-op function
+  checklistOpen: [false],
+  toggleChecklistOpen: () => {},
+  setChecklistOpen: () => {},
+  currentColumnFilters: [], // Inicialmente vazio
+  setCurrentColumnFilters: () => {}, // Função vazia
 });
 
 export const ChecklistContextProvider: React.FC<
@@ -50,6 +56,27 @@ export const ChecklistContextProvider: React.FC<
   const [checklistOpen, setChecklistOpen] = useState<
     [boolean, MovementationChecklist?]
   >([false]); // Renamed state
+  const [currentColumnFilters, setCurrentColumnFilters] = useState<
+    { dataKey: string; filterValue: string }[]
+  >([
+    { dataKey: "id_patrimonio", filterValue: "" }, // Valor inicial
+    { dataKey: "data_criacao", filterValue: "" },
+    { dataKey: "realizado", filterValue: "" },
+    { dataKey: "data_realizado", filterValue: "" },
+    { dataKey: "aprovado", filterValue: "" },
+    { dataKey: "reprovado", filterValue: "" },
+    { dataKey: "data_aprovado", filterValue: "" },
+    { dataKey: "observacao", filterValue: "" },
+    { dataKey: "nome", filterValue: "" },
+    { dataKey: "nome_responsavel", filterValue: "" },
+    { dataKey: "responsavel_tipo", filterValue: "" },
+    { dataKey: "id_patrimonio", filterValue: "" },
+    { dataKey: "responsavel_movimentacao", filterValue: "" },
+    { dataKey: "nome_patrimonio", filterValue: "" },
+    { dataKey: "descricao_projeto", filterValue: "" },
+    { dataKey: "id_checklist_movimentacao", filterValue: "" },
+    { dataKey: "id_movimentacao" , filterValue: ''},
+  ]);
 
   const toggleDeletingChecklist = (checklist?: MovementationChecklist) => {
     if (checklist) {
@@ -103,6 +130,8 @@ export const ChecklistContextProvider: React.FC<
         checklistOpen, // Updated value
         toggleChecklistOpen, // Updated function
         setChecklistOpen, // Updated dispatch function
+        currentColumnFilters, // Novo estado
+        setCurrentColumnFilters, // Atualizador para o novo estado
       }}
     >
       {children}

@@ -189,6 +189,7 @@ export default function MovementsTable() {
         {columns.map((column) =>
           column.label !== "" ? (
             <TableCell
+              key={column.dataKey}
               onClick={() => handleOpenPatrimonyDetail(row.id_patrimonio)}
               sx={{
                 cursor: "pointer",
@@ -196,7 +197,7 @@ export default function MovementsTable() {
                 paddingY: "0.1rem",
                 textTransform: "capitalize",
               }}
-              key={column.dataKey}
+             
               align={column.numeric ? "left" : "center"}
             >
               {column.dataKey === "dataMovimentacao" ? (
@@ -227,6 +228,7 @@ export default function MovementsTable() {
             </TableCell>
           ) : (
             <TableCell
+              key={column.dataKey}
               sx={{
                 cursor: "pointer",
                 paddingX: "0.2",

@@ -206,7 +206,7 @@ export default function CreatePatrimonyInfoModal() {
             bgcolor: "background.paper",
             display: "flex",
             flexDirection: "column",
-            gap: '1rem',
+            gap: "1rem",
             alignItems: "center",
             flexSruink: 1,
             boxShadow: 24,
@@ -239,7 +239,10 @@ export default function CreatePatrimonyInfoModal() {
             <Stack direction="column" spacing={1.6}>
               {columns.map((column) =>
                 column.dataKey === "data_compra" ? (
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <LocalizationProvider
+                    key={column.dataKey}
+                    dateAdapter={AdapterDayjs}
+                  >
                     <DemoContainer components={["DateField"]}>
                       <DateField
                         format="DD/MM/YYYY"
@@ -250,20 +253,21 @@ export default function CreatePatrimonyInfoModal() {
                   </LocalizationProvider>
                 ) : column.dataKey == "tipo" ? (
                   <Autocomplete
+                    key={column.dataKey}
                     disablePortal
                     id="combo-box-demo"
                     options={renderTypeOptions()}
                     onChange={handleSelectType} // Adiciona essa linha para chamar a função ao selecionar um item
-                    
                     renderInput={(params) => (
                       <TextField {...params} label={column.label} />
                     )}
                   />
                 ) : (
                   <TextField
-                  sx={{ 
-                    width: '100%'
-                  }}
+                    key={column.dataKey}
+                    sx={{
+                      width: "100%",
+                    }}
                     type={column.numeric ? "number" : "text"}
                     required={column.required}
                     onChange={(e) => handleChange(e, column.dataKey)}
