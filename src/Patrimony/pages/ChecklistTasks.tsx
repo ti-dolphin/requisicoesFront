@@ -42,11 +42,11 @@ const columns: ColumnData[] = [
     dataKey: "id_checklist_movimentacao",
     numeric: true,
   },
-  { 
-      width:  80, 
-      label: 'Patrimônio',
-      dataKey : 'id_patrimonio',
-      numeric: true
+  {
+    width: 80,
+    label: "Patrimônio",
+    dataKey: "id_patrimonio",
+    numeric: true,
   },
   {
     width: 180,
@@ -71,7 +71,6 @@ const columns: ColumnData[] = [
     label: "Data de Realização",
     dataKey: "data_realizado",
   },
-
 
   {
     label: "Patrimônio",
@@ -216,37 +215,40 @@ const ChecklistTasks = () => {
             <Typography fontSize="small" fontFamily="Roboto" color="white">
               {column.label}
             </Typography>
-            <TextField
-              id="standard-basic"
-              label=""
-              variant="standard"
-              onChange={(e) => handleChangeColumnFilter(e, column)}
-              sx={{
-                fontSize: "10px", // Tamanho da fonte do texto digitado
-                "& .MuiInput-underline:before": {
-                  borderBottom: "1px solid white", // Linha padrão
-                },
-                "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
-                  borderBottom: "2px solid white", // Linha ao passar o mouse
-                },
-                "& .MuiInput-underline:after": {
-                  borderBottom: "2px solid white", // Linha ao focar no campo
-                },
-              }}
-              InputProps={{
-                sx: {
-                  color: "white",
-                  "&:hover:not(.Mui-disabled):before": {
-                    borderBottom: "2px solid white", // Linha ao passar o mouse
-                  },
-                  "&:after": {
-                    borderBottom: "2px solid white", // Linha ao focar no campo
-                  },
+            {column.dataKey !== "realizado" &&
+              column.dataKey !== "aprovado" && (
+                <TextField
+                  id="standard-basic"
+                  label=""
+                  variant="standard"
+                  onChange={(e) => handleChangeColumnFilter(e, column)}
+                  sx={{
+                    fontSize: "10px", // Tamanho da fonte do texto digitado
+                    "& .MuiInput-underline:before": {
+                      borderBottom: "1px solid white", // Linha padrão
+                    },
+                    "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                      borderBottom: "2px solid white", // Linha ao passar o mouse
+                    },
+                    "& .MuiInput-underline:after": {
+                      borderBottom: "2px solid white", // Linha ao focar no campo
+                    },
+                  }}
+                  InputProps={{
+                    sx: {
+                      color: "white",
+                      "&:hover:not(.Mui-disabled):before": {
+                        borderBottom: "2px solid white", // Linha ao passar o mouse
+                      },
+                      "&:after": {
+                        borderBottom: "2px solid white", // Linha ao focar no campo
+                      },
 
-                  height: "1rem",
-                },
-              }}
-            />
+                      height: "1rem",
+                    },
+                  }}
+                />
+              )}
           </TableCell>
         ))}
       </TableRow>
@@ -348,7 +350,7 @@ const ChecklistTasks = () => {
           />
         );
       }
-      if(column.dataKey === 'id_patrimonio'){ 
+      if (column.dataKey === "id_patrimonio") {
         return (
           <Link to={`/patrimony/item/${row.id_patrimonio}`}>
             {row.id_patrimonio}
@@ -388,9 +390,8 @@ const ChecklistTasks = () => {
     );
   }
   const filterByStatus = (
-        checklistStatus: string,
+    checklistStatus: string,
     e?: React.MouseEvent<HTMLButtonElement>
-
   ) => {
     console.log(e);
     if (checklistStatus === "atrasados" && notifications) {
@@ -425,23 +426,23 @@ const ChecklistTasks = () => {
     setFilteredNotificaitonsByUser(notifications || []);
   };
 
- useEffect(() => {
-   // Função para atualizar o estado com base no tamanho da tela
-   const checkIsMobile = () => {
-     setIsMobile(window.matchMedia("(max-width: 768px)").matches);
-   };
+  useEffect(() => {
+    // Função para atualizar o estado com base no tamanho da tela
+    const checkIsMobile = () => {
+      setIsMobile(window.matchMedia("(max-width: 768px)").matches);
+    };
 
-   // Verifica o estado inicial
-   checkIsMobile();
+    // Verifica o estado inicial
+    checkIsMobile();
 
-   // Adiciona um listener para mudanças no tamanho da janela
-   window.addEventListener("resize", checkIsMobile);
+    // Adiciona um listener para mudanças no tamanho da janela
+    window.addEventListener("resize", checkIsMobile);
 
-   // Remove o listener ao desmontar o componente
-   return () => {
-     window.removeEventListener("resize", checkIsMobile);
-   };
- }, []);
+    // Remove o listener ao desmontar o componente
+    return () => {
+      window.removeEventListener("resize", checkIsMobile);
+    };
+  }, []);
 
   useEffect(() => {
     getNotifications();
@@ -483,10 +484,14 @@ const ChecklistTasks = () => {
             alignItems: "center",
             flexGrow: 1,
             paddingX: "2rem",
-
           }}
         >
-          <Box display="flex" alignItems="center" left={2} width={{xs: '90%', sm: '80%', md: '70%', lg: '60%', xl: '20%'}} >
+          <Box
+            display="flex"
+            alignItems="center"
+            left={2}
+            width={{ xs: "90%", sm: "80%", md: "70%", lg: "60%", xl: "20%" }}
+          >
             <IconButton
               onClick={handleBack}
               sx={{
