@@ -25,7 +25,7 @@ import { ArrowLeftIcon } from "@mui/x-date-pickers/icons";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { checklistContext } from "../context/checklistContext";
 import ChecklistItemsModal from "../modals/ChecklistItemsModal";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ChecklistFiltersMobileMenu from "../components/ChecklistFiltersMobileMenu";
 
 interface ColumnData {
@@ -42,11 +42,11 @@ const columns: ColumnData[] = [
     dataKey: "id_checklist_movimentacao",
     numeric: true,
   },
-  {
-    width: 100,
-    label: "Movimentação",
-    dataKey: "id_movimentacao",
-    numeric: true,
+  { 
+      width:  80, 
+      label: 'Patrimônio',
+      dataKey : 'id_patrimonio',
+      numeric: true
   },
   {
     width: 180,
@@ -72,11 +72,7 @@ const columns: ColumnData[] = [
     dataKey: "data_realizado",
   },
 
-  {
-    width: 180,
-    label: "Data de Aprovação",
-    dataKey: "data_aprovado",
-  },
+
   {
     label: "Patrimônio",
     dataKey: "nome_patrimonio",
@@ -138,7 +134,6 @@ const ChecklistTasks = () => {
   const navigate = useNavigate();
 
   const getNotifications = useCallback(async () => {
-    console.log("getNotifications");
     if (user) {
       const notifications = await getPatrimonyNotifications(user);
       console.log("notifications: ", notifications);
@@ -152,8 +147,9 @@ const ChecklistTasks = () => {
           }
         }
       );
-      setNotifications(filteredNotifications);
-      setFilteredNotificaitonsByUser(filteredNotifications);
+      setCurrentFilteredByStatus([...filteredNotifications]);
+      setNotifications([...filteredNotifications]);
+      setFilteredNotificaitonsByUser([...filteredNotifications]);
     }
   }, []);
 
@@ -201,6 +197,7 @@ const ChecklistTasks = () => {
         });
       }
     );
+
     setFilteredNotificaitonsByUser(filteredNotifications || []);
     //getActiveFilters
     //filter the notifications state variable accordingly to the active filters and set the result to the filteredNotificaitonsByUser using  setFilteredNotificaitonsByUser
@@ -350,11 +347,13 @@ const ChecklistTasks = () => {
             }}
           />
         );
-        // <ErrorIcon
-        //   sx={{
-        //     color: toBeDone(row) ? (isLate(row) ? "red" : "#ff9a3c") : "gray",
-        //   }}
-        // ></ErrorIcon>
+      }
+      if(column.dataKey === 'id_patrimonio'){ 
+        return (
+          <Link to={`/patrimony/item/${row.id_patrimonio}`}>
+            {row.id_patrimonio}
+          </Link>
+        );
       }
       return row[column.dataKey];
     };
