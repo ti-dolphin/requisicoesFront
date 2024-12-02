@@ -26,7 +26,7 @@ import { userContext } from "../../../Requisitions/context/userContext";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import { useNavigate } from "react-router-dom";
 interface ColumnData {
-  dataKey: keyof PatrimonyInfo;
+  dataKey: string;
   label: string;
   numeric?: boolean;
   width: number;
@@ -43,10 +43,10 @@ const columns: ColumnData[] = [
     label: "Nome",
     dataKey: "nome",
   },
-  { 
+  {
     width: 80,
-    label: 'Valor de Compra',
-    dataKey: 'valor_compra'
+    label: "Valor de Compra",
+    dataKey: "valor_compra",
   },
   {
     width: 170,
@@ -81,7 +81,7 @@ const columns: ColumnData[] = [
   {
     width: 70, // Coluna vazia para possíveis ações, mantive um valor baixo
     label: "",
-    dataKey: "id_patrimonio",
+    dataKey: "",
   },
 ];
 
@@ -120,33 +120,77 @@ export default function MovementsTable() {
   const navigate = useNavigate();
 
   const fetchData = async () => {
-    const patrimonyInfoData = await getPatrimonyInfo();
-
-        if (currentFilter === "Todos") {
-          if (patrimonyInfoData) {
-            if(!filteredRows?.length){ 
-                setFilteredRows(patrimonyInfoData);
-            }
-            setRows(patrimonyInfoData);
-          }
+    const patrimonyInfoData =
+      user && (await getPatrimonyInfo(user, currentFilter));
+    if (currentFilter === "Todos") {
+      if (patrimonyInfoData) {
+        const activeFilters = columnFilter.filter(
+          (filter) => filter.filterValue.trim() !== ""
+        );
+        if (activeFilters.length) {
+          const filteredByColumns = filterByActiveColumnFilters(
+            patrimonyInfoData,
+            activeFilters
+          );
+          setFilteredRows(filteredByColumns);
+          setRows(patrimonyInfoData);
           return;
         }
-
-        if (currentFilter === "Meus") {
-          if (patrimonyInfoData) {
-            const filtered = patrimonyInfoData.filter(
-              (register) =>
-                register.responsavel.toUpperCase() === user?.NOME?.toUpperCase()
-            );
-            if(!filteredRows?.length){ 
-                setFilteredRows(filtered);
-            }
-            setRows(filtered);
-          }
-          return;
-        }
+        setFilteredRows(patrimonyInfoData);
         setRows(patrimonyInfoData);
-    
+      }
+      return;
+    }
+
+    if (currentFilter === "Meus") {
+      if (patrimonyInfoData) {
+        const activeFilters = columnFilter.filter(
+          (filter) => filter.filterValue.trim() !== ""
+        );
+        if (activeFilters.length) {
+          const filteredByColumns = filterByActiveColumnFilters(
+            patrimonyInfoData,
+            activeFilters
+          );
+          setFilteredRows(filteredByColumns);
+          setRows(patrimonyInfoData);
+          return;
+        }
+        setFilteredRows(patrimonyInfoData);
+        setRows(patrimonyInfoData);
+      }
+      return;
+    }
+  };
+
+  const filterByActiveColumnFilters = (
+    patrimonyInfoData: PatrimonyInfo[],
+    activeFilters: { dataKey: string; filterValue: string }[]
+  ) => {
+    return patrimonyInfoData.filter((patrimonyInfo) => {
+      return activeFilters.every((filter) => {
+        const { dataKey, filterValue } = filter;
+        if (dataKey === "id_patrimonio") {
+          console.log("coluna numérica");
+          return (
+            String(patrimonyInfo[dataKey as keyof PatrimonyInfo]) ===
+            String(filterValue)
+          );
+        }
+        if (dataKey === "dataMovimentacao") {
+          const renderedDate = renderDateValue(dataKey, patrimonyInfo);
+          return renderedDate?.includes(filterValue);
+        }
+        return String(patrimonyInfo[dataKey as keyof PatrimonyInfo])
+          .toLowerCase()
+          .includes(filterValue.toLowerCase());
+      });
+    });
+  };
+
+  const renderDateValue = (dataKey: string, row: PatrimonyInfo) => {
+    const date = dateTimeRenderer(row[dataKey as keyof PatrimonyInfo] || "");
+    return date === "Invalid Date, Invalid Date" ? "" : date;
   };
 
   const handleOpenChecklists = (row: PatrimonyInfo) => {
@@ -159,8 +203,6 @@ export default function MovementsTable() {
     setSelectedItems: Dispatch<SetStateAction<PatrimonyInfo[]>>,
     selectedItems: PatrimonyInfo[]
   ) {
-    const { setResponsable } = useContext(ResponsableContext);
-
     const handleSelectItem = (
       e: React.ChangeEvent<HTMLInputElement>,
       row: PatrimonyInfo
@@ -176,9 +218,9 @@ export default function MovementsTable() {
       currentSelectedItems.splice(currentSelectedItems.indexOf(row), 1);
       setSelectedItems([...currentSelectedItems]);
     };
-    
+
     const handleOpenPatrimonyDetail = (id_patrimonio: number) => {
-      setResponsable(row.id_responsavel);
+      // setResponsable(row.id_responsavel);
       navigate(`/patrimony/details/${id_patrimonio}`);
     };
 
@@ -202,7 +244,6 @@ export default function MovementsTable() {
                 paddingY: "0.1rem",
                 textTransform: "capitalize",
               }}
-             
               align={column.numeric ? "left" : "center"}
             >
               {column.dataKey === "dataMovimentacao" ? (
@@ -227,7 +268,9 @@ export default function MovementsTable() {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       }).format(Number(row[column.dataKey]))
-                    : String(row[column.dataKey]).toLowerCase()}
+                    : String(
+                        row[column.dataKey as keyof PatrimonyInfo]
+                      ).toLowerCase()}
                 </Typography>
               )}
             </TableCell>

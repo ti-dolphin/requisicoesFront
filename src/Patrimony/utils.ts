@@ -7,14 +7,16 @@ import dayjs from "dayjs";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const getPatrimonyInfo = async( ) =>  {
-   try{ 
-    const response = await api.get<PatrimonyInfo[]>(`/patrimony`);
+export const getPatrimonyInfo = async (user: User, currentFilter: string) => {
+  try {
+    const response = await api.get<PatrimonyInfo[]>(`/patrimony`, { 
+      params: { user, filter: currentFilter }
+    });
     return response.data;
-   }catch(e){ 
-        console.log("error getPatrimonyInfo: ", e);
-   }
-}
+  } catch (e) {
+    console.log("error getPatrimonyInfo: ", e);
+  }
+};
 import axios from "axios";
 import { PatrimonyAccessory } from "./types";
 import { User } from "../Requisitions/context/userContext";

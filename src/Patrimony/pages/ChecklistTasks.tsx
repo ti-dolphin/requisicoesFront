@@ -112,22 +112,63 @@ const VirtuosoTableComponents: TableComponents<MovementationChecklist> = {
 };
 
 const ChecklistTasks = () => {
-
+   const { user } = useContext(userContext);
+    const {
+      toggleChecklistOpen,
+      refreshChecklist,
+      currentColumnFilters,
+      setCurrentColumnFilters,
+      filteredNotificationsByUser,
+      currentStatusFilterSelected,
+      setCurrentStatusFilterSelected,
+      currentFilteredByStatus,
+      setCurrentFilteredByStatus,
+      setFilteredNotificationsByUser,
+    } = useContext(checklistContext);
   const [isMobile, setIsMobile] = useState(false);
-  const { user } = useContext(userContext);
-  const {
-    toggleChecklistOpen,
-    refreshChecklist,
-    currentColumnFilters,
-    setCurrentColumnFilters,
-    filteredNotificationsByUser,
-    currentStatusFilterSelected,
-    setCurrentStatusFilterSelected,
-    currentFilteredByStatus,
-    setCurrentFilteredByStatus,
-    setFilteredNotificationsByUser
-  } = useContext(checklistContext);
-  const navigate = useNavigate();
+ 
+ 
+    const navigate = useNavigate();
+
+    const filterByActiveColumnFilters = useCallback((
+      columnFilters: { dataKey: string; filterValue: string }[],
+      notifications: MovementationChecklist[]
+    ) => {
+      const activeFilters = columnFilters.filter(
+        (filter) => filter.filterValue.trim() !== ""
+      );
+
+      if (activeFilters.length > 0) {
+        const filteredNotifications = notifications?.filter((notification) => {
+          return activeFilters.every((filter) => {
+            const { dataKey, filterValue } = filter;
+            if (
+              dataKey === "id_checklist_movimentacao" ||
+              dataKey === "id_movimentacao"
+            ) {
+              console.log("coluna numérica");
+              return (
+                String(
+                  notification[dataKey as keyof MovementationChecklist]
+                ) === String(filterValue)
+              );
+            }
+            if (dataKey === "data_realizado" || dataKey === "data_criacao") {
+              // Filtrar por valores de data renderizados
+              const renderedDate = renderDateValue(dataKey, notification);
+              return renderedDate?.includes(filterValue);
+            }
+            // Filtro padrão (string contém valor do filtro)
+            return String(notification[dataKey as keyof MovementationChecklist])
+              .toLowerCase()
+              .includes(filterValue.toLowerCase());
+          });
+        });
+        return filteredNotifications;
+      }
+      return notifications;
+    }, []);
+
 
   const getNotifications = useCallback(async () => {
     console.log("currentColumn filters: ", currentColumnFilters);
@@ -141,7 +182,7 @@ const ChecklistTasks = () => {
       setFilteredNotificationsByUser(filteredByUser);
      
     }
-  }, [currentStatusFilterSelected, setFilteredNotificationsByUser, user]);
+  }, [currentColumnFilters, currentStatusFilterSelected, filterByActiveColumnFilters, setCurrentFilteredByStatus, setFilteredNotificationsByUser, user]);
 
 
   const handleChangeColumnFilter = (
@@ -163,42 +204,6 @@ const ChecklistTasks = () => {
     setFilteredNotificationsByUser(filteredByColumnsNotifications || []);
   };
 
-  const filterByActiveColumnFilters = (
-    columnFilters: { dataKey: string; filterValue: string }[], notifications : MovementationChecklist[]
-  ) => {
-    const activeFilters = columnFilters.filter(
-      (filter) => filter.filterValue.trim() !== ""
-    );
-    console.log('activeFilters: ', activeFilters)
-    if(activeFilters.length > 0) {
-      const filteredNotifications = notifications?.filter((notification) => {
-        return activeFilters.every((filter) => {
-          const { dataKey, filterValue } = filter;
-          if (
-            dataKey === "id_checklist_movimentacao" ||
-            dataKey === "id_movimentacao"
-          ) {
-            console.log("coluna numérica");
-            return (
-              String(notification[dataKey as keyof MovementationChecklist]) ===
-              String(filterValue)
-            );
-          }
-          if (dataKey === "data_realizado" || dataKey === "data_criacao") {
-            // Filtrar por valores de data renderizados
-            const renderedDate = renderDateValue(dataKey, notification);
-            return renderedDate?.includes(filterValue);
-          }
-          // Filtro padrão (string contém valor do filtro)
-          return String(notification[dataKey as keyof MovementationChecklist])
-            .toLowerCase()
-            .includes(filterValue.toLowerCase());
-        });
-      });
-      return filteredNotifications;
-    }
-    return notifications;
-  };
 
   function fixedHeaderContent() {
     return (
