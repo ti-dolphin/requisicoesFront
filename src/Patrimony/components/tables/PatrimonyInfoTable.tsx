@@ -121,28 +121,32 @@ export default function MovementsTable() {
 
   const fetchData = async () => {
     const patrimonyInfoData = await getPatrimonyInfo();
-    console.log('fetchData');
 
-      if (currentFilter === "Todos") {
-        if (patrimonyInfoData) {
-          setFilteredRows(patrimonyInfoData);
-          setRows(patrimonyInfoData);
+        if (currentFilter === "Todos") {
+          if (patrimonyInfoData) {
+            if(!filteredRows?.length){ 
+                setFilteredRows(patrimonyInfoData);
+            }
+            setRows(patrimonyInfoData);
+          }
+          return;
         }
-        return;
-      }
-      if (currentFilter === "Meus") {
-        if (patrimonyInfoData) {
-          const filtered = patrimonyInfoData.filter(
-            (register) =>
-              register.responsavel.toUpperCase() === user?.NOME?.toUpperCase()
-          );
-          setFilteredRows(filtered);
-          setRows(filtered);
+
+        if (currentFilter === "Meus") {
+          if (patrimonyInfoData) {
+            const filtered = patrimonyInfoData.filter(
+              (register) =>
+                register.responsavel.toUpperCase() === user?.NOME?.toUpperCase()
+            );
+            if(!filteredRows?.length){ 
+                setFilteredRows(filtered);
+            }
+            setRows(filtered);
+          }
+          return;
         }
-        return;
-      }
+        setRows(patrimonyInfoData);
     
-     setRows(patrimonyInfoData);
   };
 
   const handleOpenChecklists = (row: PatrimonyInfo) => {
@@ -172,6 +176,7 @@ export default function MovementsTable() {
       currentSelectedItems.splice(currentSelectedItems.indexOf(row), 1);
       setSelectedItems([...currentSelectedItems]);
     };
+    
     const handleOpenPatrimonyDetail = (id_patrimonio: number) => {
       setResponsable(row.id_responsavel);
       navigate(`/patrimony/details/${id_patrimonio}`);

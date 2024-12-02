@@ -106,18 +106,6 @@ const ChecklistItemsModal = () => {
         console.log("dont save it because there's no item");
       }
     },
-    // beforeChange: async (oldIndex: number) => {
-    //   if(checklistItemsMap && checklistItemsMap[oldIndex].checklistItemFile){
-    //      const filledChecklistItems = checklistItemsMap.filter(
-    //        (item) => item.checklistItemFile !== undefined
-    //      );
-    //      console.log("filledChecklistItems", filledChecklistItems);
-    //      await sendChecklistItems(filledChecklistItems);
-    //      console.log('saved it');
-    //       return;
-    //   }
-    //   console.log('dont save it because theres no item')
-    // },
      afterChange: (current: number) => setCurrentSlideIndex(current),
   };
 
@@ -275,6 +263,12 @@ const handleReproveChecklist = async () => {
 };
 
   const handleSendChecklistItems = async () => {
+    const noFilteItem = ChecklistItems.find(item => !item.arquivo);
+    if(noFilteItem) {
+      alert("Todos os itens da checklist devem ter uma imagem.");
+      return;
+    }
+
     if (ChecklistItems) {
       const response = await sendChecklistItems(ChecklistItems);
       if (response && response.status === 200 && checklistOpen[1]) {
@@ -287,6 +281,7 @@ const handleReproveChecklist = async () => {
         toggleRefreshChecklist();
         toggleChecklistOpen();
       }
+      return;
     }
   };
 
@@ -517,7 +512,9 @@ const handleReproveChecklist = async () => {
             color="blue"
             sx={{ textDecoration: "underline", cursor: "pointer" }}
             onClick={() =>
-              window.open(`/patrimony/details/${checklistOpen[1]?.id_patrimonio}`)
+              window.open(
+                `/patrimony/details/${checklistOpen[1]?.id_patrimonio}`
+              )
             }
           >
             Patrimônio {checklistOpen[1]?.id_patrimonio} (
@@ -538,91 +535,99 @@ const handleReproveChecklist = async () => {
           }}
         >
           {ChecklistItems && !isMobile ? ( //desktop
-            <Stack direction="row" justifyContent="center" flexWrap="wrap" width="90%" gap={1}>
-
-              {isLoadingItems ? <CircularProgress/>  : 
-              ChecklistItems.map((checklistItem) => 
-                <Card
-                  key={checklistItem.id_item_checklist_movimentacao}
-                  sx={{
-                    width: {
-                      xs: 240,
-                      md: 300,
-                    },
-                    minHeight: 320,
-                    borderRadius: "10px",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => handleOpenItemImage(checklistItem)}
-                >
-                  <CardMedia
+            <Stack
+              direction="row"
+              justifyContent="center"
+              flexWrap="wrap"
+              width="90%"
+              gap={1}
+            >
+              {isLoadingItems ? (
+                <CircularProgress />
+              ) : (
+                ChecklistItems.map((checklistItem) => (
+                  <Card
+                    key={checklistItem.id_item_checklist_movimentacao}
                     sx={{
-                      height: 200,
+                      width: {
+                        xs: 240,
+                        md: 300,
+                      },
+                      minHeight: 320,
+                      borderRadius: "10px",
+                      cursor: "pointer",
                     }}
-                    image={renderItemImage(checklistItem)}
-                    title="checklist image"
-                  ></CardMedia>
-                  <CardContent>
-                    <Stack gap={1}>
-                      <Typography fontSize="small">
-                        {checklistItem.nome_item_checklist}
-                      </Typography>
-                      <Button
-                        onClick={() => handleChangeProblem(checklistItem)}
-                        sx={{ width: "fit-content" }}
-                      >
-                        <Stack direction="row" alignItems="center" gap={1}>
-                          <ErrorIcon
-                            sx={{
-                              color: renderErrorColor(checklistItem),
-                            }}
-                          />
-                          <Typography
-                            sx={{
-                              color: renderErrorColor(checklistItem),
-                            }}
-                            variant="body2"
-                            fontSize="small"
-                          >
-                            Problema
-                          </Typography>
-                        </Stack>
-                      </Button>
+                  >
+                    <CardMedia
+                      onClick={() => handleOpenItemImage(checklistItem)}
+                      sx={{
+                        height: 200,
+                      }}
+                      image={renderItemImage(checklistItem)}
+                      title="checklist image"
+                    ></CardMedia>
+                    <CardContent>
+                      <Stack gap={1}>
+                        <Typography fontSize="small">
+                          {checklistItem.nome_item_checklist}
+                        </Typography>
+                        <Button
+                          onClick={() => handleChangeProblem(checklistItem)}
+                          sx={{ width: "fit-content" }}
+                        >
+                          <Stack direction="row" alignItems="center" gap={1}>
+                            <ErrorIcon
+                              sx={{
+                                color: renderErrorColor(checklistItem),
+                              }}
+                            />
+                            <Typography
+                              sx={{
+                                color: renderErrorColor(checklistItem),
+                              }}
+                              variant="body2"
+                              fontSize="small"
+                            >
+                              Problema
+                            </Typography>
+                          </Stack>
+                        </Button>
 
-                      <Button
-                        id="notProblem"
-                        onClick={() => handleChangeOkay(checklistItem)}
-                        sx={{ width: "fit-content" }}
-                      >
-                        <Stack direction="row" alignItems="center" gap={1}>
-                          <CheckCircleIcon
-                            sx={{
-                              color: renderOkayColor(checklistItem),
-                            }}
-                          />
-                          <Typography
-                            sx={{
-                              color: renderOkayColor(checklistItem),
-                            }}
-                            variant="body2"
-                            fontSize="small"
-                          >
-                            Okay
-                          </Typography>
-                        </Stack>
-                      </Button>
-                      <TextareaAutosize
-                        onChange={(e) =>
-                          handleChangeItemObservation(e, checklistItem)
-                        }
-                        defaultValue={""}
-                        value={renderObservation(checklistItem)}
-                      />
-                    </Stack>
-                  </CardContent>
-                </Card>
-              )
-              }
+                        <Button
+                          id="notProblem"
+                          onClick={() => handleChangeOkay(checklistItem)}
+                          sx={{ width: "fit-content" }}
+                        >
+                          <Stack direction="row" alignItems="center" gap={1}>
+                            <CheckCircleIcon
+                              sx={{
+                                color: renderOkayColor(checklistItem),
+                              }}
+                            />
+                            <Typography
+                              sx={{
+                                color: renderOkayColor(checklistItem),
+                              }}
+                              variant="body2"
+                              fontSize="small"
+                            >
+                              Okay
+                            </Typography>
+                          </Stack>
+                        </Button>
+                        <TextareaAutosize
+                          onChange={(e) =>
+                            handleChangeItemObservation(e, checklistItem)
+                          }
+                          placeholder="Se houver, digite uma observação..."
+                          defaultValue={""}
+                          value={renderObservation(checklistItem)}
+                        />
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
             </Stack>
           ) : (
             //mobile
