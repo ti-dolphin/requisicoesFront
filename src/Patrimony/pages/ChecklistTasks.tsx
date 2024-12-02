@@ -112,45 +112,37 @@ const VirtuosoTableComponents: TableComponents<MovementationChecklist> = {
 };
 
 const ChecklistTasks = () => {
-  const [notifications, setNotifications] =
-    useState<MovementationChecklist[]>();
-  const [filteredNotificaitonsByUser, setFilteredNotificaitonsByUser] =
-    useState<MovementationChecklist[]>([]);
-  const [currentStatusFilterSelected, setCurrentStatusFilterSelected] =
-    useState<string>("");
-  const [currentFilteredByStatus, setCurrentFilteredByStatus] = useState<
-    MovementationChecklist[]
-  >([]);
-  const [isMobile, setIsMobile] = useState(false);
 
+  const [isMobile, setIsMobile] = useState(false);
   const { user } = useContext(userContext);
   const {
     toggleChecklistOpen,
     refreshChecklist,
     currentColumnFilters,
     setCurrentColumnFilters,
+    filteredNotificationsByUser,
+    currentStatusFilterSelected,
+    setCurrentStatusFilterSelected,
+    currentFilteredByStatus,
+    setCurrentFilteredByStatus,
+    setFilteredNotificationsByUser
   } = useContext(checklistContext);
   const navigate = useNavigate();
 
   const getNotifications = useCallback(async () => {
+    console.log("currentColumn filters: ", currentColumnFilters);
     if (user) {
-      const notifications = await getPatrimonyNotifications(user);
-      console.log("notifications: ", notifications);
-      const filteredNotifications = notifications.filter(
-        (notification: MovementationChecklist) => {
-          if (responsableForTypeNotification(notification)) {
-            return notification;
-          }
-          if (responsableForPatrimonyNotification(notification)) {
-            return notification;
-          }
-        }
+      const notifications = await getPatrimonyNotifications(
+        user,
+        currentStatusFilterSelected
       );
-      setCurrentFilteredByStatus([...filteredNotifications]);
-      setNotifications([...filteredNotifications]);
-      setFilteredNotificaitonsByUser([...filteredNotifications]);
+      setCurrentFilteredByStatus(notifications);
+      const filteredByUser = filterByActiveColumnFilters(currentColumnFilters, notifications);
+      setFilteredNotificationsByUser(filteredByUser);
+     
     }
-  }, []);
+  }, [currentStatusFilterSelected, setFilteredNotificationsByUser, user]);
+
 
   const handleChangeColumnFilter = (
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
@@ -165,13 +157,21 @@ const ChecklistTasks = () => {
           }
         : columnfilter
     );
-
     setCurrentColumnFilters(changedColumnFilters);
-    const activeFilters = changedColumnFilters.filter(
+    const filteredByColumnsNotifications = filterByActiveColumnFilters(changedColumnFilters, currentFilteredByStatus);
+    console.log("filteredByColumnsNotifications", filteredByColumnsNotifications);
+    setFilteredNotificationsByUser(filteredByColumnsNotifications || []);
+  };
+
+  const filterByActiveColumnFilters = (
+    columnFilters: { dataKey: string; filterValue: string }[], notifications : MovementationChecklist[]
+  ) => {
+    const activeFilters = columnFilters.filter(
       (filter) => filter.filterValue.trim() !== ""
     );
-    const filteredNotifications = currentFilteredByStatus?.filter(
-      (notification) => {
+    console.log('activeFilters: ', activeFilters)
+    if(activeFilters.length > 0) {
+      const filteredNotifications = notifications?.filter((notification) => {
         return activeFilters.every((filter) => {
           const { dataKey, filterValue } = filter;
           if (
@@ -194,12 +194,10 @@ const ChecklistTasks = () => {
             .toLowerCase()
             .includes(filterValue.toLowerCase());
         });
-      }
-    );
-
-    setFilteredNotificaitonsByUser(filteredNotifications || []);
-    //getActiveFilters
-    //filter the notifications state variable accordingly to the active filters and set the result to the filteredNotificaitonsByUser using  setFilteredNotificaitonsByUser
+      });
+      return filteredNotifications;
+    }
+    return notifications;
   };
 
   function fixedHeaderContent() {
@@ -255,46 +253,15 @@ const ChecklistTasks = () => {
     );
   }
 
-  const responsableForPatrimonyNotification = (
-    notification: MovementationChecklist
-  ) => {
-    return isMovimentationResponsable(notification) && !notification.realizado;
-  };
-
-  const responsableForTypeNotification = (
-    notification: MovementationChecklist
-  ) => {
-    if (isTypeResponsable(notification)) {
-      if (!notification.aprovado && notification.realizado) {
-        return true; //para aprovação
-      }
-      //para aprovar
-      if (
-        !notification.aprovado &&
-        !notification.realizado &&
-        isLate(notification)
-      ) {
-        return true;
-      }
-    }
-    return false;
-  };
-
   const isTypeResponsable = (checklist: MovementationChecklist) => {
     return checklist.responsavel_tipo === user?.responsavel_tipo;
   };
 
-  const isMovimentationResponsable = (checklist: MovementationChecklist) => {
-    console.log(
-      "isMoveRespnsable: ",
-      checklist.responsavel_movimentacao === user?.CODPESSOA
-    );
-    return checklist.responsavel_movimentacao === user?.CODPESSOA;
-  };
 
   const handleBack = () => {
     navigate("/patrimony");
   };
+
   const isLate = (row: MovementationChecklist) => {
     const creationDate = new Date(row.data_criacao);
     const today = new Date();
@@ -389,41 +356,28 @@ const ChecklistTasks = () => {
       </React.Fragment>
     );
   }
-  const filterByStatus = (
-    checklistStatus: string,
-    e?: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    console.log(e);
-    if (checklistStatus === "atrasados" && notifications) {
+
+  const filterByStatus = (checklistStatus: string) => {
+    if (checklistStatus === "atrasados") {
+      console.log("atrasados");
       setCurrentStatusFilterSelected("atrasados");
-      const filteredByStatus = notifications.filter(
-        (notification) => notification.atrasado
-      );
-      setFilteredNotificaitonsByUser(filteredByStatus);
-      setCurrentFilteredByStatus(filteredByStatus);
       return;
     }
-    if (checklistStatus === "aprovar" && notifications) {
+    if (checklistStatus === "aprovar") {
+      console.log("aprovar");
       setCurrentStatusFilterSelected("aprovar");
-      const filteredByStatus = notifications.filter((notification) =>
-        toBeAproved(notification)
-      );
-      setFilteredNotificaitonsByUser(filteredByStatus);
-      setCurrentFilteredByStatus(filteredByStatus);
       return;
     }
-    if (checklistStatus === "problemas" && notifications) {
+    if (checklistStatus === "problemas") {
+      console.log("problemas");
       setCurrentStatusFilterSelected("problemas");
-      const filteredByStatus = notifications.filter(
-        (notification) => notification.problema
-      );
-      setFilteredNotificaitonsByUser(filteredByStatus);
-      setCurrentFilteredByStatus(filteredByStatus);
       return;
     }
-    setCurrentStatusFilterSelected("todos");
-    setCurrentFilteredByStatus(notifications || []);
-    setFilteredNotificaitonsByUser(notifications || []);
+    if(checklistStatus === 'todos'){ 
+      console.log("todos");
+      setCurrentStatusFilterSelected("todos");
+      return;
+    }
   };
 
   useEffect(() => {
@@ -445,9 +399,10 @@ const ChecklistTasks = () => {
   }, []);
 
   useEffect(() => {
+    
     getNotifications();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshChecklist]);
+  }, [refreshChecklist, currentStatusFilterSelected]);
 
   return (
     <Box
@@ -512,9 +467,7 @@ const ChecklistTasks = () => {
               fontFamily="Roboto"
               padding={2}
             >
-              {notifications?.length
-                ? `Checklists Pendentes`
-                : `Não há checklists pendentes`}
+             Checklists Pendentes
             </Typography>
           </Box>
           {isMobile && user?.responsavel_tipo && (
@@ -597,7 +550,7 @@ const ChecklistTasks = () => {
         </AppBar>
       </Box>
       <TableVirtuoso
-        data={filteredNotificaitonsByUser}
+        data={filteredNotificationsByUser}
         components={{
           ...VirtuosoTableComponents,
           TableRow: (props) => (
@@ -619,14 +572,14 @@ const ChecklistTasks = () => {
         paddingY="0.4rem"
         paddingX="2rem"
       >
-        {filteredNotificaitonsByUser && (
+        {filteredNotificationsByUser && (
           <Typography
             variant="body2"
             color="blue"
             fontWeight="semibold"
             fontFamily="Roboto"
           >
-            Total de Checklists: {filteredNotificaitonsByUser.length}
+            Total de Checklists: {filteredNotificationsByUser.length}
           </Typography>
         )}
       </Box>

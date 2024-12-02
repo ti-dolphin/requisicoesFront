@@ -219,17 +219,24 @@ export const sendChecklistItems = async (checklistItems: ChecklistItemFile[]) =>
   }
 };
 
-export const getPatrimonyNotifications = async (user : User ) => { 
-  try{
-     const queryParams = new URLSearchParams({
-       CODPESSOA: String(user.CODPESSOA), // Assuming `id` is a property of user
-     });
-     const response = await api.get(`checklist/notifications?${queryParams.toString()}`);
-     return response.data;
-   }catch(e){
-     console.log(e);
-   }
-}
+export const getPatrimonyNotifications = async (
+  user: User,
+  currentStatusFilterSelected: string) => {
+    
+    console.log('currentStatusFilterSelected', currentStatusFilterSelected);
+  try {
+    const queryParams = new URLSearchParams({
+      CODPESSOA: String(user.CODPESSOA), // Assuming `id` is a property of user
+      status: currentStatusFilterSelected,
+    });
+    const response = await api.get(
+      `checklist/notifications?${queryParams.toString()}`
+    );
+    return response.data;
+  } catch (e) {
+    console.log(e);
+  }
+};
 
 export const updateMultiplePatrimonies = async (selectedItems : PatrimonyInfo[], options? : { active : boolean } ) => { 
    try{ 

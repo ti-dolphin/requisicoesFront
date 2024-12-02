@@ -51,7 +51,7 @@ export default function SearchAppBar({
     currentFilter,
   } = useContext(PatrimonyInfoContext);
   const {
-    toggleChecklistOpen
+    toggleChecklistOpen,
   } = useContext(checklistContext);
   const { user } = useContext(userContext);
   const [actionsMenu, setActionsMenu] = React.useState<null | HTMLElement>(
@@ -145,42 +145,14 @@ export default function SearchAppBar({
   const getNotifications = async () => {
     console.log("getNotifications");
     if (user) {
-      const notifications = await getPatrimonyNotifications(user);
-      const filteredNotifications = notifications.filter((notification: MovementationChecklist) => { 
-        if (responsableForTypeNotification(notification)) {
-          return notification;
-        }
-        if (responsableForPatrimonyNotification(notification)) {
-          return notification;
-        }
-      });
-      setNotifications(filteredNotifications);
+      const notifications = await getPatrimonyNotifications(
+        user,
+        'todos'
+      );
+      setNotifications(notifications);
     }
   };
 
-  const responsableForPatrimonyNotification = (notification : MovementationChecklist ) =>  { 
-    return isMovimentationResponsable(notification) && !notification.realizado;
-  } 
-
-  const responsableForTypeNotification = (notification : MovementationChecklist ) => { 
-    return (
-      isTypeResponsable(notification) &&
-      !notification.aprovado &&
-      notification.realizado
-    );
-  }
-
-  const isTypeResponsable = (checklist: MovementationChecklist) => {
-    return checklist.responsavel_tipo === user?.responsavel_tipo;
-  };
-
-  const isMovimentationResponsable = (checklist: MovementationChecklist) => {
-    console.log(
-      "isMoveRespnsable: ",
-      checklist.responsavel_movimentacao === user?.CODPESSOA
-    );
-    return checklist.responsavel_movimentacao === user?.CODPESSOA;
-  };
   const handleOpenChecklistTasks = ( ) => { 
       navigate(`/tasks`);
   }; 

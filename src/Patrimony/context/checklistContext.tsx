@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { createContext, useState } from "react";
 import { MovementationChecklist } from "../types";
 
@@ -16,10 +15,22 @@ interface checklistContextType {
   setChecklistOpen: React.Dispatch<
     React.SetStateAction<[boolean, MovementationChecklist?]>
   >;
-  currentColumnFilters: { dataKey: string; filterValue: string }[]; // Novo estado
+  currentColumnFilters: { dataKey: string; filterValue: string }[];
   setCurrentColumnFilters: React.Dispatch<
     React.SetStateAction<{ dataKey: string; filterValue: string }[]>
-  >; // Atualizador para o estado
+  >;
+
+  // Novos estados
+  filteredNotificationsByUser: MovementationChecklist[];
+  setFilteredNotificationsByUser: React.Dispatch<
+    React.SetStateAction<MovementationChecklist[]>
+  >;
+  currentStatusFilterSelected: string;
+  setCurrentStatusFilterSelected: React.Dispatch<React.SetStateAction<string>>;
+  currentFilteredByStatus: MovementationChecklist[];
+  setCurrentFilteredByStatus: React.Dispatch<
+    React.SetStateAction<MovementationChecklist[]>
+  >;
 }
 
 interface checklistContextProviderProps {
@@ -38,8 +49,16 @@ export const checklistContext = createContext<checklistContextType>({
   checklistOpen: [false],
   toggleChecklistOpen: () => {},
   setChecklistOpen: () => {},
-  currentColumnFilters: [], // Inicialmente vazio
-  setCurrentColumnFilters: () => {}, // Função vazia
+  currentColumnFilters: [],
+  setCurrentColumnFilters: () => {},
+
+  // Valores iniciais para os novos estados
+  filteredNotificationsByUser: [],
+  setFilteredNotificationsByUser: () => {},
+  currentStatusFilterSelected: "",
+  setCurrentStatusFilterSelected: () => {},
+  currentFilteredByStatus: [],
+  setCurrentFilteredByStatus: () => {},
 });
 
 export const ChecklistContextProvider: React.FC<
@@ -55,7 +74,7 @@ export const ChecklistContextProvider: React.FC<
   const [deletingCheckListItem, setDeletingCheckListItem] = useState(false);
   const [checklistOpen, setChecklistOpen] = useState<
     [boolean, MovementationChecklist?]
-  >([false]); // Renamed state
+  >([false]);
   const [currentColumnFilters, setCurrentColumnFilters] = useState<
     { dataKey: string; filterValue: string }[]
   >([
@@ -75,8 +94,17 @@ export const ChecklistContextProvider: React.FC<
     { dataKey: "nome_patrimonio", filterValue: "" },
     { dataKey: "descricao_projeto", filterValue: "" },
     { dataKey: "id_checklist_movimentacao", filterValue: "" },
-    { dataKey: "id_movimentacao" , filterValue: ''},
+    { dataKey: "id_movimentacao", filterValue: "" },
   ]);
+
+  // Novos estados
+  const [filteredNotificationsByUser, setFilteredNotificationsByUser] =
+    useState<MovementationChecklist[]>([]);
+  const [currentStatusFilterSelected, setCurrentStatusFilterSelected] =
+    useState<string>("");
+  const [currentFilteredByStatus, setCurrentFilteredByStatus] = useState<
+    MovementationChecklist[]
+  >([]);
 
   const toggleDeletingChecklist = (checklist?: MovementationChecklist) => {
     if (checklist) {
@@ -110,10 +138,10 @@ export const ChecklistContextProvider: React.FC<
 
   const toggleChecklistOpen = (checklist?: MovementationChecklist) => {
     if (checklist) {
-      setChecklistOpen([true, checklist]); // Updated logic
+      setChecklistOpen([true, checklist]);
       return;
     }
-    setChecklistOpen([false]); // Updated logic
+    setChecklistOpen([false]);
   };
 
   return (
@@ -127,11 +155,19 @@ export const ChecklistContextProvider: React.FC<
         toggleChecklistItemsOpen,
         deletingCheckListItem,
         toggleDeletingCheckListItem,
-        checklistOpen, // Updated value
-        toggleChecklistOpen, // Updated function
-        setChecklistOpen, // Updated dispatch function
-        currentColumnFilters, // Novo estado
-        setCurrentColumnFilters, // Atualizador para o novo estado
+        checklistOpen,
+        toggleChecklistOpen,
+        setChecklistOpen,
+        currentColumnFilters,
+        setCurrentColumnFilters,
+
+        // Novos estados e funções
+        filteredNotificationsByUser,
+        setFilteredNotificationsByUser,
+        currentStatusFilterSelected,
+        setCurrentStatusFilterSelected,
+        currentFilteredByStatus,
+        setCurrentFilteredByStatus,
       }}
     >
       {children}

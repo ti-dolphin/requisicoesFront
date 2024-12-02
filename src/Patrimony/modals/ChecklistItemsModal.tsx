@@ -620,7 +620,7 @@ const handleReproveChecklist = async () => {
                             handleChangeItemObservation(e, checklistItem)
                           }
                           placeholder="Se houver, digite uma observação..."
-                          defaultValue={""}
+                          
                           value={renderObservation(checklistItem)}
                         />
                       </Stack>
