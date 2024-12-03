@@ -8,7 +8,7 @@ const CrmHome = () => {
     const navigate = useNavigate();
   return (
     <Box height="95vh">
-      <Box padding={2}>
+      <Box padding={0.5}>
         <Stack direction="row" flexWrap="wrap" alignItems="center" gap={2}>
           <IconButton onClick={() => navigate("/home")}>
             <ArrowLeftIcon />
