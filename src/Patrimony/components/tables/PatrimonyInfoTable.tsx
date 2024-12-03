@@ -13,7 +13,6 @@ import SearchAppBar from "../SearchAppBar";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { dateTimeRenderer, getPatrimonyInfo } from "../../utils";
 import { PatrimonyInfoContext } from "../../context/patrimonyInfoContext";
-import { ResponsableContext } from "../../context/responsableContext";
 import {
   Box,
   Checkbox,
