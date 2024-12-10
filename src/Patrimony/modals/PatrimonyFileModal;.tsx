@@ -56,7 +56,7 @@ export default function PatrimonyFileModal() {
   const { toggleDeletingPatrimonyFile } = useContext(PatrimonyFileContext);
   const [responsable, setResponsable] = useState<number>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [imageSelected, setImageSelected] = useState<string | null>();
+  const [fileSelected, setFileSelected] = useState<string | null>();
 
   const fetchPatrimonyFiles = async () => {
     const data = await getPatrimonyFiles(Number(id_patrimonio));
@@ -103,15 +103,13 @@ export default function PatrimonyFileModal() {
   const isPDF = (file: PatrimonyFile) => {
     return /\.pdf$/i.test(file.arquivo);
   };
-  const openFile = (file: PatrimonyFile ) => { 
-    if(!isPDF(file)){ 
-      setImageSelected(file.arquivo);
-      return;
-    }
+
+  const openFile = (file: PatrimonyFile) => {
+    setFileSelected(file.arquivo);
   };
 
   const handleCloseImageModal = ( ) => { 
-    setImageSelected(null);
+    setFileSelected(null);
   };
   useEffect(() => {
     console.log("teste");
@@ -219,8 +217,9 @@ export default function PatrimonyFileModal() {
                       sm: "150px",
                       md: "200px",
                       lg: "300px",
-                      cursor: 'pointer'
+                      cursor: 'pointer',
                     },
+                    width: '100%',
                     background: isImage(file)
                       ? `url('${file.arquivo}')`
                       : "none",
@@ -265,7 +264,7 @@ export default function PatrimonyFileModal() {
         </Fade>
       </Modal>
       <Modal
-        open={imageSelected ? true : false}
+        open={fileSelected ? true : false}
         onClose={handleCloseImageModal}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
@@ -297,12 +296,15 @@ export default function PatrimonyFileModal() {
           <Box
             sx={{
               height: "100%",
-              backgroundImage: `url('${imageSelected}')`,
+              backgroundImage: `url('${fileSelected}')`,
               backgroundSize: "contain",
               backgroundRepeat: "no-repeat",
               backgroundPosition: "center",
             }}
-          ></Box>
+
+          >
+
+          </Box>
         </Box>
       </Modal>
     </div>
