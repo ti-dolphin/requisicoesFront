@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, SetStateAction } from "react";
+import { Dispatch, SetStateAction } from "react";
 export interface Requisition {
   OBSERVACAO: string;
   ID_REQUISICAO: number;
@@ -50,7 +50,7 @@ export interface RequisitionType{
   nome_tipo : string;
 }
 export interface Project {
-  DESCRICAO: ReactNode;
+  DESCRICAO: string;
   ID: number;
 }
 export interface Item {

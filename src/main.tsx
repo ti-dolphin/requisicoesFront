@@ -14,6 +14,7 @@ import { RequisitionContextProvider } from "./Requisitions/context/RequisitionCo
 import { UserContextProvider } from "./Requisitions/context/userContext.tsx";
 import { PatrimonyInfoContextProvider } from './Patrimony/context/patrimonyInfoContext.tsx';
 import { ChecklistContextProvider } from './Patrimony/context/checklistContext.tsx';
+import { OpportunityInfoProvider } from './crm/context/OpportunityInfoContext.tsx';
 
 const theme = createTheme(
   {
@@ -33,6 +34,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <ThemeProvider theme={theme}>
       <UserContextProvider>
         <RequisitionContextProvider>
+          <OpportunityInfoProvider>
           <PatrimonyInfoContextProvider>
             <ChecklistContextProvider>
               <QueryClientProvider client={queryClient}>
@@ -40,6 +42,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
               </QueryClientProvider>
             </ChecklistContextProvider>
           </PatrimonyInfoContextProvider>
+           </OpportunityInfoProvider>
         </RequisitionContextProvider>
       </UserContextProvider>
     </ThemeProvider>

@@ -466,13 +466,13 @@ const ChecklistTasks = () => {
               <ArrowLeftIcon />
             </IconButton>
             <Typography
-              variant="h6"
+             
               textAlign="center"
               fontSize="medium"
               fontFamily="Roboto"
               padding={2}
             >
-             Checklists Pendentes
+              Checklists Pendentes
             </Typography>
           </Box>
           {isMobile && user?.responsavel_tipo && (

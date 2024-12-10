@@ -7,6 +7,9 @@ import {
   Badge,
   Box,
   Button,
+  Card,
+  CardContent,
+  CardMedia,
   CircularProgress,
   IconButton,
   Stack,
@@ -53,6 +56,7 @@ export default function PatrimonyFileModal() {
   const { toggleDeletingPatrimonyFile } = useContext(PatrimonyFileContext);
   const [responsable, setResponsable] = useState<number>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [imageSelected, setImageSelected] = useState<string | null>();
 
   const fetchPatrimonyFiles = async () => {
     const data = await getPatrimonyFiles(Number(id_patrimonio));
@@ -98,6 +102,16 @@ export default function PatrimonyFileModal() {
 
   const isPDF = (file: PatrimonyFile) => {
     return /\.pdf$/i.test(file.arquivo);
+  };
+  const openFile = (file: PatrimonyFile ) => { 
+    if(!isPDF(file)){ 
+      setImageSelected(file.arquivo);
+      return;
+    }
+  };
+
+  const handleCloseImageModal = ( ) => { 
+    setImageSelected(null);
   };
   useEffect(() => {
     console.log("teste");
@@ -185,90 +199,111 @@ export default function PatrimonyFileModal() {
               </Stack>
             )}
             {fileData?.map((file) => (
-              <Box
-                sx={{ borderRadius: "10px" }}
-                className="border border-gray-300"
+              <Card
+                key={file.id_anexo_patrimonio}
+                sx={{
+                  borderRadius: "10px",
+                  boxShadow: 2,
+                  marginBottom: 2,
+                }}
               >
-                <Stack
-                  direction="row"
-                  gap={1}
-                  flexWrap="wrap"
-                  padding={1}
-                  height="fit-content"
+                <CardMedia
+                  component={isPDF(file) ? "object" : "div"}
+                  data={isPDF(file) ? file.arquivo : undefined}
+                  src={isPDF(file) ? undefined : file.arquivo}
+                  type={isPDF(file) ? "application/pdf" : undefined}
+                  onClick={() => openFile(file)}
                   sx={{
-                    cursor: "pointer",
-                    color: "blue",
-                    textDecoration: "underline",
+                    height: {
+                      xs: "100px",
+                      sm: "150px",
+                      md: "200px",
+                      lg: "300px",
+                      cursor: 'pointer'
+                    },
+                    background: isImage(file)
+                      ? `url('${file.arquivo}')`
+                      : "none",
+                    backgroundPosition: "center",
+                    backgroundSize: "cover",
+                    backgroundRepeat: "no-repeat",
+                  }}
+                />
+                <CardContent
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    padding: 1,
                   }}
                 >
-                  <Box
+                  <Typography
+                    onClick={() => handleOpenLink(file.arquivo)}
+                    fontSize="small"
                     sx={{
-                      height: {
-                        xs: "100px",
-                        sm: "150px",
-                        md: "200px",
-                        lg: "300px",
-                      },
-                      borderRadius: "10px",
-                      width: {
-                        xs: "100%",
-                        sm: "100%",
-                        lg: "100%",
-                      },
-                      background: isImage(file)
-                        ? `url('${file.arquivo}')`
-                        : "none",
-                      backgroundPosition: "center",
-                      backgroundSize: "cover",
-                      backgroundRepeat: "no-repeat",
+                      cursor: "pointer",
+                      color: "blue",
+                      textDecoration: "underline",
+                      flex: 1,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
                     }}
                   >
-                    {isPDF(file) && (
-                      <object
-                        data={file.arquivo}
-                        type="application/pdf"
-                        width="100%"
-                        height="100%"
-                      ></object>
-                    )}
-                  </Box>
-                  <Box
-                    sx={{
-                      borderRadius: "10px",
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      flexWrap: "wrap",
-                      width: {
-                        xs: "100%",
-                        lg: "50%",
-                      },
-                    }}
+                    {file.nome_arquivo}
+                  </Typography>
+                  <IconButton
+                    onClick={() => toggleDeletingPatrimonyFile(true, file)}
+                    sx={{ color: "#F7941E" }}
                   >
-                    <Typography
-                      onClick={() => handleOpenLink(file.arquivo)}
-                      fontSize="small"
-                      overflow={"hidden"}
-                    >
-                      {file.nome_arquivo}
-                    </Typography>
-                    <IconButton
-                      onClick={() => toggleDeletingPatrimonyFile(true, file)}
-                      sx={{
-                        color: "blue",
-                        textTransform: "underline",
-                        marginLeft: 1,
-                      }}
-                    >
-                      <DeleteIcon sx={{ color: "#F7941E" }} />
-                    </IconButton>
-                  </Box>
-                </Stack>
-              </Box>
+                    <DeleteIcon />
+                  </IconButton>
+                </CardContent>
+              </Card>
             ))}
-            
           </ModalContent>
         </Fade>
+      </Modal>
+      <Modal
+        open={imageSelected ? true : false}
+        onClose={handleCloseImageModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "90%",
+            height: "90%",
+            bgcolor: "background.paper",
+            border: "1px solid #000",
+            boxShadow: 24,
+            p: 2,
+          }}
+        >
+          <IconButton
+            onClick={handleCloseImageModal}
+            sx={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+            }}
+          >
+            <CloseIcon sx={{ color: "red" }} />
+          </IconButton>
+          <Box
+            sx={{
+              height: "100%",
+              backgroundImage: `url('${imageSelected}')`,
+              backgroundSize: "contain",
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "center",
+            }}
+          ></Box>
+        </Box>
       </Modal>
     </div>
   );

@@ -171,7 +171,7 @@ export default function SearchAppBar({
           backgroundColor: "#2B3990",
           display: "flex",
           justifyContent: "center",
-          padding: "0.4rem",
+           padding: "0.2rem",
         }}
       >
         <Toolbar>

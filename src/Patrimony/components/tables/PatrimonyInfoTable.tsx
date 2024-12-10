@@ -442,7 +442,7 @@ export default function MovementsTable() {
   }, [refreshPatrimonyInfo, currentFilter]);
 
   return (
-    <Paper style={{ height: "80%", width: "100%", padding: 2 }}>
+    <Paper style={{  width: "100%", padding: 2, flexGrow: 1, height: "75%" }}>
       <SearchAppBar
         setFilteredRows={setFilteredRows}
         selectedItems={selectedItems}

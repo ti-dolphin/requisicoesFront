@@ -2,9 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-body{
-    padding: 0.2rem;
-}
+/* body{
+    padding: 0.1rem;
+} */
 body::-webkit-scrollbar {
   width: 8px;               /* width of the entire scrollbar */
 }
