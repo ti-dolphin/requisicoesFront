@@ -13,6 +13,7 @@ import {
   CircularProgress,
   IconButton,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import AttachFile from "@mui/icons-material/AttachFile";
@@ -120,9 +121,11 @@ export default function PatrimonyFileModal() {
   return (
     <div>
       <Badge badgeContent={fileData?.length || 0} color="primary">
-        <IconButton onClick={handleOpen}>
-          <AttachFile sx={{ color: "#F7941E" }} />
-        </IconButton>
+        <Tooltip title="Anexos do patrimônio">
+          <IconButton onClick={handleOpen}>
+            <AttachFile sx={{ color: "#F7941E" }} />
+          </IconButton>
+        </Tooltip>
       </Badge>
       <Modal
         aria-labelledby="transition-modal-title"
@@ -217,9 +220,9 @@ export default function PatrimonyFileModal() {
                       sm: "150px",
                       md: "200px",
                       lg: "300px",
-                      cursor: 'pointer',
+                      cursor: "pointer",
                     },
-                    width: '100%',
+                    width: "100%",
                     background: isImage(file)
                       ? `url('${file.arquivo}')`
                       : "none",
@@ -301,10 +304,7 @@ export default function PatrimonyFileModal() {
               backgroundRepeat: "no-repeat",
               backgroundPosition: "center",
             }}
-
-          >
-
-          </Box>
+          ></Box>
         </Box>
       </Modal>
     </div>

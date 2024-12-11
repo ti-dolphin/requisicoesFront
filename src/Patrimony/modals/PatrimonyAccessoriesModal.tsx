@@ -17,6 +17,7 @@ import {
   CardContent,
   CardMedia,
   CircularProgress,
+  Tooltip,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -173,9 +174,11 @@ export default function PatrimonyAccessoryModal() {
   return (
     <div>
       <Badge badgeContent={accessories.length} color="primary">
-        <IconButton onClick={handleOpen}>
-          <HomeRepairServiceIcon sx={{ color: "#F7941E" }} />
-        </IconButton>
+        <Tooltip title="Acessórios">
+          <IconButton onClick={handleOpen}>
+            <HomeRepairServiceIcon sx={{ color: "#F7941E" }} />
+          </IconButton>
+        </Tooltip>
       </Badge>
       <Modal open={open} onClose={handleClose}>
         <Box sx={modalStyle(theme)}>
@@ -201,7 +204,7 @@ export default function PatrimonyAccessoryModal() {
               accessories.map((accessory, index) => (
                 <Card sx={{ borderRadius: "10px", width: 300 }}>
                   <CardMedia
-                    image={isLoading ? '' : renderAcessoryImage(accessory)}
+                    image={isLoading ? "" : renderAcessoryImage(accessory)}
                     sx={{ height: 200 }}
                   >
                     {isLoading && (

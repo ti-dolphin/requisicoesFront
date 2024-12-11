@@ -6,6 +6,7 @@ import {
   Stack,
   Switch,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import MovimentationTable from "../components/tables/MovimentationTable";
@@ -33,7 +34,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { ArrowLeftIcon } from "@mui/x-date-pickers/icons";
 import PatrimonyAccessoryModal from "../modals/PatrimonyAccessoriesModal";
 // import { userContext } from "../../Requisitions/context/userContext";
-
+import ChecklistIcon from "@mui/icons-material/Checklist";
 const PatrimonyDetails = () => {
   const { id_patrimonio } = useParams();
   const { refreshPatrimonyInfo, toggleRefreshPatrimonyInfo } =
@@ -248,9 +249,18 @@ const PatrimonyDetails = () => {
                   >
                     Detalhes
                   </Typography>
+
                   <Stack direction="row" spacing={2}>
                     <PatrimonyFileModal />
                     <PatrimonyAccessoryModal />
+                    <Tooltip
+                      onClick={() => window.open(`/patrimony/checklist/${id_patrimonio}`)}
+                      title="Checklists do patrimônio"
+                    >
+                      <IconButton>
+                        <ChecklistIcon sx={{ color: "#F7941E" }} />
+                      </IconButton>
+                    </Tooltip>
                   </Stack>
                   {patrimonyData &&
                     Object.keys(patrimonyData).map((key) => (
@@ -359,6 +369,7 @@ const PatrimonyDetails = () => {
                         >
                           Histórico de Movimentações
                         </Typography>
+
                         <CreateMovementation responsable={responsable} />
                       </Stack>
                     </Box>

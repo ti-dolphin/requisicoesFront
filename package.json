@@ -38,6 +38,7 @@
     "react-virtuoso": "^4.9.0",
     "react-window": "^1.8.10",
     "recharts": "^2.13.3",
+    "requisitions": "file:",
     "slick-carousel": "^1.8.1",
     "sort-by": "^0.0.2"
   },

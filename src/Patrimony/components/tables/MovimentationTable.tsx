@@ -8,7 +8,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { TableVirtuoso, TableComponents } from "react-virtuoso";
-import { Box, IconButton, Stack, Typography } from "@mui/material";
+import { Box, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
 import MovimentationFileModal from "../../modals/MovimentationFileModal";
 import EditIcon from "@mui/icons-material/Edit";
@@ -130,7 +130,6 @@ const RowContent = ({
             paddingY: "6px",
             border: "none",
             width: column.width,
-            
           }}
         >
           <Stack
@@ -151,16 +150,22 @@ const RowContent = ({
               <MovimentationFileModal movementationId={row.id_movimentacao} />
             )}
             {column.dataKey === "observacao" && (
-              <IconButton
-                onClick={() => togglEditingMovementationObservation(true, row)}
-              >
-                <EditIcon sx={{ color: "#F7941E" }} />
-              </IconButton>
+              <Tooltip title="Editar Observação">
+                <IconButton
+                  onClick={() =>
+                    togglEditingMovementationObservation(true, row)
+                  }
+                >
+                  <EditIcon sx={{ color: "#F7941E" }} />
+                </IconButton>
+              </Tooltip>
             )}
             {column.dataKey === "id_movimentacao" && (
-              <IconButton onClick={() => handleClickDeleteMovimentation(row)}>
-                <DeleteIcon sx={{ color: "#F7941E" }} />
-              </IconButton>
+              <Tooltip title="Excluir Movimentação">
+                <IconButton onClick={() => handleClickDeleteMovimentation(row)}>
+                  <DeleteIcon sx={{ color: "#F7941E" }} />
+                </IconButton>
+              </Tooltip>
             )}
           </Stack>
         </TableCell>
