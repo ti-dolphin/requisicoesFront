@@ -11,6 +11,7 @@ import {
   CircularProgress,
   IconButton,
   Stack,
+  Tooltip,
   Typography
 } from "@mui/material";
 import AttachFile from "@mui/icons-material/AttachFile";
@@ -128,11 +129,14 @@ export default function MovimentationFileModal({
 
   return (
     <div>
-      <IconButton aria-label="cart" onClick={handleOpen}>
-        <StyledBadge badgeContent={fileData?.length} color="secondary">
-          <AttachFile sx={{ color: "#F7941E" }} />
-        </StyledBadge>
-      </IconButton>
+      <Tooltip title="Anexos da movimentação">
+        <IconButton aria-label="cart" onClick={handleOpen}>
+          <StyledBadge badgeContent={fileData?.length} color="secondary">
+            <AttachFile sx={{ color: "#F7941E" }} />
+          </StyledBadge>
+        </IconButton>
+      </Tooltip>
+      {/*  */}
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"

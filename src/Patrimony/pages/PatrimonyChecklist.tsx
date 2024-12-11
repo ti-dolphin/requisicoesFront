@@ -57,7 +57,7 @@ const PatrimonyChecklist = () => {
     { 
       field: 'nome_patrimonio',
       headerName: "Patrimônio",
-      width: 200,
+      width: 300,
     },
     {
       field: "id_checklist_movimentacao",
