@@ -27,42 +27,41 @@ const theme = createTheme(
 );
 
 const columns: GridColDef<OpportunityInfo>[] = [
-  { field: "numero_projeto", headerName: "Nº Projeto", width: 130 }, // os.ID_PROJETO
-  { field: "numero_adicional", headerName: "Nº Adicional", width: 130 }, // os.ID_ADICIONAL
-  { field: "status", headerName: "Status", width: 120 }, // s.NOME
+  { field: "numeroProjeto", headerName: "Nº Projeto", width: 130 }, // os.ID_PROJETO
+  { field: "numeroAdicional", headerName: "Nº Adicional", width: 130 }, // os.ID_ADICIONAL
+  { field: "nomeStatus", headerName: "Status", width: 120 }, // s.NOME
   {
-    field: "descricao_projeto",
+    field: "nomeDescricaoProposta",
     headerName: "Descrição",
     width: 200,
     editable: false,
-  }, // p.DESCRICAO
-  { field: "cliente", headerName: "Cliente", width: 150 }, // c.NOME
-  { field: "vendedor", headerName: "Vendedor", width: 150 }, // vendedor.NOME
-  { field: "gerente", headerName: "Gerente", width: 150 }, // gerente.NOME
+  }, // os.NOME
+  { field: "nomeCliente", headerName: "Cliente", width: 150 }, // c.NOME
+  { field: "nomeVendedor", headerName: "Vendedor", width: 150 }, // vendedor.NOME
+  { field: "nomeGerente", headerName: "Gerente", width: 150 }, // gerente.NOME
   {
-    field: "valor_faturamento_dolphin",
+    field: "valorFaturamentoDolphin",
     headerName: "Faturamento Dolphin",
   }, // CONCAT('R$ ', FORMAT(os.VALORFATDOLPHIN, 2, 'de_DE'))
   {
-    field: "valor_faturamento_direto",
+    field: "valorFaturamentoDireto",
     headerName: "Faturamento Direto",
   }, // CONCAT('R$ ', FORMAT(os.VALORFATDIRETO, 2, 'de_DE'))
   {
-    field: "valor_total",
+    field: "valorTotal",
     headerName: "Valor Total",
   }, // CONCAT('R$ ', FORMAT(os.VALORTOTAL, 2, 'de_DE'))
   {
-    field: "data_solicitacao",
+    field: "dataSolicitacao",
     headerName: "Solicitação",
     width: 120,
     valueFormatter: (value: Date) => {
-      console.log("value: ", value);
       if (value) return new Date(value).toLocaleDateString("pt-BR");
       return "-";
     },
   }, // os.DATASOLICITACAO
   {
-    field: "data_fechamento",
+    field: "dataFechamento",
     headerName: "Fechamento",
     width: 120,
     valueFormatter: (value: Date) => {
@@ -71,7 +70,7 @@ const columns: GridColDef<OpportunityInfo>[] = [
     },
   }, // os.DATAENTREGA
   {
-    field: "data_interacao",
+    field: "dataInteracao",
     headerName: "Data de Interação",
     valueFormatter: (value: Date) => {
       if (value) return new Date(value).toLocaleDateString("pt-BR");
@@ -79,7 +78,7 @@ const columns: GridColDef<OpportunityInfo>[] = [
     },
   }, // os.DATAINTERACAO
   {
-    field: "data_inicio",
+    field: "dataInicio",
     headerName: "Data de Início",
     valueFormatter: (value: Date) => {
       if (value) return new Date(value).toLocaleDateString("pt-BR");
@@ -87,11 +86,12 @@ const columns: GridColDef<OpportunityInfo>[] = [
     },
   }, // os.DATAINICIO
   {
-    field: "numero_os",
+    field: "numeroOs",
     headerName: "Nº OS",
     width: 130,
   }, // os.CODOS
 ];
+
 
 export default function OpportunityInfoTable() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -160,7 +160,7 @@ export default function OpportunityInfoTable() {
         <DataGrid
           rows={rows}
           columns={columns}
-          getRowId={(row) => row.numero_os}
+          getRowId={(row) => row.numeroOs}
           rowHeight={30} // Define `numero_projeto` como ID da linha
           columnHeaderHeight={30}
           initialState={{
@@ -221,7 +221,7 @@ export default function OpportunityInfoTable() {
             currency: "BRL",
           }).format(
             rows.reduce((acumulador, opp) => {
-              const valorLimpo = String(opp.valor_faturamento_direto)
+              const valorLimpo = String(opp.valorFaturamentoDireto)
                 .replace("R$", "")
                 .replace(/\./g, "")
                 .replace(",", ".");
@@ -236,7 +236,7 @@ export default function OpportunityInfoTable() {
             currency: "BRL",
           }).format(
             rows.reduce((acumulador, opp) => {
-              const valorLimpo = String(opp.valor_total ? opp.valor_total : 0)
+              const valorLimpo = String(opp.valorTotal ? opp.valorTotal : 0)
                 .replace("R$", "")
                 .replace(/\./g, "")
                 .replace(",", ".");

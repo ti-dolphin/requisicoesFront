@@ -321,7 +321,9 @@ export default function CreateMovementation({
                   id={column.dataKey}
                   multiline
                   placeholder={column.label}
-                ></TextField>
+                >
+                  
+                </TextField>
               )
             )}
             <Button onClick={handleSaveMovementation}>

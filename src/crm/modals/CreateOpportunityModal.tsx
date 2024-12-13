@@ -7,68 +7,17 @@ import {
   AutocompleteChangeDetails,
   AutocompleteChangeReason,
   Button,
+  IconButton,
   Modal,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import { fetchAllProjects } from "../../Requisitions/utils";
-import { fetchAllClients, fetchSalers, fetchStatusList } from "../utils";
-import {  Client, OpportunityColumn, OpportunityInfo, OpportunityOptionField, Pessoa, Status } from "../types";
+import { fetchAllClients, fetchSalers, fetchStatusList, opportunityInputFields, postOpportunity } from "../utils";
+import {  Client, Opportunity, OpportunityColumn, OpportunityOptionField, Pessoa, Status } from "../types";
+import CloseIcon from "@mui/icons-material/Close";
 
-const columns: OpportunityColumn[] = [
-  {
-    label: "Projeto",
-    dataKey: "numero_projeto",
-    autoComplete: true,
-  },
-  {
-    label: "Status",
-    dataKey: "status",
-    autoComplete: true,
-  },
-  {
-    label: "Descrição",
-    dataKey: "descricao_projeto",
-  },
-  {
-    label: "Cliente",
-    dataKey: "cliente",
-    autoComplete: true,
-  },
-  {
-    label: "Data de Solicitação",
-    dataKey: "data_solicitacao",
-  },
-  {
-    label: "Data de Envio da Proposta",
-    dataKey: "data_envio_proposta",
-  },
-  {
-    label: "Data de Fechamento",
-    dataKey: "data_fechamento",
-  },
-  {
-    label: "Data de Interação",
-    dataKey: "data_interacao",
-  },
-
-  {
-    label: "Vendedor",
-    dataKey: "vendedor",
-    autoComplete: true,
-  },
-
-  {
-    label: "Valor Faturamento Dolphin",
-    dataKey: "valor_faturamento_dolphin",
-  },
-  {
-    label: "Valor Faturamento Direto",
-    dataKey: "valor_faturamento_direto",
-  },
-  { label: "Valor Total", dataKey: "valor_total" },
-];
 
 const CreateOpportunityModal = () => {
 
@@ -103,37 +52,64 @@ const CreateOpportunityModal = () => {
     })) || [];
     setStatusOptions(options);
   };
+
   const fetchSalerOps = async () => {
     const salers = await fetchSalers();
     const options = salers.map((saler : Pessoa) => ({label : saler.NOME, id: saler.CODPESSOA, object: 'saler'}));
     setSalerOptions(options);
   };
 
-  const { creatingOpportunity, toggleCreatingOpportunity } = useContext(
+  const { creatingOpportunity, toggleCreatingOpportunity, toggleRefreshOpportunityInfo } = useContext(
     OpportunityInfoContext
   );
   const handleClose = () => toggleCreatingOpportunity();
   const [adicional, setAdicional] = useState(false);
-  const [opportunity, setCurrentOpportunity] = useState<OpportunityInfo>({
-    numero_os: 0,
-    numero_projeto: 0,
-    numero_adicional: 0,
-    status: "Novo", // Default: status inicial
-    descricao_proposta: "Descrição padrão", // Default
-    cliente: "Cliente padrão", // Default
-    data_cadastro: new Date(), // Default: data atual
-    data_solicitacao: new Date(), // Default: data atual
-    data_envio_proposta: new Date(), // Default: data atual
-    data_fechamento: new Date(), // Default: data atual
-    data_interacao: new Date(), // Default: data atual
-    data_inicio: new Date(), // Default: data atual
-    data_necessidade: new Date(), // Default: data atual
-    data_prev_fechamento: new Date(), // Default: data atual
-    vendedor: "Vendedor padrão", // Default
-    gerente: "Gerente padrão", // Default
-    valor_faturamento_dolphin: 0, // Default: sem valor'
-    valor_faturamento_direto: 0, // Default: sem valor
-    valor_total: 0, // Default: sem valor
+  const [opportunity, setCurrentOpportunity] = useState<Opportunity>({
+    codOs: 0, // Exemplo de código de OS (AUTO_INCREMENT, não precisa definir)
+    codTipoOs: 1, // Valor padrão para o tipo de OS (campo com valor padrão '1')
+    codCCusto: null, // Opcional
+    obra: null, // Opcional
+    dataSolicitacao: new Date(), // Data atual (pode ser null se não obrigatório)
+    dataNecessidade: new Date(), // Data atual (pode ser null se não obrigatório)
+    docReferencia: null, // Opcional
+    listaMateriais: null, // Opcional
+    dataInicio: null, // Opcional
+    dataPrevEntrega: null, // Opcional
+    dataEntrega: null, // Opcional
+    codStatus: 1, // Valor padrão para o status (campo com valor padrão '1')
+    nome: "", // Nome obrigatório
+    descricao: null, // Opcional
+    atividades: null, // Opcional
+    prioridade: 0, // Valor padrão (campo com valor padrão '0')
+    solicitante: 1, // Valor padrão para o solicitante (campo com valor padrão '1')
+    responsavel: 1, // Valor padrão para o responsável (campo com valor padrão '1')
+    codDisciplina: 1, // Valor padrão para o código de disciplina (campo com valor padrão '1')
+    gut: 1, // Valor padrão para o GUT (campo com valor padrão '1')
+    gravidade: 1, // Valor padrão para a gravidade (campo com valor padrão '1')
+    urgencia: 1, // Valor padrão para urgência (campo com valor padrão '1')
+    tendencia: 1, // Valor padrão para tendência (campo com valor padrão '1')
+    dataLiberacao: null, // Opcional
+    relacionamento: 1, // Valor padrão para relacionamento (campo com valor padrão '1')
+    fkCodCliente: "-", // Valor padrão (campo com valor padrão '-')
+    fkCodColigada: 0, // Valor padrão para código de coligada (campo com valor padrão '0')
+    valorFatDireto: 0.0, // Valor padrão (campo com valor padrão '0.00')
+    valorServicoMO: 0.0, // Valor padrão (campo com valor padrão '0.00')
+    valorServicoMatAplicado: 0.0, // Valor padrão (campo com valor padrão '0.00')
+    valorMaterial: 0.0, // Valor padrão (campo com valor padrão '0.00')
+    valorTotal: 0.0, // Valor padrão (campo com valor padrão '0.00')
+    codSegmento: 1, // Valor padrão para código de segmento (campo com valor padrão '1')
+    codCidade: 0, // Valor padrão para código de cidade (campo com valor padrão '0')
+    valorLocacao: 0.0, // Valor padrão (campo com valor padrão '0.00')
+    idAdicional: 0, // Valor padrão (campo com valor padrão '0')
+    idProjeto: 0, // Valor padrão (campo com valor padrão '0')
+    dataInteracao: "1111-11-11", // Valor padrão (campo com valor padrão '1111-11-11')
+    valorFatDolphin: 0.0, // Valor padrão para faturamento Dolphin (campo com valor padrão '0.00')
+    principal: true, // Valor padrão (campo com valor padrão '1')
+    valorComissao: 0.0, // Valor obrigatório
+    idMotivoPerdido: 1, // Valor obrigatório (campo não pode ser nulo)
+    observacoes: null, // Opcional
+    descricaoVenda: null, // Opcional
+    emailVendaEnviado: false, // Valor padrão (campo com valor padrão '0')
   });
 
   const [isAdicionalChoiceOpen, setIsAdicionalChoiceOpen] = useState(true);
@@ -165,15 +141,16 @@ const CreateOpportunityModal = () => {
           ...opportunity,
           numero_projeto: value?.id,
         });
-        setCurrentOpportunity({...opportunity, numero_projeto: value?.id });
+        setCurrentOpportunity({...opportunity, idProjeto: value?.id });
         return;
       }
+      
       if(value?.object === 'status'){ 
         console.log("handleChangeAutoComplete: ", {
           ...opportunity,
           status: value?.label,
         });
-        setCurrentOpportunity({...opportunity, status: value?.label });
+        setCurrentOpportunity({...opportunity, codStatus: value?.id });
         return;
       }
       if(value?.object === 'saler'){
@@ -181,7 +158,7 @@ const CreateOpportunityModal = () => {
           ...opportunity,
           vendedor: value?.label,
         }); 
-        setCurrentOpportunity({...opportunity, vendedor: value?.label });
+        setCurrentOpportunity({...opportunity, responsavel: value?.id });
         return;
       }
   };
@@ -198,7 +175,7 @@ const CreateOpportunityModal = () => {
       setCurrentOpportunity({...opportunity, [column.dataKey]: value });
   };
 
-  const isDateField = (dataKey: string): boolean => dataKey.startsWith("data_");
+  const isDateField = (dataKey: string): boolean => dataKey.startsWith("data");
 
   const handleAdicionalChoice = (isAdicional: boolean) => {
     setAdicional(isAdicional);
@@ -210,10 +187,20 @@ const CreateOpportunityModal = () => {
     dataKey: string;
     autoComplete?: boolean;
   }) => {
-    if (column.dataKey === "numero_projeto") return projectOptions;
-    if (column.dataKey === "vendedor") return salerOptions;
-    if (column.dataKey === "status") return statusOptions;
-    if(( column.dataKey === 'cliente')) return clientOptions;
+    if (column.dataKey === "idProjeto") return projectOptions;
+    if (column.dataKey === "responsavel") return salerOptions;
+    if (column.dataKey === "codStatus") return statusOptions;
+    if (column.dataKey === "fkCodCliente") return clientOptions;
+  };
+
+  const handleSaveOpportunity = async ( ) => { 
+    // Implementar o salvamento da proposta na API
+    console.log("Salvando proposta: ", opportunity);
+    const response = await postOpportunity(opportunity);
+    if(response?.status === 200) {
+       handleClose()
+      toggleRefreshOpportunityInfo();
+    }
   };
 
   React.useEffect(() => {
@@ -250,6 +237,13 @@ const CreateOpportunityModal = () => {
           p: 2,
         }}
       >
+        <IconButton  sx={{
+          position: 'absolute',
+          right: 1,
+          top: 1
+        }}onClick={handleClose}>
+          <CloseIcon />
+        </IconButton>
         {" "}
         <Typography fontFamily="Roboto">Nova Proposta</Typography>
         <Stack
@@ -259,8 +253,8 @@ const CreateOpportunityModal = () => {
           padding={1}
           overflow="scroll"
         >
-          {columns.map((column) =>
-            column.dataKey === "numero_projeto" && !adicional ? (
+          {opportunityInputFields.map((column) =>
+            column.dataKey === "idProjeto" && !adicional ? (
               ""
             ) : column.autoComplete ? (
               <Autocomplete
@@ -273,11 +267,13 @@ const CreateOpportunityModal = () => {
                 )}
               />
             ) : (
-              <TextField
+              
+             column.dataKey === 'descricao' && adicional ?'' : //na coluna descrição, se for adicional não renderizar campo pois já tem
+               <TextField
                 key={column.dataKey}
                 label={column.label}
                 placeholder={column.label}
-                type={isDateField(column.dataKey) ? "date" : "text"}
+                type={column.type}
                 onChange={(e) => handleChangeTextField(e, column)}
                 InputLabelProps={
                   isDateField(column.dataKey) ? { shrink: true } : undefined
@@ -289,7 +285,7 @@ const CreateOpportunityModal = () => {
             )
           )}
         </Stack>
-        <Button variant="outlined">
+        <Button variant="outlined" onClick={handleSaveOpportunity}>
           <Typography fontFamily="Roboto" fontSize="small">
             Salvar
           </Typography>
