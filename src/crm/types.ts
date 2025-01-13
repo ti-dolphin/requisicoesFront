@@ -17,8 +17,8 @@ export interface OpportunityInfo {
 }
 
 export interface Opportunity {
-  codOs: number; // CODOS
-  codTipoOs?: number; // CODTIPOOS
+  codOs: number | null; // CODOS
+  codTipoOs?: number | null; // CODTIPOOS
   codCCusto?: string | null; // CODCCUSTO
   obra?: string | null; // OBRA
   dataSolicitacao?: Date | string | null; // DATASOLICITACAO
@@ -28,40 +28,54 @@ export interface Opportunity {
   dataInicio?: Date | string | null; // DATAINICIO
   dataPrevEntrega?: Date | string | null; // DATAPREVENTREGA
   dataEntrega?: Date | string | null; // DATAENTREGA
-  codStatus?: number; // CODSTATUS
-  nome: string; // NOME
+  dataEnvioEntrega?: Date | string | null; // Data de envio da entrega
+  codStatus?: number | null; // CODSTATUS
+  nome: string | null; // NOME
   descricao?: string | null; // DESCRICAO
   atividades?: string | null; // ATIVIDADES
-  prioridade?: number; // PRIORIDADE
-  solicitante?: number; // SOLICITANTE
-  responsavel?: number; // RESPONSAVEL
-  codDisciplina?: number; // CODDISCIPLINA
-  gut?: number; // GUT
-  gravidade?: number; // GRAVIDADE
-  urgencia?: number; // URGENCIA
-  tendencia?: number; // TENDENCIA
+  prioridade?: number | null; // PRIORIDADE
+  solicitante?: number | null; // SOLICITANTE
+  responsavel?: number | null; // RESPONSAVEL
+  codDisciplina?: number | null; // CODDISCIPLINA
+  gut?: number | null; // GUT
+  gravidade?: number | null; // da
+  urgencia?: number | null; // URGENCIA
+  tendencia?: number | null; // TENDENCIA
   dataLiberacao?: Date | string | null; // DATALIBERACAO
-  relacionamento?: number; // RELACIONAMENTO
-  fkCodCliente?: string; // FK_CODCLIENTE
-  fkCodColigada: number; // FK_CODCOLIGADA
+  relacionamento?: number | null; // RELACIONAMENTO
+  fkCodCliente?: number | string | null; // FK_CODCLIENTE
+  fkCodColigada: number | null; // FK_CODCOLIGADA
   valorFatDireto?: number | null; // VALORFATDIRETO
   valorServicoMO?: number | null; // VALORSERVICOMO
   valorServicoMatAplicado?: number | null; // VALORSERVICOMATAPLICADO
   valorMaterial?: number | null; // VALORMATERIAL
   valorTotal?: number | null; // VALORTOTAL
-  codSegmento: number; // CODSEGMENTO
-  codCidade?: number; // CODCIDADE
+  codSegmento: number | null; // CODSEGMENTO
+  codCidade?: number | null; // CODCIDADE
   valorLocacao?: number | null; // VALORLOCACAO
-  idAdicional: number; // ID_ADICIONAL
-  idProjeto: number; // ID_PROJETO
+  idAdicional: number | null; // ID_ADICIONAL
+  numeroAdicional: number | null; // Número adicional
+  idProjeto: number | null; // ID_PROJETO
   dataInteracao?: Date | string | null; // DATAINTERACAO
-  valorFatDolphin: number; // VALORFATDOLPHIN
-  principal: boolean; // PRINCIPAL
-  valorComissao: number; // VALOR_COMISSAO
-  idMotivoPerdido: number; // id_motivo_perdido
+  valorFatDolphin: number | null; // VALORFATDOLPHIN
+  principal: boolean | null; // PRINCIPAL
+  valorComissao: number | null; // VALOR_COMISSAO
+  idMotivoPerdido: number | null; // id_motivo_perdido
   observacoes?: string | null; // observacoes
   descricaoVenda?: string | null; // DESCRICAO_VENDA
-  emailVendaEnviado?: boolean; // EMAIL_VENDA_ENVIADO
+  emailVendaEnviado?: boolean | null; // EMAIL_VENDA_ENVIADO
+  comentarios: Comentario[] | [];
+  files?: OpportunityFile [];
+  seguidores: Follower[]
+}
+
+export interface Comentario{ 
+     email: string | number,
+     codOs : number | null,
+     criadoEm: Date | string | null,
+     criadoPor: string | null,
+     descricao: string | null,
+     codigoComentario: number  | null
 }
 
 export interface DateFilter {
@@ -80,18 +94,36 @@ export interface Pessoa {
   CODPESSOA: number;
   NOME: string;
 }
+
+ export interface Follower {   
+  id_seguidor_projeto : number;
+  id_projeto : number;
+  codpessoa : number;
+  ativo : number;
+  nome: string;
+}
 export interface OpportunityColumn {
   label: string;
   dataKey: string;
   autoComplete?: boolean;
   type: string;
+  key?: number;
 }
 export interface Client {
   CODCLIENTE: number;
-  NOME: string;
+  NOMEFANTASIA: string;
 }
+
+
 export interface OpportunityOptionField {
   label: string;
   id: number;
   object: string;
+  key: number;
+}
+export interface OpportunityFile {
+       id_anexo_os : number,
+       codos : number,
+       nome_arquivo : string,
+       arquivo : string
 }

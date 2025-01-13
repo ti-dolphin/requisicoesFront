@@ -1,0 +1,130 @@
+[
+  {
+    "Cadastro": {
+      "nome": "Proposta de Expansão ABC",
+      "codStatus": "Acompanhamento",
+      "fkCodCliente": "BRES DOM...",
+      "dataSolicitacao": "15/12/2023",
+      "dataEntrega": "15/01/2024"
+    },
+    "Interação": {
+      "dataInteracao": "02/01/2024",
+      "comentarios": "Reunião inicial realizada com feedback positivo."
+    },
+    "Escopo": {
+      "observacoes": "Escopo inicial alinhado com o cliente, sem pendências."
+    },
+    "Venda": {
+      "responsavel": "Jesser Flor",
+      "valorFatDolphin": 250000.0,
+      "valorFatDireto": 300000.0,
+      "valorTotal": 550000.0,
+      "valorComissao": 27500.0
+    },
+    "Seguidores": []
+  },
+  {
+    "Cadastro": {
+      "idProjeto": 102,
+      "numeroAdicional": 2,
+      "nome": "Projeto de Automação",
+      "codStatus": 1,
+      "fkCodCliente": "Cliente B",
+      "dataSolicitacao": "01/11/2023",
+      "dataEntrega": "01/02/2024"
+    },
+    "Interação": {
+      "dataInteracao": "20/12/2023",
+      "comentarios": "Solicitação de ajuste no cronograma."
+    },
+    "Escopo": {
+      "observacoes": "Necessário adicionar novos requisitos ao escopo."
+    },
+    "Venda": {
+      "responsavel": "Maria Oliveira",
+      "valorFatDolphin": 400000.0,
+      "valorFatDireto": 100000.0,
+      "valorTotal": 500000.0,
+      "valorComissao": 25000.0
+    },
+    "Seguidores": []
+  },
+  {
+    "Cadastro": {
+      "idProjeto": 103,
+      "numeroAdicional": 0,
+      "nome": "Desenvolvimento de API",
+      "codStatus": 4,
+      "fkCodCliente": "Cliente C",
+      "dataSolicitacao": "05/10/2023",
+      "dataEntrega": "15/12/2023"
+    },
+    "Interação": {
+      "dataInteracao": "10/11/2023",
+      "comentarios": "Entrega finalizada e aprovada."
+    },
+    "Escopo": {
+      "observacoes": "Projeto entregue dentro do escopo."
+    },
+    "Venda": {
+      "responsavel": "Carlos Santos",
+      "valorFatDolphin": 200000.0,
+      "valorFatDireto": 50000.0,
+      "valorTotal": 250000.0,
+      "valorComissao": 12500.0
+    },
+    "Seguidores": []
+  },
+  {
+    "Cadastro": {
+      "idProjeto": 104,
+      "numeroAdicional": 3,
+      "nome": "Implementação de ERP",
+      "codStatus": 2,
+      "fkCodCliente": "Cliente D",
+      "dataSolicitacao": "01/01/2024",
+      "dataEntrega": "01/03/2024"
+    },
+    "Interação": {
+      "dataInteracao": "05/01/2024",
+      "comentarios": "Cliente solicitou reunião para ajustes."
+    },
+    "Escopo": {
+      "observacoes": "Aguardando validação de requisitos."
+    },
+    "Venda": {
+      "responsavel": "Fernanda Lima",
+      "valorFatDolphin": 350000.0,
+      "valorFatDireto": 200000.0,
+      "valorTotal": 550000.0,
+      "valorComissao": 27500.0
+    },
+    "Seguidores": []
+  },
+  {
+    "Cadastro": {
+      "idProjeto": 105,
+      "numeroAdicional": 1,
+      "nome": "Redesenho de Arquitetura",
+      "codStatus": 3,
+      "fkCodCliente": "Cliente E",
+      "dataSolicitacao": "10/08/2023",
+      "dataEntrega": "20/01/2024"
+    },
+    "Interação": {
+      "dataInteracao": "22/12/2023",
+      "comentarios": "Relatório enviado ao cliente."
+    },
+    "Escopo": {
+      "observacoes": "Alteração no modelo de arquitetura em revisão."
+    },
+    "Venda": {
+      "responsavel": "Paulo Souza",
+      "valorFatDolphin": 500000.0,
+      "valorFatDireto": 300000.0,
+      "valorTotal": 800000.0,
+      "valorComissao": 40000.0
+    },
+    "Seguidores": []
+  }
+]

@@ -1,13 +1,40 @@
+import { AxiosRequestConfig } from "axios";
 import api from "../api";
 import { DateFilter, Opportunity, OpportunityColumn } from "./types";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import dayjs from "dayjs";
+import { Person } from "../Requisitions/types";
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+
+export const fetchPersonList = async () => {
+  try {
+    const response = await api.get<Person[]>("/pessoa");
+    return response.data;
+  } catch (e) {
+    console.log(e);
+  }
+}
+export const updateOpportunity = async (opportunity : Opportunity ) =>  { 
+  try {
+    const response = await api.put("opportunity/update",  opportunity );
+    return response;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
 
 export const getOpportunities = async (
   finished: boolean,
-  dateFilters: DateFilter[]
+  dateFilters: DateFilter[],
+  codpessoa: number
 ) => {
   try {
     const response = await api.get("/opportunity", {
-      params: { finished, dateFilters },
+      params: { finished, dateFilters, codpessoa },
     });
     return response.data;
   } catch (error) {
@@ -34,19 +61,69 @@ export const fetchSalers = async () => {
   }
 };
 
-export const fetchAllClients = async () => {
+export const getOpportunityById = async (oppId: number) => {
   try {
-    const respoonse = await api.get("/opportunity/client");
-    return respoonse.data;
+    console.log("getOpportunityById");
+    const response = await api.get(`/opportunity/${oppId}`);
+    return response.data;
   } catch (e) {
     console.log(e);
   }
 };
 
-export const postOpportunity = async (opp: Opportunity) => {
+export const fetchAllClients = async () => {
   try {
-    const response = await api.post(`opportunity`, { ...opp });
+    const respoonse = await api.get("/opportunity/client");
+    return respoonse.data;
+  } catch (e) {
+    console.log('fetchAllClients: ', e);
+  }
+};
+
+export const createOpportunity = async (opp: Opportunity) => {
+  try {
+    const response = await api.post(`opportunity/create`, { ...opp });
     return response;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+
+
+export const createAdicional = async (opportunity : Opportunity ) =>  { 
+  try{ 
+    const response = await api.post(`opportunity/create`, opportunity);
+    return response.data;
+  }catch(e){ 
+    console.log(e);
+  }
+};
+
+export const createOpportunityFiles = async (oppId : number, files: FormData ) =>  { 
+  const config: AxiosRequestConfig = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      params: { 
+          oppId
+      },
+      data: files,
+    };
+    try{
+      const response = await api.post(`opportunity/files`, files, config);
+      return response;
+    }catch(e){
+      console.log(e);
+    }
+};
+export const fetchOpportunityFilesById = async (oppId : number) => {
+  console.log("fetchOpportunityFilesById");
+  try {
+    const response = await api.get(`/opportunity/files`, { 
+      params: { oppId },
+    });
+    return response.data;
   } catch (e) {
     console.log(e);
   }
@@ -75,11 +152,11 @@ export const opportunityInputFields: OpportunityColumn[] = [
     dataKey: "nome", // Alinhado com a propriedade descricao da interface
     type: "text", // Tipo texto
   },
-  { 
-    label: 'Descrição do Projeto',
-    dataKey: 'descricao',
-    type: 'text'
-  },
+  // { 
+  //   label: 'Descrição do Projeto',
+  //   dataKey: 'descricao',
+  //   type: 'text'
+  // },
   {
     label: "Cliente",
     dataKey: "fkCodCliente", // Alinhado com a propriedade fkCodCliente da interface

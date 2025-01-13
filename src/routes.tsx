@@ -11,6 +11,7 @@ import PatrimonyDetails from "./Patrimony/pages/PatrimonyDetails";
 import PatrimonyChecklist from "./Patrimony/pages/PatrimonyChecklist";
 import CrmHome from "./crm/pages/CrmHome";
 import ChecklistTasks from "./Patrimony/pages/ChecklistTasks";
+import OpportunityDetails from "./crm/pages/OpportunityDetails";
 // import { ChecklistContextProvider } from "./Patrimony/context/checklistContext";
 
 const router = createBrowserRouter([
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
   { 
     path : '/crm',
     element: <CrmHome />
+  },
+  { 
+    path: '/crm/opportunity/:opportunityId',
+    element: <OpportunityDetails />
   }
 ]);
 // eslint-disable-next-line react-refresh/only-export-components

@@ -254,7 +254,9 @@ export const updateMultiplePatrimonies = async (selectedItems : PatrimonyInfo[],
    }catch(e){ 
       console.log(e);
    }
+
 };
+
 export const createMovementationfile = async(movementationId: number ,file : FormData) =>  {
     const config: AxiosRequestConfig = {
       headers: {

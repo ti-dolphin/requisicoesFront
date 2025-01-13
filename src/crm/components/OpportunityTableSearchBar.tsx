@@ -11,6 +11,7 @@ import {
   styled,
   TextField,
   Toolbar,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -18,10 +19,13 @@ import { ArrowLeftIcon } from "@mui/x-date-pickers/icons";
 import { useNavigate } from "react-router-dom";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { OpportunityInfoContext } from "../context/OpportunityInfoContext";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { defaultDateFilters } from "../context/OpportunityInfoContext";
 import CreateOpportunityModal from "../modals/CreateOpportunityModal";
 import AddIcon from "@mui/icons-material/Add";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import CloseIcon from "@mui/icons-material/Close";
+import { motion, AnimatePresence } from "framer-motion";
 
 const OpportunityTableSearchBar = () => {
   const {
@@ -31,7 +35,8 @@ const OpportunityTableSearchBar = () => {
     toggleRefreshOpportunityInfo,
     toggleCreatingOpportunity,
   } = useContext(OpportunityInfoContext);
-
+  const [dateFiltersActive, setDateFiltersActive] = useState(false);
+  
   const Search = styled("div")(({ theme }) => ({
     position: "relative",
     borderRadius: theme.shape.borderRadius,
@@ -161,16 +166,16 @@ const OpportunityTableSearchBar = () => {
   return (
     <AppBar
       sx={{
-        position: "static",
-        backgroundColor: "#2B3990",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "start",
+        position: "static",
+        backgroundColor: "#2B3990",
+        alignItems: "start",
+        justifyContent: "center",
         zIndex: 10,
         height: "fit-content",
         gap: 1,
-        alignItems: "start",
-        padding: 1,
+        padding: 0,
         overFlow: "scroll",
         boxShadow: "none",
       }}
@@ -188,18 +193,20 @@ const OpportunityTableSearchBar = () => {
         sx={{
           display: "flex",
           flexDirection: "row",
-          alignItems: "start",
-          justifyContente: "start",
-          flexWrap: "wrap",
+          alignItems: "center",
+          height: "fit-content",
+          justifyContent: "start",
+          flexWrap: "wrap", // Permite que o conteúdo quebre para uma nova linha
           width: "100%",
           gap: {
             xs: 4,
-            sm: 4,
-            md: 4,
-            lg: 4,
+            sm: 3,
+            md: 2,
+            lg: 1,
           },
-
-          overflowX: "scroll",
+          overflowX: "auto", // Scroll horizontal automático
+          overflowY: "hidden", // Remove o scroll vertical
+          padding: 0.5, // Remove possíveis espaçamentos extras
         }}
       >
         <Search
@@ -209,7 +216,6 @@ const OpportunityTableSearchBar = () => {
               sm: 200,
               md: 250,
             },
-            transform: "translate(0, 23px)",
             padding: 0.1,
             border: "0.5px solid #e3e3e3",
           }}
@@ -223,126 +229,155 @@ const OpportunityTableSearchBar = () => {
           />
         </Search>
 
-        <Stack gap={1}>
-          <FormControl
+        <Stack direction="row" gap={1} alignItems="center">
+          <Button
+            onClick={(e) => handleSearchWithDateParams(e)}
             sx={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 2,
-              borderRadius: 0.5,
+              color: "white",
+              backgroundColor: "#F7941E",
+              "&:hover": {
+                backgroundColor: "#f1b963",
+              },
             }}
           >
-            {dateParams.map((dateFilter, index) => (
-              <Stack gap={0.5}>
-                <Typography
-                  fontSize="small"
-                  fontFamily="Roboto"
-                  fontWeight="semibold"
-                >
-                  {dateFilter.label}
-                </Typography>
-                <TextField
-                  key={index}
-                  type="date"
-                  size="small"
-                  onChange={(e) => handleChangeDateFilters(e, dateFilter)}
-                  InputProps={{
-                    sx: {
-                      borderRadius: 1,
-                      height: 30,
-                      backgroundColor: "#e7eaf6",
-                      color: "black",
-                      "& .MuiOutlinedInput-notchedOutline": {
-                        border: "none",
-                        borderColor: "white", // Cor da borda normal
-                      },
-                      "&:hover .MuiOutlinedInput-notchedOutline": {
-                        border: "2px solid",
-                        borderColor: "#8dc6ff", // Cor da borda no hover
-                      },
-                    },
-                  }}
-                  value={
-                    dateFilter.isFromParam
-                      ? dateFilters.find(
-                          (filter) =>
-                            filter.dateFilterKey === dateFilter.dataKey
-                        )?.from
-                      : dateFilters.find(
-                          (filter) =>
-                            filter.dateFilterKey === dateFilter.dataKey
-                        )?.to
-                  }
-                />
-              </Stack>
-            ))}
-          </FormControl>
-          <Stack direction="row" gap={2} alignItems="center">
-            <Button
-              onClick={(e) => handleSearchWithDateParams(e)}
-              sx={{
-                color: "white",
-                backgroundColor: "#F7941E",
-                "&:hover": {
-                  backgroundColor: "#f1b963",
-                },
-              }}
+            <Typography
+              fontSize="small"
+              fontFamily="Roboto"
+              fontWeight="semibold"
             >
-              <Typography
-                fontSize="small"
-                fontFamily="Roboto"
-                fontWeight="semibold"
-              >
-                Pesquisar
-              </Typography>
-            </Button>
-            <Button
-              onClick={handleCleanDateFilters}
-              sx={{
-                color: "white",
-                backgroundColor: "#F7941E",
-                "&:hover": {
-                  backgroundColor: "#f1b963",
-                },
-              }}
+              Pesquisar
+            </Typography>
+          </Button>
+          <Button
+            onClick={handleCleanDateFilters}
+            sx={{
+              color: "white",
+              backgroundColor: "#F7941E",
+              "&:hover": {
+                backgroundColor: "#f1b963",
+              },
+            }}
+          >
+            <Typography
+              fontSize="small"
+              fontFamily="Roboto"
+              fontWeight="semibold"
             >
-              <Typography
-                fontSize="small"
-                fontFamily="Roboto"
-                fontWeight="semibold"
-              >
-                Limpar Filtros
-              </Typography>
-            </Button>
-            <IconButton
-              onClick={toggleCreatingOpportunity}
-              sx={{
-                backgroundColor: "#F7941E",
-                color: "white",
-                "&:hover": { backgroundColor: "#f1b963" },
-              }}
-            >
-              <AddIcon sx={{ color: "#2B3990" }} />
-            </IconButton>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  onChange={handleChangeShowFinishedOpps}
-                  checkedIcon={<CheckBoxIcon sx={{ color: "white" }} />}
-                  sx={{
+              Limpar Filtros
+            </Typography>
+          </Button>
+
+          <IconButton
+            onClick={toggleCreatingOpportunity}
+            sx={{
+              backgroundColor: "#F7941E",
+              color: "white",
+              "&:hover": { backgroundColor: "#f1b963" },
+            }}
+          >
+            <AddIcon sx={{ color: "#2B3990" }} />
+          </IconButton>
+          <FormControlLabel
+            control={
+              <Checkbox
+                onChange={handleChangeShowFinishedOpps}
+                checkedIcon={<CheckBoxIcon sx={{ color: "white" }} />}
+                sx={{
+                  color: "white",
+                  "& .Mui-checked": {
                     color: "white",
-                    "& .Mui-checked": {
-                      color: "white",
-                    },
-                  }}
-                />
-              }
-              label="Listar Finalizados"
-            />
-          </Stack>
+                  },
+                }}
+              />
+            }
+            label="Listar Finalizados"
+          />
         </Stack>
+
+        {dateFiltersActive ? (
+          <AnimatePresence>
+            <motion.div
+              key="filters"
+              initial={{ opacity: 0, y: 0 }} // Início da animação
+              animate={{ opacity: 1, y: 0 }} // Animação quando aparece
+              exit={{ opacity: 0, y: -20 }} // Animação ao desaparecer
+              transition={{ duration: 0.3 }} // Configuração de duração
+            >
+              <FormControl
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 1.5,
+                  borderRadius: 0.5,
+                }}
+              >
+                {dateParams.map((dateFilter, index) => (
+                  <Stack key={index}>
+                    <Typography
+                      fontSize="small"
+                      fontFamily="Roboto"
+                      fontWeight="semibold"
+                    >
+                      {dateFilter.label}
+                    </Typography>
+                    <TextField
+                      key={index}
+                      type="date"
+                      size="small"
+                      onChange={(e) => handleChangeDateFilters(e, dateFilter)}
+                      InputProps={{
+                        sx: {
+                          borderRadius: 1,
+                          height: 30,
+                          backgroundColor: "white",
+                          color: "black",
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            border: "none",
+                            borderColor: "white",
+                          },
+                          "&:hover .MuiOutlinedInput-notchedOutline": {
+                            border: "2px solid",
+                            borderColor: "#8dc6ff",
+                          },
+                          maxWidth: 150,
+                        },
+                      }}
+                      value={
+                        dateFilter.isFromParam
+                          ? dateFilters.find(
+                              (filter) =>
+                                filter.dateFilterKey === dateFilter.dataKey
+                            )?.from
+                          : dateFilters.find(
+                              (filter) =>
+                                filter.dateFilterKey === dateFilter.dataKey
+                            )?.to
+                      }
+                    />
+                  </Stack>
+                ))}
+                <Tooltip title="Fechar filtros">
+                  <IconButton
+                    onClick={() => setDateFiltersActive(!dateFiltersActive)}
+                  >
+                    <CloseIcon sx={{ color: "white" }} />
+                  </IconButton>
+                </Tooltip>
+              </FormControl>
+            </motion.div>
+          </AnimatePresence>
+        ) : (
+          <Tooltip title="Mostrar filtros">
+            <IconButton
+              onClick={() => setDateFiltersActive(!dateFiltersActive)}
+            >
+              <FilterAltIcon sx={{ color: "white" }} />
+            </IconButton>
+          </Tooltip>
+        )}
       </Toolbar>
+
       <CreateOpportunityModal />
     </AppBar>
   );

@@ -57,12 +57,15 @@ const defaultTheme = createTheme();
             <Alert
               variant="filled"
               severity="error"
+              className="drop-shadow-lg"
               sx={{
                 top: "10%",
                 width: "400px",
                 position: "absolute",
                 left: "50%",
                 marginLeft: "-200px",
+                zIndex: 20,
+                
               }}
             >
               Usuário e/ou senha incorretos

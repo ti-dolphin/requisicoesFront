@@ -1,76 +1,205 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useContext, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { OpportunityInfoContext } from "../context/OpportunityInfoContext";
 import Box from "@mui/material/Box";
 import {
-  Autocomplete,
   AutocompleteChangeDetails,
   AutocompleteChangeReason,
   Button,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   IconButton,
   Modal,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
-import { fetchAllProjects } from "../../Requisitions/utils";
-import { fetchAllClients, fetchSalers, fetchStatusList, opportunityInputFields, postOpportunity } from "../utils";
-import {  Client, Opportunity, OpportunityColumn, OpportunityOptionField, Pessoa, Status } from "../types";
+import { fetchAllProjects, Project } from "../../Requisitions/utils";
+import {
+  createAdicional,
+  createOpportunity,
+  createOpportunityFiles,
+  fetchAllClients,
+  fetchSalers,
+  fetchStatusList,
+  getOpportunityById,
+  updateOpportunity,
+} from "../utils";
+import {
+  Client,
+  Comentario,
+  Opportunity,
+  OpportunityColumn,
+  OpportunityFile,
+  OpportunityOptionField,
+  Status,
+} from "../types";
 import CloseIcon from "@mui/icons-material/Close";
+import Slider from "react-slick";
+import RenderOpportunityFields from "../components/RenderOpportunityFields";
+import { userContext } from "../../Requisitions/context/userContext";
+import OpportunityFiles from "../components/OpportunityFiles";
+import AdicionalChoice from "./AdicionalChoice";
+import ProjectChoiceModal from "./ProjectChoiceModal";
+import FollowersTable from "../components/FollowersTable";
 
 
 const CreateOpportunityModal = () => {
+  const guides = [
+    {
+      name: "Cadastro",
+      fields: [
+        {
+          label: "Nº Projeto",
+          dataKey: "idProjeto", // Alinhado com a propriedade idProjeto da interface
+          autoComplete: true,
+          type: "number", // Tipo numérico
+        },
+        {
+          label: "Nº Adicional",
+          dataKey: "numeroAdicional",
+          type: "number", // Tipo numérico
+        },
+        {
+          label: "Descrição da Proposta",
+          dataKey: "nome", // Alinhado com a propriedade descricao da interface
+          type: "text", // Tipo texto
+        },
+        {
+          label: "Status",
+          dataKey: "codStatus", // Alinhado com a propriedade codStatus da interface
+          autoComplete: true,
+          type: "number", // Tipo numérico
+        },
+        {
+          label: "Cliente",
+          dataKey: "fkCodCliente", // Alinhado com a propriedade fkCodCliente da interface
+          autoComplete: true,
+          type: "text", // Tipo texto
+        },
+        {
+          label: "Data de Solicitação",
+          dataKey: "dataSolicitacao", // Alinhado com a propriedade dataSolicitacao da interface
+          type: "Date", // Tipo data e hora
+        },
+        {
+          label: "Data de Fechamento",
+          dataKey: "dataEntrega", // Alinhado com a propriedade dataEntrega da interface
+          type: "date", // Tipo data e hora
+        },
+        {
+          label: "Data de Início",
+          dataKey: "dataInicio",
+          type: "date",
+        },
+      ],
+    },
+    {
+      name: "Interação",
+      fields: [
+        {
+          label: "Data de Interação",
+          dataKey: "dataInteracao", // Alinhado com a propriedade dataInteracao da interface
+          type: "date", // Tipo data e hora
+        },
+        {
+          label: "Comentários",
+          dataKey: "comentarios",
+          type: "text",
+        },
+      ],
+    },
+    {
+      name: "Escopo",
+      fields: [
+        {
+          label: "Observações",
+          dataKey: "observacoes", // Alinhado com a propriedade observacoes da interface
+          type: "text", // Tipo texto
+        },
+      ],
+    },
+    {
+      name: "Venda",
+      fields: [
+        {
+          label: "Vendedor",
+          dataKey: "responsavel", // Alinhado com a propriedade responsavel da interface
+          autoComplete: true,
+          type: "text", // Tipo texto
+        },
+        {
+          label: "Valor Faturamento Dolphin",
+          dataKey: "valorFatDolphin", // Alinhado com a propriedade valorFatDolphin da interface
+          type: "number", // Tipo numérico
+        },
+        {
+          label: "Valor Faturamento Direto",
+          dataKey: "valorFatDireto", // Alinhado com a propriedade valorFatDireto da interface
+          type: "number", // Tipo numérico
+        },
+        {
+          label: "Valor Total",
+          dataKey: "valorTotal", // Alinhado com a propriedade valorTotal da interface
+          type: "number", // Tipo numérico
+        },
+        {
+          label: "Valor Comissão",
+          dataKey: "valorComissao", // Alinhado com a propriedade valorComissao da interface
+          type: "number", // Tipo numérico
+        },
+      ],
+    },
+    {
+      name: "Seguidores",
+    },
+  ];
 
-  const fetchClientOps = async () =>  {
-    const clients = await fetchAllClients();
-    const options = clients.map((client : Client) => ({ 
-      label: client.NOME,
-      id: client.CODCLIENTE,
-      object: 'client'
-    } ));
-    setClientOptions([...options]);
-  }
-
-  const fetchProjectsOps = async () => {
-    const projects = await fetchAllProjects();
-    const options =
-      (projects &&
-        projects.map((project) => ({
-          label: project.DESCRICAO,
-          id: project.ID,
-          object: 'project'
-        }))) ||
-      [];
-    setProjectOptions([...options]);
+  const settings = {
+    swipe: true,
+    arrows: false,
+    accessibility: false,
+    dots: false,
+    infinite: false,
+    speed: 200,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    draggable: false,
+    beforeChange: (oldIndex: number, newIndex: number) => {
+      console.log(oldIndex, newIndex);
+    },
+    afterChange: (current: number) => {
+      setCurrentSlideIndex(current);
+      setCurrentCommentValue("");
+      setEditingComment(undefined);
+    },
   };
-  const fetchStatusOps = async () => {
-    const statusList = await fetchStatusList();
-    const options = statusList.map(( status : Status ) => ({
-      label: status.NOME,
-      id: status.CODSTATUS,
-      object: 'status'
-    })) || [];
-    setStatusOptions(options);
-  };
 
-  const fetchSalerOps = async () => {
-    const salers = await fetchSalers();
-    const options = salers.map((saler : Pessoa) => ({label : saler.NOME, id: saler.CODPESSOA, object: 'saler'}));
-    setSalerOptions(options);
-  };
-
-  const { creatingOpportunity, toggleCreatingOpportunity, toggleRefreshOpportunityInfo } = useContext(
-    OpportunityInfoContext
-  );
-  const handleClose = () => toggleCreatingOpportunity();
+  const {
+    creatingOpportunity,
+    currentOppIdSelected,
+    setCurrentOppIdSelected,
+    setCreatingOpportunity,
+    toggleRefreshOpportunityInfo,
+  } = useContext(OpportunityInfoContext);
+  const { user } = useContext(userContext);
   const [adicional, setAdicional] = useState(false);
   const [opportunity, setCurrentOpportunity] = useState<Opportunity>({
     codOs: 0, // Exemplo de código de OS (AUTO_INCREMENT, não precisa definir)
     codTipoOs: 1, // Valor padrão para o tipo de OS (campo com valor padrão '1')
     codCCusto: null, // Opcional
     obra: null, // Opcional
-    dataSolicitacao: new Date(), // Data atual (pode ser null se não obrigatório)
-    dataNecessidade: new Date(), // Data atual (pode ser null se não obrigatório)
+    dataSolicitacao: null, // Data atual (pode ser null se não obrigatório)
+    dataNecessidade: null, // Data atual (pode ser null se não obrigatório)
     docReferencia: null, // Opcional
     listaMateriais: null, // Opcional
     dataInicio: null, // Opcional
@@ -102,7 +231,7 @@ const CreateOpportunityModal = () => {
     valorLocacao: 0.0, // Valor padrão (campo com valor padrão '0.00')
     idAdicional: 0, // Valor padrão (campo com valor padrão '0')
     idProjeto: 0, // Valor padrão (campo com valor padrão '0')
-    dataInteracao: "1111-11-11", // Valor padrão (campo com valor padrão '1111-11-11')
+    dataInteracao: null, // Valor padrão (campo com valor padrão '1111-11-11')
     valorFatDolphin: 0.0, // Valor padrão para faturamento Dolphin (campo com valor padrão '0.00')
     principal: true, // Valor padrão (campo com valor padrão '1')
     valorComissao: 0.0, // Valor obrigatório
@@ -110,75 +239,203 @@ const CreateOpportunityModal = () => {
     observacoes: null, // Opcional
     descricaoVenda: null, // Opcional
     emailVendaEnviado: false, // Valor padrão (campo com valor padrão '0')
+    numeroAdicional: 0, // Valor padrão com
+    comentarios: [],
+    seguidores: []
   });
-
+  const sliderRef = useRef<Slider | null>(null);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [isAdicionalChoiceOpen, setIsAdicionalChoiceOpen] = useState(true);
+  const [editingComment, setEditingComment] = useState<Comentario>();
   const [projectOptions, setProjectOptions] = useState<
-   OpportunityOptionField[]
+    OpportunityOptionField[]
   >([]);
-  const [salerOptions, setSalerOptions] = useState<
-   OpportunityOptionField[]
-  >([]);
-  const [statusOptions, setStatusOptions] = useState<
-   OpportunityOptionField[]
-  >([]);
-  const [clientOptions, setClientOptions] = useState<{
-    label: string;
-    id: number;
-    object: string;
-  }[]>([]);
+  const [refreshOpportunityFields, setRefreshOpportunityFields] =
+    useState(false);
+  //setRefreshUploads
+  const [projectChoiceModalOpen, setProjectChoiceModalOpen] = useState(false);
+  const [formDataFileArray, setFormDataFileArray] = useState<FormData>(
+    new FormData()
+  );
+
+  const [salerOptions, setSalerOptions] = useState<OpportunityOptionField[]>(
+    []
+  );
+
+  const [statusOptions, setStatusOptions] = useState<OpportunityOptionField[]>(
+    []
+  );
+
+  const [clientOptions, setClientOptions] = useState<OpportunityOptionField[]>(
+    []
+  );
+
+  const [currentCommentValue, setCurrentCommentValue] = React.useState("");
+  const [saveProgressModalOpen, setSaveProgressModalOpen] = useState(false);
+
+  const handleClose = () => {
+    setCreatingOpportunity(false);
+    setCurrentOppIdSelected(0);
+    setCurrentSlideIndex(0);
+    toggleRefreshOpportunityInfo();
+    cleanEntries();
+    setSaveProgressModalOpen(false);
+  };
+
+  const fetchClientOps = useCallback(async () => {
+    const clients = await fetchAllClients();
+    const options = clients.map((client: Client) => ({
+      label: client.NOMEFANTASIA,
+      id: client.CODCLIENTE,
+      object: "client",
+      key: client.CODCLIENTE,
+    }));
+    setClientOptions([...options]);
+  }, [setClientOptions]);
+
+  const fetchProjectsOps = useCallback(async () => {
+    const projects = await fetchAllProjects();
+    const options =
+      (projects &&
+        projects.map((project: Project) => ({
+          label: project.DESCRICAO,
+          id: project.ID,
+          object: "project",
+          key: project.ID,
+        }))) ||
+      [];
+    setProjectOptions([...options]);
+  }, [setProjectOptions]);
+
+  const fetchStatusOps = useCallback(async () => {
+    const statusList = await fetchStatusList();
+    const options =
+      statusList.map((status: Status) => ({
+        label: status.NOME,
+        id: status.CODSTATUS,
+        object: "status",
+        key: status.CODSTATUS,
+      })) || [];
+    setStatusOptions(options);
+  }, [setStatusOptions]);
+
+  const fetchSalerOps = useCallback(async () => {
+    const salers = await fetchSalers();
+    const options = salers.map(
+      (saler: { NOME: string; CODPESSOA: number }) => ({
+        label: saler.NOME,
+        id: saler.CODPESSOA,
+        object: "saler",
+        key: saler.CODPESSOA,
+      })
+    );
+    setSalerOptions(options);
+  }, [setSalerOptions]);
+
+  const fetchOppData = useCallback(async () => {
+    const data = await getOpportunityById(currentOppIdSelected);
+    const formattedOpp = {
+      ...data,
+      dataSolicitacao: data.dataSolicitacao
+        ? new Date(data.dataSolicitacao).toISOString().split("T")[0]
+        : null,
+      dataNecessidade: data.dataNecessidade
+        ? new Date(data.dataNecessidade).toISOString().split("T")[0]
+        : null,
+      dataInicio: data.dataInicio
+        ? new Date(data.dataInicio).toISOString().split("T")[0]
+        : null,
+      dataPrevEntrega: data.dataPrevEntrega
+        ? new Date(data.dataPrevEntrega).toISOString().split("T")[0]
+        : null,
+      dataEntrega: data.dataEntrega
+        ? new Date(data.dataEntrega).toISOString().split("T")[0]
+        : null,
+      dataLiberacao: data.dataLiberacao
+        ? new Date(data.dataLiberacao).toISOString().split("T")[0]
+        : null,
+      dataInteracao: data.dataInteracao
+        ? new Date(data.dataInteracao).toISOString().split("T")[0]
+        : null,
+    };
+    console.log({formattedOpp})
+    setCurrentOpportunity(formattedOpp);
+  }, [currentOppIdSelected, setCurrentOpportunity]);
 
   const handleChangeAutoComplete = (
     _event: React.SyntheticEvent<Element, Event>,
-     value:OpportunityOptionField | null,
+    value: OpportunityOptionField | null,
     _reason: AutocompleteChangeReason,
     _details?:
-      | AutocompleteChangeDetails<{ label: string; id: number, object: string }>
+      | AutocompleteChangeDetails<{ label: string; id: number; object: string }>
       | undefined
   ) => {
-      if(value?.object==='project'){ 
-        console.log("handleChangeAutoComplete: ", {
-          ...opportunity,
-          numero_projeto: value?.id,
-        });
-        setCurrentOpportunity({...opportunity, idProjeto: value?.id });
-        return;
-      }
-      
-      if(value?.object === 'status'){ 
-        console.log("handleChangeAutoComplete: ", {
-          ...opportunity,
-          status: value?.label,
-        });
-        setCurrentOpportunity({...opportunity, codStatus: value?.id });
-        return;
-      }
-      if(value?.object === 'saler'){
-        console.log("handleChangeAutoComplete: ", {
-          ...opportunity,
-          vendedor: value?.label,
-        }); 
-        setCurrentOpportunity({...opportunity, responsavel: value?.id });
-        return;
-      }
+    if (value?.object === "project") {
+      setCurrentOpportunity({ ...opportunity, idProjeto: value?.id });
+      return;
+    }
+
+    if (value?.object === "status") {
+      setCurrentOpportunity({ ...opportunity, codStatus: value?.id });
+      return;
+    }
+    if (value?.object === "saler") {
+      setCurrentOpportunity({ ...opportunity, responsavel: value?.id });
+      return;
+    }
+    if (value?.object === "client") {
+      setCurrentOpportunity({ ...opportunity, fkCodCliente: value?.id });
+      return;
+    }
+  };
+
+  const isNumeric = (value: string) => {
+    return !isNaN(Number(value));
   };
 
   const handleChangeTextField = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     column: OpportunityColumn
   ) => {
-      const  {value } = e.target;
-      console.log("handleChangeTextField: ", {
+    const { value } = e.target;
+    if(column.dataKey === "valorFatDireto"){ 
+      console.log('valorFatDireto')
+      const totalValue = Number(opportunity.valorFatDolphin) + Number(value);
+      console.log({totalValue})
+      setCurrentOpportunity({ 
         ...opportunity,
-        [column.dataKey]: value,
+        valorFatDireto: Number(value),
+        valorTotal: totalValue,
       });
-      setCurrentOpportunity({...opportunity, [column.dataKey]: value });
+      return;
+    }
+    if(column.dataKey === "valorFatDolphin"){ 
+      console.log('valorFatDolphin')
+      const totalValue = Number(opportunity.valorFatDireto) + Number(value);
+      console.log({ totalValue });
+      setCurrentOpportunity({ 
+       ...opportunity,
+        valorFatDolphin: Number(value),
+        valorTotal: totalValue,
+      });
+      return;
+    }
+    setCurrentOpportunity({
+      ...opportunity,
+      [column.dataKey]: isNumeric(value) ? Number(value) : value,
+    });
+    
   };
 
   const isDateField = (dataKey: string): boolean => dataKey.startsWith("data");
 
   const handleAdicionalChoice = (isAdicional: boolean) => {
-    setAdicional(isAdicional);
+    if (isAdicional) {
+      setAdicional(true);
+      setProjectChoiceModalOpen(true);
+      return;
+    }
+    setAdicional(false);
     setIsAdicionalChoiceOpen(false);
   };
 
@@ -193,26 +450,278 @@ const CreateOpportunityModal = () => {
     if (column.dataKey === "fkCodCliente") return clientOptions;
   };
 
-  const handleSaveOpportunity = async ( ) => { 
-    // Implementar o salvamento da proposta na API
-    console.log("Salvando proposta: ", opportunity);
-    const response = await postOpportunity(opportunity);
-    if(response?.status === 200) {
-       handleClose()
-      toggleRefreshOpportunityInfo();
+  const cleanEntries = () => {
+    setAdicional(false);
+    setCurrentCommentValue("");
+    setEditingComment(undefined);
+    setCurrentOpportunity({
+      codOs: 0, // Exemplo de código de OS (AUTO_INCREMENT, não precisa definir)
+      codTipoOs: 1, // Valor padrão para o tipo de OS (campo com valor padrão '1')
+      codCCusto: null, // Opcional
+      obra: null, // Opcional
+      dataSolicitacao: null, // Data atual (pode ser null se não obrigatório)
+      dataNecessidade: null, // Data atual (pode ser null se não obrigatório)
+      docReferencia: null, // Opcional
+      listaMateriais: null, // Opcional
+      dataInicio: null, // Opcional
+      dataPrevEntrega: null, // Opcional
+      dataEntrega: null, // Opcional
+      codStatus: 1, // Valor padrão para o status (campo com valor padrão '1')
+      nome: "", // Nome obrigatório
+      descricao: null, // Opcional
+      atividades: null, // Opcional
+      prioridade: 0, // Valor padrão (campo com valor padrão '0')
+      solicitante: 1, // Valor padrão para o solicitante (campo com valor padrão '1')
+      responsavel: 1, // Valor padrão para o responsável (campo com valor padrão '1')
+      codDisciplina: 1, // Valor padrão para o código de disciplina (campo com valor padrão '1')
+      gut: 1, // Valor padrão para o GUT (campo com valor padrão '1')
+      gravidade: 1, // Valor padrão para a gravidade (campo com valor padrão '1')
+      urgencia: 1, // Valor padrão para urgência (campo com valor padrão '1')
+      tendencia: 1, // Valor padrão para tendência (campo com valor padrão '1')
+      dataLiberacao: null, // Opcional
+      relacionamento: 1, // Valor padrão para relacionamento (campo com valor padrão '1')
+      fkCodCliente: "-", // Valor padrão (campo com valor padrão '-')
+      fkCodColigada: 0, // Valor padrão para código de coligada (campo com valor padrão '0')
+      valorFatDireto: 0.0, // Valor padrão (campo com valor padrão '0.00')
+      valorServicoMO: 0.0, // Valor padrão (campo com valor padrão '0.00')
+      valorServicoMatAplicado: 0.0, // Valor padrão (campo com valor padrão '0.00')
+      valorMaterial: 0.0, // Valor padrão (campo com valor padrão '0.00')
+      valorTotal: 0.0, // Valor padrão (campo com valor padrão '0.00')
+      codSegmento: 1, // Valor padrão para código de segmento (campo com valor padrão '1')
+      codCidade: 0, // Valor padrão para código de cidade (campo com valor padrão '0')
+      valorLocacao: 0.0, // Valor padrão (campo com valor padrão '0.00')
+      idAdicional: 0, // Valor padrão (campo com valor padrão '0')
+      idProjeto: 0, // Valor padrão (campo com valor padrão '0')
+      dataInteracao: null, // Valor padrão (campo com valor padrão '1111-11-11')
+      valorFatDolphin: 0.0, // Valor padrão para faturamento Dolphin (campo com valor padrão '0.00')
+      principal: true, // Valor padrão (campo com valor padrão '1')
+      valorComissao: 0.0, // Valor obrigatório
+      idMotivoPerdido: 1, // Valor obrigatório (campo não pode ser nulo)
+      observacoes: null, // Opcional
+      descricaoVenda: null, // Opcional
+      emailVendaEnviado: false, // Valor padrão (campo com valor padrão '0')
+      numeroAdicional: 0, // Valor padrão com
+      comentarios: [],
+      seguidores: []
+    });
+  };
+
+
+
+  const handleChangeGuide = (index: number) => {
+    sliderRef.current?.slickGoTo(index);
+    setCurrentSlideIndex(index);
+  };
+
+  const handleSaveProjectChoiceAdicional = async () => {
+    const data = await createAdicional(opportunity);
+    if (data) {
+      setCurrentOpportunity({
+        ...opportunity,
+        idAdicional: data.adicional.ID,
+        numeroAdicional: data.adicional.NUMERO,
+        codOs: data.codOs,
+      });
+      setCreatingOpportunity(false);
+      setCurrentOppIdSelected(data.codOs);
+      setProjectChoiceModalOpen(false);
+      setRefreshOpportunityFields(!refreshOpportunityFields);
+      setAdicional(true);
     }
   };
 
-  React.useEffect(() => {
+  const renderAutoCompleteValue = (
+    field: OpportunityColumn
+  ): OpportunityOptionField => {
+    if (field.dataKey === "idProjeto") {
+      const optionValueSelected = projectOptions.find(
+        (option) => option.id === opportunity["idProjeto"]
+      );
+      if (optionValueSelected) return optionValueSelected;
+    }
+    if (field.dataKey === "codStatus") {
+      const optionValueSelected = statusOptions.find(
+        (option) => option.id === opportunity["codStatus"]
+      );
+      if (optionValueSelected) return optionValueSelected;
+    }
+    if (field.dataKey === "fkCodCliente") {
+      const optionValueSelected = clientOptions.find(
+        (option) => option.id === opportunity["fkCodCliente"]
+      );
+      if (optionValueSelected) return optionValueSelected;
+    }
+    if (field.dataKey === "responsavel") {
+      const optionValueSelected = salerOptions.find(
+        (option) => option.id === opportunity["responsavel"]
+      );
+      if (optionValueSelected) return optionValueSelected;
+    }
+    return {
+      label: "",
+      id: 0,
+      object: "",
+      key: 0,
+    };
+  };
+
+  const handleChangeComentarios = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    codigoComentario?: number
+  ) => {
+    const { value } = e.target;
+    setCurrentCommentValue(value);
+
+    const newCommentIsBeingTyped =
+      !codigoComentario || !opportunity.comentarios;
+    let newComment;
+    if (newCommentIsBeingTyped) {
+      newComment = opportunity.comentarios.find(
+        (comment) => comment.codigoComentario === 0
+      );
+      if (newComment) {
+        newComment.descricao = value;
+        setCurrentOpportunity({
+          ...opportunity,
+          comentarios: [...opportunity.comentarios],
+        });
+        return;
+      }
+      newComment = {
+        email: 0,
+        codOs: opportunity.codOs,
+        criadoEm: new Date(),
+        criadoPor: user?.NOME || "",
+        descricao: value,
+        codigoComentario: 0,
+      };
+      setCurrentOpportunity({
+        ...opportunity,
+        comentarios: [...opportunity.comentarios, newComment],
+      });
+      return;
+    }
+    //editting a comment
+    const coments = [...(opportunity.comentarios || [])];
+    const index = coments.findIndex(
+      (c) => c.codigoComentario === codigoComentario
+    );
+    if (index >= 0) {
+      coments[index].descricao = value;
+      setCurrentOpportunity({
+        ...opportunity,
+        comentarios: coments,
+      });
+    }
+  };
+
+  const uploadFiles = useCallback(
+    async (opportunityId: number) => {
+      const isEmpty = ![...formDataFileArray.getAll("files")].length;
+      if (opportunityId && !isEmpty) {
+        await createOpportunityFiles(opportunityId, formDataFileArray);
+        setFormDataFileArray(new FormData());
+      }
+    },
+    [formDataFileArray]
+  );
+
+  const handleSaveOpportunity = useCallback(async () => {
+    if (opportunity.codOs) {
+      const response = await updateOpportunity(opportunity);
+      if (response?.status === 200) {
+        cleanEntries();
+        await uploadFiles(opportunity.codOs);
+        setRefreshOpportunityFields(!refreshOpportunityFields);
+      }
+      return;
+    }
+    const response = await createOpportunity({
+      ...opportunity, //adding the user to followers
+      seguidores: [...opportunity.seguidores ,{
+        id_seguidor_projeto : 0,
+        id_projeto : opportunity.idProjeto || 0,
+        codpessoa : user?.CODPESSOA || 0,
+        ativo : 1,
+        nome: ''
+      }]
+    });
+    if (response?.status === 200) {
+      setCreatingOpportunity(false);
+      setCurrentOppIdSelected(response.data.codOs); //
+      cleanEntries();
+      await uploadFiles(response.data.codOs);
+      setRefreshOpportunityFields(!refreshOpportunityFields);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    opportunity,
+    refreshOpportunityFields,
+    setCreatingOpportunity,
+    setCurrentOppIdSelected,
+    uploadFiles,
+  ]);
+
+  const handleDeleteFile = (file: OpportunityFile) => {
+    const newOppFiles =
+      [...(opportunity.files || [])].filter(
+        (oppFile) => oppFile.nome_arquivo !== file.nome_arquivo
+      ) || [];
+    setCurrentOpportunity({
+      ...opportunity,
+      files: newOppFiles,
+    });
+  };
+
+  const handleChangeFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const file = e.target.files[0];
+
+      const newFile: OpportunityFile = {
+        id_anexo_os: Date.now(), // Gera um ID único temporário
+        arquivo: URL.createObjectURL(file), // Gera a URL temporária para o preview
+        nome_arquivo: file.name,
+        codos: opportunity.codOs || 0,
+      };
+      const newOppFiles = [...(opportunity.files || []), newFile];
+      setCurrentOpportunity({
+        ...opportunity,
+        files: newOppFiles,
+      });
+      setFormDataFileArray((prevFormDataFileArray) => {
+        const updatedFormData = new FormData();
+        prevFormDataFileArray.forEach((value, key) => {
+          updatedFormData.append(key, value);
+        });
+        updatedFormData.append("files", file);
+        return updatedFormData;
+      });
+    }
+  };
+
+  const handlesaveProgressAction = async ( ) => { 
+      await handleSaveOpportunity();
+      handleClose();
+  }
+
+  useEffect(() => {
+    console.log('useeffect CreatingOpportunityModal')
     fetchProjectsOps();
     fetchStatusOps();
     fetchSalerOps();
     fetchClientOps();
-  }, [creatingOpportunity, adicional]);
+    if (creatingOpportunity) {
+      setIsAdicionalChoiceOpen(true);
+    }
+    if (currentOppIdSelected > 0) {
+      setIsAdicionalChoiceOpen(false); //
+      fetchOppData();
+    }
+  }, [currentOppIdSelected, refreshOpportunityFields, creatingOpportunity, fetchProjectsOps, fetchStatusOps, fetchSalerOps, fetchClientOps, fetchOppData]);
 
   return (
     <Modal
-      open={creatingOpportunity}
+      open={creatingOpportunity || currentOppIdSelected > 0}
       onClose={handleClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
@@ -223,117 +732,184 @@ const CreateOpportunityModal = () => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: 400,
+          width: {
+            xs: 250,
+            sm: 270,
+            md: 500,
+            lg: 600,
+            xl: 800,
+          },
+          maxHeight: "90%",
           bgcolor: "background.paper",
-
           boxShadow: 24,
-          height: "80%",
           overFlow: "hidden",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "center",
           alignItems: "center",
-          gap: 2,
-          p: 2,
+          p: 1,
+          gap: 4,
         }}
       >
-        <IconButton  sx={{
-          position: 'absolute',
-          right: 1,
-          top: 1
-        }}onClick={handleClose}>
+        <IconButton
+          sx={{
+            position: "absolute",
+            right: 1,
+            top: 1,
+          }}
+          onClick={() => setSaveProgressModalOpen(true)}
+        >
           <CloseIcon />
-        </IconButton>
-        {" "}
-        <Typography fontFamily="Roboto">Nova Proposta</Typography>
+        </IconButton>{" "}
+        <Typography fontFamily="Roboto" fontSize="large">
+          Proposta
+        </Typography>
         <Stack
-          maxHeight="80%"
+          direction="column"
           width="100%"
           gap={1}
           padding={1}
           overflow="scroll"
         >
-          {opportunityInputFields.map((column) =>
-            column.dataKey === "idProjeto" && !adicional ? (
-              ""
-            ) : column.autoComplete ? (
-              <Autocomplete
-                disablePortal
-                onChange={handleChangeAutoComplete}
-                options={renderOptions(column) || []}
-                sx={{ width: 300 }}
-                renderInput={(params) => (
-                  <TextField {...params} label={column.label} />
+          <Stack
+            direction="row"
+            gap={1}
+            sx={{
+              display: "flex",
+              width: "100%",
+              justifyContent: "space-around",
+              alignItems: "center",
+              overflowX: "scroll",
+
+              minHeight: "4em",
+              padding: 1,
+              "&::-webkit-scrollbar": {
+                width: "4px", // Width of the scrollbar
+                height: "2px",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                height: "2px",
+                backgroundColor: "#888", // Color of the scrollbar thumb
+                borderRadius: "4px", // Rounded edges for the thumb
+              },
+            }}
+          >
+            {guides.map((guide, index) => (
+              <Chip
+                key={index}
+                onClick={() => handleChangeGuide(index)}
+                sx={{
+                  cursor: "pointer",
+                }}
+                label={guide.name}
+                variant={currentSlideIndex === index ? "filled" : "outlined"}
+              />
+            ))}
+          </Stack>
+          <Slider ref={sliderRef} {...settings}>
+            {guides.map((guide) => (
+              <Box
+                key={guide.name}
+                sx={{
+                  width: "100%", // Garante que cada slide ocupe largura total
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    alignItems: "flex-start",
+                    justifyContent: "left",
+                    gap: 2,
+                    width: "100%",
+                    minWidth: 0,
+                  }}
+                >
+                  {guide.fields?.map((field) => (
+                    <RenderOpportunityFields
+                      key={field.dataKey}
+                      field={field}
+                      renderAutoCompleteValue={renderAutoCompleteValue}
+                      handleChangeAutoComplete={handleChangeAutoComplete}
+                      renderOptions={renderOptions}
+                      adicional={adicional}
+                      currentOppIdSelected={currentOppIdSelected}
+                      opportunity={opportunity}
+                      handleChangeTextField={handleChangeTextField}
+                      isDateField={isDateField}
+                      currentCommentValue={currentCommentValue}
+                      handleChangeComentarios={handleChangeComentarios}
+                      editingComment={editingComment}
+                      setEditingComment={setEditingComment}
+                    />
+                  ))}
+                </Box>
+                {guide.name === "Seguidores" && (
+                  <Box>
+                    <FollowersTable
+                      setCurrentOpportunity={setCurrentOpportunity}
+                      opportunity={opportunity}
+                      handleSaveOpportunity={handleSaveOpportunity}
+                    />
+                  </Box>
                 )}
-              />
-            ) : (
-              
-             column.dataKey === 'descricao' && adicional ?'' : //na coluna descrição, se for adicional não renderizar campo pois já tem
-               <TextField
-                key={column.dataKey}
-                label={column.label}
-                placeholder={column.label}
-                type={column.type}
-                onChange={(e) => handleChangeTextField(e, column)}
-                InputLabelProps={
-                  isDateField(column.dataKey) ? { shrink: true } : undefined
-                }
-                variant="outlined"
-                fullWidth
-                margin="normal"
-              />
-            )
-          )}
+                {guide.name === "Escopo" && (
+                  <OpportunityFiles
+                    handleChangeFiles={handleChangeFiles}
+                    handleDeleteFile={handleDeleteFile}
+                    opportunity={opportunity}
+                  />
+                )}
+              </Box>
+            ))}
+          </Slider>
         </Stack>
         <Button variant="outlined" onClick={handleSaveOpportunity}>
           <Typography fontFamily="Roboto" fontSize="small">
             Salvar
           </Typography>
         </Button>
-        <Modal
-          open={isAdicionalChoiceOpen}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
+        <AdicionalChoice
+          isAdicionalChoiceOpen={isAdicionalChoiceOpen}
+          handleClose={handleClose}
+          handleAdicionalChoice={handleAdicionalChoice}
+        />
+        <ProjectChoiceModal
+          handleSaveProjectChoiceAdicional={handleSaveProjectChoiceAdicional}
+          projectChoiceModalOpen={projectChoiceModalOpen}
+          setProjectChoiceModalOpen={setProjectChoiceModalOpen}
+          handleChangeAutoComplete={handleChangeAutoComplete}
+          renderOptions={renderOptions}
+        />
+        <Dialog
+          open={saveProgressModalOpen}
+          onClose={handleClose}
+          aria-labelledby="save-progress-title"
+          aria-describedby="save-progress-description"
+
         >
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: 400,
-              bgcolor: "background.paper",
-              border: "2px solid #000",
-              boxShadow: 24,
-              height: "20%",
-              overFlow: "hidden",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: 2,
-              p: 2,
-            }}
-          >
-            A proposta é um adicional?
-            <Stack direction="row" gap={1}>
-              <Button
-                onClick={() => handleAdicionalChoice(true)}
-                variant="contained"
-                color="primary"
-              >
-                Sim
-              </Button>
-              <Button
-                onClick={() => handleAdicionalChoice(false)}
-                variant="contained"
-                color="primary"
-              >
-                Não
-              </Button>
-            </Stack>
-          </Box>
-        </Modal>
+          <DialogTitle id="save-progress-title">Salvar progresso?</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="save-progress-description">
+              Deseja salvar seu progresso antes de sair?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions sx={{display: 'flex', justifyContent: 'center'}}>
+            <Button
+              onClick={handlesaveProgressAction}
+              color="primary"
+              autoFocus
+            >
+              Sim
+            </Button>
+              <Button onClick={handleClose} color="secondary">
+              Não
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </Modal>
   );

@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { createContext, useState } from "react";
+import React, { createContext, Dispatch, SetStateAction, useState } from "react";
 import { DateFilter, OpportunityInfo } from "../types"; // Certifique-se de que este caminho está correto
 
 // Tipagem para o filtro de datas
@@ -10,10 +10,13 @@ interface OpportunityInfoContextType {
   columnFilters: { dataKey: string; filterValue: string }[]; // Filtros aplicados nas colunas
   dateFilters: DateFilter[]; // Filtros de datas
   creatingOpportunity: boolean; // Estado para criar oportunidades
+  currentOppIdSelected: number;
   refreshOpportunityInfo: boolean; // Estado para forçar atualização
   finishedOppsEnabled: boolean;
+  setCurrentOppIdSelected: React.Dispatch<React.SetStateAction<number>>;
   setFinishedOppsEnabled: React.Dispatch<React.SetStateAction<boolean>>;
   toggleCreatingOpportunity: () => void; // Função para alternar criação de oportunidade
+  setCreatingOpportunity: Dispatch<SetStateAction<boolean>>; // Função para
   toggleRefreshOpportunityInfo: () => void; // Função para alternar atualização
   changeFilteredRows: (rows: OpportunityInfo[]) => void; // Atualizar linhas filtradas
   changeColumnFilters: (
@@ -61,22 +64,23 @@ interface OpportunityInfoProviderProps {
 }
 
 // Criação do contexto
-export const OpportunityInfoContext = createContext<OpportunityInfoContextType>(
-  {
-    filteredRows: [],
-    columnFilters: defaultColumnFilters,
-    dateFilters: defaultDateFilters,
-    finishedOppsEnabled: false,
-    creatingOpportunity: false,
-    refreshOpportunityInfo: false,
-    setFinishedOppsEnabled: () => {},
-    toggleCreatingOpportunity: () => {},
-    toggleRefreshOpportunityInfo: () => {},
-    changeFilteredRows: () => {},
-    changeColumnFilters: () => {},
-    setDateFilters: () => {},
-  }
-);
+export const OpportunityInfoContext = createContext<OpportunityInfoContextType>({
+  filteredRows: [],
+  columnFilters: defaultColumnFilters,
+  dateFilters: defaultDateFilters,
+  finishedOppsEnabled: false,
+  creatingOpportunity: false,
+  refreshOpportunityInfo: false,
+  currentOppIdSelected: 0,
+  setCurrentOppIdSelected: () => {},
+  setFinishedOppsEnabled: () => {},
+  toggleCreatingOpportunity: () => {},
+  toggleRefreshOpportunityInfo: () => {},
+  changeFilteredRows: () => {},
+  changeColumnFilters: () => {},
+  setCreatingOpportunity: () => {},
+  setDateFilters: () => {},
+});
 
 // Implementação do Provider
 export const OpportunityInfoProvider = ({
@@ -89,6 +93,7 @@ export const OpportunityInfoProvider = ({
   const [creatingOpportunity, setCreatingOpportunity] = useState(false);
   const [refreshOpportunityInfo, setRefreshOpportunityInfo] = useState(false);
   const [finishedOppsEnabled, setFinishedOppsEnabled] = useState(false);
+  const [currentOppIdSelected, setCurrentOppIdSelected] = useState(0);
 
   const toggleCreatingOpportunity = () => {
     setCreatingOpportunity((prev) => !prev);
@@ -122,6 +127,9 @@ export const OpportunityInfoProvider = ({
         changeFilteredRows,
         changeColumnFilters,
         finishedOppsEnabled,
+        currentOppIdSelected ,
+        setCurrentOppIdSelected,
+        setCreatingOpportunity,
         setFinishedOppsEnabled,
       }}
     >
