@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Follower, Opportunity } from "../types";
-import { DataGrid, GridCallbackDetails, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
+import { DataGrid, GridCallbackDetails, GridColDef, GridRowSelectionModel, GridToolbarFilterButton } from "@mui/x-data-grid";
 import { Box, createTheme, IconButton, Stack, ThemeProvider } from "@mui/material";
 import { ptBR } from "@mui/x-data-grid/locales";
 import { ptBR as pickersPtBr } from "@mui/x-date-pickers/locales";
@@ -27,7 +27,6 @@ const columns: GridColDef[] = [
   {
     field: "nome",
     headerName: "Nome",
-    width: 300,
     align: "left",
     headerAlign: "center",
   },
@@ -77,19 +76,26 @@ export default function FollowersTable({
       </Stack>
       <ThemeProvider theme={theme}>
         <DataGrid
+          disableColumnSelector
           sx={{
-            border: "none",
+            border: "1px solid",
             "& .MuiDataGrid-columnHeaders": {
               backgroundColor: "blue",
             },
             "& .MuiDataGrid-row": {
               cursor: "pointer",
             },
+            maxWidth: {
+              xs: "100%",
+              md: "100%",
+              lg: "90%",
+            },
           }}
           paginationModel={{
             pageSize: 100,
-            page: 0
+            page: 0,
           }}
+          autosizeOnMount
           pageSizeOptions={[]}
           getRowId={(row: Follower) => row.codpessoa}
           rows={opportunity.seguidores.map((row) => ({
@@ -101,7 +107,6 @@ export default function FollowersTable({
           onRowSelectionModelChange={(newSelection, details) =>
             handleRowSelection(newSelection, details)
           }
-          
           disableRowSelectionOnClick
         />
       </ThemeProvider>

@@ -148,13 +148,13 @@ const CreateOpportunityModal = () => {
           type: "number", // Tipo numérico
         },
         {
-          label: "Valor Total",
-          dataKey: "valorTotal", // Alinhado com a propriedade valorTotal da interface
+          label: "Valor Comissão",
+          dataKey: "valorComissao", // Alinhado com a propriedade valorComissao da interface
           type: "number", // Tipo numérico
         },
         {
-          label: "Valor Comissão",
-          dataKey: "valorComissao", // Alinhado com a propriedade valorComissao da interface
+          label: "Valor Total",
+          dataKey: "valorTotal", // Alinhado com a propriedade valorTotal da interface
           type: "number", // Tipo numérico
         },
       ],
@@ -778,8 +778,8 @@ const CreateOpportunityModal = () => {
               width: "100%",
               justifyContent: "space-around",
               alignItems: "center",
-              overflowX: "scroll",
 
+              overflowX: "scroll",
               minHeight: "4em",
               padding: 1,
               "&::-webkit-scrollbar": {
@@ -811,18 +811,19 @@ const CreateOpportunityModal = () => {
                 key={guide.name}
                 sx={{
                   width: "100%", // Garante que cada slide ocupe largura total
-                  display: "flex",
+                  display: "flex !important",
+                  flexDirection: 'column',
                   justifyContent: "center",
                   alignItems: "center",
+                  padding: 0.5
                 }}
               >
                 <Box
                   sx={{
                     display: "flex",
-                    flexDirection: "row",
-                    flexWrap: "wrap",
+                    justifyContent: "center",
                     alignItems: "flex-start",
-                    justifyContent: "left",
+                    flexWrap: "wrap",
                     gap: 2,
                     width: "100%",
                     minWidth: 0,
@@ -848,13 +849,13 @@ const CreateOpportunityModal = () => {
                   ))}
                 </Box>
                 {guide.name === "Seguidores" && (
-                  <Box>
+             
                     <FollowersTable
                       setCurrentOpportunity={setCurrentOpportunity}
                       opportunity={opportunity}
                       handleSaveOpportunity={handleSaveOpportunity}
                     />
-                  </Box>
+                  
                 )}
                 {guide.name === "Escopo" && (
                   <OpportunityFiles
@@ -889,7 +890,6 @@ const CreateOpportunityModal = () => {
           onClose={handleClose}
           aria-labelledby="save-progress-title"
           aria-describedby="save-progress-description"
-
         >
           <DialogTitle id="save-progress-title">Salvar progresso?</DialogTitle>
           <DialogContent>
@@ -897,7 +897,7 @@ const CreateOpportunityModal = () => {
               Deseja salvar seu progresso antes de sair?
             </DialogContentText>
           </DialogContent>
-          <DialogActions sx={{display: 'flex', justifyContent: 'center'}}>
+          <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
             <Button
               onClick={handlesaveProgressAction}
               color="primary"
@@ -905,7 +905,7 @@ const CreateOpportunityModal = () => {
             >
               Sim
             </Button>
-              <Button onClick={handleClose} color="secondary">
+            <Button onClick={handleClose} color="secondary">
               Não
             </Button>
           </DialogActions>

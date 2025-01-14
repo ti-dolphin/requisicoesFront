@@ -26,7 +26,7 @@ const OpportunityFiles = ({
   const [selectedImage, setSelectedImage] = useState<string | null>(null); // For modal
 
   return (
-    <Box>
+    <Box sx={{width: '100%'}}>
       {
         <Button
           component="span"

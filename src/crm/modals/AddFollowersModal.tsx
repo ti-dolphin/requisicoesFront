@@ -4,13 +4,14 @@ import React, { useEffect, useState } from 'react'
 import AddIcon from "@mui/icons-material/Add";
 import { Box, Button, createTheme, IconButton, Modal, ThemeProvider, Tooltip, Typography } from '@mui/material';
 import { Opportunity } from '../types';
-import { DataGrid, GridCallbackDetails, GridColDef, GridFooterContainer, GridPagination, GridRowSelectionModel, GridSelectedRowCount } from '@mui/x-data-grid';
+import { DataGrid, GridCallbackDetails, GridColDef, GridColumnMenu, GridColumnMenuColumnsItem, GridColumnMenuProps, GridFilterPanel, GridFooterContainer, GridPagination, GridRowSelectionModel, GridSelectedRowCount } from '@mui/x-data-grid';
 import { ptBR } from "@mui/x-data-grid/locales";
 import { ptBR as pickersPtBr } from "@mui/x-date-pickers/locales";
 import { ptBR as corePtBr } from "@mui/material/locale";
 import CloseIcon from "@mui/icons-material/Close";
 import { fetchPersonList } from '../utils';
 import { Person } from '../../Requisitions/types';
+import { GridFilterPanelProps } from '@mui/x-data-grid/components/panel/filterPanel/GridFilterPanel';
 
 const theme = createTheme(
   {
@@ -24,15 +25,16 @@ const theme = createTheme(
 );
 
 const columns: GridColDef[] = [
-
-  { 
-    field: 'NOME',
-    headerName: 'Nome',
-    width: 300,
-    type: 'string',
-    align: 'left',
-    headerAlign: 'center',
-  }
+  {
+    field: "NOME",
+    headerName: "Nome",
+    
+    type: "string",
+    align: "left",
+    headerAlign: "center",
+    filterable: true,
+    
+  },
 ];
 
 
@@ -60,12 +62,12 @@ const AddFollowersModal = ({
       <GridFooterContainer
         sx={{
           color: "black",
-          paddingX: 4,
-          paddingY: 0,
+          paddingX: 1,
+          paddingY: 1,
           display: "flex",
           justifyContent: "end",
           flexGrow: 1,
-          flexWrap: "wrap",
+          
           overFlowY: "scroll",
           zIndex: 20,
           backgroundColor: "white",
@@ -78,7 +80,7 @@ const AddFollowersModal = ({
             Concluir
           </Typography>
         </Button>
-        <GridSelectedRowCount selectedRowCount={456} />
+        <GridSelectedRowCount selectedRowCount={previousSelectedList.length} />
 
         <GridPagination
           sx={{
@@ -150,9 +152,9 @@ const AddFollowersModal = ({
   useEffect( () => {
     console.log('current followers: ', opportunity.seguidores)
     fetchOptions();
-  }, []);
+  }, [opportunity.seguidores]);
   return (
-    <div>
+    <Box>
       <IconButton onClick={() => setAddingFollowers(!addingFollowrs)}>
         <Tooltip title="adicionar seguidores">
           <AddIcon />
@@ -170,7 +172,11 @@ const AddFollowersModal = ({
             alignItems: "center",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: "fit-content",
+            width: {
+              xs: "90%",
+              md: "80%",
+              lg: "30%",
+            },
             height: "90%",
             bgcolor: "background.paper",
             boxShadow: 24,
@@ -194,6 +200,7 @@ const AddFollowersModal = ({
             sx={{
               display: "flex",
               flexDirection: "column",
+              alignItems: "center",
               maxHeight: "90%",
             }}
           >
@@ -206,8 +213,13 @@ const AddFollowersModal = ({
                   "& .MuiDataGrid-columnHeaders": {
                     backgroundColor: "#f5f5f5",
                   },
+
+                  maxWidth: {
+                    xs: "100%",
+                    md: "100%",
+                    lg: "90%",
+                  },
                 }}
-                
                 pageSizeOptions={[100]}
                 initialState={{
                   pagination: {
@@ -216,15 +228,46 @@ const AddFollowersModal = ({
                     },
                   },
                 }}
+                autosizeOnMount
                 slots={{
+                  columnMenu: (props: GridColumnMenuProps) => (
+                    <Box sx={{
+                      "& .MuiMenuItem-root": { 
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                      },
+                      maxWidth: {
+                        xs: 260,
+                        sm: 300
+                      }
+                    }}>
+                      <GridColumnMenu {...props}>
+                       
+                      </GridColumnMenu>
+                    </Box>
+                  ),
                   footer: GridFooter,
+                  filterPanel: (props: GridFilterPanelProps) => (
+                    <GridFilterPanel
+                      {...props}
+                      disableAddFilterButton
+                      sx={{
+                        "& .MuiDataGrid-filterFormColumnInput": {
+                          display: "none",
+                        },
+                        "& .MuiDataGrid-filterFormOperatorInput": {
+                          display: "none",
+                        },
+                      }}
+                    ></GridFilterPanel>
+                  ),
                 }}
                 rowSelection
                 disableMultipleRowSelection={false}
                 onRowSelectionModelChange={(newSelection, details) =>
                   handleRowSelection(newSelection, details)
                 }
-                
+                disableColumnSelector
                 checkboxSelection
                 density="compact"
               />
@@ -232,7 +275,7 @@ const AddFollowersModal = ({
           </Box>
         </Box>
       </Modal>
-    </div>
+    </Box>
   );
 };
 
