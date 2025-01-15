@@ -26,8 +26,20 @@ import AddIcon from "@mui/icons-material/Add";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import CloseIcon from "@mui/icons-material/Close";
 import { motion, AnimatePresence } from "framer-motion";
+import { GridColDef } from "@mui/x-data-grid";
+import { OpportunityInfo } from "../types";
 
-const OpportunityTableSearchBar = () => {
+interface OpportunityTableSearchBarProps {
+  columns: GridColDef<OpportunityInfo>[];
+  allRows: OpportunityInfo[];
+  setRows: React.Dispatch<React.SetStateAction<OpportunityInfo[]>>;
+}
+const OpportunityTableSearchBar = ({
+  columns,
+  allRows,
+  setRows
+}: OpportunityTableSearchBarProps) => {
+
   const {
     setFinishedOppsEnabled,
     dateFilters,
@@ -36,7 +48,8 @@ const OpportunityTableSearchBar = () => {
     toggleCreatingOpportunity,
   } = useContext(OpportunityInfoContext);
   const [dateFiltersActive, setDateFiltersActive] = useState(false);
-  
+  const [searchValue, setSearchValue] = useState('');
+
   const Search = styled("div")(({ theme }) => ({
     position: "relative",
     borderRadius: theme.shape.borderRadius,
@@ -163,6 +176,20 @@ const OpportunityTableSearchBar = () => {
     toggleRefreshOpportunityInfo();
   };
 
+  const handleGeneralSerarch = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const value = e.target.value.toLowerCase();
+    setSearchValue(value);
+    const newFilteredRows = allRows.filter((row) =>
+      columns.some((column) => {
+        const cellValue = row[column.field as keyof OpportunityInfo];
+        return cellValue && String(cellValue).toLowerCase().includes(value);
+      })
+    );
+    setRows(newFilteredRows);
+  };
+
   return (
     <AppBar
       sx={{
@@ -224,12 +251,15 @@ const OpportunityTableSearchBar = () => {
             <SearchIcon />
           </SearchIconWrapper>
           <StyledInputBase
+            onChange={(e) => handleGeneralSerarch(e)}
             placeholder="Buscar..."
+            value={searchValue}
+            autoFocus
             inputProps={{ "aria-label": "search", height: 20 }}
           />
         </Search>
 
-        <Stack direction="row" gap={1} alignItems="center">
+        <Stack direction="row" flexWrap="wrap" gap={1} alignItems="center">
           <Button
             onClick={(e) => handleSearchWithDateParams(e)}
             sx={{
@@ -238,6 +268,7 @@ const OpportunityTableSearchBar = () => {
               "&:hover": {
                 backgroundColor: "#f1b963",
               },
+              padding: 0.5,
             }}
           >
             <Typography

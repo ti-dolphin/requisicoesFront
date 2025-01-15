@@ -78,23 +78,20 @@ export default function FollowersTable({
         <DataGrid
           disableColumnSelector
           sx={{
-            border: "1px solid",
+     
             "& .MuiDataGrid-columnHeaders": {
               backgroundColor: "blue",
             },
             "& .MuiDataGrid-row": {
               cursor: "pointer",
             },
-            maxWidth: {
-              xs: "100%",
-              md: "100%",
-              lg: "90%",
-            },
+            
           }}
           paginationModel={{
             pageSize: 100,
             page: 0,
           }}
+          
           autosizeOnMount
           pageSizeOptions={[]}
           getRowId={(row: Follower) => row.codpessoa}

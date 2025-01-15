@@ -54,6 +54,7 @@ const columns: GridColDef<OpportunityInfo>[] = [
   {
     field: "valorTotal",
     headerName: "Valor Total",
+ 
   }, // CONCAT('R$ ', FORMAT(os.VALORTOTAL, 2, 'de_DE'))
   {
     field: "dataSolicitacao",
@@ -94,12 +95,14 @@ const columns: GridColDef<OpportunityInfo>[] = [
     headerName: "Nº OS",
     width: 130,
   }, // os.CODOS
+  
 ];
 
 export default function OpportunityInfoTable() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { user} = useContext(userContext);
   const [rows, setRows] = useState<OpportunityInfo[]>([]);
+  const [allRows, setAllRows] = useState<OpportunityInfo[]>([]);
   const {
     finishedOppsEnabled,
     refreshOpportunityInfo,
@@ -115,6 +118,7 @@ export default function OpportunityInfoTable() {
         user.CODPESSOA
       );
       if (opps) {
+        setAllRows(opps);
         setRows(opps);
       }
     }
@@ -224,7 +228,11 @@ export default function OpportunityInfoTable() {
         flex: 1,
       }}
     >
-      <OpportunityTableSearchBar />
+      <OpportunityTableSearchBar
+        columns={columns}
+        allRows={allRows}
+        setRows={setRows}
+      />
       <ThemeProvider theme={theme}>
         <DataGrid
           rows={rows}
