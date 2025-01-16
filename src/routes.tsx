@@ -12,6 +12,9 @@ import PatrimonyChecklist from "./Patrimony/pages/PatrimonyChecklist";
 import CrmHome from "./crm/pages/CrmHome";
 import ChecklistTasks from "./Patrimony/pages/ChecklistTasks";
 import OpportunityDetails from "./crm/pages/OpportunityDetails";
+import { MovimentationContextProvider } from "./Patrimony/context/movementationContext";
+import { MovementationFileContextProvider } from "./Patrimony/context/movementationFileContext";
+import { PatrimonyFileContextProvider } from "./Patrimony/context/patrimonyFileContext";
 // import { ChecklistContextProvider } from "./Patrimony/context/checklistContext";
 
 const router = createBrowserRouter([
@@ -25,7 +28,15 @@ const router = createBrowserRouter([
         <PatrimonyChecklist />
     ),
   },
-  { path: "/patrimony/details/:id_patrimonio", element: <PatrimonyDetails /> },
+  { path: "/patrimony/details/:id_patrimonio", element: (
+     <MovimentationContextProvider>
+            <MovementationFileContextProvider>
+              <PatrimonyFileContextProvider>
+                <PatrimonyDetails />
+               </PatrimonyFileContextProvider>
+             </MovementationFileContextProvider>
+      </MovimentationContextProvider>
+  ) },
   {
     path: "requisitions/requisitionDetail/:id",
     element: (

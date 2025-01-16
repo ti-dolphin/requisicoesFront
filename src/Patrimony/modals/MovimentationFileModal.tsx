@@ -12,7 +12,7 @@ import {
   IconButton,
   Stack,
   Tooltip,
-  Typography
+  Typography,
 } from "@mui/material";
 import AttachFile from "@mui/icons-material/AttachFile";
 import CloseIcon from "@mui/icons-material/Close";
@@ -26,7 +26,7 @@ import {
   getResponsableForPatrimony,
 } from "../utils";
 import { MovementationFile } from "../types";
-import { useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { userContext } from "../../Requisitions/context/userContext";
 import { useParams } from "react-router-dom";
 
@@ -51,169 +51,169 @@ const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
   },
 }));
 
-
 interface MovimentationFileModalProps {
   movementationId?: number;
 }
 //MAIN COMPONENT
-export default function MovimentationFileModal({
-  movementationId,
-}: MovimentationFileModalProps) {
-  const {
-    toggleMovementationFileOpen,
-    movementationFileOpen,
-    refreshMovementationFile,
-    toggleRefreshMovementationFile,
-    toggleDeletingMovimentationFile
-  } = React.useContext(MovementationFileContext);
-  const { user } = React.useContext(userContext);
-  const { id_patrimonio } = useParams();
-  const handleOpen = () => toggleMovementationFileOpen(movementationId);
-  const handleClose = () => toggleMovementationFileOpen();
-  const [fileData, setFileData] = useState<MovementationFile[]>();
-  const [responsable, setResponsable] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+const MovimentationFileModal = memo(
+  ({ movementationId }: MovimentationFileModalProps) => {
+    console.log("renderizou MovimentationFileModal");
+    const {
+      toggleMovementationFileOpen,
+      movementationFileOpen,
+      refreshMovementationFile,
+      toggleRefreshMovementationFile,
+      toggleDeletingMovimentationFile,
+    } = React.useContext(MovementationFileContext);
+    const { user } = React.useContext(userContext);
+    const { id_patrimonio } = useParams();
+    const handleOpen = () => toggleMovementationFileOpen(movementationId);
+    const handleClose = () => toggleMovementationFileOpen();
+    const [fileData, setFileData] = useState<MovementationFile[]>();
+    const [responsable, setResponsable] = useState<number>(0);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const fetchFileData = async () => {
-    if (movementationId) {
-      console.log("movementationId: ", movementationId);
-      const fileData = await getMovementationFiles(movementationId);
-      const responsable = await getResponsableForPatrimony(
-        Number(id_patrimonio)
-      );
-      if (responsable) {
-        setResponsable(responsable[0].id_responsavel);
+    const fetchFileData = useCallback(async () => {
+      if (movementationId) {
+        const fileData = await getMovementationFiles(movementationId);
+        const responsable = await getResponsableForPatrimony(
+          Number(id_patrimonio)
+        );
+        if (responsable) {
+          setResponsable(responsable[0].id_responsavel);
+        }
+        if (fileData) {
+          setFileData(fileData);
+        }
       }
-      if (fileData) {
-        setFileData(fileData);
-      }
-    }
-  };
-  const handleUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsLoading(true);
-    if (movementationId && e.target.files) {
+    }, [id_patrimonio, movementationId]);
+
+    const handleUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      console.log("handleUploadFile");
+      setIsLoading(true);
+      if (movementationId && e.target.files) {
         const file = e.target.files[0];
         const formData = new FormData();
         formData.append("file", file);
-      try {
-        await createMovementationfile(movementationId, formData);
-        toggleRefreshMovementationFile();
-      } catch (error) {
-        alert("Error uploading file: \n" + error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
-
-
-  const allowedToAttachFile = () => {
-    return user?.CODPESSOA === responsable || user?.PERM_ADMINISTRADOR;
-  };
-  const isPDF = (file: MovementationFile) => {
-    return /\.pdf$/i.test(file.arquivo);
-  };
-
-  const isImage = (file: MovementationFile) => {
-    return /\.(jpg|jpeg|png|gif)$/i.test(file.arquivo);
-  };
-
-     const handleOpenLink = (url: string) => {
-       window.open(url, "_blank");
-     };
-
-  React.useEffect(() => {
-    fetchFileData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshMovementationFile]);
-
-  return (
-    <div>
-      <Tooltip title="Anexos da movimentação">
-        <IconButton aria-label="cart" onClick={handleOpen}>
-          <StyledBadge badgeContent={fileData?.length} color="secondary">
-            <AttachFile sx={{ color: "#F7941E" }} />
-          </StyledBadge>
-        </IconButton>
-      </Tooltip>
-      {/*  */}
-      <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        open={
-          movementationFileOpen[0] &&
-          movementationFileOpen[1] === Number(movementationId)
+        try {
+          await createMovementationfile(movementationId, formData);
+          toggleRefreshMovementationFile();
+        } catch (error) {
+          alert("Error uploading file: \n" + error);
+        } finally {
+          setIsLoading(false);
         }
-        onClose={handleClose}
-        closeAfterTransition
-        slots={{ backdrop: StyledBackdrop }}
-      >
-        <Fade in={movementationFileOpen[0]}>
-          <ModalContent
-            sx={{
-              ...style,
-              minWidth: "260px",
-              width: {
-                xs: "260px",
-                sm: "400px",
-                md: "500px",
-                lg: "600px",
-              },
-            }}
-          >
-            <DeleteMovimentationFileModal />
+      }
+    };
 
-            <Stack direction="row" justifyContent="center" padding={0.6}>
-              <Stack>
-                <Typography variant="h6" textAlign="center">
-                  Anexos
-                </Typography>
-                <Typography>
-                  Movimentação: {movementationFileOpen[1]}
-                </Typography>
+    const allowedToAttachFile = () => {
+      return user?.CODPESSOA === responsable || user?.PERM_ADMINISTRADOR;
+    };
+    const isPDF = (file: MovementationFile) => {
+      return /\.pdf$/i.test(file.arquivo);
+    };
+
+    const isImage = (file: MovementationFile) => {
+      return /\.(jpg|jpeg|png|gif)$/i.test(file.arquivo);
+    };
+
+    const handleOpenLink = (url: string) => {
+      window.open(url, "_blank");
+    };
+
+    useEffect(() => {
+      fetchFileData();
+    }, [fetchFileData, refreshMovementationFile]);
+
+    return (
+      <div>
+        <Tooltip title="Anexos da movimentação">
+          <IconButton aria-label="cart" onClick={handleOpen}>
+            <StyledBadge badgeContent={fileData?.length} color="secondary">
+              <AttachFile sx={{ color: "#F7941E" }} />
+            </StyledBadge>
+          </IconButton>
+        </Tooltip>
+        {/*  */}
+        <Modal
+          aria-labelledby="transition-modal-title"
+          aria-describedby="transition-modal-description"
+          open={
+            movementationFileOpen[0] &&
+            movementationFileOpen[1] === Number(movementationId)
+          }
+          onClose={handleClose}
+          closeAfterTransition
+          slots={{ backdrop: StyledBackdrop }}
+        >
+          <Fade in={movementationFileOpen[0]}>
+            <ModalContent
+              sx={{
+                ...style,
+                minWidth: "260px",
+                width: {
+                  xs: "260px",
+                  sm: "400px",
+                  md: "500px",
+                  lg: "600px",
+                },
+              }}
+            >
+              <DeleteMovimentationFileModal />
+
+              <Stack direction="row" justifyContent="center" padding={0.6}>
+                <Stack>
+                  <Typography variant="h6" textAlign="center">
+                    Anexos
+                  </Typography>
+                  <Typography>
+                    Movimentação: {movementationFileOpen[1]}
+                  </Typography>
+                </Stack>
+                <IconButton
+                  onClick={handleClose}
+                  sx={{
+                    color: "red",
+                    position: "absolute",
+                    right: "1rem",
+                    top: "1rem",
+                  }}
+                >
+                  <CloseIcon />
+                </IconButton>
               </Stack>
-              <IconButton
-                onClick={handleClose}
-                sx={{
-                  color: "red",
-                  position: "absolute",
-                  right: "1rem",
-                  top: "1rem",
-                }}
-              >
-                <CloseIcon />
-              </IconButton>
-            </Stack>
 
-            {allowedToAttachFile() ? (
-              <Button
-                component="label"
-                role={undefined}
-                variant="contained"
-                tabIndex={-1}
-                startIcon={<CloudUploadIcon />}
-              >
-                Anexar
-                <VisuallyHiddenInput onChange={handleUploadFile} type="file" />
-              </Button>
-            ) : (
-              ""
-            )}
+              {allowedToAttachFile() ? (
+                <Button
+                  component="label"
+                  role={undefined}
+                  variant="contained"
+                  tabIndex={-1}
+                  startIcon={<CloudUploadIcon />}
+                >
+                  Anexar
+                  <VisuallyHiddenInput
+                    onChange={handleUploadFile}
+                    type="file"
+                  />
+                </Button>
+              ) : (
+                ""
+              )}
 
-            {isLoading && (
-              <Stack
-                direction="row"
-                justifyContent="center"
-                alignItems="center"
-                sx={{ mt: 2 }}
-              >
-                <CircularProgress />
-                <Typography sx={{ ml: 2 }}>Enviando...</Typography>
-              </Stack>
-            )}
+              {isLoading && (
+                <Stack
+                  direction="row"
+                  justifyContent="center"
+                  alignItems="center"
+                  sx={{ mt: 2 }}
+                >
+                  <CircularProgress />
+                  <Typography sx={{ ml: 2 }}>Enviando...</Typography>
+                </Stack>
+              )}
 
-            {
-              fileData?.map((file) => (
+              {fileData?.map((file) => (
                 <Box
                   sx={{ borderRadius: "10px" }}
                   className="border border-gray-300"
@@ -296,32 +296,16 @@ export default function MovimentationFileModal({
                     </Box>
                   </Stack>
                 </Box>
-              ))
+              ))}
+            </ModalContent>
+          </Fade>
+        </Modal>
+      </div>
+    );
+  }
+);
 
-              /* <FixedSizeList
-              height={400}
-              width="100%"
-              itemSize={46}
-              itemCount={fileData?.length || 0}
-              overscanCount={5}
-            >
-              {({ index, style }) => (
-                <RenderRow
-                  index={index}
-                  style={style}
-                  fileData={fileData || []}
-                  data={fileData}
-                />
-              )}
-            </FixedSizeList> */
-            }
-          </ModalContent>
-        </Fade>
-      </Modal>
-    </div>
-  );
-}
-//MAIN COMPONENT
+export default MovimentationFileModal;
 
 const Backdrop = React.forwardRef<HTMLDivElement, { open?: boolean }>(
   (props, ref) => {

@@ -119,8 +119,10 @@ export default function MovementsTable() {
   const navigate = useNavigate();
 
   const fetchData = async () => {
-    const patrimonyInfoData =
-      user && (await getPatrimonyInfo(user, currentFilter));
+    console.log('fetchData PatrimonyInfoTable.tsx')
+    const patrimonyInfoData = user && (await getPatrimonyInfo(user, currentFilter));
+    console.log({ patrimonyInfoData });
+    console.log({currentFilter})
     if (currentFilter === "Todos") {
       if (patrimonyInfoData) {
         const activeFilters = columnFilter.filter(
@@ -436,27 +438,30 @@ export default function MovementsTable() {
   };
 
   React.useEffect(() => {
-    localStorage.setItem("currentFilter", currentFilter);
+    console.log({currentFilter})
+    console.log('USEFFECT PatrimonyInfoTable.tsx');
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshPatrimonyInfo, currentFilter]);
 
   return (
-    <Paper style={{  width: "100%", padding: 2, flexGrow: 1, height: "75%" }}>
+    <Paper style={{ width: "100%", padding: 2, flexGrow: 1, height: "75%" }}>
       <SearchAppBar
         setFilteredRows={setFilteredRows}
         selectedItems={selectedItems}
         handleSearch={handleSearch}
         setSelectedItems={setSelectedItems}
       />
-      <TableVirtuoso
-        data={filteredRows}
-        components={VirtuosoTableComponents}
-        fixedHeaderContent={fixedHeaderContent}
-        itemContent={(index, row) =>
-          RowContent(index, row, setSelectedItems, selectedItems)
-        }
-      />
+      {filteredRows && filteredRows.length && (
+        <TableVirtuoso
+          data={filteredRows}
+          components={VirtuosoTableComponents}
+          fixedHeaderContent={fixedHeaderContent}
+          itemContent={(index, row) =>
+            RowContent(index, row, setSelectedItems, selectedItems)
+          }
+        />
+      )}
       <Box
         display="flex"
         justifyContent="flex-end"
@@ -464,7 +469,7 @@ export default function MovementsTable() {
         paddingX="2rem"
         gap={4}
       >
-        {filteredRows && (
+        {filteredRows && filteredRows.length  && (
           <>
             <Typography
               variant="body2"

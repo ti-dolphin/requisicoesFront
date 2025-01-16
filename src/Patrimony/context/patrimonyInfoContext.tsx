@@ -49,7 +49,7 @@ export const PatrimonyInfoContext = createContext<PatrimonyInfoContextType>({
   creatingPatrimonyAccessory: false,
   deletingPatrimonyAccessory: [false],
   deletingPatrimonyAccessoryFile: [false],
-  currentFilter: "Ativos",
+  currentFilter: "Todos",
   filteredRows : [],
   columnFilter: [
     { dataKey: "id_patrimonio", filterValue: "" },
@@ -134,6 +134,7 @@ export const PatrimonyInfoContextProvider = ({
   };
 
   const toggleRefreshPatrimonyInfo = () => {
+    console.log('toggleRefreshPatrimonyInfo');
     setRefreshPatrimonyInfo((prev) => !prev);
   };
 

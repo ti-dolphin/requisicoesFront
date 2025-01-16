@@ -50,7 +50,6 @@ export default function CreateMovementation({
     creatingPatrimonyInfo,
     toggleCreatingPatrimonyInfo,
     toggleRefreshPatrimonyInfo,
-    setCurrentFilter,
     changeCreatingPatrimonyInfo
   } = React.useContext(PatrimonyInfoContext);
   const { user } = React.useContext(userContext);
@@ -76,8 +75,6 @@ export default function CreateMovementation({
 
   const handleSaveMovementation = async () => {
     if (creatingPatrimonyInfo[0] && handleSave) {
-
-      
       const insertIdPatrimony = await handleSave();
       if (insertIdPatrimony) {
         const insertIdMovementation = await createMovementation({
@@ -86,7 +83,6 @@ export default function CreateMovementation({
         });
         if (insertIdMovementation) {
           navigate(`/patrimony/details/${insertIdPatrimony}`);
-          setCurrentFilter("Ativos");
           toggleRefreshPatrimonyInfo();
           toggleCreatingPatrimonyInfo();
           return;

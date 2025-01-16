@@ -21,6 +21,7 @@ export default function DeleteMovimentationFileModal() {
   const {toggleDeletingMovimentationFile, deletingMovimentationFile, toggleRefreshMovementationFile} = React.useContext(MovementationFileContext);
   const handleClose = () => toggleDeletingMovimentationFile(false);
   const handleDelete = async( ) => { 
+    console.log('handleDelete')
     if (deletingMovimentationFile[0] && deletingMovimentationFile[1]) {
       const response = await deleteMovementationFileModal(
         deletingMovimentationFile[1].id_anexo_movimentacao,

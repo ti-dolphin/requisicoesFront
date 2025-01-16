@@ -154,10 +154,9 @@ export const dateRenderer = (value?: string | number) => {
     }
 };
 export const getResponsableForPatrimony = async(patrimonyId: number  ) =>  {
-   console.log("patrimonyId passado: ", patrimonyId);
+
    try{ 
        const response = await api.get(`/patrimony/responsable/${patrimonyId}`);
-       console.log("resopnse: ", response.data);
        return response.data;
    }catch(e){ 
          console.log(e);

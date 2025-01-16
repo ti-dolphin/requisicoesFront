@@ -18,7 +18,7 @@ import EditMovimentationObservationModal from "../../modals/EditMovimentationObs
 import { MovimentationContext } from "../../context/movementationContext";
 import { dateTimeRenderer, getMovementationsByPatrimonyId } from "../../utils";
 import { userContext } from "../../../Requisitions/context/userContext";
-import { useContext } from "react";
+import { memo, useContext } from "react";
 
 // Tipo Movementation
 interface Movementation {
@@ -94,111 +94,116 @@ function fixedHeaderContent() {
 }
 
 // Linha de conteúdo
-const RowContent = ({
-  row,
-  singleMovementation,
-}: {
-  row: Movementation;
-  singleMovementation: () => boolean;
-}) => {
-  const { togglEditingMovementationObservation, toggleDeletingMovementation } =
-    useContext(MovimentationContext);
-  const { user } = useContext(userContext);
+const RowContent = memo(
+  ({
+    row,
+    singleMovementation,
+  }: {
+    row: Movementation;
+    singleMovementation: () => boolean;
+  }) => {
+    console.log('renderizou RowContent')
+    const {
+      togglEditingMovementationObservation,
+      toggleDeletingMovementation,
+    } = useContext(MovimentationContext);
+    const { user } = useContext(userContext);
+    
+    const handleClickDeleteMovimentation = (row: Movementation) => {
+      if (singleMovementation()) {
+        alert("Não é permitido excluir a única movimentação!");
+        return;
+      }
+      if (!isWhoCreated() && !user?.PERM_ADMINISTRADOR) {
+        alert(
+          "Apenas quem criou ou o administrador pode excluir a movimentação!"
+        );
+        return;
+      }
+      toggleDeletingMovementation(row);
+    };
+    const isWhoCreated = () => user?.CODPESSOA === row.id_ultimo_responsavel;
 
-  const handleClickDeleteMovimentation = (row: Movementation) => {
-    if (singleMovementation()) {
-      alert("Não é permitido excluir a única movimentação!");
-      return;
-    }
-    if (!isWhoCreated() && !user?.PERM_ADMINISTRADOR) {
-      alert(
-        "Apenas quem criou ou o administrador pode excluir a movimentação!"
-      );
-      return;
-    }
-    toggleDeletingMovementation(row);
-  };
-
-  const isWhoCreated = () => user?.CODPESSOA === row.id_ultimo_responsavel;
-
-  return (
-    <React.Fragment>
-      {columns.map((column) => (
-        <TableCell
-          key={column.dataKey}
-          sx={{
-            paddingY: "6px",
-            border: "none",
-            width: column.width,
-          }}
-        >
-          <Stack
-            direction="row"
-            spacing={1}
-            alignItems="center"
-            justifyContent={
-              column.dataKey === "id_movimentacao" ? "end" : "space-between"
-            }
+    return (
+      <React.Fragment>
+        {columns.map((column) => (
+          <TableCell
+            key={column.dataKey}
+            sx={{
+              paddingY: "6px",
+              border: "none",
+              width: column.width,
+            }}
           >
-            <Typography sx={{ fontSize: "12px", textAlign: "left" }}>
-              {column.dataKey === "data"
-                ? dateTimeRenderer(row.data)
-                : row[column.dataKey] || "-"}
-            </Typography>
+            <Stack
+              direction="row"
+              spacing={1}
+              alignItems="center"
+              justifyContent={
+                column.dataKey === "id_movimentacao" ? "end" : "space-between"
+              }
+            >
+              <Typography sx={{ fontSize: "12px", textAlign: "left" }}>
+                {column.dataKey === "data"
+                  ? dateTimeRenderer(row.data)
+                  : row[column.dataKey] || "-"}
+              </Typography>
 
-            {column.dataKey === "projeto" && (
-              <MovimentationFileModal movementationId={row.id_movimentacao} />
-            )}
-            {column.dataKey === "observacao" && (
-              <Tooltip title="Editar Observação">
-                <IconButton
-                  onClick={() =>
-                    togglEditingMovementationObservation(true, row)
-                  }
-                >
-                  <EditIcon sx={{ color: "#F7941E" }} />
-                </IconButton>
-              </Tooltip>
-            )}
-            {column.dataKey === "id_movimentacao" && (
-              <Tooltip title="Excluir Movimentação">
-                <IconButton onClick={() => handleClickDeleteMovimentation(row)}>
-                  <DeleteIcon sx={{ color: "#F7941E" }} />
-                </IconButton>
-              </Tooltip>
-            )}
-          </Stack>
-        </TableCell>
-      ))}
-    </React.Fragment>
-  );
-};
-
-// Componente principal
-export default function DetailMovementsTable() {
+              {column.dataKey === "projeto" && (
+                <MovimentationFileModal movementationId={row.id_movimentacao} />
+              )}
+              {column.dataKey === "observacao" && (
+                <Tooltip title="Editar Observação">
+                  <IconButton
+                    onClick={() =>
+                      togglEditingMovementationObservation(true, row)
+                    }
+                  >
+                    <EditIcon sx={{ color: "#F7941E" }} />
+                  </IconButton>
+                </Tooltip>
+              )}
+              {column.dataKey === "id_movimentacao" && (
+                <Tooltip title="Excluir Movimentação">
+                  <IconButton
+                    onClick={() => handleClickDeleteMovimentation(row)}
+                  >
+                    <DeleteIcon sx={{ color: "#F7941E" }} />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </Stack>
+          </TableCell>
+        ))}
+      </React.Fragment>
+    );
+  }
+);
+const MovimentationTable = memo(() => {
   const { id_patrimonio } = useParams();
   const [movementations, setMovementations] = React.useState<Movementation[]>(
     []
   );
   const { refreshMovimentation } = useContext(MovimentationContext);
 
-  const fetchMovementations = async () => {
+  const fetchMovementations = React.useCallback(async () => {
     const movementationsData = await getMovementationsByPatrimonyId(
       Number(id_patrimonio)
     );
     if (movementationsData) setMovementations([...movementationsData]);
-  };
+  }, [id_patrimonio]);
 
   const singleMovementation = () => movementations.length === 1;
 
   React.useEffect(() => {
+    console.log("USE EFFECT - MovimentationTable");
     fetchMovementations();
-  }, [refreshMovimentation]);
+  }, [fetchMovementations, refreshMovimentation]); //,
 
   return (
     <Box sx={{ height: "90%", width: "100%", padding: 0, boxShadow: "none" }}>
       <TableVirtuoso
-      style={{boxShadow: 'none'}}
+        style={{ boxShadow: "none" }}
         data={movementations}
         components={{
           ...VirtuosoTableComponents,
@@ -221,4 +226,5 @@ export default function DetailMovementsTable() {
       <EditMovimentationObservationModal />
     </Box>
   );
-}
+});
+export default MovimentationTable;

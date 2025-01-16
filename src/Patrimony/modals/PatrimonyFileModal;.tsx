@@ -60,6 +60,7 @@ export default function PatrimonyFileModal() {
   const [fileSelected, setFileSelected] = useState<string | null>();
 
   const fetchPatrimonyFiles = async () => {
+    console.log('fetchPatrimonyFiles')
     const data = await getPatrimonyFiles(Number(id_patrimonio));
     const responsableData = await getResponsableForPatrimony(
       Number(id_patrimonio)
@@ -113,7 +114,7 @@ export default function PatrimonyFileModal() {
     setFileSelected(null);
   };
   useEffect(() => {
-    console.log("teste");
+
     fetchPatrimonyFiles();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshPatrimonyFile]);
