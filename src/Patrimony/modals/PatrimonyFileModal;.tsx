@@ -141,8 +141,7 @@ export default function PatrimonyFileModal() {
             sx={{
               ...style,
               minWidth: "260px",
-              maxHeight: "650px",
-              overflow: "scroll",
+              overflowY: "scroll",
               width: {
                 xs: "260px",
                 sm: "400px",
@@ -200,70 +199,68 @@ export default function PatrimonyFileModal() {
                 <Typography sx={{ ml: 2 }}>Enviando...</Typography>
               </Stack>
             )}
-            {fileData?.map((file) => (
-              <Card
-                key={file.id_anexo_patrimonio}
-                sx={{
-                  borderRadius: "10px",
-                  boxShadow: 2,
-                  marginBottom: 2,
-                }}
-              >
-                <CardMedia
-                  component={isPDF(file) ? "object" : "div"}
-                  data={isPDF(file) ? file.arquivo : undefined}
-                  src={isPDF(file) ? undefined : file.arquivo}
-                  type={isPDF(file) ? "application/pdf" : undefined}
-                  onClick={() => openFile(file)}
+            <Stack maxHeight={400} overflow={'scroll'} gap={2}>
+              {fileData?.map((file) => (
+                <Card
+                  key={file.id_anexo_patrimonio}
                   sx={{
-                    height: {
-                      xs: "100px",
-                      sm: "150px",
-                      md: "200px",
-                      lg: "300px",
-                      cursor: "pointer",
-                    },
-                    width: "100%",
-                    background: isImage(file)
-                      ? `url('${file.arquivo}')`
-                      : "none",
-                    backgroundPosition: "center",
-                    backgroundSize: "cover",
-                    backgroundRepeat: "no-repeat",
-                  }}
-                />
-                <CardContent
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    padding: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    minHeight: 350,
+                    borderRadius: "10px",
+                    boxShadow: 2
                   }}
                 >
-                  <Typography
-                    onClick={() => handleOpenLink(file.arquivo)}
-                    fontSize="small"
+                  <CardMedia
+                    component={isPDF(file) ? "object" : "div"}
+                    data={isPDF(file) ? file.arquivo : undefined}
+                    src={isPDF(file) ? undefined : file.arquivo}
+                    type={isPDF(file) ? "application/pdf" : undefined}
+                    onClick={() => openFile(file)}
                     sx={{
-                      cursor: "pointer",
-                      color: "blue",
-                      textDecoration: "underline",
-                      flex: 1,
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
+                      height: 300,
+                      width: "100%",
+                      background: isImage(file)
+                        ? `url('${file.arquivo}')`
+                        : "none",
+                      backgroundPosition: "center",
+                      backgroundSize: "cover",
+                      backgroundRepeat: "no-repeat",
+                    }}
+                  />
+                  <CardContent
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      padding: 1,
                     }}
                   >
-                    {file.nome_arquivo}
-                  </Typography>
-                  <IconButton
-                    onClick={() => toggleDeletingPatrimonyFile(true, file)}
-                    sx={{ color: "#F7941E" }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </CardContent>
-              </Card>
-            ))}
+                    <Typography
+                      onClick={() => handleOpenLink(file.arquivo)}
+                      fontSize="small"
+                      sx={{
+                        cursor: "pointer",
+                        color: "blue",
+                        textDecoration: "underline",
+                        flex: 1,
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {file.nome_arquivo}
+                    </Typography>
+                    <IconButton
+                      onClick={() => toggleDeletingPatrimonyFile(true, file)}
+                      sx={{ color: "#F7941E" }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </CardContent>
+                </Card>
+              ))}
+            </Stack>
           </ModalContent>
         </Fade>
       </Modal>
