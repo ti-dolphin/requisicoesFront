@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import AddIcon from "@mui/icons-material/Add";
 import { Box, Button, createTheme, IconButton, Modal, ThemeProvider, Tooltip, Typography } from '@mui/material';
 import { Opportunity } from '../types';
-import { DataGrid, GridCallbackDetails, GridColDef, GridColumnMenu, GridColumnMenuColumnsItem, GridColumnMenuProps, GridFilterPanel, GridFooterContainer, GridPagination, GridRowSelectionModel, GridSelectedRowCount } from '@mui/x-data-grid';
+import { DataGrid, GridCallbackDetails, GridColDef, GridColumnMenu, GridColumnMenuProps, GridFilterPanel, GridFooterContainer, GridPagination, GridRowSelectionModel, GridSelectedRowCount } from '@mui/x-data-grid';
 import { ptBR } from "@mui/x-data-grid/locales";
 import { ptBR as pickersPtBr } from "@mui/x-date-pickers/locales";
 import { ptBR as corePtBr } from "@mui/material/locale";

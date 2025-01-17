@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Follower, Opportunity } from "../types";
-import { DataGrid, GridCallbackDetails, GridColDef, GridRowSelectionModel, GridToolbarFilterButton } from "@mui/x-data-grid";
+import { DataGrid, GridCallbackDetails, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import { Box, createTheme, IconButton, Stack, ThemeProvider } from "@mui/material";
 import { ptBR } from "@mui/x-data-grid/locales";
 import { ptBR as pickersPtBr } from "@mui/x-date-pickers/locales";
