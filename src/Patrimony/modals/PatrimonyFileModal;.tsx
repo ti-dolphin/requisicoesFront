@@ -208,7 +208,7 @@ export default function PatrimonyFileModal() {
                     flexDirection: 'column',
                     minHeight: 350,
                     borderRadius: "10px",
-                    boxShadow: 2
+                    boxShadow: 2 
                   }}
                 >
                   <CardMedia

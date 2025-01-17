@@ -452,7 +452,7 @@ export default function MovementsTable() {
         handleSearch={handleSearch}
         setSelectedItems={setSelectedItems}
       />
-      {filteredRows && filteredRows.length && (
+      {filteredRows  && (
         <TableVirtuoso
           data={filteredRows}
           components={VirtuosoTableComponents}

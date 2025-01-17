@@ -38,7 +38,7 @@ const modules = [
       "https://firebasestorage.googleapis.com/v0/b/dolphin-8f800.appspot.com/o/Wavy_Bus-17_Single-07.jpg?alt=media&token=0414fe18-af22-4d9b-a669-90153972fa9b",
       name: 'CRM',
       Info: 'Gerenciamneto e acompanhamento de Projetos',
-      path: '/crm'
+      path: '/'
   },
 ];
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
