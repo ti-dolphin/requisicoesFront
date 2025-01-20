@@ -763,6 +763,9 @@ const CreateOpportunityModal = () => {
         <Typography fontFamily="Roboto" fontSize="large">
           Proposta
         </Typography>
+        <Typography>
+          {currentOppIdSelected > 0? `${opportunity.nome}` : ""}
+        </Typography>
         <Stack
           direction="column"
           width="100%"

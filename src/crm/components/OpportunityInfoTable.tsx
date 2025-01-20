@@ -141,7 +141,7 @@ export default function OpportunityInfoTable() {
           flexWrap: "wrap",
           overFlowY: "scroll",
           zIndex: 20,
-          backgroundColor: "white",
+          backgroundColor: "#2B3990",
           borderRadius: 2,
           height: "30px",
         }}
@@ -156,14 +156,14 @@ export default function OpportunityInfoTable() {
             gap: 4,
           }}
         >
-          <Typography fontSize="small" color="blue">
+          <Typography fontSize="small" color="white">
             <span className="font-semibold tracking-wide">
               {" "}
               Nº de Registros
             </span>{" "}
             {rows.length}
           </Typography>
-          <Typography fontSize="small" color="blue">
+          <Typography fontSize="small" color="white">
             <span className="font-semibold tracking-wide">
               Faturamneto Dolphin:
             </span>{" "}
@@ -180,7 +180,7 @@ export default function OpportunityInfoTable() {
               }, 0)
             )}
           </Typography>
-          <Typography fontSize="small" color="blue">
+          <Typography fontSize="small" color="white">
             <span className="font-semibold tracking-wide">Valor Total:</span>{" "}
             {new Intl.NumberFormat("pt-BR", {
               style: "currency",
@@ -206,6 +206,7 @@ export default function OpportunityInfoTable() {
             overflowY: "hidden",
             overflowX: "hidden",
             height: "30px",
+            color: 'white'
           }}
         />
       </GridFooterContainer>
@@ -258,6 +259,7 @@ export default function OpportunityInfoTable() {
               cursor: "pointer",
               ":nth-child(even)": {
                 backgroundColor: "#e7eaf6",
+       
               },
             },
             "& .MuiDataGrid-cell": {
