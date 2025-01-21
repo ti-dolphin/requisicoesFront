@@ -201,13 +201,13 @@ const OpportunityTableSearchBar = ({
         justifyContent: "center",
         zIndex: 10,
         height: "fit-content",
-        gap: 1,
+        gap: 0.4,
         padding: 0,
         overFlow: "scroll",
         boxShadow: "none",
       }}
     >
-      <Stack direction="row" alignItems="center">
+      <Stack direction="row" alignItems="center"  padding={0}>
         <IconButton onClick={() => navigate("/home")}>
           <ArrowLeftIcon sx={{ color: "white" }} />
         </IconButton>
@@ -233,7 +233,7 @@ const OpportunityTableSearchBar = ({
           },
           overflowX: "auto", // Scroll horizontal automático
           overflowY: "hidden", // Remove o scroll vertical
-          padding: 0.5, // Remove possíveis espaçamentos extras
+          padding: 0, // Remove possíveis espaçamentos extras
         }}
       >
         <Search
@@ -317,7 +317,7 @@ const OpportunityTableSearchBar = ({
                   color: "white",
                   "& .Mui-checked": {
                     color: "white",
-                  },
+                  }
                 }}
               />
             }
