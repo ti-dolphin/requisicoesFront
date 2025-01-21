@@ -25,6 +25,7 @@ const OpportunityFiles = ({
   handleDeleteFile,
   handleChangeFiles,
 }: OpportunityFilesProps) => {
+  
   const [selectedFile, setSelectedFile] = useState<OpportunityFile>();
   const handleCloseFileViewer =  () =>  {
     setSelectedFile(undefined);
@@ -146,54 +147,6 @@ const OpportunityFiles = ({
         isPDF={isPDF}
         fileName={selectedFile?.nome_arquivo || ""}
       />
-
-      {/* Modal */}
-      {/* <Modal
-        open={!!selectedImage}
-        onClose={() => setSelectedImage(null)} // Close modal
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Box
-          sx={{
-            width: "80%",
-            height: "90%",
-            objectFit: "contain",
-            background: "#fff",
-            position: "relative",
-            borderRadius: "8px",
-            boxShadow: "0px 2px 12px rgba(0, 0, 0, 0.3)",
-          }}
-        >
-          <Box
-            component="img"
-            src={selectedImage || ""}
-            alt="Selected"
-            sx={{
-              width: "100%",
-              height: "100%",
-              objectFit: "contain",
-              background: "#fff",
-              borderRadius: "8px",
-              boxShadow: "0px 2px 12px rgba(0, 0, 0, 0.3)",
-            }}
-          >
-          </Box>
-          <IconButton
-            sx={{
-              position: "absolute",
-              right: 1,
-              top: 1,
-            }}
-            onClick={() => setSelectedImage(null)}
-          >
-            <CloseIcon sx={{ color: "red" }} />
-          </IconButton>{" "}
-        </Box>
-      </Modal> */}
     </Box>
   );
 };
