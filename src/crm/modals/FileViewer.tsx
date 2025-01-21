@@ -43,9 +43,8 @@ const FileViewer: React.FC<FileViewerProps> = ({
         {fileUrl && isPDF(fileName) ? (
           <Box
             width="100%"
-            component="object"
-            data={fileUrl}
-            type="application/pdf"
+            component="iframe"
+            src={fileUrl}
             sx={{
               height: "100%",
               width: "100%",

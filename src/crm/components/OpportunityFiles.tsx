@@ -112,9 +112,8 @@ const OpportunityFiles = ({
                   <Box
                     height="150px"
                     width="100%"
-                    component="object"
-                    data={file.arquivo}
-                    type="application/pdf"
+                    component="iframe"
+                    src={file.arquivo}
                     sx={{
                       height: "100%",
                       width: "100%",

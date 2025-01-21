@@ -18,7 +18,6 @@ export const  formatDate = (value : Date | string) =>  {
  export const isPDF = (url: string) => {
    console.log({ url });
    if (/\.pdf$/i.test(url)) {
-     console.log("pdf");
      return true;
    }
    return false;
