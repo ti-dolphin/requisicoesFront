@@ -230,6 +230,7 @@ const AddFollowersModal = ({
                 }}
                 autosizeOnMount
                 slots={{
+                  
                   columnMenu: (props: GridColumnMenuProps) => (
                     <Box sx={{
                       "& .MuiMenuItem-root": { 

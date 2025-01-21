@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Follower, Opportunity } from "../types";
-import { DataGrid, GridCallbackDetails, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
+import { DataGrid, GridCallbackDetails, GridColDef, GridFilterPanel, GridRowSelectionModel } from "@mui/x-data-grid";
 import { Box, createTheme, IconButton, Stack, ThemeProvider } from "@mui/material";
 import { ptBR } from "@mui/x-data-grid/locales";
 import { ptBR as pickersPtBr } from "@mui/x-date-pickers/locales";
@@ -8,6 +8,7 @@ import { ptBR as corePtBr } from "@mui/material/locale";
 import AddFollowersModal from "../modals/AddFollowersModal";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useState } from "react";
+import { GridFilterPanelProps } from "@mui/x-data-grid/components/panel/filterPanel/GridFilterPanel";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const followersDummyData: Follower[] = [];
@@ -77,21 +78,34 @@ export default function FollowersTable({
       <ThemeProvider theme={theme}>
         <DataGrid
           disableColumnSelector
+          slots={{
+            filterPanel: (props: GridFilterPanelProps) => (
+              <GridFilterPanel
+                {...props}
+                disableAddFilterButton
+                sx={{
+                  "& .MuiDataGrid-filterFormColumnInput": {
+                    display: "none",
+                  },
+                  "& .MuiDataGrid-filterFormOperatorInput": {
+                    display: "none",
+                  },
+                }}
+              ></GridFilterPanel>
+            ),
+          }}
           sx={{
-     
             "& .MuiDataGrid-columnHeaders": {
               backgroundColor: "blue",
             },
             "& .MuiDataGrid-row": {
               cursor: "pointer",
             },
-            
           }}
           paginationModel={{
             pageSize: 100,
             page: 0,
           }}
-          
           autosizeOnMount
           pageSizeOptions={[]}
           getRowId={(row: Follower) => row.codpessoa}

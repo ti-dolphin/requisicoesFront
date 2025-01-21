@@ -733,11 +733,11 @@ const CreateOpportunityModal = () => {
           left: "50%",
           transform: "translate(-50%, -50%)",
           width: {
-            xs: 250,
-            sm: 270,
-            md: 500,
-            lg: 600,
-            xl: 800,
+            //responsive width
+            xs: "100%",
+            md: "70%",
+            lg: "50%",
+            xl: "40%",
           },
           maxHeight: "90%",
           bgcolor: "background.paper",

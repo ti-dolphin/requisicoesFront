@@ -31,6 +31,7 @@ import {
 import { PatrimonyFileContext } from "../context/patrimonyFileContext";
 import DeletePatrimonyFileModal from "./DeletePatrimonyFileModal";
 import { userContext } from "../../Requisitions/context/userContext";
+import { isPDF } from "../../generalUtilities";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -102,10 +103,7 @@ export default function PatrimonyFileModal() {
     return /\.(jpg|jpeg|png|gif)$/i.test(file.arquivo);
   };
 
-  const isPDF = (file: PatrimonyFile) => {
-    return /\.pdf$/i.test(file.arquivo);
-  };
-
+ 
   const openFile = (file: PatrimonyFile) => {
     setFileSelected(file.arquivo);
   };
@@ -212,10 +210,10 @@ export default function PatrimonyFileModal() {
                   }}
                 >
                   <CardMedia
-                    component={isPDF(file) ? "object" : "div"}
-                    data={isPDF(file) ? file.arquivo : undefined}
-                    src={isPDF(file) ? undefined : file.arquivo}
-                    type={isPDF(file) ? "application/pdf" : undefined}
+                    component={isPDF(file.arquivo) ? "object" : "div"}
+                    data={isPDF(file.arquivo) ? file.arquivo : undefined}
+                    src={isPDF(file.arquivo) ? undefined : file.arquivo}
+                    type={isPDF(file.arquivo) ? "application/pdf" : undefined}
                     onClick={() => openFile(file)}
                     sx={{
                       height: 300,

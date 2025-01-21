@@ -33,7 +33,14 @@ const AdicionalChoice = ({
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: 400,
+          width: {
+            //responsive width
+            xs: "90%",
+            sm: "65%",
+            md: "50%",
+            lg: "40%",
+            xl: "30%"
+          },
           bgcolor: "background.paper",
           boxShadow: 24,
           height: "20%",

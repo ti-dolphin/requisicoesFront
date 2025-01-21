@@ -202,7 +202,7 @@ const OpportunityTableSearchBar = ({
         zIndex: 10,
         height: "fit-content",
         gap: 0.4,
-        padding: 0,
+        padding: 1,
         overFlow: "scroll",
         boxShadow: "none",
       }}

@@ -10,7 +10,11 @@ import {
   IconButton,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import CloseIcon from "@mui/icons-material/Close";
+import { isPDF } from "../../generalUtilities";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Worker, Viewer } from "@react-pdf-viewer/core";
+import "@react-pdf-viewer/core/lib/styles/index.css";
+import FileViewer from "../modals/FileViewer";
 
 type OpportunityFilesProps = {
   opportunity: Opportunity;
@@ -23,10 +27,19 @@ const OpportunityFiles = ({
   handleDeleteFile,
   handleChangeFiles,
 }: OpportunityFilesProps) => {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null); // For modal
-
+  const [selectedFile, setSelectedFile] = useState<OpportunityFile>();
+  const handleCloseFileViewer =  () =>  {
+    setSelectedFile(undefined);
+  };
+  const handleFileClick = (file: OpportunityFile) => {
+    if(isPDF(file.nome_arquivo)){
+      window.open(file.arquivo);
+      return;
+    }
+    setSelectedFile(file);
+  };
   return (
-    <Box sx={{width: '100%'}}>
+    <Box sx={{ width: "100%" }}>
       {
         <Button
           component="span"
@@ -40,7 +53,7 @@ const OpportunityFiles = ({
             <input
               type="file"
               id="fileUpload"
-              accept="image/*"
+              accept="image/*, application/pdf"
               style={{ display: "none" }}
               onChange={(e) => handleChangeFiles(e)}
             />
@@ -58,48 +71,89 @@ const OpportunityFiles = ({
         gap={2}
         mt={2}
       >
-        {(
-          opportunity.files &&
+        {opportunity.files &&
           opportunity.files.map((file, index) => (
             <Box
               key={index}
-              onClick={() => handleDeleteFile(file)}
               position="relative"
+              className="drop-shadow-md"
+              sx={{
+                height: "150px",
+                objectFit: "cover",
+                cursor: "pointer",
+                padding: 0.5,
+              }}
             >
+              {/* Botão de excluir */}
               <IconButton
+                className="drop-shadow-md"
                 sx={{
+                  backgroundColor: "#2B3990",
                   position: "absolute",
-                  right: 1,
-                  top: 0.5,
+                  right: 1.5,
+                  top: 2,
+                  zIndex: 20,
                 }}
+                onClick={() => handleDeleteFile(file)}
               >
-                <CloseIcon
-                  sx={{ color: "red" }}
-                  onClick={() => handleDeleteFile(file)}
-                />
+                <DeleteIcon sx={{ color: "white" }} />
               </IconButton>
-              <Box
-                key={file.id_anexo_os}
-                component="img"
-                src={file.arquivo}
-                alt={file.nome_arquivo}
-                sx={{
-                  width: "100%",
-                  height: "150px",
-                  objectFit: "cover",
-                  cursor: "pointer",
-                  borderRadius: "8px",
-                  boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.2)",
-                }}
-                onClick={() => setSelectedImage(file.arquivo)} // Open modal
-              />
+
+              {/* Conteúdo do arquivo */}
+              {isPDF(file.nome_arquivo) ? (
+                <Box
+                  component="a"
+                  href={file.arquivo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  sx={{
+                    display: "block",
+                    height: "150px",
+                    width: "100%",
+                    textDecoration: "none",
+                  }}
+                >
+                  <Box
+                    height="150px"
+                    width="100%"
+                    component="object"
+                    data={file.arquivo}
+                    type="application/pdf"
+                    sx={{
+                      height: "100%",
+                      width: "100%",
+                      objectFit: "fill", // Força a ocupar a largura total
+                      pointerEvents: "none", // Desativa interatividade no preview
+                    }}
+                  />
+                </Box>
+              ) : (
+                <img
+                  onClick={() => handleFileClick(file)}
+                  src={file.arquivo}
+                  alt={file.nome_arquivo}
+                  style={{
+                    cursor: "pointer",
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    borderRadius: "5px",
+                  }}
+                />
+              )}
             </Box>
-          ))
-        )}
+          ))}
       </Box>
+      <FileViewer
+        fileViewerOpen={selectedFile !== undefined}
+        fileUrl={selectedFile?.arquivo || ""}
+        handleCloseFileViewer={handleCloseFileViewer}
+        isPDF={isPDF}
+        fileName={selectedFile?.nome_arquivo || ""}
+      />
 
       {/* Modal */}
-      <Modal
+      {/* <Modal
         open={!!selectedImage}
         onClose={() => setSelectedImage(null)} // Close modal
         sx={{
@@ -131,7 +185,8 @@ const OpportunityFiles = ({
               borderRadius: "8px",
               boxShadow: "0px 2px 12px rgba(0, 0, 0, 0.3)",
             }}
-          ></Box>
+          >
+          </Box>
           <IconButton
             sx={{
               position: "absolute",
@@ -143,7 +198,7 @@ const OpportunityFiles = ({
             <CloseIcon sx={{ color: "red" }} />
           </IconButton>{" "}
         </Box>
-      </Modal>
+      </Modal> */}
     </Box>
   );
 };
