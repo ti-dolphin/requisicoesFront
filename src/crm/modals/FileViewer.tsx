@@ -31,6 +31,7 @@ const FileViewer: React.FC<FileViewerProps> = ({
         sx={{
           width: "90%",
           height: "90%",
+          padding: 2,
           background: "#fff",
           position: "relative",
           borderRadius: "8px",
@@ -41,7 +42,6 @@ const FileViewer: React.FC<FileViewerProps> = ({
         {/* Render image or PDF */}
         {fileUrl && isPDF(fileName) ? (
           <Box
-            height="150px"
             width="100%"
             component="object"
             data={fileUrl}
@@ -50,7 +50,6 @@ const FileViewer: React.FC<FileViewerProps> = ({
               height: "100%",
               width: "100%",
               objectFit: "fill", // Força a ocupar a largura total
-              pointerEvents: "none", // Desativa interatividade no preview
             }}
           />
         ) : (
@@ -70,9 +69,13 @@ const FileViewer: React.FC<FileViewerProps> = ({
         {/* Close Button */}
         <IconButton
           sx={{
+            backgroundColor: "white",
             position: "absolute",
-            right: 8,
-            top: 8,
+            right: 0,
+            top: 0,
+            "&:hover": {
+              backgroundColor: "white",
+            },
           }}
           onClick={handleCloseFileViewer}
         >

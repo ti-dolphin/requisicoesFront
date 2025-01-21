@@ -88,24 +88,22 @@ const OpportunityFiles = ({
               <IconButton
                 className="drop-shadow-md"
                 sx={{
-                  backgroundColor: "#2B3990",
+                  backgroundColor: "white",
                   position: "absolute",
-                  right: 1.5,
-                  top: 2,
+                  right: -1,
+                  top: -2,
                   zIndex: 20,
+                  "&:hover": { backgroundColor: "white" },
                 }}
                 onClick={() => handleDeleteFile(file)}
               >
-                <DeleteIcon sx={{ color: "white" }} />
+                <DeleteIcon sx={{ color: "#2B3990" }} />
               </IconButton>
 
               {/* Conteúdo do arquivo */}
               {isPDF(file.nome_arquivo) ? (
                 <Box
-                  component="a"
-                  href={file.arquivo}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  onClick={() => setSelectedFile(file)}
                   sx={{
                     display: "block",
                     height: "150px",
