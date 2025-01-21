@@ -6,13 +6,11 @@ import {
   Button,
   Stack,
   Typography,
-  Modal,
   IconButton,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { isPDF } from "../../generalUtilities";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Worker, Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import FileViewer from "../modals/FileViewer";
 
