@@ -1,3 +1,5 @@
+import { AutocompleteChangeDetails, AutocompleteChangeReason } from "@mui/material";
+
 export interface OpportunityInfo {
   numeroProjeto: number; // ID_PROJETO
   numeroAdicional: number; // ID_ADICIONAL
@@ -67,6 +69,70 @@ export interface Opportunity {
   comentarios: Comentario[] | [];
   files?: OpportunityFile [];
   seguidores: Follower[]
+}
+export interface OpportunityGuideProps {
+  guide: Guide;
+  renderAutoCompleteValue: (field: OpportunityColumn) => OpportunityOptionField;
+  handleChangeAutoComplete: (
+    _event: React.SyntheticEvent<Element, Event>,
+    value: OpportunityOptionField | null,
+    _reason: AutocompleteChangeReason,
+    _details?:
+      | AutocompleteChangeDetails<{
+          label: string;
+          id: number;
+          object: string;
+        }>
+      | undefined
+  ) => void;
+  renderOptions: (column: {
+    label: string;
+    dataKey: string;
+    autoComplete?: boolean;
+  }) => OpportunityOptionField[] | undefined;
+  adicional: boolean;
+  currentOppIdSelected: number;
+  opportunity: Opportunity;
+  handleChangeTextField: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    column: OpportunityColumn
+  ) => void;
+  isDateField: (dataKey: string) => boolean;
+  currentCommentValue: string;
+  handleChangeComentarios: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    codigoComentario?: number
+  ) => void;
+  editingComment: Comentario | undefined;
+  setEditingComment: React.Dispatch<
+    React.SetStateAction<Comentario | undefined>
+  >;
+  setCurrentOpportunity: React.Dispatch<React.SetStateAction<Opportunity>>;
+  handleSaveOpportunity: () => Promise<void>;
+  handleChangeFiles: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
+  handleDeleteFile: (file: OpportunityFile) => void;
+}
+
+export interface GuideSelectorProps {
+  guides: Guide[];
+  currentSlideIndex: number;
+  handleChangeGuide: (index: number) => void;
+}
+
+export interface Guide{
+    name: string;
+    fields?: ({
+        label: string;
+        dataKey: string;
+        autoComplete: boolean;
+        type: string;
+    } | {
+        label: string;
+        dataKey: string;
+        type: string;
+        autoComplete?: undefined;
+    })[];
+
 }
 
 export interface Comentario{ 

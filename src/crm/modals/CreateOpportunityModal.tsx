@@ -37,6 +37,7 @@ import {
 import {
   Client,
   Comentario,
+  Guide,
   Opportunity,
   OpportunityColumn,
   OpportunityFile,
@@ -51,10 +52,11 @@ import OpportunityFiles from "../components/OpportunityFiles";
 import AdicionalChoice from "./AdicionalChoice";
 import ProjectChoiceModal from "./ProjectChoiceModal";
 import FollowersTable from "../components/FollowersTable";
-
+import OpportunityGuide from "../components/OpportunityGuide";
+import GuideSelector from "../components/GuideSelector";
 
 const CreateOpportunityModal = () => {
-  const guides = [
+  const guides: Guide[] = [
     {
       name: "Cadastro",
       fields: [
@@ -241,7 +243,7 @@ const CreateOpportunityModal = () => {
     emailVendaEnviado: false, // Valor padrão (campo com valor padrão '0')
     numeroAdicional: 0, // Valor padrão com
     comentarios: [],
-    seguidores: []
+    seguidores: [],
   });
   const sliderRef = useRef<Slider | null>(null);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
@@ -358,7 +360,7 @@ const CreateOpportunityModal = () => {
         ? new Date(data.dataInteracao).toISOString().split("T")[0]
         : null,
     };
-    console.log({formattedOpp})
+    console.log({ formattedOpp });
     setCurrentOpportunity(formattedOpp);
   }, [currentOppIdSelected, setCurrentOpportunity]);
 
@@ -398,23 +400,23 @@ const CreateOpportunityModal = () => {
     column: OpportunityColumn
   ) => {
     const { value } = e.target;
-    if(column.dataKey === "valorFatDireto"){ 
-      console.log('valorFatDireto')
+    if (column.dataKey === "valorFatDireto") {
+      console.log("valorFatDireto");
       const totalValue = Number(opportunity.valorFatDolphin) + Number(value);
-      console.log({totalValue})
-      setCurrentOpportunity({ 
+      console.log({ totalValue });
+      setCurrentOpportunity({
         ...opportunity,
         valorFatDireto: Number(value),
         valorTotal: totalValue,
       });
       return;
     }
-    if(column.dataKey === "valorFatDolphin"){ 
-      console.log('valorFatDolphin')
+    if (column.dataKey === "valorFatDolphin") {
+      console.log("valorFatDolphin");
       const totalValue = Number(opportunity.valorFatDireto) + Number(value);
       console.log({ totalValue });
-      setCurrentOpportunity({ 
-       ...opportunity,
+      setCurrentOpportunity({
+        ...opportunity,
         valorFatDolphin: Number(value),
         valorTotal: totalValue,
       });
@@ -424,7 +426,6 @@ const CreateOpportunityModal = () => {
       ...opportunity,
       [column.dataKey]: isNumeric(value) ? Number(value) : value,
     });
-    
   };
 
   const isDateField = (dataKey: string): boolean => dataKey.startsWith("data");
@@ -502,11 +503,9 @@ const CreateOpportunityModal = () => {
       emailVendaEnviado: false, // Valor padrão (campo com valor padrão '0')
       numeroAdicional: 0, // Valor padrão com
       comentarios: [],
-      seguidores: []
+      seguidores: [],
     });
   };
-
-
 
   const handleChangeGuide = (index: number) => {
     sliderRef.current?.slickGoTo(index);
@@ -638,13 +637,16 @@ const CreateOpportunityModal = () => {
     }
     const response = await createOpportunity({
       ...opportunity, //adding the user to followers
-      seguidores: [...opportunity.seguidores ,{
-        id_seguidor_projeto : 0,
-        id_projeto : opportunity.idProjeto || 0,
-        codpessoa : user?.CODPESSOA || 0,
-        ativo : 1,
-        nome: ''
-      }]
+      seguidores: [
+        ...opportunity.seguidores,
+        {
+          id_seguidor_projeto: 0,
+          id_projeto: opportunity.idProjeto || 0,
+          codpessoa: user?.CODPESSOA || 0,
+          ativo: 1,
+          nome: "",
+        },
+      ],
     });
     if (response?.status === 200) {
       setCreatingOpportunity(false);
@@ -653,7 +655,7 @@ const CreateOpportunityModal = () => {
       await uploadFiles(response.data.codOs);
       setRefreshOpportunityFields(!refreshOpportunityFields);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     opportunity,
     refreshOpportunityFields,
@@ -699,13 +701,13 @@ const CreateOpportunityModal = () => {
     }
   };
 
-  const handlesaveProgressAction = async ( ) => { 
-      await handleSaveOpportunity();
-      handleClose();
-  }
+  const handlesaveProgressAction = async () => {
+    await handleSaveOpportunity();
+    handleClose();
+  };
 
   useEffect(() => {
-    console.log('useeffect CreatingOpportunityModal')
+    console.log("useeffect CreatingOpportunityModal");
     fetchProjectsOps();
     fetchStatusOps();
     fetchSalerOps();
@@ -717,7 +719,16 @@ const CreateOpportunityModal = () => {
       setIsAdicionalChoiceOpen(false); //
       fetchOppData();
     }
-  }, [currentOppIdSelected, refreshOpportunityFields, creatingOpportunity, fetchProjectsOps, fetchStatusOps, fetchSalerOps, fetchClientOps, fetchOppData]);
+  }, [
+    currentOppIdSelected,
+    refreshOpportunityFields,
+    creatingOpportunity,
+    fetchProjectsOps,
+    fetchStatusOps,
+    fetchSalerOps,
+    fetchClientOps,
+    fetchOppData,
+  ]);
 
   return (
     <Modal
@@ -764,7 +775,7 @@ const CreateOpportunityModal = () => {
           Proposta
         </Typography>
         <Typography>
-          {currentOppIdSelected > 0? `${opportunity.nome}` : ""}
+          {currentOppIdSelected > 0 ? `${opportunity.nome}` : ""}
         </Typography>
         <Stack
           direction="column"
@@ -773,101 +784,33 @@ const CreateOpportunityModal = () => {
           padding={1}
           overflow="scroll"
         >
-          <Stack
-            direction="row"
-            gap={1}
-            sx={{
-              display: "flex",
-              width: "100%",
-              justifyContent: "space-around",
-              alignItems: "center",
-
-              overflowX: "scroll",
-              minHeight: "4em",
-              padding: 1,
-              "&::-webkit-scrollbar": {
-                width: "4px", // Width of the scrollbar
-                height: "2px",
-              },
-              "&::-webkit-scrollbar-thumb": {
-                height: "2px",
-                backgroundColor: "#888", // Color of the scrollbar thumb
-                borderRadius: "4px", // Rounded edges for the thumb
-              },
-            }}
-          >
-            {guides.map((guide, index) => (
-              <Chip
-                key={index}
-                onClick={() => handleChangeGuide(index)}
-                sx={{
-                  cursor: "pointer",
-                }}
-                label={guide.name}
-                variant={currentSlideIndex === index ? "filled" : "outlined"}
-              />
-            ))}
-          </Stack>
+          <GuideSelector
+            guides={guides} // Passa os guias
+            currentSlideIndex={currentSlideIndex} // Índice do guia selecionado
+            handleChangeGuide={handleChangeGuide} // Função para lidar com a troca de guia
+          />
           <Slider ref={sliderRef} {...settings}>
             {guides.map((guide) => (
-              <Box
-                key={guide.name}
-                sx={{
-                  width: "100%", // Garante que cada slide ocupe largura total
-                  display: "flex !important",
-                  flexDirection: 'column',
-                  justifyContent: "center",
-                  alignItems: "center",
-                  padding: 0.5
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "flex-start",
-                    flexWrap: "wrap",
-                    gap: 2,
-                    width: "100%",
-                    minWidth: 0,
-                  }}
-                >
-                  {guide.fields?.map((field) => (
-                    <RenderOpportunityFields
-                      key={field.dataKey}
-                      field={field}
-                      renderAutoCompleteValue={renderAutoCompleteValue}
-                      handleChangeAutoComplete={handleChangeAutoComplete}
-                      renderOptions={renderOptions}
-                      adicional={adicional}
-                      currentOppIdSelected={currentOppIdSelected}
-                      opportunity={opportunity}
-                      handleChangeTextField={handleChangeTextField}
-                      isDateField={isDateField}
-                      currentCommentValue={currentCommentValue}
-                      handleChangeComentarios={handleChangeComentarios}
-                      editingComment={editingComment}
-                      setEditingComment={setEditingComment}
-                    />
-                  ))}
-                </Box>
-                {guide.name === "Seguidores" && (
-             
-                    <FollowersTable
-                      setCurrentOpportunity={setCurrentOpportunity}
-                      opportunity={opportunity}
-                      handleSaveOpportunity={handleSaveOpportunity}
-                    />
-                  
-                )}
-                {guide.name === "Escopo" && (
-                  <OpportunityFiles
-                    handleChangeFiles={handleChangeFiles}
-                    handleDeleteFile={handleDeleteFile}
-                    opportunity={opportunity}
-                  />
-                )}
-              </Box>
+              <OpportunityGuide
+                key={guide.name} // É importante usar um identificador único, como o nome ou ID do guia
+                guide={guide} // Passa o objeto `guide` diretamente
+                renderAutoCompleteValue={renderAutoCompleteValue} // Função para renderizar valores de autocomplete
+                handleChangeAutoComplete={handleChangeAutoComplete} // Função para lidar com mudanças no autocomplete
+                renderOptions={renderOptions} // Função para renderizar opções de autocomplete
+                adicional={adicional} // Informação adicional (personalizável)
+                currentOppIdSelected={currentOppIdSelected} // ID da oportunidade selecionada
+                opportunity={opportunity} // Objeto da oportunidade atual
+                handleChangeTextField={handleChangeTextField} // Função para lidar com campos de texto
+                isDateField={isDateField} // Verificação se o campo é uma data
+                currentCommentValue={currentCommentValue} // Valor do comentário atual
+                handleChangeComentarios={handleChangeComentarios} // Função para mudanças nos comentários
+                editingComment={editingComment} // Indica se um comentário está sendo editado
+                setEditingComment={setEditingComment} // Define o estado de edição de comentários
+                setCurrentOpportunity={setCurrentOpportunity} // Define a oportunidade atual
+                handleSaveOpportunity={handleSaveOpportunity} // Salva a oportunidade
+                handleChangeFiles={handleChangeFiles} // Função para manipulação de arquivos
+                handleDeleteFile={handleDeleteFile} // Função para deletar arquivos
+              />
             ))}
           </Slider>
         </Stack>
