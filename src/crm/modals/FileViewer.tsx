@@ -39,7 +39,6 @@ const FileViewer: React.FC<FileViewerProps> = ({
           overflow: "hidden",
         }}
       >
-        {/* Render image or PDF */}
         {fileUrl && isPDF(fileName) ? (
           <Box
             width="100%"

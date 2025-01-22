@@ -1,4 +1,5 @@
 import { AutocompleteChangeDetails, AutocompleteChangeReason } from "@mui/material";
+import { ChecklistItemFile } from "../Patrimony/types";
 
 export interface OpportunityInfo {
   numeroProjeto: number; // ID_PROJETO
@@ -117,6 +118,31 @@ export interface GuideSelectorProps {
   guides: Guide[];
   currentSlideIndex: number;
   handleChangeGuide: (index: number) => void;
+}
+
+export interface CardChecklistItemProps {
+  key: number;
+  checklistItem: ChecklistItemFile;
+  onOpenItemImage: (checklistItem: ChecklistItemFile) => void;
+  onChangeProblem: (checklistItemReceived: ChecklistItemFile) => void;
+  onChangeOkay: (checklistItemReceived: ChecklistItemFile) => void;
+  onChangeObservation: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    checklistItemReceived: ChecklistItemFile
+  ) => void;
+  renderItemImage: (checklistItem: ChecklistItemFile) => string;
+  renderErrorColor: (checklistItem: ChecklistItemFile) => "gray" | "red";
+  renderOkayColor: (checklistItem: ChecklistItemFile) => "gray" | "green";
+  renderObservation: (checklistItem: ChecklistItemFile) => string;
+  isMovimentationResponsable: () => boolean;
+  handleFileChange: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    checklistItem: ChecklistItemFile
+  ) => Promise<void>;
+  toBeDone: () => boolean;
+  isIOS: boolean;
+  shouldShowFinalizeButton: boolean;
+  handleSendChecklistItems: () => Promise<void>;
 }
 
 export interface Guide{

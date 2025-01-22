@@ -17,9 +17,7 @@ import {
 } from "@mui/material";
 import { checklistContext } from "../context/checklistContext";
 import CloseIcon from "@mui/icons-material/Close";
-import ErrorIcon from "@mui/icons-material/Error";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+
 import {
   getChecklistItems,
   sendChecklist,
@@ -37,14 +35,13 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { CircularProgress } from "@mui/material";
-import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
-import CircleIcon from '@mui/icons-material/Circle';
+import CardChecklistItem from "../components/CardChecklistItem";
+import SliderPagination from "../components/SliderPagination";
+import FileViewer from "../../crm/modals/FileViewer";
+import { isPDF } from "../../generalUtilities";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
-
-
 
 const ChecklistItemsModal = () => {
   const {
@@ -108,6 +105,7 @@ const ChecklistItemsModal = () => {
         console.log("dont save it because there's no item");
       }
     },
+
      afterChange: (current: number) => setCurrentSlideIndex(current),
   };
 
@@ -434,6 +432,10 @@ const handleReproveChecklist = async () => {
     }
     alert("Não há arquivo!");
   };
+
+  const shouldShowFinalizeButton = toBeDone() && isMovimentationResponsable() && (lastItem() || !isMobile);
+  const shouldShowApprovalButtons = toBeAproved() && (lastItem() || !isMobile);
+
   useEffect(() => {
      if (ChecklistItems?.length > 0) {
      const timer = setTimeout(() => {
@@ -528,7 +530,6 @@ const handleReproveChecklist = async () => {
           sx={{
             display: "flex",
             flexDirection: "column",
-
             alignItems: {
               md: "center",
             },
@@ -536,274 +537,75 @@ const handleReproveChecklist = async () => {
             gap: "2rem",
           }}
         >
-          {ChecklistItems && !isMobile ? ( //desktop
-            <Stack
-              direction="row"
-              justifyContent="center"
-              flexWrap="wrap"
-              width="90%"
-              gap={1}
+          {isLoadingItems ? (
+            <CircularProgress sx={{ margin: "auto" }} />
+          ) : ChecklistItems && !isMobile ? ( // Desktop
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: `repeat(${Math.min(
+                  ChecklistItems.length,
+                  4
+                )}, 1fr)`, // Definindo o máximo de 4 colunas
+                justifyContent: "center",
+                gap: 2, // Espaçamento entre os itens do grid
+              }}
             >
-              {isLoadingItems ? (
-                <CircularProgress />
-              ) : (
-                ChecklistItems.map((checklistItem) => (
-                  <Card
-                    key={checklistItem.id_item_checklist_movimentacao}
-                    sx={{
-                      width: {
-                        xs: 240,
-                        md: 300,
-                      },
-                      minHeight: 320,
-                      borderRadius: "10px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <CardMedia
-                      onClick={() => handleOpenItemImage(checklistItem)}
-                      sx={{
-                        height: 200,
-                      }}
-                      image={renderItemImage(checklistItem)}
-                      title="checklist image"
-                    ></CardMedia>
-                    <CardContent>
-                      <Stack gap={1}>
-                        <Typography fontSize="small">
-                          {checklistItem.nome_item_checklist}
-                        </Typography>
-                        <Button
-                          onClick={() => handleChangeProblem(checklistItem)}
-                          sx={{ width: "fit-content" }}
-                        >
-                          <Stack direction="row" alignItems="center" gap={1}>
-                            <ErrorIcon
-                              sx={{
-                                color: renderErrorColor(checklistItem),
-                              }}
-                            />
-                            <Typography
-                              sx={{
-                                color: renderErrorColor(checklistItem),
-                              }}
-                              variant="body2"
-                              fontSize="small"
-                            >
-                              Problema
-                            </Typography>
-                          </Stack>
-                        </Button>
-
-                        <Button
-                          id="notProblem"
-                          onClick={() => handleChangeOkay(checklistItem)}
-                          sx={{ width: "fit-content" }}
-                        >
-                          <Stack direction="row" alignItems="center" gap={1}>
-                            <CheckCircleIcon
-                              sx={{
-                                color: renderOkayColor(checklistItem),
-                              }}
-                            />
-                            <Typography
-                              sx={{
-                                color: renderOkayColor(checklistItem),
-                              }}
-                              variant="body2"
-                              fontSize="small"
-                            >
-                              Okay
-                            </Typography>
-                          </Stack>
-                        </Button>
-                        <TextareaAutosize
-                          onChange={(e) =>
-                            handleChangeItemObservation(e, checklistItem)
-                          }
-                          placeholder="Se houver, digite uma observação..."
-                          
-                          value={renderObservation(checklistItem)}
-                        />
-                      </Stack>
-                    </CardContent>
-                  </Card>
-                ))
-              )}
-            </Stack>
-          ) : (
-            //mobile
-            ChecklistItems && (
-              <Slider ref={sliderRef} {...settings}>
-                {ChecklistItems.map((checklistItem) => (
-                  <Card
-                    key={checklistItem.id_checklist_movimentacao}
-                    sx={{
-                      width: {
-                        xs: 240,
-                        md: 300,
-                      },
-                      minHeight: 320,
-                      borderRadius: "10px",
-                    }}
-                  >
-                    <CardMedia
-                      sx={{
-                        height: 200,
-                      }}
-                      image={isLoading ? "" : renderItemImage(checklistItem)}
-                      title="checklist image"
-                    >
-                      {isLoading && (
-                        <Stack
-                          direction="row"
-                          justifyContent="center"
-                          alignItems="center"
-                          sx={{ mt: 2, height: "100%" }}
-                        >
-                          <CircularProgress />
-                        </Stack>
-                      )}
-                    </CardMedia>
-                    <CardContent>
-                      <Stack gap={1}>
-                        <Typography fontSize="small">
-                          {checklistItem.nome_item_checklist}
-                        </Typography>
-                        <Button
-                          onClick={() => handleChangeProblem(checklistItem)}
-                          sx={{ width: "fit-content" }}
-                        >
-                          <Stack direction="row" alignItems="center" gap={1}>
-                            <ErrorIcon
-                              sx={{
-                                color: renderErrorColor(checklistItem),
-                              }}
-                            />
-                            <Typography
-                              sx={{
-                                color: renderErrorColor(checklistItem),
-                              }}
-                              variant="body2"
-                              fontSize="small"
-                            >
-                              Problema
-                            </Typography>
-                          </Stack>
-                        </Button>
-
-                        <Button
-                          id="notProblem"
-                          onClick={() => handleChangeOkay(checklistItem)}
-                          sx={{ width: "fit-content" }}
-                        >
-                          <Stack direction="row" alignItems="center" gap={1}>
-                            <CheckCircleIcon
-                              sx={{
-                                color: renderOkayColor(checklistItem),
-                              }}
-                            />
-                            <Typography
-                              sx={{
-                                color: renderOkayColor(checklistItem),
-                              }}
-                              variant="body2"
-                              fontSize="small"
-                            >
-                              Okay
-                            </Typography>
-                          </Stack>
-                        </Button>
-                        <TextareaAutosize
-                          onChange={(e) =>
-                            handleChangeItemObservation(e, checklistItem)
-                          }
-                          defaultValue={""}
-                          value={renderObservation(checklistItem)}
-                        />
-                        {toBeDone() && isMovimentationResponsable() && (
-                          <label>
-                            <input
-                              type="file"
-                              id="fileUpload"
-                              accept="image/*"
-                              capture={isIOS ? false : "environment"}
-                              style={{ display: "none" }}
-                              onChange={(e) =>
-                                handleFileChange(e, checklistItem)
-                              }
-                            />
-                            <Button
-                              component="span"
-                              sx={{
-                                height: "20px",
-                                width: "fit-content",
-                                padding: "0",
-                              }}
-                            >
-                              <Stack
-                                direction="row"
-                                alignItems="center"
-                                gap={0.5}
-                              >
-                                <Typography fontSize="small">
-                                  Carregar nova foto
-                                </Typography>
-                                <CloudUploadIcon sx={{ fontSize: "16px" }} />
-                              </Stack>
-                            </Button>
-                          </label>
-                        )}
-                      </Stack>
-                    </CardContent>
-                  </Card>
-                ))}
-              </Slider>
-            )
-          )}
-          {isMobile && (
-            <Box className="space-y-8">
-              <Stack direction="row" justifyContent="space-between">
-                <IconButton onClick={previous}>
-                  <NavigateBeforeIcon sx={{ color: "blue" }} />
-                </IconButton>
-                <IconButton onClick={next}>
-                  <NavigateNextIcon sx={{ color: "blue" }} />
-                </IconButton>
-              </Stack>
-              <Stack
-                direction="row"
-                justifyContent="center"
-                flexWrap="wrap"
-                gap={1}
-              >
-                {ChecklistItems?.map((_checklistItem, index) => (
-                  <CircleIcon
-                    sx={{
-                      width: "12px",
-                      height: "12px",
-                      borderRadius: "50%",
-                      backgroundColor:
-                        index === currentSlideIndex ? "#333" : "#bbb", // Cor ativa para o slide atual
-                      transition:
-                        "transform 0.3s ease, background-color 0.3s ease",
-                      cursor: "pointer",
-                      color: "#e3e3e3",
-                      transform:
-                        index === currentSlideIndex ? "scale(1.4)" : "scale(1)", // Aumento do ponto ativo
-
-                      "&:hover": {
-                        backgroundColor: "#888", // Cor ao passar o mouse
-                        transform:
-                          index === currentSlideIndex
-                            ? "scale(1.4)"
-                            : "scale(1.2)", // Efeito de zoom ao passar o mouse
-                      },
-                    }}
-                  />
-                ))}
-              </Stack>
+              {ChecklistItems.map((checklistItem) => (
+                <CardChecklistItem
+                  key={checklistItem.id_item_checklist_movimentacao}
+                  checklistItem={checklistItem}
+                  onOpenItemImage={handleOpenItemImage}
+                  onChangeProblem={handleChangeProblem}
+                  onChangeOkay={handleChangeOkay}
+                  onChangeObservation={handleChangeItemObservation}
+                  renderItemImage={renderItemImage}
+                  renderErrorColor={renderErrorColor}
+                  renderOkayColor={renderOkayColor}
+                  renderObservation={renderObservation}
+                  isMovimentationResponsable={isMovimentationResponsable}
+                  handleFileChange={handleFileChange}
+                  toBeDone={toBeDone}
+                  isIOS={isIOS}
+                  shouldShowFinalizeButton={shouldShowFinalizeButton}
+                  handleSendChecklistItems={handleSendChecklistItems}
+                />
+              ))}
             </Box>
+          ) : (
+            // Mobile
+            ChecklistItems && (
+              <Stack gap={1}>
+                <Slider ref={sliderRef} {...settings}>
+                  {ChecklistItems.map((checklistItem) => (
+                    <CardChecklistItem
+                      key={checklistItem.id_item_checklist_movimentacao}
+                      checklistItem={checklistItem}
+                      onOpenItemImage={handleOpenItemImage}
+                      onChangeProblem={handleChangeProblem}
+                      onChangeOkay={handleChangeOkay}
+                      onChangeObservation={handleChangeItemObservation}
+                      renderItemImage={renderItemImage}
+                      renderErrorColor={renderErrorColor}
+                      renderOkayColor={renderOkayColor}
+                      renderObservation={renderObservation}
+                      toBeDone={toBeDone}
+                      handleFileChange={handleFileChange}
+                      isMovimentationResponsable={isMovimentationResponsable}
+                      isIOS={isIOS}
+                      shouldShowFinalizeButton={shouldShowFinalizeButton}
+                      handleSendChecklistItems={handleSendChecklistItems}
+                    />
+                  ))}
+                </Slider>
+                <SliderPagination
+                  ChecklistItems={ChecklistItems}
+                  currentSlideIndex={currentSlideIndex}
+                  previous={previous}
+                  next={next}
+                />
+              </Stack>
+            )
           )}
         </Box>
 
@@ -816,78 +618,28 @@ const handleReproveChecklist = async () => {
             transform: "translateY(-4rem)",
           }}
         >
-          {toBeDone() &&
-            isMovimentationResponsable() &&
-            (lastItem() || !isMobile) &&
-            toBeDone() && (
-              <Button onClick={handleSendChecklistItems}>
-                <Typography
-                  fontSize="medium"
-                  fontFamily="revert-layer"
-                  textTransform="capitalize"
-                >
-                  {" "}
-                  Finalizar
+          {shouldShowApprovalButtons && (
+            <>
+              <Button onClick={handleAproveChecklist}>
+                <Typography fontSize="medium" textTransform="capitalize">
+                  Aprovar
                 </Typography>
               </Button>
-            )}
-
-          {toBeAproved() && (lastItem() || !isMobile) && (
-            <Button onClick={handleAproveChecklist}>
-              <Typography fontSize="medium" textTransform="capitalize">
-                Aprovar
-              </Typography>
-            </Button>
-          )}
-          {toBeAproved() && (lastItem() || !isMobile) && (
-            <Button onClick={handleReproveChecklist}>
-              <Typography fontSize="medium" textTransform="capitalize">
-                Reprovar
-              </Typography>
-            </Button>
+              <Button onClick={handleReproveChecklist}>
+                <Typography fontSize="medium" textTransform="capitalize">
+                  Reprovar
+                </Typography>
+              </Button>
+            </>
           )}
         </Box>
-        <Modal
-          open={itemImageOpen !== undefined}
-          onClose={handleCloseImageModal}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: "90%",
-              height: "90%",
-              bgcolor: "background.paper",
-              border: "1px solid #000",
-              boxShadow: 24,
-              p: 2,
-            }}
-          >
-            <IconButton
-              onClick={handleCloseImageModal}
-              sx={{
-                position: "absolute",
-                top: 8,
-                right: 8,
-              }}
-            >
-              <CloseIcon sx={{ color: "red" }} />
-            </IconButton>
-            <Box
-              sx={{
-                height: "100%",
-                backgroundImage: `url(${itemImageOpen?.arquivo})`,
-                backgroundSize: "contain",
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "center",
-              }}
-            ></Box>
-          </Box>
-        </Modal>
+        <FileViewer
+          fileViewerOpen={itemImageOpen !== undefined}
+          fileUrl={itemImageOpen?.arquivo || ""}
+          fileName={itemImageOpen?.arquivo || ""}
+          isPDF={isPDF}
+          handleCloseFileViewer={handleCloseImageModal}
+        />
       </Box>
     </Modal>
   );
