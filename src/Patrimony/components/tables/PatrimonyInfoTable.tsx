@@ -14,15 +14,8 @@ import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { dateTimeRenderer, getPatrimonyInfo } from "../../utils";
 import { PatrimonyInfoContext } from "../../context/patrimonyInfoContext";
 import {
-  Box,
-  Button,
-  Card,
-  CardContent,
   Checkbox,
   IconButton,
-  ListItem,
-  ListItemButton,
-  ListItemText,
   Stack,
   TextField,
   Typography,
@@ -30,7 +23,7 @@ import {
 import { userContext } from "../../../Requisitions/context/userContext";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import { useNavigate } from "react-router-dom";
-import { FixedSizeList, ListChildComponentProps } from 'react-window';
+import { FixedSizeList } from 'react-window';
 import { PatrimonyInfoColumnData, patrimonyInfoColumns } from "../../../crm/utils";
 import PatrimonyInfoTableFooter from "../PatrimonyInfoTableFooter";
 import PatrimonyInfoCard from "../PatrimonyInfoCard";
@@ -57,7 +50,7 @@ const PatrimonyInfoVirtuosoTableComponents: TableComponents<PatrimonyInfo> = {
 };
 
 export default function PatrimonyInfoTable() {
-  console.log("Renderizou MovementsTable");
+  console.log("Renderizou PatrimonyInfoTable");
   const {
     refreshPatrimonyInfo,
     currentFilter,
@@ -66,6 +59,7 @@ export default function PatrimonyInfoTable() {
     filteredRows,
     setFilteredRows,
   } = useContext(PatrimonyInfoContext);
+
   const { user } = useContext(userContext);
   const [rows, setRows] = useState<PatrimonyInfo[]>();
   const [selectedItems, setSelectedItems] = useState<PatrimonyInfo[]>([]);
@@ -375,6 +369,9 @@ export default function PatrimonyInfoTable() {
        setFilteredRows(
          rows.filter(
            (moviment) =>
+
+             moviment.nome.toLowerCase().includes(searchValue) ||
+             moviment.nome_tipo?.toLowerCase().includes(searchValue) ||
              moviment.gerente.toLowerCase().includes(searchValue) ||
              moviment.projeto.toLowerCase().includes(searchValue) ||
              moviment.responsavel.toLowerCase().includes(searchValue) ||
@@ -426,9 +423,9 @@ export default function PatrimonyInfoTable() {
       )}
       {filteredRows && isMobile && (
         <FixedSizeList
-          height={600} 
+          height={710} 
           width={350}
-          itemSize={310}
+          itemSize={320}
           itemCount={filteredRows.length}
           overscanCount={1}
           

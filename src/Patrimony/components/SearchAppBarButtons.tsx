@@ -12,7 +12,27 @@ import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { buttonStylesMobile, BaseButtonStyles } from "../../utilStyles";
 import React from "react";
+import { User } from "../../Requisitions/context/userContext";
+import { MovementationChecklist } from "../types";
 
+
+interface PatrimonySearchAppBarButtonsProps {
+  user: User; // Substitua por um tipo mais específico, se disponível
+  isMobile: boolean;
+  actionsMenuOpen: boolean;
+  actionsMenu: HTMLElement | null;
+  handleClickAction: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  handleCloseActions: () => void;
+  handleOpenActionModal: (action: string) => void;
+  filterMenuOpen: boolean;
+  filterMenu: HTMLElement | null;
+  handleClickFilter: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  handleCloseFilter: () => void;
+  handleSelectFilter: (filter: string) => void;
+  currentFilter: string;
+  handleOpenChecklistTasks: () => void;
+  notifications: MovementationChecklist[]; // Substitua por um tipo mais específico, se disponível
+}
 
 const PatrimonySearchAppBarButtons = React.memo(
   ({
@@ -31,15 +51,16 @@ const PatrimonySearchAppBarButtons = React.memo(
     currentFilter,
     handleOpenChecklistTasks,
     notifications,
-  }) => {
+  }: PatrimonySearchAppBarButtonsProps) => {
     console.log("renderizou SerachAppBarButtons");
     // Array to define the buttons and their configurations
     const PatrimonyAppBarButtons = [
       {
         condition: user?.PERM_ADMINISTRADOR,
-        render: () => (
+        render: (index: number) => (
           <>
             <Button
+              key={index}
               id="basic-button"
               aria-controls={actionsMenuOpen ? "basic-menu" : undefined}
               aria-haspopup="true"
@@ -74,9 +95,10 @@ const PatrimonySearchAppBarButtons = React.memo(
         ),
       },
       {
-        render: () => (
+        render: (index: number) => (
           <>
             <Button
+              key={index}
               id="basic-button"
               aria-controls={filterMenuOpen ? "basic-menu" : undefined}
               aria-haspopup="true"
@@ -115,8 +137,9 @@ const PatrimonySearchAppBarButtons = React.memo(
         ),
       },
       {
-        render: () => (
+        render: (index: number) => (
           <Button
+            key={index}
             id="basic-button"
             aria-controls={filterMenuOpen ? "basic-menu" : undefined}
             aria-haspopup="true"
@@ -143,11 +166,12 @@ const PatrimonySearchAppBarButtons = React.memo(
         direction="row"
         alignItems="center"
         gap={2}
+        padding={0.5}
       >
         {PatrimonyAppBarButtons.map((buttonConfig, index) =>
           buttonConfig.condition !== undefined
-            ? buttonConfig.condition && buttonConfig.render()
-            : buttonConfig.render()
+            ? buttonConfig.condition && buttonConfig.render(index)
+            : buttonConfig.render(index)
         )}
       </Stack>
     );

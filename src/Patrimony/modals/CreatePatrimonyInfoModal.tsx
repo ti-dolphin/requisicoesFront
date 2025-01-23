@@ -70,7 +70,8 @@ const columns: ColumnData[] = [
 ];
 
 export default function CreatePatrimonyInfoModal() {
-
+  console.log("renderizou CreatePatrimonyInfoModal");
+  
   const {creatingPatrimonyInfo, toggleCreatingPatrimonyInfo, changeCreatingPatrimonyInfo } = useContext(PatrimonyInfoContext);
 
   const [patrimonyInfo, setPatrimonynInfo] = useState<Patrimony>({
