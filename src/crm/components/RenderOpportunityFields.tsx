@@ -19,9 +19,7 @@ import { formatDate } from "../../generalUtilities";
 
 interface RenderFieldProps {
   field: OpportunityColumn;
-  renderAutoCompleteValue: (
-    field: OpportunityColumn
-  ) => OpportunityOptionField;
+  renderAutoCompleteValue: (field: OpportunityColumn) => OpportunityOptionField;
   handleChangeAutoComplete: (
     _event: React.SyntheticEvent<Element, Event>,
     value: OpportunityOptionField | null,
@@ -67,7 +65,19 @@ const RenderOpportunityFields: React.FC<RenderFieldProps> = ({
 }) => {
   const isFullWidthField =
     field.dataKey === "observacao" || field.dataKey === "comentarios";
-  //state for currentCommentValue
+
+  const isFieldDisabled = (field: OpportunityColumn) => {
+    if (field.dataKey === "numeroAdicional") {
+      return true;
+    }
+    if (
+      field.dataKey === "dataEntrega" &&
+      ![11, 12, 13, 5].find((statusId) => statusId === opportunity.codStatus)
+    ) {
+      return true;
+    }
+    return false;
+  };
   const renderFieldValue = (field: OpportunityColumn) => {
     return opportunity[field.dataKey as keyof typeof opportunity]
       ? opportunity[field.dataKey as keyof typeof opportunity]
@@ -98,7 +108,9 @@ const RenderOpportunityFields: React.FC<RenderFieldProps> = ({
           primary={comentario.descricao || "Comentário vazio"}
           secondary={
             comentario.criadoPor
-              ? `Por: ${comentario.criadoPor} | ${formatDate(comentario.criadoEm || '')}`
+              ? `Por: ${comentario.criadoPor} | ${formatDate(
+                  comentario.criadoEm || ""
+                )}`
               : "Autor desconhecido"
           }
         />
@@ -228,7 +240,44 @@ const RenderOpportunityFields: React.FC<RenderFieldProps> = ({
       </Box>
     );
   }
-
+  if (field.dataKey === "observacoes") {
+    return (
+      <TextField
+        key={field.dataKey}
+        onChange={(e) => handleChangeTextField(e, field)}
+        placeholder="Digite qualquer observação que ajute a detalhar a proposta..."
+        value={opportunity.observacoes}
+        type="text"
+        multiline // Permite múltiplas linhas
+        rows={3} // Define a altura inicial
+        variant="outlined" // Exibe uma borda destacada
+        fullWidth // Garante que o campo preencha o espaço disponível
+        sx={{
+          borderRadius: 2, // Bordas arredondadas
+          backgroundColor: "#f9f9f9", // Fundo claro para destacar
+          boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", // Efeito de profundidade
+          "& .MuiOutlinedInput-root": {
+            "& fieldset": {
+              borderColor: "#1976d2", // Cor da borda inicial
+            },
+            "&:hover fieldset": {
+              borderColor: "#1565c0", // Cor da borda ao passar o mouse
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "#0d47a1", // Cor da borda ao focar
+              borderWidth: "2px", // Aumenta a espessura ao focar
+            },
+          },
+          "& .MuiInputLabel-root": {
+            color: "#757575", // Cor do label
+          },
+          "& .MuiInputLabel-root.Mui-focused": {
+            color: "#0d47a1", // Cor do label ao focar
+          },
+        }}
+      />
+    );
+  }
   return (
     <Box sx={{ maxWidth: isFullWidthField ? "100%" : "300px", width: "100%" }}>
       <Typography fontFamily="Roboto" fontSize="small">
@@ -237,8 +286,8 @@ const RenderOpportunityFields: React.FC<RenderFieldProps> = ({
       <TextField
         key={field.dataKey}
         value={renderFieldValue(field)}
-        disabled={field.dataKey === "numeroAdicional"}
         type={field.type}
+        disabled={isFieldDisabled(field)}
         onChange={(e) => handleChangeTextField(e, field)}
         InputLabelProps={
           isDateField(field.dataKey) ? { shrink: true } : undefined

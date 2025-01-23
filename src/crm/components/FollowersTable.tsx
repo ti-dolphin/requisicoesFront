@@ -109,9 +109,10 @@ export default function FollowersTable({
           autosizeOnMount
           pageSizeOptions={[]}
           getRowId={(row: Follower) => row.codpessoa}
-          rows={opportunity.seguidores.map((row) => ({
+          rows={opportunity.seguidores.map((row,index) => ({
             ...row,
             id: row.codpessoa,
+            key: index
           }))}
           columns={columns}
           checkboxSelection

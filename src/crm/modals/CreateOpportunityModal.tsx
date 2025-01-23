@@ -88,20 +88,21 @@ const CreateOpportunityModal = () => {
           autoComplete: true,
           type: "text", // Tipo texto
         },
+
         {
           label: "Data de Solicitação",
           dataKey: "dataSolicitacao", // Alinhado com a propriedade dataSolicitacao da interface
           type: "Date", // Tipo data e hora
         },
         {
-          label: "Data de Fechamento",
-          dataKey: "dataEntrega", // Alinhado com a propriedade dataEntrega da interface
-          type: "date", // Tipo data e hora
-        },
-        {
           label: "Data de Início",
           dataKey: "dataInicio",
           type: "date",
+        },
+        {
+          label: "Data de Fechamento",
+          dataKey: "dataEntrega", // Alinhado com a propriedade dataEntrega da interface
+          type: "date", // Tipo data e hora
         },
       ],
     },
@@ -792,24 +793,24 @@ const CreateOpportunityModal = () => {
           <Slider ref={sliderRef} {...settings}>
             {guides.map((guide) => (
               <OpportunityGuide
-                key={guide.name} // É importante usar um identificador único, como o nome ou ID do guia
-                guide={guide} // Passa o objeto `guide` diretamente
-                renderAutoCompleteValue={renderAutoCompleteValue} // Função para renderizar valores de autocomplete
-                handleChangeAutoComplete={handleChangeAutoComplete} // Função para lidar com mudanças no autocomplete
-                renderOptions={renderOptions} // Função para renderizar opções de autocomplete
-                adicional={adicional} // Informação adicional (personalizável)
-                currentOppIdSelected={currentOppIdSelected} // ID da oportunidade selecionada
-                opportunity={opportunity} // Objeto da oportunidade atual
-                handleChangeTextField={handleChangeTextField} // Função para lidar com campos de texto
-                isDateField={isDateField} // Verificação se o campo é uma data
-                currentCommentValue={currentCommentValue} // Valor do comentário atual
-                handleChangeComentarios={handleChangeComentarios} // Função para mudanças nos comentários
-                editingComment={editingComment} // Indica se um comentário está sendo editado
-                setEditingComment={setEditingComment} // Define o estado de edição de comentários
-                setCurrentOpportunity={setCurrentOpportunity} // Define a oportunidade atual
-                handleSaveOpportunity={handleSaveOpportunity} // Salva a oportunidade
-                handleChangeFiles={handleChangeFiles} // Função para manipulação de arquivos
-                handleDeleteFile={handleDeleteFile} // Função para deletar arquivos
+                key={guide.name} 
+                guide={guide} 
+                renderAutoCompleteValue={renderAutoCompleteValue} 
+                handleChangeAutoComplete={handleChangeAutoComplete} 
+                renderOptions={renderOptions} 
+                adicional={adicional} 
+                currentOppIdSelected={currentOppIdSelected} 
+                opportunity={opportunity} 
+                handleChangeTextField={handleChangeTextField} 
+                isDateField={isDateField} 
+                currentCommentValue={currentCommentValue} 
+                handleChangeComentarios={handleChangeComentarios} 
+                editingComment={editingComment} 
+                setEditingComment={setEditingComment} 
+                setCurrentOpportunity={setCurrentOpportunity} 
+                handleSaveOpportunity={handleSaveOpportunity}
+                handleChangeFiles={handleChangeFiles} 
+                handleDeleteFile={handleDeleteFile} 
               />
             ))}
           </Slider>

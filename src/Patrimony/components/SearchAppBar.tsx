@@ -29,11 +29,12 @@ import { userContext } from "../../Requisitions/context/userContext";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { checklistContext } from "../context/checklistContext";
 import { useNavigate } from "react-router-dom";
+import PatrimonySearchAppBarButtons from "./SearchAppBarButtons";
 
 
 
 interface SearchAppBarProps {
-  handleSearch: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  handleSearch: (e: React.ChangeEvent<HTMLInputElement>) => void;
   selectedItems: PatrimonyInfo[];
   setSelectedItems: Dispatch<SetStateAction<PatrimonyInfo[]>>;
   setFilteredRows?: Dispatch<SetStateAction<PatrimonyInfo[] | undefined>>;
@@ -44,6 +45,7 @@ export default function SearchAppBar({
   selectedItems,
   setSelectedItems,
 }: SearchAppBarProps) {
+  console.log('renderizou SearchAppbar')
   const {
     toggleCreatingPatrimonyInfo,
     toggleRefreshPatrimonyInfo,
@@ -68,6 +70,7 @@ export default function SearchAppBar({
   const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
   const [openInactivateModal, setOpenInactivateModal] = React.useState(false);
   const [openActivateModal, setOpenActivateModal] = React.useState(false);
+  const [isMobile, setIsMobile] = React.useState(false);
   const handleOpenActivateModal = () => setOpenActivateModal(true);
   const handleCloseActivateModal = () => setOpenActivateModal(false);
   const handleOpenDeleteModal = () => setOpenDeleteModal(true);
@@ -77,6 +80,7 @@ export default function SearchAppBar({
   const handleClickAction = (event: React.MouseEvent<HTMLButtonElement>) => {
     setActionsMenu(event.currentTarget);
   };
+
   const navigate = useNavigate();
   const handleClickFilter = (event: React.MouseEvent<HTMLButtonElement>) => {
     setFilterMenu(event.currentTarget);
@@ -159,6 +163,7 @@ export default function SearchAppBar({
   useEffect(() => {
     console.log('PERM_ADMINISTRADOR: ', user?.PERM_ADMINISTRADOR);
     console.log("PERM_CADASTRAR_PAT: ", user?.PERM_CADASTRAR_PAT);
+    setIsMobile(window.innerWidth <= 768);
     getNotifications();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -171,7 +176,7 @@ export default function SearchAppBar({
           backgroundColor: "#2B3990",
           display: "flex",
           justifyContent: "center",
-           padding: "0.2rem",
+          padding: "0.2rem",
         }}
       >
         <Toolbar>
@@ -190,139 +195,26 @@ export default function SearchAppBar({
               <StyledInputBase
                 placeholder="Search…"
                 inputProps={{ "aria-label": "search" }}
-                onKeyDown={handleSearch}
+                onChange={handleSearch}
               />
             </Search>
-            <Stack
-              className="MenuList"
-              flexWrap="wrap"
-              justifyContent="start"
-              direction="row"
-              alignItems="center"
-              gap={2}
-            >
-              {user?.PERM_ADMINISTRADOR && (
-                <>
-                  <Button
-                    id="basic-button"
-                    aria-controls={actionsMenuOpen ? "basic-menu" : undefined}
-                    aria-haspopup="true"
-                    aria-expanded={actionsMenuOpen ? "true" : undefined}
-                    onClick={handleClickAction}
-                    sx={{
-                      color: "white",
-                      backgroundColor: "#F7941E",
-                      "&:hover": {
-                        backgroundColor: "#f1b963",
-                      },
-                    }}
-                  >
-                    <Typography textTransform="capitalize">Ações</Typography>
-                    <ArrowDropDownCircleIcon sx={{ color: "white" }} />
-                  </Button>
-                  <Menu
-                    id="basic-menu"
-                    anchorEl={actionsMenu}
-                    open={actionsMenuOpen}
-                    onClose={handleCloseActions}
-                    MenuListProps={{
-                      "aria-labelledby": "basic-button",
-                    }}
-                  >
-                    {["Inativar", "Ativar", "Excluir"].map((action) => (
-                      <MenuItem
-                        key={action}
-                        onClick={() => handleOpenActionModal(action)}
-                      >
-                        {action}
-                      </MenuItem>
-                    ))}
-                  </Menu>
-                </>
-              )}
-              <Button
-                id="basic-button"
-                aria-controls={filterMenuOpen ? "basic-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={filterMenuOpen ? "true" : undefined}
-                onClick={handleClickFilter}
-                sx={{
-                  color: "white",
-                  backgroundColor: "#F7941E",
-                  "&:hover": {
-                    backgroundColor: "#f1b963",
-                  },
-                }}
-              >
-                <Typography textTransform="capitalize">Filtros</Typography>
-                <FilterAltIcon sx={{ color: "white" }} />
-              </Button>
-              <Menu
-                id="basic-menu"
-                anchorEl={filterMenu}
-                open={filterMenuOpen}
-                onClose={handleCloseFilter}
-                MenuListProps={{
-                  "aria-labelledby": "basic-button",
-                }}
-              >
-                {["Meus", "Todos"].map((filter) => (
-                  <MenuItem
-                    key={filter}
-                    onClick={() => handleSelectFilter(filter)}
-                    sx={{
-                      backgroundColor:
-                        currentFilter === filter ? "whitesmoke" : "white",
-                    }}
-                  >
-                    {filter}
-                  </MenuItem>
-                ))}
-              </Menu>
-
-              <Button
-                id="basic-button"
-                aria-controls={filterMenuOpen ? "basic-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={filterMenuOpen ? "true" : undefined}
-                onClick={handleOpenChecklistTasks}
-                sx={{
-                  color: "white",
-                  backgroundColor: "#F7941E",
-                  "&:hover": {
-                    backgroundColor: "#f1b963",
-                  },
-                }}
-              >
-                <Typography textTransform="capitalize">Checklists</Typography>
-                <Badge badgeContent={notifications?.length} color="primary">
-                  <NotificationsIcon sx={{ color: "white" }} />
-                </Badge>
-              </Button>
-              <Menu
-                id="basic-menu"
-                anchorEl={filterMenu}
-                open={filterMenuOpen}
-                onClose={handleCloseFilter}
-                MenuListProps={{
-                  "aria-labelledby": "basic-button",
-                }}
-              >
-                {["Meus", "Todos"].map((filter) => (
-                  <MenuItem
-                    key={filter}
-                    onClick={() => handleSelectFilter(filter)}
-                    sx={{
-                      backgroundColor:
-                        currentFilter === filter ? "whitesmoke" : "white",
-                    }}
-                  >
-                    {filter}
-                  </MenuItem>
-                ))}
-              </Menu>
-            </Stack>
-
+            <PatrimonySearchAppBarButtons
+              user={user}
+              isMobile={isMobile}
+              actionsMenuOpen={actionsMenuOpen}
+              actionsMenu={actionsMenu}
+              handleClickAction={handleClickAction}
+              handleCloseActions={handleCloseActions}
+              handleOpenActionModal={handleOpenActionModal}
+              filterMenuOpen={filterMenuOpen}
+              filterMenu={filterMenu}
+              handleClickFilter={handleClickFilter}
+              handleCloseFilter={handleCloseFilter}
+              handleSelectFilter={handleSelectFilter}
+              currentFilter={currentFilter}
+              handleOpenChecklistTasks={handleOpenChecklistTasks}
+              notifications={notifications}
+            />
             <Stack direction="row" alignItems="center" gap={2}>
               {user?.PERM_CADASTRAR_PAT && (
                 <Tooltip title="Novo Patrimônio">
@@ -338,20 +230,6 @@ export default function SearchAppBar({
                   </IconButton>
                 </Tooltip>
               )}
-              {/* <Tooltip title="Novo Patrimônio">
-                <IconButton
-                  onClick={handleClickNotifications}
-                  sx={{
-                    backgroundColor: "#F7941E",
-                    color: "white",
-                    "&:hover": { backgroundColor: "#f1b963" },
-                  }}
-                >
-                  <Badge badgeContent={notifications?.length} color="primary">
-                    <NotificationsIcon sx={{ color: "white" }} />
-                  </Badge>
-                </IconButton>
-              </Tooltip> */}
             </Stack>
             <Menu
               id="basic-menu"

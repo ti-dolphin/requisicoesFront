@@ -57,7 +57,7 @@ const OpportunityFiles = ({
               onChange={(e) => handleChangeFiles(e)}
             />
             <Stack direction="row" alignItems="center" gap={0.5}>
-              <Typography fontSize="small">Carregar nova foto</Typography>
+              <Typography fontSize="small">Enviar Arquivo</Typography>
               <CloudUploadIcon sx={{ fontSize: "16px" }} />
             </Stack>
           </label>

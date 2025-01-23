@@ -24,7 +24,11 @@ const OpportunityGuide = ({
   handleChangeFiles,
   handleDeleteFile,
 }: OpportunityGuideProps) => {
-    console.log("OpportunityGuide")
+
+   const justifyStartGuide = (guideName : string ) => { 
+    return guideName === "Escopo" || guideName === "Interação";
+   }
+
   return (
     <Box
       key={guide.name}
@@ -40,7 +44,7 @@ const OpportunityGuide = ({
       <Box
         sx={{
           display: "flex",
-          justifyContent: "center",
+          justifyContent: justifyStartGuide(guide.name) ? `start` : `center`,
           alignItems: "flex-start",
           flexWrap: "wrap",
           gap: 2,
@@ -48,6 +52,13 @@ const OpportunityGuide = ({
           minWidth: 0,
         }}
       >
+        {guide.name === "Escopo" && (
+          <OpportunityFiles
+            handleChangeFiles={handleChangeFiles}
+            handleDeleteFile={handleDeleteFile}
+            opportunity={opportunity}
+          />
+        )}
         {guide.fields?.map((field) => (
           <RenderOpportunityFields
             key={field.dataKey}
@@ -72,13 +83,6 @@ const OpportunityGuide = ({
           setCurrentOpportunity={setCurrentOpportunity}
           opportunity={opportunity}
           handleSaveOpportunity={handleSaveOpportunity}
-        />
-      )}
-      {guide.name === "Escopo" && (
-        <OpportunityFiles
-          handleChangeFiles={handleChangeFiles}
-          handleDeleteFile={handleDeleteFile}
-          opportunity={opportunity}
         />
       )}
     </Box>

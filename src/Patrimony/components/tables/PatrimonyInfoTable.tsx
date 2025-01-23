@@ -15,8 +15,14 @@ import { dateTimeRenderer, getPatrimonyInfo } from "../../utils";
 import { PatrimonyInfoContext } from "../../context/patrimonyInfoContext";
 import {
   Box,
+  Button,
+  Card,
+  CardContent,
   Checkbox,
   IconButton,
+  ListItem,
+  ListItemButton,
+  ListItemText,
   Stack,
   TextField,
   Typography,
@@ -24,67 +30,14 @@ import {
 import { userContext } from "../../../Requisitions/context/userContext";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import { useNavigate } from "react-router-dom";
-interface ColumnData {
-  dataKey: string;
-  label: string;
-  numeric?: boolean;
-  width: number;
-}
+import { FixedSizeList, ListChildComponentProps } from 'react-window';
+import { PatrimonyInfoColumnData, patrimonyInfoColumns } from "../../../crm/utils";
+import PatrimonyInfoTableFooter from "../PatrimonyInfoTableFooter";
+import PatrimonyInfoCard from "../PatrimonyInfoCard";
 
-const columns: ColumnData[] = [
-  {
-    width: 90, // Reduzi um pouco para economizar espaço
-    label: "Patrimônio",
-    dataKey: "id_patrimonio",
-  },
-  {
-    width: 90, // Mantive um tamanho razoável para a visualização do nome
-    label: "Nome",
-    dataKey: "nome",
-  },
-  {
-    width: 80,
-    label: "Valor de Compra",
-    dataKey: "valor_compra",
-  },
-  {
-    width: 170,
-    label: "Tipo",
-    dataKey: "nome_tipo",
-  },
-  {
-    width: 150, // Reduzi para economizar espaço, mantendo a descrição legível
-    label: "Descrição",
-    dataKey: "descricao",
-  },
-  {
-    width: 100, // Mantido similar ao nome
-    label: "Responsável",
-    dataKey: "responsavel",
-  },
-  {
-    width: 100, // Mantido igual ao responsável
-    label: "Gerente",
-    dataKey: "gerente",
-  },
-  {
-    width: 150, // Projeto precisa de um pouco mais de espaço
-    label: "Projeto",
-    dataKey: "projeto",
-  },
-  {
-    width: 80, // Reduzido um pouco para última movimentação
-    label: "Ultima Movimentação",
-    dataKey: "dataMovimentacao",
-  },
-  {
-    width: 70, // Coluna vazia para possíveis ações, mantive um valor baixo
-    label: "",
-    dataKey: "",
-  },
-];
 
-const VirtuosoTableComponents: TableComponents<PatrimonyInfo> = {
+
+const PatrimonyInfoVirtuosoTableComponents: TableComponents<PatrimonyInfo> = {
   Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
     <TableContainer component={Paper} {...props} ref={ref} />
   )),
@@ -103,7 +56,8 @@ const VirtuosoTableComponents: TableComponents<PatrimonyInfo> = {
   )),
 };
 
-export default function MovementsTable() {
+export default function PatrimonyInfoTable() {
+  console.log("Renderizou MovementsTable");
   const {
     refreshPatrimonyInfo,
     currentFilter,
@@ -115,6 +69,7 @@ export default function MovementsTable() {
   const { user } = useContext(userContext);
   const [rows, setRows] = useState<PatrimonyInfo[]>();
   const [selectedItems, setSelectedItems] = useState<PatrimonyInfo[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
 
   const navigate = useNavigate();
 
@@ -220,6 +175,7 @@ export default function MovementsTable() {
       setSelectedItems([...currentSelectedItems]);
     };
 
+
     const handleOpenPatrimonyDetail = (id_patrimonio: number) => {
       // setResponsable(row.id_responsavel);
       navigate(`/patrimony/details/${id_patrimonio}`);
@@ -234,7 +190,7 @@ export default function MovementsTable() {
 
     return (
       <React.Fragment>
-        {columns.map((column) =>
+        {patrimonyInfoColumns.map((column) =>
           column.label !== "" ? (
             <TableCell
               key={column.dataKey}
@@ -309,10 +265,11 @@ export default function MovementsTable() {
     );
   }
 
+
   function fixedHeaderContent() {
     return (
       <TableRow>
-        {columns.map((column) => (
+        {patrimonyInfoColumns.map((column) => (
           <TableCell
             key={column.dataKey}
             variant="head"
@@ -348,7 +305,7 @@ export default function MovementsTable() {
 
   const handleFilterByColumn = (
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
-    column: ColumnData
+    column: PatrimonyInfoColumnData
   ) => {
     const { value } = e.target;
     const activeFilters = getActiveFilters(column, value);
@@ -387,7 +344,7 @@ export default function MovementsTable() {
     setFilteredRows(rows);
   };
 
-  const getActiveFilters = (column: ColumnData, value: string) => {
+  const getActiveFilters = (column: PatrimonyInfoColumnData, value: string) => {
     const updatedColumnFilters = columnFilter.map((currrentColumnFilter) => {
       if (currrentColumnFilter.dataKey === column.dataKey) {
         return {
@@ -410,94 +367,86 @@ export default function MovementsTable() {
     return activeFilters;
   };
 
-  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('handleSearch');
     const { value } = e.currentTarget;
-    if (e.key === "Enter") {
-      setFilteredRows((prevRows) => {
-        const searchValue = value.toLowerCase();
-        return (
-          prevRows &&
-          prevRows.filter(
-            (moviment) =>
-              moviment.gerente.toLowerCase().includes(searchValue) ||
-              moviment.projeto.toLowerCase().includes(searchValue) ||
-              moviment.responsavel.toLowerCase().includes(searchValue) ||
-              moviment.id_patrimonio === Number(searchValue) ||
-              moviment.patrimonio.toLowerCase().includes(searchValue) ||
-              moviment.descricao.toLowerCase().includes(searchValue) ||
-              moviment.dataMovimentacao.toLowerCase().includes(searchValue)
-          )
-        );
-      });
-      return;
-    }
-    if (e.key === "Backspace") {
-      setFilteredRows(rows);
-      return;
-    }
+    const searchValue = value.toLowerCase();
+     if(rows){
+       setFilteredRows(
+         rows.filter(
+           (moviment) =>
+             moviment.gerente.toLowerCase().includes(searchValue) ||
+             moviment.projeto.toLowerCase().includes(searchValue) ||
+             moviment.responsavel.toLowerCase().includes(searchValue) ||
+             moviment.id_patrimonio === Number(searchValue) ||
+             moviment.patrimonio.toLowerCase().includes(searchValue) ||
+             moviment.descricao.toLowerCase().includes(searchValue) ||
+             moviment.dataMovimentacao.toLowerCase().includes(searchValue)
+         )
+       );
+       return;
+     }
+    return;
   };
 
   React.useEffect(() => {
     console.log({currentFilter})
     console.log('USEFFECT PatrimonyInfoTable.tsx');
     fetchData();
+    setIsMobile(window.innerWidth <= 768);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshPatrimonyInfo, currentFilter]);
 
   return (
-    <Paper style={{ width: "100%", padding: 2, flexGrow: 1, height: "75%" }}>
+    <Paper
+      style={{
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: 'center',
+        gap: 4,
+        flexGrow: 1,
+      }}
+    >
       <SearchAppBar
         setFilteredRows={setFilteredRows}
         selectedItems={selectedItems}
         handleSearch={handleSearch}
         setSelectedItems={setSelectedItems}
       />
-      {filteredRows  && (
+      {filteredRows && !isMobile && (
         <TableVirtuoso
           data={filteredRows}
-          components={VirtuosoTableComponents}
+          components={PatrimonyInfoVirtuosoTableComponents}
           fixedHeaderContent={fixedHeaderContent}
           itemContent={(index, row) =>
             RowContent(index, row, setSelectedItems, selectedItems)
           }
         />
       )}
-      <Box
-        display="flex"
-        justifyContent="flex-end"
-        paddingY="0.4rem"
-        paddingX="2rem"
-        gap={4}
-      >
-        {filteredRows && filteredRows.length  && (
-          <>
-            <Typography
-              variant="body2"
-              color="blue"
-              fontWeight="semibold"
-              fontFamily="Roboto"
-            >
-              {`Total: ${new Intl.NumberFormat("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              }).format(
-                filteredRows.reduce(
-                  (total, row) => total + Number(row.valor_compra || 0),
-                  0
-                )
-              )}`}
-            </Typography>
-            <Typography
-              variant="body2"
-              color="blue"
-              fontWeight="semibold"
-              fontFamily="Roboto"
-            >
-              {filteredRows.length} Itens encontrados
-            </Typography>
-          </>
-        )}
-      </Box>
+      {filteredRows && isMobile && (
+        <FixedSizeList
+          height={600} 
+          width={350}
+          itemSize={310}
+          itemCount={filteredRows.length}
+          overscanCount={1}
+          
+        >
+          {({ index, style, data }) => {
+            const cardStyle = {...style}
+            return (
+              <PatrimonyInfoCard
+                props={{ index, style: cardStyle, data }}
+                filteredRows={filteredRows}
+              />
+            );
+          }}
+        </FixedSizeList>
+      )}
+      {filteredRows && !isMobile && (
+        <PatrimonyInfoTableFooter filteredRows={filteredRows} />
+      )}
     </Paper>
   );
 }

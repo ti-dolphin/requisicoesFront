@@ -139,6 +139,7 @@ const Home = () => {
               index //box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
             ) => (
               <Card
+                 key={index}
                 sx={{
                   width: 300,
                   height: "500px",

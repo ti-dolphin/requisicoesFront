@@ -56,7 +56,6 @@ const ChecklistItemsModal = () => {
   const [ChecklistItems, setChecklistItems] = useState<ChecklistItemFile[]>([]);
   const [isMobile, setIsMobile] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isIOS, setIsIOS] = useState(false);
   const sliderRef = useRef<Slider | null>(null);
   const [itemImageOpen, setItemImageOpen] = useState <ChecklistItemFile>();
@@ -118,11 +117,9 @@ const ChecklistItemsModal = () => {
     file: FormData
   ) => {
     if (checklistItem) {
-    
         const updatedItems = updateChecklistItemToOkay(checklistItem);
         await sendChecklistItems(updatedItems);
         await uploadFileToChecklistItemFile(checklistItem.id_item_checklist_movimentacao, file);
-        setIsLoading(false);
         toggleRefreshChecklist();
         return;
       
@@ -153,7 +150,6 @@ const ChecklistItemsModal = () => {
     const file = e.target.files?.[0];
     if (isMovimentationResponsable() && file && toBeDone()) {
       const formData = new FormData();
-      setIsLoading(true);
       formData.append("file", file);
       await handleUploadImage(checklistItem, formData); // Atualiza a imagem no estado
       return;
