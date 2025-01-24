@@ -1,5 +1,5 @@
 import { AutocompleteChangeDetails, AutocompleteChangeReason } from "@mui/material";
-import { ChecklistItemFile } from "../Patrimony/types";
+import { ChecklistItemFile, MovementationChecklist } from "../Patrimony/types";
 
 export interface OpportunityInfo {
   numeroProjeto: number; // ID_PROJETO
@@ -70,6 +70,13 @@ export interface Opportunity {
   comentarios: Comentario[] | [];
   files?: OpportunityFile [];
   seguidores: Follower[]
+}
+
+export  interface ChecklistColumnData {
+  dataKey: keyof MovementationChecklist;
+  label: string;
+  numeric?: boolean;
+  width?: number;
 }
 export interface OpportunityGuideProps {
   guide: Guide;

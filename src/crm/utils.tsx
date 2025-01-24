@@ -5,8 +5,12 @@ import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import dayjs from "dayjs";
 import { Person } from "../Requisitions/types";
+
+
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
 
 
 export const fetchPersonList = async () => {
@@ -90,7 +94,6 @@ export const createOpportunity = async (opp: Opportunity) => {
 };
 
 
-
 export const createAdicional = async (opportunity : Opportunity ) =>  { 
   try{ 
     const response = await api.post(`opportunity/create`, opportunity);
@@ -99,7 +102,6 @@ export const createAdicional = async (opportunity : Opportunity ) =>  {
     console.log(e);
   }
 };
-
 
 
 export const patrimonyInfoColumns: PatrimonyInfoColumnData[] = [

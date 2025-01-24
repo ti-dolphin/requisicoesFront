@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import { PatrimonyInfoContext } from "../context/patrimonyInfoContext";
@@ -21,23 +19,33 @@ import {
 import CreatePatrimonyInfoModal from "../modals/CreatePatrimonyInfoModal";
 import React from "react";
 import { MovementationChecklist, PatrimonyInfo } from "../types";
-import { deleteMultiplePatrimonies, getPatrimonyNotifications, updateMultiplePatrimonies } from "../utils";
+import { deleteMultiplePatrimonies, getPatrimonyNotifications, Search, SearchIconWrapper, StyledInputBase, updateMultiplePatrimonies } from "../utils";
 import { userContext } from "../../Requisitions/context/userContext";
 import { checklistContext } from "../context/checklistContext";
 import { useNavigate } from "react-router-dom";
 import PatrimonySearchAppBarButtons from "./SearchAppBarButtons";
+import { basicAppbarStyles } from "../../utilStyles";
 
 
 
 interface SearchAppBarProps {
   handleSearch: (e: React.ChangeEvent<HTMLInputElement>) => void;
   selectedItems: PatrimonyInfo[];
+  isCardViewActive: boolean;
   setSelectedItems: Dispatch<SetStateAction<PatrimonyInfo[]>>;
   setFilteredRows?: Dispatch<SetStateAction<PatrimonyInfo[] | undefined>>;
+  setIsCardViewActive: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SearchAppBar = React.memo(
-  ({ handleSearch, selectedItems, setSelectedItems }: SearchAppBarProps) => {
+  ({
+    handleSearch,
+    selectedItems,
+    setSelectedItems,
+    isCardViewActive,
+    setIsCardViewActive,
+  }: SearchAppBarProps) => {
+
     console.log("renderizou SearchAppbar");
     const {
       toggleCreatingPatrimonyInfo,
@@ -158,7 +166,13 @@ const SearchAppBar = React.memo(
         handleCloseDeleteModal();
         handleCloseActions();
       }
-    }, [selectedItems, setSelectedItems, toggleRefreshPatrimonyInfo, handleCloseDeleteModal, handleCloseActions]);
+    }, [
+      selectedItems,
+      setSelectedItems,
+      toggleRefreshPatrimonyInfo,
+      handleCloseDeleteModal,
+      handleCloseActions,
+    ]);
 
     const handleActivatePatrimony = React.useCallback(async () => {
       if (selectedItems) {
@@ -172,7 +186,13 @@ const SearchAppBar = React.memo(
           handleCloseActions();
         }
       }
-    }, [selectedItems, setSelectedItems, toggleRefreshPatrimonyInfo, handleCloseActivateModal, handleCloseActions]);
+    }, [
+      selectedItems,
+      setSelectedItems,
+      toggleRefreshPatrimonyInfo,
+      handleCloseActivateModal,
+      handleCloseActions,
+    ]);
 
     const handleInactivatePatrimony = React.useCallback(async () => {
       if (selectedItems) {
@@ -184,7 +204,13 @@ const SearchAppBar = React.memo(
           handleCloseActions();
         }
       }
-    }, [selectedItems, setSelectedItems, toggleRefreshPatrimonyInfo, handleCloseInactivateModal, handleCloseActions]);
+    }, [
+      selectedItems,
+      setSelectedItems,
+      toggleRefreshPatrimonyInfo,
+      handleCloseInactivateModal,
+      handleCloseActions,
+    ]);
 
     // Funções relacionadas às notificações
     const handleSelectNotification = React.useCallback(
@@ -215,16 +241,8 @@ const SearchAppBar = React.memo(
     }, [user, getNotifications]);
 
     return (
-      <Box sx={{ flexGrow: 1, width: '100%' }}>
-        <AppBar
-          position="static"
-          sx={{
-            backgroundColor: "#2B3990",
-            display: "flex",
-            justifyContent: "center",
-            padding: "0.2rem",
-          }}
-        >
+      <Box sx={{ flexGrow: 1, width: "100%" }}>
+        <AppBar position="static" sx={{ ...basicAppbarStyles }}>
           <Toolbar>
             <CreatePatrimonyInfoModal />
             <Stack
@@ -246,6 +264,8 @@ const SearchAppBar = React.memo(
               </Search>
               {user && notifications && (
                 <PatrimonySearchAppBarButtons
+                  setIsCardViewActive={setIsCardViewActive}
+                  isCardViewActive={isCardViewActive}
                   user={user}
                   isMobile={isMobile}
                   actionsMenuOpen={actionsMenuOpen}
@@ -416,47 +436,6 @@ const SearchAppBar = React.memo(
   }
 );
 
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(1),
-    width: "auto",
-  },
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  width: "100%",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    [theme.breakpoints.up("sm")]: {
-      width: "12ch",
-      "&:focus": {
-        width: "20ch",
-      },
-    },
-  },
-}));
 
 const style = {
   position: "absolute" as const,

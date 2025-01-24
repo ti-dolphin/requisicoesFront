@@ -1,7 +1,7 @@
 import { Card, Typography, Stack, Button, Box } from "@mui/material";
 import { ListChildComponentProps } from "react-window";
 import { PatrimonyInfo } from "../types";
-import { BaseButtonStyles } from "../../utilStyles";
+import { BaseButtonStyles, basicCardContentStyles, basicCardStyles } from "../../utilStyles";
 import { useNavigate } from "react-router-dom";
 
 interface PatrimonyInfoCardProps {
@@ -30,27 +30,13 @@ const PatrimonyInfoCard = ({ props, filteredRows }: PatrimonyInfoCardProps) => {
         <Card
           style={{
             ...style,
-            boxShadow: "none",
-            display: "flex",
-            flexShrink: 1,
-            paddingBottom: "5px",
-            paddingLeft: "5px",
-            paddingRight: "5px",
-            paddingTop: "5px",
+          ...basicCardStyles
           }}
           key={index}
         >
           <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "start",
-              gap: 0.8,
-              padding: 1,
-              justifyContent: "center",
-              borderRadius: "16px",
-            }}
-            className=" shadow-sm shadow-gray-600"
+            sx={basicCardContentStyles}
+            className="shadow-sm shadow-gray-600"
           >
             <Typography color="textPrimary" fontWeight="bold" gutterBottom>
               {row.id_patrimonio} - {row.nome}

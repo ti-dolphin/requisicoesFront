@@ -1,4 +1,3 @@
-import React from "react";
 import { Box } from "@mui/material";
 import RenderOpportunityFields from "./RenderOpportunityFields";
 import FollowersTable from "./FollowersTable";

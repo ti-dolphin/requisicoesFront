@@ -12,7 +12,6 @@ import {
   AutocompleteChangeDetails,
   AutocompleteChangeReason,
   Button,
-  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -46,12 +45,9 @@ import {
 } from "../types";
 import CloseIcon from "@mui/icons-material/Close";
 import Slider from "react-slick";
-import RenderOpportunityFields from "../components/RenderOpportunityFields";
 import { userContext } from "../../Requisitions/context/userContext";
-import OpportunityFiles from "../components/OpportunityFiles";
 import AdicionalChoice from "./AdicionalChoice";
 import ProjectChoiceModal from "./ProjectChoiceModal";
-import FollowersTable from "../components/FollowersTable";
 import OpportunityGuide from "../components/OpportunityGuide";
 import GuideSelector from "../components/GuideSelector";
 

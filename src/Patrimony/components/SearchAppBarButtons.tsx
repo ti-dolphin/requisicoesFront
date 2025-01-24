@@ -14,6 +14,7 @@ import { buttonStylesMobile, BaseButtonStyles } from "../../utilStyles";
 import React from "react";
 import { User } from "../../Requisitions/context/userContext";
 import { MovementationChecklist } from "../types";
+import TableViewToggleButton from "../../components/TableViewToggleButton";
 
 
 interface PatrimonySearchAppBarButtonsProps {
@@ -32,6 +33,8 @@ interface PatrimonySearchAppBarButtonsProps {
   currentFilter: string;
   handleOpenChecklistTasks: () => void;
   notifications: MovementationChecklist[]; // Substitua por um tipo mais específico, se disponível
+  setIsCardViewActive: React.Dispatch<React.SetStateAction<boolean>>;
+  isCardViewActive: boolean;
 }
 
 const PatrimonySearchAppBarButtons = React.memo(
@@ -51,6 +54,9 @@ const PatrimonySearchAppBarButtons = React.memo(
     currentFilter,
     handleOpenChecklistTasks,
     notifications,
+    setIsCardViewActive,
+    isCardViewActive
+
   }: PatrimonySearchAppBarButtonsProps) => {
     console.log("renderizou SerachAppBarButtons");
     // Array to define the buttons and their configurations
@@ -173,6 +179,10 @@ const PatrimonySearchAppBarButtons = React.memo(
             ? buttonConfig.condition && buttonConfig.render(index)
             : buttonConfig.render(index)
         )}
+        <TableViewToggleButton
+          setIsCardViewActive={setIsCardViewActive}
+          isCardViewActive={isCardViewActive}
+        />
       </Stack>
     );
   }

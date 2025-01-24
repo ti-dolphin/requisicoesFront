@@ -64,7 +64,8 @@ export default function PatrimonyInfoTable() {
   const [rows, setRows] = useState<PatrimonyInfo[]>();
   const [selectedItems, setSelectedItems] = useState<PatrimonyInfo[]>([]);
   const [isMobile, setIsMobile] = useState(false);
-
+  const [isCardViewActive, setIsCardViewActive] = useState(false);
+ 
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -386,11 +387,13 @@ export default function PatrimonyInfoTable() {
     return;
   };
 
+
   React.useEffect(() => {
     console.log({currentFilter})
     console.log('USEFFECT PatrimonyInfoTable.tsx');
     fetchData();
     setIsMobile(window.innerWidth <= 768);
+    setIsCardViewActive(window.innerWidth <= 768);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshPatrimonyInfo, currentFilter]);
 
@@ -400,18 +403,20 @@ export default function PatrimonyInfoTable() {
         width: "100%",
         display: "flex",
         flexDirection: "column",
-        alignItems: 'center',
+        alignItems: "center",
         gap: 4,
         flexGrow: 1,
       }}
     >
       <SearchAppBar
+        isCardViewActive={isCardViewActive}
+        setIsCardViewActive={setIsCardViewActive}
         setFilteredRows={setFilteredRows}
         selectedItems={selectedItems}
         handleSearch={handleSearch}
         setSelectedItems={setSelectedItems}
       />
-      {filteredRows && !isMobile && (
+      {filteredRows && !isCardViewActive && (
         <TableVirtuoso
           data={filteredRows}
           components={PatrimonyInfoVirtuosoTableComponents}
@@ -421,17 +426,16 @@ export default function PatrimonyInfoTable() {
           }
         />
       )}
-      {filteredRows && isMobile && (
+      {filteredRows && isCardViewActive && (
         <FixedSizeList
-          height={710} 
-          width={350}
+          height={600}
+          width="100%"
           itemSize={320}
           itemCount={filteredRows.length}
           overscanCount={1}
-          
         >
           {({ index, style, data }) => {
-            const cardStyle = {...style}
+            const cardStyle = { ...style };
             return (
               <PatrimonyInfoCard
                 props={{ index, style: cardStyle, data }}
