@@ -18,7 +18,10 @@ import EditMovimentationObservationModal from "../../modals/EditMovimentationObs
 import { MovimentationContext } from "../../context/movementationContext";
 import { dateTimeRenderer, getMovementationsByPatrimonyId } from "../../utils";
 import { userContext } from "../../../Requisitions/context/userContext";
-import { memo, useContext } from "react";
+import { memo, useContext, useState } from "react";
+import { FixedSizeList } from "react-window";
+import MovementationCard from "../MovementationCard";
+import TableViewToggleButton from "../../../components/TableViewToggleButton";
 
 // Tipo Movementation
 interface Movementation {
@@ -108,7 +111,6 @@ const RowContent = memo(
       toggleDeletingMovementation,
     } = useContext(MovimentationContext);
     const { user } = useContext(userContext);
-    
     const handleClickDeleteMovimentation = (row: Movementation) => {
       if (singleMovementation()) {
         alert("Não é permitido excluir a única movimentação!");
@@ -122,8 +124,7 @@ const RowContent = memo(
       }
       toggleDeletingMovementation(row);
     };
-    const isWhoCreated = () => user?.CODPESSOA === row.id_ultimo_responsavel;
-
+    const isWhoCreated = () => user?.CODPESSOA === row.id_ultimo_responsavel;    
     return (
       <React.Fragment>
         {columns.map((column) => (
@@ -148,7 +149,6 @@ const RowContent = memo(
                   ? dateTimeRenderer(row.data)
                   : row[column.dataKey] || "-"}
               </Typography>
-
               {column.dataKey === "projeto" && (
                 <MovimentationFileModal movementationId={row.id_movimentacao} />
               )}
@@ -184,6 +184,8 @@ const MovimentationTable = memo(() => {
   const [movementations, setMovementations] = React.useState<Movementation[]>(
     []
   );
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [isCardViewActive, setIsCardViewActive] = useState<boolean>(false);
   const { refreshMovimentation } = useContext(MovimentationContext);
 
   const fetchMovementations = React.useCallback(async () => {
@@ -196,32 +198,65 @@ const MovimentationTable = memo(() => {
   const singleMovementation = () => movementations.length === 1;
 
   React.useEffect(() => {
-    console.log("USE EFFECT - MovimentationTable");
     fetchMovementations();
+    setIsMobile(window.innerWidth <= 768);
+    setIsCardViewActive(window.innerWidth <= 768);
   }, [fetchMovementations, refreshMovimentation]); //,
 
   return (
-    <Box sx={{ height: "90%", width: "100%", padding: 0, boxShadow: "none" }}>
-      <TableVirtuoso
-        style={{ boxShadow: "none" }}
-        data={movementations}
-        components={{
-          ...VirtuosoTableComponents,
-          TableRow: (props) => (
-            <TableRow
-              {...props}
-              sx={{
-                cursor: "pointer",
-                "&:hover": { backgroundColor: "#e7eaf6" },
-              }}
-            />
-          ),
-        }}
-        fixedHeaderContent={fixedHeaderContent}
-        itemContent={(_index, row) => (
-          <RowContent row={row} singleMovementation={singleMovementation} />
-        )}
+    <Box
+      sx={{
+        height: "90%",
+        width: "100%",
+        paddingRight: isMobile ? 1 : 0,
+        boxShadow: "none",
+      }}
+    >
+      <TableViewToggleButton
+        isCardViewActive={isCardViewActive}
+        setIsCardViewActive={setIsCardViewActive}
       />
+      {!isCardViewActive && (
+        <TableVirtuoso
+          style={{ boxShadow: "none" }}
+          data={movementations}
+          components={{
+            ...VirtuosoTableComponents,
+            TableRow: (props) => (
+              <TableRow
+                {...props}
+                sx={{
+                  cursor: "pointer",
+                  "&:hover": { backgroundColor: "#e7eaf6" },
+                }}
+              />
+            ),
+          }}
+          fixedHeaderContent={fixedHeaderContent}
+          itemContent={(_index, row) => (
+            <RowContent row={row} singleMovementation={singleMovementation} />
+          )}
+        />
+      )}
+      {isCardViewActive && (
+        <FixedSizeList
+          height={600}
+          width="100%"
+          itemSize={320}
+          itemCount={movementations.length}
+          overscanCount={1}
+        >
+          {({ index, style, data }) => {
+            return (
+              <MovementationCard
+                key={index}
+                props={{ index, style, data }}
+                cardData={movementations[index]}
+              />
+            );
+          }}
+        </FixedSizeList>
+      )}
       <DeleteMovementationModal />
       <EditMovimentationObservationModal />
     </Box>

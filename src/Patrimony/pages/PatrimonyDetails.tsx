@@ -352,12 +352,12 @@ const PatrimonyDetails = () => {
                 >
                   <Typography
                     display="flex"
-                    alignItems="center"
                     fontSize={{
                       lg: "1.5rem",
                       sm: "1rem",
                       xs: "14px",
                     }}
+                    fontWeight="bold"
                     className="text-gray-[#2B3990]"
                     textAlign="center"
                   >

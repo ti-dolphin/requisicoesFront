@@ -4,6 +4,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import { IconButton } from "@mui/material";
+import { buttonStylesMobile } from "../../utilStyles";
 
 interface ChecklistFiltersMobileMenuProps {
   filterByStatus: (
@@ -33,6 +34,7 @@ export default function ChecklistFiltersMobileMenu({filterByStatus}: ChecklistFi
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
+        sx={{...buttonStylesMobile}}
       >
         <FilterAltIcon sx={{ color: "white" }} />
       </IconButton>

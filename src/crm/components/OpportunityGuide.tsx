@@ -38,6 +38,7 @@ const OpportunityGuide = ({
         justifyContent: "center",
         alignItems: "center",
         padding: 0.5,
+        
       }}
     >
       <Box

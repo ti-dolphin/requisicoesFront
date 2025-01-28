@@ -13,6 +13,7 @@ import { basicAppbarStyles } from "../../utilStyles";
 import { Search, SearchIconWrapper, StyledInputBase } from "../utils";
 import SearchIcon from "@mui/icons-material/Search";
 import TableViewToggleButton from "../../components/TableViewToggleButton";
+import { User } from "../../Requisitions/context/userContext";
 
 interface ChecklistAppBarProps {
   handleSearch: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -20,9 +21,7 @@ interface ChecklistAppBarProps {
   filterByStatus: (status: string) => void; // Função para aplicar o filtro
   currentStatusFilterSelected: string; // Filtro selecionado atualmente
   isMobile: boolean; // Determina se é uma visualização mobile
-  user?: {
-    responsavel_tipo?: boolean; // Verifica se o usuário tem tipo de responsável
-  };
+  user: User;
   setIsCardViewActive: React.Dispatch<React.SetStateAction<boolean>>;
   isCardViewActive: boolean; 
 }
@@ -37,6 +36,7 @@ const ChecklistAppBar: React.FC<ChecklistAppBarProps> = ({
   isCardViewActive,
   setIsCardViewActive,
 }) => {
+  console.log(!isMobile && user?.responsavel_tipo);
   return (
     <Box>
       <AppBar
@@ -45,9 +45,8 @@ const ChecklistAppBar: React.FC<ChecklistAppBarProps> = ({
           ...basicAppbarStyles,
           alignItems: {
             xs: "center",
-            md: "start"
-          },
-          
+            md: "start",
+          }
         }}
       >
         <Box
@@ -56,7 +55,7 @@ const ChecklistAppBar: React.FC<ChecklistAppBarProps> = ({
           flexWrap="wrap"
           left={2}
           gap={1}
-          width={{ xs: "90%", sm: "80%", md: "70%", lg: "60%", xl: "20%" }}
+          width={{ xs: "90%", sm: "80%", md: "70%", lg: "60%" }}
         >
           <IconButton
             onClick={handleBack}
@@ -84,7 +83,7 @@ const ChecklistAppBar: React.FC<ChecklistAppBarProps> = ({
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
-              placeholder="Search…"
+              placeholder="Buscar..."
               inputProps={{ "aria-label": "search" }}
               onChange={handleSearch}
             />
@@ -93,38 +92,38 @@ const ChecklistAppBar: React.FC<ChecklistAppBarProps> = ({
             isCardViewActive={isCardViewActive}
             setIsCardViewActive={setIsCardViewActive}
           />
+          {!isMobile && user?.responsavel_tipo && (
+            <Stack direction={"row"} spacing={2} alignItems="center">
+              {["atrasados", "aprovar", "problemas", "todos"].map((status) => (
+                <Button
+                  key={status}
+                  id={status}
+                  onClick={() => filterByStatus(status)}
+                  sx={{
+                    color: "white",
+                    backgroundColor:
+                      currentStatusFilterSelected === status ||
+                      (status === "todos" && currentStatusFilterSelected === "")
+                        ? "#f1b963"
+                        : "#F7941E",
+                    "&:hover": {
+                      backgroundColor: "#f1b963",
+                    },
+                    height: "1.4rem",
+                    fontSize: "12px",
+                  }}
+                >
+                  {status.charAt(0).toUpperCase() + status.slice(1)}
+                </Button>
+              ))}
+            </Stack>
+          )}
+          {isMobile && user?.responsavel_tipo && (
+            <ChecklistFiltersMobileMenu filterByStatus={filterByStatus} />
+          )}
         </Box>
-         
+
         {/* Responsable for type buttons */}
-        {isMobile && user?.responsavel_tipo && (
-          <ChecklistFiltersMobileMenu filterByStatus={filterByStatus} />
-        )}
-        {!isMobile && user?.responsavel_tipo && (
-          <Stack direction={"row"} spacing={2} alignItems="center">
-            {["atrasados", "aprovar", "problemas", "todos"].map((status) => (
-              <Button
-                key={status}
-                id={status}
-                onClick={() => filterByStatus(status)}
-                sx={{
-                  color: "white",
-                  backgroundColor:
-                    currentStatusFilterSelected === status ||
-                    (status === "todos" && currentStatusFilterSelected === "")
-                      ? "#f1b963"
-                      : "#F7941E",
-                  "&:hover": {
-                    backgroundColor: "#f1b963",
-                  },
-                  height: "1.4rem",
-                  fontSize: "12px",
-                }}
-              >
-                {status.charAt(0).toUpperCase() + status.slice(1)}
-              </Button>
-            ))}
-          </Stack>
-        )}
       </AppBar>
     </Box>
   );

@@ -1,16 +1,18 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Box, Typography, Card, Stack, Button } from "@mui/material";
 import { BaseButtonStyles, basicCardContentStyles, basicCardStyles } from "../../utilStyles";
 import { ListChildComponentProps } from "react-window";
 import { MovementationChecklist } from "../types";
 import { ChecklistColumnData } from "../../crm/types";
+import { User, userContext } from "../../Requisitions/context/userContext";
 
-interface ChecklistTaskCardProps {
+interface ChecklistCard {
   key: number;
   handleOpenChecklist: (row: MovementationChecklist) => void
-  renderValue: (
+  renderValue?: (
     column: ChecklistColumnData,
-    row: MovementationChecklist
+    row: MovementationChecklist,
+    user: User
   ) => string | number | JSX.Element | null | undefined;
   props: ListChildComponentProps;
   cardData: MovementationChecklist; // Os dados da tarefa (uma linha da lista)
@@ -20,7 +22,7 @@ interface ChecklistTaskCardProps {
   }[];
 }
 
-const ChecklistTaskCard: React.FC<ChecklistTaskCardProps> = ({
+const ChecklistCard: React.FC<ChecklistCard> = ({
   cardData,
   columns,
   key,
@@ -29,10 +31,12 @@ const ChecklistTaskCard: React.FC<ChecklistTaskCardProps> = ({
   renderValue,
 }) => {
   const { style } = props;
+  const {user} = useContext(userContext);
 
   return (
-    <Card key={key} sx={{ ...style, ...basicCardStyles }}>
+    <Card key={key} sx={{ ...style, ...basicCardStyles}}>
       <Box sx={basicCardContentStyles} className="shadow-sm shadow-gray-600">
+     
         {columns.map((column) => (
           <Box key={column.dataKey} sx={{ marginBottom: 1 }}>
             <Stack direction="row" gap={1} alignItems="center">
@@ -40,7 +44,7 @@ const ChecklistTaskCard: React.FC<ChecklistTaskCardProps> = ({
                 {column.label}:
               </Typography>{" "}
               <Typography fontSize="small" color="textSecondary">
-                {renderValue(column, cardData)}
+                {renderValue && user && renderValue(column, cardData, user)}
               </Typography>
             </Stack>
           </Box>
@@ -56,4 +60,4 @@ const ChecklistTaskCard: React.FC<ChecklistTaskCardProps> = ({
   );
 };
 
-export default ChecklistTaskCard;
+export default ChecklistCard;

@@ -14,15 +14,17 @@ import {
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { userContext } from "../../Requisitions/context/userContext";
 import { MovementationChecklist } from "../types";
-import { dateTimeRenderer, getPatrimonyNotifications } from "../utils";
+import {
+  dateTimeRenderer,
+  getPatrimonyNotifications,
+  renderValue,
+} from "../utils";
 import { TableVirtuoso, TableComponents } from "react-virtuoso";
-import ErrorIcon from "@mui/icons-material/Error";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { checklistContext } from "../context/checklistContext";
 import ChecklistItemsModal from "../modals/ChecklistItemsModal";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FixedSizeList } from "react-window";
-import ChecklistTaskCard from "../components/ChecklistTaskCard";
+import ChecklistCard from "../components/ChecklistCard";
 import { ChecklistColumnData } from "../../crm/types";
 import ChecklistAppBar from "../components/ChecklistAppBar";
 
@@ -215,7 +217,7 @@ const ChecklistTasks = () => {
 
   function fixedHeaderContent() {
     return (
-      <TableRow sx={{ backgroundColor: "#2B3990", borderRadius: 'none' }}>
+      <TableRow sx={{ backgroundColor: "#2B3990", borderRadius: "none" }}>
         {columns.map((column) => (
           <TableCell
             key={column.dataKey}
@@ -266,20 +268,8 @@ const ChecklistTasks = () => {
     );
   }
 
-  const isTypeResponsable = (checklist: MovementationChecklist) => {
-    return checklist.responsavel_tipo === user?.responsavel_tipo;
-  };
-
   const handleBack = () => {
     navigate("/patrimony");
-  };
-
-  const isLate = (row: MovementationChecklist) => {
-    const creationDate = new Date(row.data_criacao);
-    const today = new Date();
-    const threeDaysAgo = new Date();
-    threeDaysAgo.setDate(today.getDate() - 3);
-    return creationDate < threeDaysAgo && !row.realizado;
   };
 
   const renderDateValue = (dataKey: string, row: MovementationChecklist) => {
@@ -287,54 +277,6 @@ const ChecklistTasks = () => {
       row[dataKey as keyof MovementationChecklist] || ""
     );
     return date === "Invalid Date, Invalid Date" ? "" : date;
-  };
-
-  const toBeAproved = (row: MovementationChecklist) => {
-    return row.realizado && !row.aprovado;
-  };
-
-  const renderValue = (
-    column: ChecklistColumnData,
-    row: MovementationChecklist
-  ) => {
-    if (column.dataKey === "aprovado") {
-      return (
-        <ErrorIcon
-          sx={{
-            color:
-              toBeAproved(row) && isTypeResponsable(row) ? "#ff9a3c" : "gray",
-          }}
-        ></ErrorIcon>
-      );
-    }
-
-    if (column.dataKey === "realizado") {
-      return toBeDone(row) ? (
-        <ErrorIcon
-          sx={{
-            color: isLate(row) ? "red" : "#ff9a3c",
-          }}
-        ></ErrorIcon>
-      ) : (
-        <CheckCircleIcon
-          sx={{
-            color: "green",
-          }}
-        />
-      );
-    }
-    if (column.dataKey === "id_patrimonio") {
-      return (
-        <Link to={`/patrimony/item/${row.id_patrimonio}`}>
-          {row.id_patrimonio}
-        </Link>
-      );
-    }
-    return row[column.dataKey];
-  };
-
-  const toBeDone = (row: MovementationChecklist) => {
-    return !row.aprovado && !row.realizado;
   };
 
   const handleOpenChecklist = (row: MovementationChecklist) => {
@@ -365,7 +307,7 @@ const ChecklistTasks = () => {
             <Typography fontSize="small">
               {isDateValue(column)
                 ? renderDateValue(column.dataKey, row)
-                : renderValue(column, row)}
+                : user && renderValue(column, row, user)}
             </Typography>
           </TableCell>
         ))}
@@ -449,21 +391,24 @@ const ChecklistTasks = () => {
         },
       }}
     >
-      <ChecklistAppBar
-        setIsCardViewActive={setIsCardViewActive}
-        isCardViewActive={isCardViewActive}
-        handleSearch={handleSearch}
-        handleBack={handleBack}
-        filterByStatus={filterByStatus}
-        currentStatusFilterSelected={currentStatusFilterSelected}
-        isMobile={isMobile}
-      />
+      {user && (
+        <ChecklistAppBar
+          setIsCardViewActive={setIsCardViewActive}
+          isCardViewActive={isCardViewActive}
+          handleSearch={handleSearch}
+          handleBack={handleBack}
+          filterByStatus={filterByStatus}
+          user={user}
+          currentStatusFilterSelected={currentStatusFilterSelected}
+          isMobile={isMobile}
+        />
+      )}
 
       {/* Non Mobile Table View */}
       {filteredNotificationsByUser && !isCardViewActive && (
         <TableVirtuoso
           data={filteredNotificationsByUser}
-          style={{ borderRadius: 0}}
+          style={{ borderRadius: 0 }}
           components={{
             ...VirtuosoTableComponents,
             TableRow: (props) => (
@@ -499,7 +444,7 @@ const ChecklistTasks = () => {
               { label: "Aprovado", dataKey: "aprovado" },
             ];
             return (
-              <ChecklistTaskCard
+              <ChecklistCard
                 handleOpenChecklist={handleOpenChecklist}
                 renderValue={renderValue}
                 key={index}

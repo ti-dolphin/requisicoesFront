@@ -230,13 +230,13 @@ const CreateOpportunityModal = () => {
     valorLocacao: 0.0, // Valor padrão (campo com valor padrão '0.00')
     idAdicional: 0, // Valor padrão (campo com valor padrão '0')
     idProjeto: 0, // Valor padrão (campo com valor padrão '0')
-    dataInteracao: null, // Valor padrão (campo com valor padrão '1111-11-11')
+    dataInteracao: '', // Valor padrão (campo com valor padrão '1111-11-11')
     valorFatDolphin: 0.0, // Valor padrão para faturamento Dolphin (campo com valor padrão '0.00')
     principal: true, // Valor padrão (campo com valor padrão '1')
     valorComissao: 0.0, // Valor obrigatório
     idMotivoPerdido: 1, // Valor obrigatório (campo não pode ser nulo)
-    observacoes: null, // Opcional
-    descricaoVenda: null, // Opcional
+    observacoes: '', // Opcional
+    descricaoVenda: '', // Opcional
     emailVendaEnviado: false, // Valor padrão (campo com valor padrão '0')
     numeroAdicional: 0, // Valor padrão com
     comentarios: [],
@@ -249,26 +249,20 @@ const CreateOpportunityModal = () => {
   const [projectOptions, setProjectOptions] = useState<
     OpportunityOptionField[]
   >([]);
-  const [refreshOpportunityFields, setRefreshOpportunityFields] =
-    useState(false);
-  //setRefreshUploads
+  const [refreshOpportunityFields, setRefreshOpportunityFields] = useState(false);
   const [projectChoiceModalOpen, setProjectChoiceModalOpen] = useState(false);
   const [formDataFileArray, setFormDataFileArray] = useState<FormData>(
     new FormData()
   );
-
   const [salerOptions, setSalerOptions] = useState<OpportunityOptionField[]>(
     []
   );
-
   const [statusOptions, setStatusOptions] = useState<OpportunityOptionField[]>(
     []
   );
-
   const [clientOptions, setClientOptions] = useState<OpportunityOptionField[]>(
     []
   );
-
   const [currentCommentValue, setCurrentCommentValue] = React.useState("");
   const [saveProgressModalOpen, setSaveProgressModalOpen] = useState(false);
 
@@ -389,7 +383,10 @@ const CreateOpportunityModal = () => {
   };
 
   const isNumeric = (value: string) => {
+    if (value !== ''){
     return !isNaN(Number(value));
+    }
+    return false;
   };
 
   const handleChangeTextField = (
@@ -419,6 +416,11 @@ const CreateOpportunityModal = () => {
       });
       return;
     }
+    console.log({value});
+    console.log({
+      ...opportunity,
+      [column.dataKey]: isNumeric(value) ? Number(value) : value,
+    });
     setCurrentOpportunity({
       ...opportunity,
       [column.dataKey]: isNumeric(value) ? Number(value) : value,
@@ -495,7 +497,7 @@ const CreateOpportunityModal = () => {
       principal: true, // Valor padrão (campo com valor padrão '1')
       valorComissao: 0.0, // Valor obrigatório
       idMotivoPerdido: 1, // Valor obrigatório (campo não pode ser nulo)
-      observacoes: null, // Opcional
+      observacoes: '', // Opcional
       descricaoVenda: null, // Opcional
       emailVendaEnviado: false, // Valor padrão (campo com valor padrão '0')
       numeroAdicional: 0, // Valor padrão com
@@ -747,7 +749,7 @@ const CreateOpportunityModal = () => {
             lg: "50%",
             xl: "40%",
           },
-          maxHeight: "90%",
+          height: 'fit-content',
           bgcolor: "background.paper",
           boxShadow: 24,
           overFlow: "hidden",

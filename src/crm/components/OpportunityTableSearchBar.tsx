@@ -254,7 +254,6 @@ const OpportunityTableSearchBar = ({
             onChange={(e) => handleGeneralSerarch(e)}
             placeholder="Buscar..."
             value={searchValue}
-            autoFocus
             inputProps={{ "aria-label": "search", height: 20 }}
           />
         </Search>

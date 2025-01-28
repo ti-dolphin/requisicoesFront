@@ -46,7 +46,7 @@ export const basicCardStyles = {
 export const basicCardContentStyles = {
   display: "flex",
   flexDirection: "column",
-  width: "100%",
+  width: "fit-content",
   alignItems: "start",
   gap: 0.8,
   padding: 1,

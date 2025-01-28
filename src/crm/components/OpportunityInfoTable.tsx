@@ -239,16 +239,22 @@ export default function OpportunityInfoTable() {
           rows={rows}
           columns={columns}
           getRowId={(row) => row.numeroOs}
-          rowHeight={30} // Define `numero_projeto` como ID da linha
-          columnHeaderHeight={30}
+          rowHeight={40} // Define `numero_projeto` como ID da linha
+          columnHeaderHeight={40}
           onRowClick={(e) => selectOpportunity(e)}
           sx={{
             width: "100%",
             borderCollapse: "collapse",
             fontFamily: "Arial, sans-serif",
-            fontSize: "12.5px",
+            fontSize: "12px",
+            fontWeight: "600",
+            color: "#233142",
             "& .MuiDataGrid-columnHeaders": {
               fontWeight: "bold",
+              color: "black",
+              "& .MuiDataGrid-columnHeader": {
+                backgroundColor: "#ececec",
+              },
             },
             "& .MuiDataGrid-columnHeaderTitle": {
               fontWeight: "bold",
@@ -258,8 +264,7 @@ export default function OpportunityInfoTable() {
             "& .MuiDataGrid-row": {
               cursor: "pointer",
               ":nth-child(even)": {
-                backgroundColor: "#e7eaf6",
-       
+                backgroundColor: "#ececec",
               },
             },
             "& .MuiDataGrid-cell": {
