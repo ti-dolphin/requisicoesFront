@@ -46,7 +46,7 @@ const ChecklistAppBar: React.FC<ChecklistAppBarProps> = ({
           alignItems: {
             xs: "center",
             md: "start",
-          }
+          },
         }}
       >
         <Box
@@ -88,10 +88,12 @@ const ChecklistAppBar: React.FC<ChecklistAppBarProps> = ({
               onChange={handleSearch}
             />
           </Search>
-          <TableViewToggleButton
-            isCardViewActive={isCardViewActive}
-            setIsCardViewActive={setIsCardViewActive}
-          />
+          {isMobile && (
+            <TableViewToggleButton
+              isCardViewActive={isCardViewActive}
+              setIsCardViewActive={setIsCardViewActive}
+            />
+          )}
           {!isMobile && user?.responsavel_tipo && (
             <Stack direction={"row"} spacing={2} alignItems="center">
               {["atrasados", "aprovar", "problemas", "todos"].map((status) => (

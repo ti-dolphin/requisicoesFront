@@ -179,10 +179,12 @@ const PatrimonySearchAppBarButtons = React.memo(
             ? buttonConfig.condition && buttonConfig.render(index)
             : buttonConfig.render(index)
         )}
-        <TableViewToggleButton
-          setIsCardViewActive={setIsCardViewActive}
-          isCardViewActive={isCardViewActive}
-        />
+        {isMobile && (
+          <TableViewToggleButton
+            setIsCardViewActive={setIsCardViewActive}
+            isCardViewActive={isCardViewActive}
+          />
+        )}
       </Stack>
     );
   }

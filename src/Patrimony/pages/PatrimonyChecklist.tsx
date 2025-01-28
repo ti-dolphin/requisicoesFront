@@ -46,6 +46,7 @@ const PatrimonyChecklist = () => {
   const [checklistData, setChecklistData] = useState<MovementationChecklist[]>(
     []
   );
+  const [isMobile, setIsMobile] = useState<boolean>(false);
   const [isCardViewActive, setIsCardViewActive] = useState<boolean>(false);
   const handleOpenChecklist = (row: MovementationChecklist) => {
     toggleChecklistOpen(row);
@@ -67,6 +68,7 @@ const PatrimonyChecklist = () => {
   useEffect(() => {
     getChecklistData();
     setIsCardViewActive(window.innerWidth < 768);
+    setIsMobile(window.innerWidth < 768);
   }, [getChecklistData, refreshChecklist]);
 
   const columns: GridColDef[] = [
@@ -170,10 +172,12 @@ const PatrimonyChecklist = () => {
               ? `Histórico de Checklists do Patrimônio | ${checklistData[0].nome_patrimonio} | 000${checklistData[0].id_patrimonio}`
               : "Não há checklists para este patrimônio"}
           </Typography>
-          <TableViewToggleButton
-            isCardViewActive={isCardViewActive}
-            setIsCardViewActive={setIsCardViewActive}
-          />
+          {isMobile && (
+            <TableViewToggleButton
+              isCardViewActive={isCardViewActive}
+              setIsCardViewActive={setIsCardViewActive}
+            />
+          )}
         </Box>
       </AppBar>
       <Paper

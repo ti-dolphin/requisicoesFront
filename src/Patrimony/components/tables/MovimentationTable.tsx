@@ -212,10 +212,12 @@ const MovimentationTable = memo(() => {
         boxShadow: "none",
       }}
     >
-      <TableViewToggleButton
-        isCardViewActive={isCardViewActive}
-        setIsCardViewActive={setIsCardViewActive}
-      />
+      {isMobile && (
+        <TableViewToggleButton
+          isCardViewActive={isCardViewActive}
+          setIsCardViewActive={setIsCardViewActive}
+        />
+      )}
       {!isCardViewActive && (
         <TableVirtuoso
           style={{ boxShadow: "none" }}
