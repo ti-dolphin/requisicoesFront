@@ -150,6 +150,7 @@ export interface CardChecklistItemProps {
   isIOS: boolean;
   shouldShowFinalizeButton: boolean;
   handleSendChecklistItems: () => Promise<void>;
+  isMobile : boolean
 }
 
 export interface Guide{

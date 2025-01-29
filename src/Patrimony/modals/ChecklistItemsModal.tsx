@@ -557,6 +557,7 @@ const handleReproveChecklist = async () => {
                   isMovimentationResponsable={isMovimentationResponsable}
                   handleFileChange={handleFileChange}
                   toBeDone={toBeDone}
+                  isMobile={isMobile}
                   isIOS={isIOS}
                   shouldShowFinalizeButton={shouldShowFinalizeButton}
                   handleSendChecklistItems={handleSendChecklistItems}
@@ -584,6 +585,7 @@ const handleReproveChecklist = async () => {
                       handleFileChange={handleFileChange}
                       isMovimentationResponsable={isMovimentationResponsable}
                       isIOS={isIOS}
+                      isMobile={isMobile}
                       shouldShowFinalizeButton={shouldShowFinalizeButton}
                       handleSendChecklistItems={handleSendChecklistItems}
                     />

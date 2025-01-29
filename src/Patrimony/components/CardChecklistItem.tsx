@@ -22,9 +22,10 @@ const CardChecklistItem = ({
   shouldShowFinalizeButton,
   handleSendChecklistItems,
   key,
+  isMobile
 }: CardChecklistItemProps) => {
   const shouldShowUploadFileButton = () => {
-    return toBeDone() && isMovimentationResponsable();
+    return toBeDone() && isMovimentationResponsable() && isMobile;
   };
   return (
     <Card

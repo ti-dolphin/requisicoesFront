@@ -21,13 +21,14 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { OpportunityInfoContext } from "../context/OpportunityInfoContext";
 import React, { useContext, useState } from "react";
 import { defaultDateFilters } from "../context/OpportunityInfoContext";
-import CreateOpportunityModal from "../modals/CreateOpportunityModal";
+import OpportunityModal from "../modals/OpportunityModal";
 import AddIcon from "@mui/icons-material/Add";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import CloseIcon from "@mui/icons-material/Close";
 import { motion, AnimatePresence } from "framer-motion";
 import { GridColDef } from "@mui/x-data-grid";
 import { OpportunityInfo } from "../types";
+import { BaseButtonStyles, buttonStylesMobile } from "../../utilStyles";
 
 interface OpportunityTableSearchBarProps {
   columns: GridColDef<OpportunityInfo>[];
@@ -203,11 +204,10 @@ const OpportunityTableSearchBar = ({
         height: "fit-content",
         gap: 0.4,
         padding: 1,
-        overFlow: "scroll",
         boxShadow: "none",
       }}
     >
-      <Stack direction="row" alignItems="center"  padding={0}>
+      <Stack direction="row" alignItems="center" padding={0}>
         <IconButton onClick={() => navigate("/home")}>
           <ArrowLeftIcon sx={{ color: "white" }} />
         </IconButton>
@@ -232,8 +232,18 @@ const OpportunityTableSearchBar = ({
             lg: 1,
           },
           overflowX: "auto", // Scroll horizontal automático
+          "&::-webkit-scrollbar": {
+            padding: "10px",
+            width: "4px", // Largura da barra de rolagem
+            height: "2px",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            height: "2px",
+            backgroundColor: "white", // Cor da barra de rolagem
+            borderRadius: "4px", // Bordas arredondadas
+          },
           overflowY: "hidden", // Remove o scroll vertical
-          padding: 0, // Remove possíveis espaçamentos extras
+          padding: 1, // Remove possíveis espaçamentos extras
         }}
       >
         <Search
@@ -259,54 +269,47 @@ const OpportunityTableSearchBar = ({
         </Search>
 
         <Stack direction="row" flexWrap="wrap" gap={1} alignItems="center">
-          <Button
-            onClick={(e) => handleSearchWithDateParams(e)}
-            sx={{
-              color: "white",
-              backgroundColor: "#F7941E",
-              "&:hover": {
-                backgroundColor: "#f1b963",
-              },
-              padding: 0.5,
-            }}
-          >
-            <Typography
-              fontSize="small"
-              fontFamily="Roboto"
-              fontWeight="semibold"
-            >
-              Pesquisar
-            </Typography>
-          </Button>
-          <Button
-            onClick={handleCleanDateFilters}
-            sx={{
-              color: "white",
-              backgroundColor: "#F7941E",
-              "&:hover": {
-                backgroundColor: "#f1b963",
-              },
-            }}
-          >
-            <Typography
-              fontSize="small"
-              fontFamily="Roboto"
-              fontWeight="semibold"
-            >
-              Limpar Filtros
-            </Typography>
-          </Button>
-
+          {dateFiltersActive && (
+            <>
+              <Button
+                onClick={(e) => handleSearchWithDateParams(e)}
+                sx={BaseButtonStyles}
+              >
+                <Typography
+                  fontSize="small"
+                  fontFamily="Roboto"
+                  fontWeight="semibold"
+                >
+                  Pesquisar
+                </Typography>
+              </Button>
+              <Button onClick={handleCleanDateFilters} sx={BaseButtonStyles}>
+                <Typography
+                  fontSize="small"
+                  fontFamily="Roboto"
+                  fontWeight="semibold"
+                >
+                  Limpar Filtros
+                </Typography>
+              </Button>
+            </>
+          )}
           <IconButton
             onClick={toggleCreatingOpportunity}
-            sx={{
-              backgroundColor: "#F7941E",
-              color: "white",
-              "&:hover": { backgroundColor: "#f1b963" },
-            }}
+            sx={buttonStylesMobile}
           >
             <AddIcon sx={{ color: "#2B3990" }} />
           </IconButton>
+          {!dateFiltersActive && (
+            <Tooltip title="Mostrar filtros">
+              <IconButton 
+                sx={buttonStylesMobile}
+                onClick={() => setDateFiltersActive(!dateFiltersActive)}
+              >
+                <FilterAltIcon sx={{ color: "white" }} />
+              </IconButton>
+            </Tooltip>
+          )}
           <FormControlLabel
             control={
               <Checkbox
@@ -316,7 +319,7 @@ const OpportunityTableSearchBar = ({
                   color: "white",
                   "& .Mui-checked": {
                     color: "white",
-                  }
+                  },
                 }}
               />
             }
@@ -324,7 +327,7 @@ const OpportunityTableSearchBar = ({
           />
         </Stack>
 
-        {dateFiltersActive ? (
+        {dateFiltersActive && (
           <AnimatePresence>
             <motion.div
               key="filters"
@@ -340,6 +343,7 @@ const OpportunityTableSearchBar = ({
                   alignItems: "center",
                   gap: 1.5,
                   borderRadius: 0.5,
+                  zIndex: 20,
                 }}
               >
                 {dateParams.map((dateFilter, index) => (
@@ -397,18 +401,10 @@ const OpportunityTableSearchBar = ({
               </FormControl>
             </motion.div>
           </AnimatePresence>
-        ) : (
-          <Tooltip title="Mostrar filtros">
-            <IconButton
-              onClick={() => setDateFiltersActive(!dateFiltersActive)}
-            >
-              <FilterAltIcon sx={{ color: "white" }} />
-            </IconButton>
-          </Tooltip>
         )}
       </Toolbar>
 
-      <CreateOpportunityModal />
+      <OpportunityModal />
     </AppBar>
   );
 };

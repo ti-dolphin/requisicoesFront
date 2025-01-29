@@ -31,18 +31,17 @@ const theme = createTheme(
 );
 
 const columns: GridColDef<OpportunityInfo>[] = [
-  { field: "numeroProjeto", headerName: "Nº Projeto", width: 130 }, // os.ID_PROJETO
-  { field: "numeroAdicional", headerName: "Nº Adicional", width: 130 }, // os.ID_ADICIONAL
-  { field: "nomeStatus", headerName: "Status", width: 120 }, // s.NOME
+  { field: "numeroProjeto", headerName: "Nº Projeto" }, // os.ID_PROJETO
+  { field: "numeroAdicional", headerName: "Nº Adicional" }, // os.ID_ADICIONAL
+  { field: "nomeStatus", headerName: "Status" }, // s.NOME
   {
     field: "nomeDescricaoProposta",
     headerName: "Descrição",
-    width: 200,
     editable: false,
   }, // os.NOME
-  { field: "nomeCliente", headerName: "Cliente", width: 150 }, // c.NOME
-  { field: "nomeVendedor", headerName: "Vendedor", width: 150 }, // vendedor.NOME
-  { field: "nomeGerente", headerName: "Gerente", width: 150 }, // gerente.NOME
+  { field: "nomeCliente", headerName: "Cliente" }, // c.NOME
+  { field: "nomeVendedor", headerName: "Vendedor" }, // vendedor.NOME
+  { field: "nomeGerente", headerName: "Gerente" }, // gerente.NOME
   {
     field: "valorFaturamentoDolphin",
     headerName: "Faturamento Dolphin",
@@ -54,12 +53,10 @@ const columns: GridColDef<OpportunityInfo>[] = [
   {
     field: "valorTotal",
     headerName: "Valor Total",
- 
   }, // CONCAT('R$ ', FORMAT(os.VALORTOTAL, 2, 'de_DE'))
   {
     field: "dataSolicitacao",
     headerName: "Solicitação",
-    width: 120,
     valueFormatter: (value: Date) => {
       if (value) return formatDate(value);
       return "-";
@@ -68,7 +65,6 @@ const columns: GridColDef<OpportunityInfo>[] = [
   {
     field: "dataFechamento",
     headerName: "Fechamento",
-    width: 120,
     valueFormatter: (value: Date) => {
       if (value) return formatDate(value);
       return "-";
@@ -76,7 +72,7 @@ const columns: GridColDef<OpportunityInfo>[] = [
   }, // os.DATAENTREGA
   {
     field: "dataInteracao",
-    headerName: "Data de Interação",
+    headerName: "Data de Interação", 
     valueFormatter: (value: Date) => {
       if (value) return formatDate(value);
       return "-";
@@ -93,16 +89,17 @@ const columns: GridColDef<OpportunityInfo>[] = [
   {
     field: "numeroOs",
     headerName: "Nº OS",
-    width: 130,
   }, // os.CODOS
-  
 ];
+
 
 export default function OpportunityInfoTable() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { user} = useContext(userContext);
   const [rows, setRows] = useState<OpportunityInfo[]>([]);
   const [allRows, setAllRows] = useState<OpportunityInfo[]>([]);
+   const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [ isCardViewActive, setIsCardViewActive] = useState<boolean>(false);
   const {
     finishedOppsEnabled,
     refreshOpportunityInfo,
@@ -215,6 +212,8 @@ export default function OpportunityInfoTable() {
 
   useEffect(() => {
     fetchOpportunities();
+    setIsMobile(window.innerWidth > 768);
+    setIsCardViewActive(window.innerWidth > 768);
   }, [fetchOpportunities, refreshOpportunityInfo]);
   return (
     <Box
@@ -234,51 +233,60 @@ export default function OpportunityInfoTable() {
         allRows={allRows}
         setRows={setRows}
       />
-      <ThemeProvider theme={theme}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          getRowId={(row) => row.numeroOs}
-          rowHeight={40} // Define `numero_projeto` como ID da linha
-          columnHeaderHeight={40}
-          onRowClick={(e) => selectOpportunity(e)}
-          sx={{
-            width: "100%",
-            borderCollapse: "collapse",
-            fontFamily: "Arial, sans-serif",
-            fontSize: "12px",
-            fontWeight: "600",
-            color: "#233142",
-            "& .MuiDataGrid-columnHeaders": {
-              fontWeight: "bold",
-              color: "black",
-              "& .MuiDataGrid-columnHeader": {
-                backgroundColor: "#ececec",
+      {!isCardViewActive && (
+        <ThemeProvider theme={theme}>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            getRowId={(row) => row.numeroOs}
+            rowHeight={40} // Define `numero_projeto` como ID da linha
+            columnHeaderHeight={40}
+            autosizeOnMount
+            autosizeOptions={{
+              expand: true,
+            }}
+            onRowClick={(e) => selectOpportunity(e)}
+            sx={{
+              width: "100%",
+              borderCollapse: "collapse",
+              fontFamily: "Arial, sans-serif",
+              fontSize: "12px",
+              fontWeight: "600",
+              color: "#233142",
+              "& .MuiDataGrid-columnHeaders": {
+                fontWeight: "bold",
+                color: "black",
+                "& .MuiDataGrid-columnHeader": {
+                  backgroundColor: "#ececec",
+                },
               },
-            },
-            "& .MuiDataGrid-columnHeaderTitle": {
-              fontWeight: "bold",
-              fontSize: 12,
-            },
+              "& .MuiDataGrid-columnHeaderTitle": {
+                fontWeight: "bold",
+                fontSize: 12,
+              },
 
-            "& .MuiDataGrid-row": {
-              cursor: "pointer",
-              ":nth-child(even)": {
-                backgroundColor: "#ececec",
+              "& .MuiDataGrid-row": {
+                cursor: "pointer",
+                ":nth-child(even)": {
+                  backgroundColor: "#ececec",
+                },
               },
-            },
-            "& .MuiDataGrid-cell": {
-              paddingLeft: 1.2,
-            },
-          }}
-          autoPageSize
-          // pageSizeOptions={[10, 20, 30]}
-          disableRowSelectionOnClick
-          slots={{
-            footer: GridFooter,
-          }}
-        />
-      </ThemeProvider>
+              "& .MuiDataGrid-cell": {
+                paddingLeft: 1.2,
+              },
+            }}
+            autoPageSize
+            // pageSizeOptions={[10, 20, 30]}
+            disableRowSelectionOnClick
+            slots={{
+              footer: GridFooter,
+            }}
+          />
+        </ThemeProvider>
+      )}
+      {/* {isCardViewActive &&
+
+      } */}
     </Box>
   );
 }

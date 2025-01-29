@@ -51,7 +51,7 @@ import ProjectChoiceModal from "./ProjectChoiceModal";
 import OpportunityGuide from "../components/OpportunityGuide";
 import GuideSelector from "../components/GuideSelector";
 
-const CreateOpportunityModal = () => {
+const OpportunityModal = () => {
   const guides: Guide[] = [
     {
       name: "Cadastro",
@@ -230,13 +230,13 @@ const CreateOpportunityModal = () => {
     valorLocacao: 0.0, // Valor padrão (campo com valor padrão '0.00')
     idAdicional: 0, // Valor padrão (campo com valor padrão '0')
     idProjeto: 0, // Valor padrão (campo com valor padrão '0')
-    dataInteracao: '', // Valor padrão (campo com valor padrão '1111-11-11')
+    dataInteracao: "", // Valor padrão (campo com valor padrão '1111-11-11')
     valorFatDolphin: 0.0, // Valor padrão para faturamento Dolphin (campo com valor padrão '0.00')
     principal: true, // Valor padrão (campo com valor padrão '1')
     valorComissao: 0.0, // Valor obrigatório
     idMotivoPerdido: 1, // Valor obrigatório (campo não pode ser nulo)
-    observacoes: '', // Opcional
-    descricaoVenda: '', // Opcional
+    observacoes: "", // Opcional
+    descricaoVenda: "", // Opcional
     emailVendaEnviado: false, // Valor padrão (campo com valor padrão '0')
     numeroAdicional: 0, // Valor padrão com
     comentarios: [],
@@ -249,7 +249,8 @@ const CreateOpportunityModal = () => {
   const [projectOptions, setProjectOptions] = useState<
     OpportunityOptionField[]
   >([]);
-  const [refreshOpportunityFields, setRefreshOpportunityFields] = useState(false);
+  const [refreshOpportunityFields, setRefreshOpportunityFields] =
+    useState(false);
   const [projectChoiceModalOpen, setProjectChoiceModalOpen] = useState(false);
   const [formDataFileArray, setFormDataFileArray] = useState<FormData>(
     new FormData()
@@ -383,8 +384,8 @@ const CreateOpportunityModal = () => {
   };
 
   const isNumeric = (value: string) => {
-    if (value !== ''){
-    return !isNaN(Number(value));
+    if (value !== "") {
+      return !isNaN(Number(value));
     }
     return false;
   };
@@ -416,7 +417,7 @@ const CreateOpportunityModal = () => {
       });
       return;
     }
-    console.log({value});
+    console.log({ value });
     console.log({
       ...opportunity,
       [column.dataKey]: isNumeric(value) ? Number(value) : value,
@@ -497,7 +498,7 @@ const CreateOpportunityModal = () => {
       principal: true, // Valor padrão (campo com valor padrão '1')
       valorComissao: 0.0, // Valor obrigatório
       idMotivoPerdido: 1, // Valor obrigatório (campo não pode ser nulo)
-      observacoes: '', // Opcional
+      observacoes: "", // Opcional
       descricaoVenda: null, // Opcional
       emailVendaEnviado: false, // Valor padrão (campo com valor padrão '0')
       numeroAdicional: 0, // Valor padrão com
@@ -744,12 +745,17 @@ const CreateOpportunityModal = () => {
           transform: "translate(-50%, -50%)",
           width: {
             //responsive width
-            xs: "100%",
-            md: "70%",
-            lg: "50%",
-            xl: "40%",
+            xs: "95%",
+            md: "40%",
+            
+      
           },
-          height: 'fit-content',
+          height: {
+            //responsive height
+            xs: "90%",
+            md: "75%",
+            lg: "70%"
+          },
           bgcolor: "background.paper",
           boxShadow: 24,
           overFlow: "hidden",
@@ -782,6 +788,7 @@ const CreateOpportunityModal = () => {
           gap={1}
           padding={1}
           overflow="scroll"
+          position="relative"
         >
           <GuideSelector
             guides={guides} // Passa os guias
@@ -791,24 +798,24 @@ const CreateOpportunityModal = () => {
           <Slider ref={sliderRef} {...settings}>
             {guides.map((guide) => (
               <OpportunityGuide
-                key={guide.name} 
-                guide={guide} 
-                renderAutoCompleteValue={renderAutoCompleteValue} 
-                handleChangeAutoComplete={handleChangeAutoComplete} 
-                renderOptions={renderOptions} 
-                adicional={adicional} 
-                currentOppIdSelected={currentOppIdSelected} 
-                opportunity={opportunity} 
-                handleChangeTextField={handleChangeTextField} 
-                isDateField={isDateField} 
-                currentCommentValue={currentCommentValue} 
-                handleChangeComentarios={handleChangeComentarios} 
-                editingComment={editingComment} 
-                setEditingComment={setEditingComment} 
-                setCurrentOpportunity={setCurrentOpportunity} 
+                key={guide.name}
+                guide={guide}
+                renderAutoCompleteValue={renderAutoCompleteValue}
+                handleChangeAutoComplete={handleChangeAutoComplete}
+                renderOptions={renderOptions}
+                adicional={adicional}
+                currentOppIdSelected={currentOppIdSelected}
+                opportunity={opportunity}
+                handleChangeTextField={handleChangeTextField}
+                isDateField={isDateField}
+                currentCommentValue={currentCommentValue}
+                handleChangeComentarios={handleChangeComentarios}
+                editingComment={editingComment}
+                setEditingComment={setEditingComment}
+                setCurrentOpportunity={setCurrentOpportunity}
                 handleSaveOpportunity={handleSaveOpportunity}
-                handleChangeFiles={handleChangeFiles} 
-                handleDeleteFile={handleDeleteFile} 
+                handleChangeFiles={handleChangeFiles}
+                handleDeleteFile={handleDeleteFile}
               />
             ))}
           </Slider>
@@ -860,4 +867,4 @@ const CreateOpportunityModal = () => {
   );
 };
 
-export default CreateOpportunityModal;
+export default OpportunityModal;
