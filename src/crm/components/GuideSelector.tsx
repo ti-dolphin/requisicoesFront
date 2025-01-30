@@ -51,5 +51,5 @@ const GuideSelector = ({
       </Stack>
   );
 };
-
+GuideSelector.displayName = "GuideSelector";
 export default GuideSelector;

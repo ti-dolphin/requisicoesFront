@@ -36,14 +36,17 @@ export const basicCardStyles = {
   boxShadow: "none",
   display: "flex",
   justifyContent: "center",
+  alignItems: 'center',
   flexShrink: 1,
   flexGrow: 1,
   paddingBottom: "5px",
   paddingLeft: "5px",
   paddingRight: "5px",
   paddingTop: "5px",
+
 };
 export const basicCardContentStyles = {
+  boxShadow: `rgba(149, 157, 165, 0.2) 0px 8px 24px`,
   display: "flex",
   flexDirection: "column",
   width: "fit-content",
@@ -52,4 +55,12 @@ export const basicCardContentStyles = {
   padding: 1,
   justifyContent: "center",
   borderRadius: "16px",
+};
+export const cardTitleStyle = {
+  fontSize: 14,
+  textTransform: 'uppercase',
+  width: '100%',
+  textAlign: 'center',
+  color: "textPrimary",
+  fontWeight: "500",
 };

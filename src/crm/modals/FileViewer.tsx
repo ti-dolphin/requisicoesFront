@@ -83,5 +83,5 @@ const FileViewer: React.FC<FileViewerProps> = ({
     </Modal>
   );
 };
-
+FileViewer.displayName = 'FileView';
 export default FileViewer;

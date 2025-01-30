@@ -51,7 +51,7 @@ import ProjectChoiceModal from "./ProjectChoiceModal";
 import OpportunityGuide from "../components/OpportunityGuide";
 import GuideSelector from "../components/GuideSelector";
 
-const OpportunityModal = () => {
+export const OpportunityModal = () => {
   const guides: Guide[] = [
     {
       name: "Cadastro",
@@ -182,15 +182,6 @@ const OpportunityModal = () => {
       setEditingComment(undefined);
     },
   };
-
-  const {
-    creatingOpportunity,
-    currentOppIdSelected,
-    setCurrentOppIdSelected,
-    setCreatingOpportunity,
-    toggleRefreshOpportunityInfo,
-  } = useContext(OpportunityInfoContext);
-  const { user } = useContext(userContext);
   const [adicional, setAdicional] = useState(false);
   const [opportunity, setCurrentOpportunity] = useState<Opportunity>({
     codOs: 0, // Exemplo de código de OS (AUTO_INCREMENT, não precisa definir)
@@ -264,8 +255,17 @@ const OpportunityModal = () => {
   const [clientOptions, setClientOptions] = useState<OpportunityOptionField[]>(
     []
   );
-  const [currentCommentValue, setCurrentCommentValue] = React.useState("");
+  const [currentCommentValue, setCurrentCommentValue] = useState("");
   const [saveProgressModalOpen, setSaveProgressModalOpen] = useState(false);
+
+    const {
+      creatingOpportunity,
+      currentOppIdSelected,
+      setCurrentOppIdSelected,
+      setCreatingOpportunity,
+      toggleRefreshOpportunityInfo,
+    } = useContext(OpportunityInfoContext);
+    const { user } = useContext(userContext);
 
   const handleClose = () => {
     setCreatingOpportunity(false);
@@ -747,14 +747,12 @@ const OpportunityModal = () => {
             //responsive width
             xs: "95%",
             md: "40%",
-            
-      
           },
           height: {
             //responsive height
             xs: "90%",
             md: "75%",
-            lg: "70%"
+            lg: "70%",
           },
           bgcolor: "background.paper",
           boxShadow: 24,
@@ -865,6 +863,7 @@ const OpportunityModal = () => {
       </Box>
     </Modal>
   );
-};
+}; 
+OpportunityModal.displayName = "OpportunityModal";
 
-export default OpportunityModal;
+   

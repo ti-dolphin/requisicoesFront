@@ -84,5 +84,5 @@ const AdicionalChoice = ({
     </Modal>
   );
 };
-
+AdicionalChoice.displayName = "AdicionalChoice";
 export default AdicionalChoice

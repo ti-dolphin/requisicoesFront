@@ -37,11 +37,11 @@ interface FollowersTableProps {
   setCurrentOpportunity: React.Dispatch<React.SetStateAction<Opportunity>>;
   handleSaveOpportunity:  () => Promise<void>;
 }
-export default function FollowersTable({
+const  FollowersTable = ({
   opportunity,
   setCurrentOpportunity,
   handleSaveOpportunity,
-}: FollowersTableProps) {
+}: FollowersTableProps) => {
   const [previousSelectedList, setPreviousSelectedList] = useState<number[]>(
     []
   );
@@ -125,3 +125,6 @@ export default function FollowersTable({
     </Box>
   );
 }
+
+FollowersTable.displayName = "FollowersTable";
+export default FollowersTable;

@@ -299,4 +299,6 @@ const RenderOpportunityFields: React.FC<RenderFieldProps> = ({
   );
 };
 
+RenderOpportunityFields.displayName = "RenderOpportunityFields";
+
 export default RenderOpportunityFields;

@@ -151,4 +151,6 @@ const OpportunityFiles = ({
   );
 };
 
+OpportunityFiles.displayName = "OpportunityFiles";
+
 export default OpportunityFiles;

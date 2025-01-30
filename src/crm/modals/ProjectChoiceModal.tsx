@@ -101,5 +101,5 @@ const ProjectChoiceModal = ({
     </Modal>
   );
 };
-
+ProjectChoiceModal.displayName = "ProjectChoiceModal";
 export default ProjectChoiceModal

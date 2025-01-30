@@ -11,7 +11,6 @@ import PatrimonyDetails from "./Patrimony/pages/PatrimonyDetails";
 import PatrimonyChecklist from "./Patrimony/pages/PatrimonyChecklist";
 import CrmHome from "./crm/pages/CrmHome";
 import ChecklistTasks from "./Patrimony/pages/ChecklistTasks";
-import OpportunityDetails from "./crm/pages/OpportunityDetails";
 import { MovimentationContextProvider } from "./Patrimony/context/movementationContext";
 import { MovementationFileContextProvider } from "./Patrimony/context/movementationFileContext";
 import { PatrimonyFileContextProvider } from "./Patrimony/context/patrimonyFileContext";
@@ -54,11 +53,8 @@ const router = createBrowserRouter([
   { 
     path : '/crm',
     element: <CrmHome />
-  },
-  { 
-    path: '/crm/opportunity/:opportunityId',
-    element: <OpportunityDetails />
   }
+  
 ]);
 // eslint-disable-next-line react-refresh/only-export-components
 export {router, RouterProvider}

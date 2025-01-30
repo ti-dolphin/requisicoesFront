@@ -150,7 +150,6 @@ const AddFollowersModal = ({
   };
 
   useEffect( () => {
-    console.log('current followers: ', opportunity.seguidores)
     fetchOptions();
   }, [opportunity.seguidores]);
   return (
@@ -279,5 +278,5 @@ const AddFollowersModal = ({
     </Box>
   );
 };
-
+AddFollowersModal.displayName = "AddFollowersModal";
 export default AddFollowersModal

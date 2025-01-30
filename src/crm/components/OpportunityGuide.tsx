@@ -88,5 +88,5 @@ const OpportunityGuide = ({
     </Box>
   );
 };
-
+OpportunityGuide.displayName = "OpportunityGuide";
 export default OpportunityGuide;
