@@ -50,8 +50,10 @@ import AdicionalChoice from "./AdicionalChoice";
 import ProjectChoiceModal from "./ProjectChoiceModal";
 import OpportunityGuide from "../components/OpportunityGuide";
 import GuideSelector from "../components/GuideSelector";
+import { BaseButtonStyles } from "../../utilStyles";
 
 export const OpportunityModal = () => {
+  // console.log("OpportunityModal()");
   const guides: Guide[] = [
     {
       name: "Cadastro",
@@ -271,7 +273,6 @@ export const OpportunityModal = () => {
     setCreatingOpportunity(false);
     setCurrentOppIdSelected(0);
     setCurrentSlideIndex(0);
-    toggleRefreshOpportunityInfo();
     cleanEntries();
     setSaveProgressModalOpen(false);
   };
@@ -654,6 +655,7 @@ export const OpportunityModal = () => {
       cleanEntries();
       await uploadFiles(response.data.codOs);
       setRefreshOpportunityFields(!refreshOpportunityFields);
+      toggleRefreshOpportunityInfo();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -705,9 +707,11 @@ export const OpportunityModal = () => {
     await handleSaveOpportunity();
     handleClose();
   };
+  useEffect(( )=> {
+    console.log('OpportunityModal renderizou')
+  })
 
   useEffect(() => {
-    console.log("useeffect CreatingOpportunityModal");
     fetchProjectsOps();
     fetchStatusOps();
     fetchSalerOps();
@@ -850,12 +854,14 @@ export const OpportunityModal = () => {
           <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
             <Button
               onClick={handlesaveProgressAction}
-              color="primary"
+              sx={{ ...BaseButtonStyles, backgroundColor: 'darkgreen', "&:hover": { backgroundColor: 'green' } }}
               autoFocus
             >
               Sim
             </Button>
-            <Button onClick={handleClose} color="secondary">
+            <Button
+              sx={{ ...BaseButtonStyles, backgroundColor: 'darkred', "&:hover": { backgroundColor: 'red' } }}
+             onClick={handleClose} color="secondary">
               Não
             </Button>
           </DialogActions>

@@ -1,4 +1,3 @@
-import "./wdyr.ts";
 import React from "react";
 import "./index.css";
 import { RouterProvider } from "./routes.tsx";

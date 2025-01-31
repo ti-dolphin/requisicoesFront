@@ -13,12 +13,17 @@ const TableViewToggleButton: React.FC<ViewToggleButtonProps> = ({
   isCardViewActive,
   setIsCardViewActive,
 }) => {
+
+  const handleChangeView = () => {
+    console.log({ isCardViewActive: !isCardViewActive });
+    setIsCardViewActive(!isCardViewActive);
+  };
   return (
     <Tooltip
       title={`Mudar para ${isCardViewActive ?  "Tabela" : "Cards"}`}
     >
       <IconButton
-        onClick={() => setIsCardViewActive(!isCardViewActive)}
+        onClick={handleChangeView}
         sx={{
             ...buttonStylesMobile
         }}

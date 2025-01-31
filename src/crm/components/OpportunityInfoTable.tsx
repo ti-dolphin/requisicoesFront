@@ -23,12 +23,13 @@ import { getOpportunities } from "../utils";
 import { ptBR } from "@mui/x-data-grid/locales";
 import { ptBR as pickersPtBr } from "@mui/x-date-pickers/locales";
 import { ptBR as corePtBr } from "@mui/material/locale";
-import { Card, createTheme, Typography } from "@mui/material";
+import { createTheme, ThemeProvider, Typography } from "@mui/material";
 import { formatDate } from "../../generalUtilities";
 import { userContext } from "../../Requisitions/context/userContext";
 import { FixedSizeGrid } from "react-window";
 import OpportunityCard from "./OpportunityCard";
 import {OpportunityModal} from "../modals/OpportunityModal";
+import { CircularProgress } from "@mui/material";
 
 const theme = createTheme(
   {
@@ -47,18 +48,19 @@ const gridCardColumns: { headerName: string; field: keyof OpportunityInfo }[] = 
     headerName: "Nº OS",
   },
   { field: "numeroProjeto", headerName: "Nº Projeto" },
+  { field: "numeroAdicional", headerName: "Nº Adicional" }, // os.ID_ADICIONAL
   { field: "nomeDescricaoProposta", headerName: "Descrição" },
   { field: "nomeCliente", headerName: "Cliente" },
   {
     field: "valorTotal",
     headerName: "Valor Total",
   },
+  { field: "nomeStatus", headerName: "Status" }, // s.NOME
+
 ];
 
-
-
  const OpportunityInfoTable: React.FC = () => {
-   // console.log("OpportunityInfoTable()");
+    // console.log("OpportunityInfoTable()");
    // eslint-disable-next-line @typescript-eslint/no-unused-vars
    const windowWith = window.innerWidth;
    const { user } = useContext(userContext);
@@ -67,10 +69,11 @@ const gridCardColumns: { headerName: string; field: keyof OpportunityInfo }[] = 
    const [isMobile, setIsMobile] = useState<boolean>(false);
    const [gridRowCount, setGridRowCount] = useState<number>(0);
    const [cardWidth, setCardWidth] = useState<number>(0);
-   const [isCardViewActive, setIsCardViewActive] = useState<boolean>(true);
+   const [isCardViewActive, setIsCardViewActive] = useState<boolean>(false);
    const [gridOuterContainerHeight, setgridOuterContainerHeight] = useState(0);
    const GridOuterContainerRef = useRef<HTMLDivElement>(null);
    const [gridColumnsCount, setGridColumnsCount] = useState<number>(0);
+   const [isLoading, setIsLoading] = useState<boolean>(true);
    const {
      finishedOppsEnabled,
      refreshOpportunityInfo,
@@ -142,14 +145,18 @@ const gridCardColumns: { headerName: string; field: keyof OpportunityInfo }[] = 
      []
    );
 
-   const calculateIsMobile = () => {
-     setIsMobile(windowWith <= 768);
-   };
+   const calculateIsMobile = ( ) => { 
+     console.log({ isMobile: window.innerWidth < 768 })
+    setIsMobile(window.innerWidth < 768);
+   }
+
    const calculateInitialCardViewActive = () => {
      setIsCardViewActive(windowWith <= 768);
    };
 
    const fetchOpportunities = useCallback(async () => {
+      setIsLoading(true); // Ativa o loading
+
      if (user) {
        const opps = await getOpportunities(
          finishedOppsEnabled,
@@ -159,55 +166,48 @@ const gridCardColumns: { headerName: string; field: keyof OpportunityInfo }[] = 
        if (opps) {
          setAllRows(opps);
          setRows(opps);
-         calculateGridLayoutProps(opps.length);
+         calculateLayoutProps(opps.length);
        }
      }
+     setIsLoading(false);
      // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [refreshOpportunityInfo, finishedOppsEnabled]);
 
+   const shouldShowGrid = () => {
+     return (
+       gridRowCount > 0 &&
+       cardWidth > 0 &&
+       gridColumnsCount > 0 &&
+       isCardViewActive
+     );
+   };
+
    const calculateGridHeight = () => {
      if (GridOuterContainerRef.current) {
-       const height = GridOuterContainerRef.current.clientHeight;
+       const height = GridOuterContainerRef.current.clientHeight - 5;
+       console.log({calculatedHeight: height})
        setgridOuterContainerHeight(height);
        return height;
      }
    };
 
    const calculateCardWidth = useCallback(() => {
-     // Largura mínima e máxima do card
      const minCardWidth = 300;
      const maxCardWidth = 600;
-
-     // Largura mínima e máxima da janela para cálculo proporcional
      const minWindowWidth = 320; // Largura mínima da tela (ex.: smartphones pequenos)
      const maxWindowWidth = 1200; // Largura máxima da tela (ex.: desktops)
-
-     // Garantir que a largura da janela esteja dentro dos limites
      const clampedWindowWidth = Math.min(
        Math.max(windowWith, minWindowWidth),
        maxWindowWidth
      );
-
-     // Calcular a largura do card proporcionalmente
      const cardWidth =
        minCardWidth +
        ((clampedWindowWidth - minWindowWidth) /
          (maxWindowWidth - minWindowWidth)) *
          (maxCardWidth - minCardWidth);
-
-     // Arredondar o valor para evitar decimais desnecessários
      const roundedCardWidth = Math.round(cardWidth);
-
-     // Atualizar o estado com a nova largura do card
      setCardWidth(roundedCardWidth);
-
-     // Retornar a largura calculada (opcional)
      return roundedCardWidth;
-     // const IsMobile = windowWith < 768;
-     // console.log({IsMobile: IsMobile});
-     // const cardWidth = IsMobile ? 300 : 400;
-     // setCardWidth(cardWidth);
-     // return cardWidth;
    }, [windowWith]);
 
    const calculateGridColumnsCount = useCallback(
@@ -228,21 +228,23 @@ const gridCardColumns: { headerName: string; field: keyof OpportunityInfo }[] = 
      return gridRowCount;
    };
 
-   const calculateGridLayoutProps = useCallback(
+   const calculateLayoutProps = useCallback(
      (registerCount: number) => {
-       const gridHeight = calculateGridHeight();
        const cardWidth = calculateCardWidth();
        const gridColumnsCount = calculateGridColumnsCount(cardWidth);
        const gridRowCount = calculateGridRowCount(
          registerCount,
          gridColumnsCount
        );
-       // console.log({
-       //   gridHeight,
-       //   cardWidth,
-       //   gridColumnsCount,
-       //   gridRowCount,
-       // })
+       const gridHeight = calculateGridHeight();
+       console.log({
+         cardWidth,
+         gridColumnsCount,
+         gridRowCount,
+         gridHeight,
+       })
+       calculateInitialCardViewActive();
+      //  calculateIsMobile();
      },
      [calculateCardWidth, calculateGridColumnsCount, rows.length]
    );
@@ -256,40 +258,41 @@ const gridCardColumns: { headerName: string; field: keyof OpportunityInfo }[] = 
        <GridFooterContainer
          sx={{
            color: "black",
-           paddingX: 4,
+           paddingX: 1,
            paddingY: 0,
            display: "flex",
-           justifyContent: "end",
-           flexGrow: 1,
-           flexWrap: "wrap",
-           overFlowY: "scroll",
+           justifyContent: "space-between", // Alinha os itens nas extremidades
+           alignItems: "center", // Centraliza verticalmente
+           flexWrap: "nowrap", // Permite que o conteúdo quebre em várias linhas
+           overflowX: "auto", // Permite rolagem horizontal se necessário
+           overflowY: "hidden",
            zIndex: 20,
            backgroundColor: "#2B3990",
-           borderRadius: 2,
-           height: "30px",
+           borderRadius: 0,
+           height: "auto", // Altura automática para acomodar o conteúdo
+           minHeight: "52px", // Altura mínima
+           gap: 1, // Espaçamento entre os itens
          }}
          className="shadow-2xl"
        >
+         {/* Box com os textos */}
          <Box
            sx={{
-             padding: 2,
-             display: "flex",
+             paddingTop: 1,
+             display: isMobile ? 'none' : 'flex',
              justifyContent: "center",
-             flexWrap: "wrap",
-             gap: 4,
+             alignItems: "center",
+             gap: 2,
+             flexGrow: 1, // Ocupa o espaço disponível
+             overflowX: "auto", // Permite rolagem horizontal se necessário
            }}
          >
-           <Typography fontSize="small" color="white">
-             <span className="font-semibold tracking-wide">
-               {" "}
-               Nº de Registros
-             </span>{" "}
+           <Typography fontSize="small" color="white" >
+             <span className="font-semibold tracking-wide">Nº de Registros</span>{" "}
              {rows.length}
            </Typography>
            <Typography fontSize="small" color="white">
-             <span className="font-semibold tracking-wide">
-               Faturamneto Dolphin:
-             </span>{" "}
+             <span className="font-semibold tracking-wide">Faturamento Dolphin:</span>{" "}
              {new Intl.NumberFormat("pt-BR", {
                style: "currency",
                currency: "BRL",
@@ -319,24 +322,36 @@ const gridCardColumns: { headerName: string; field: keyof OpportunityInfo }[] = 
              )}
            </Typography>
          </Box>
+
+         {/* Paginação */}
          <GridPagination
            sx={{
              padding: 0,
+             width: "fit-content",
              display: "flex",
-             maxWidth: "200px",
              alignItems: "center",
-             justifyContent: "end",
+             justifyContent: "start",
              overflowY: "hidden",
-             overflowX: "hidden",
              height: "30px",
              color: "white",
+             "& .MuiToolbar-gutters": {
+              padding: 0,
+               "& .MuiTablePagination-selectLabel": {
+                 display: "none", // Oculta o rótulo "Rows per page"
+               },
+             },
            }}
          />
        </GridFooterContainer>
      );
    };
 
+   useEffect(() => { 
+     console.log("OpportunityInfoTable renderizou");
+   })
+
    useEffect(() => {
+     calculateIsMobile()
      fetchOpportunities();
    }, [fetchOpportunities, refreshOpportunityInfo]);
    return (
@@ -345,8 +360,10 @@ const gridCardColumns: { headerName: string; field: keyof OpportunityInfo }[] = 
          width: "100%",
          height: "100%",
          paddingX: 0,
+         paddingY: 0,
          backgroundColor: "#fff",
          display: "flex",
+         boxSizing: 'border-box',
          flexDirection: "column",
          gap: 0,
          flex: 1,
@@ -356,92 +373,118 @@ const gridCardColumns: { headerName: string; field: keyof OpportunityInfo }[] = 
          columns={columns}
          allRows={allRows}
          setRows={setRows}
+         isCardViewActive={isCardViewActive}
+         setIsCardViewActive={setIsCardViewActive}
        />
-       {
-         // <ThemeProvider theme={theme}>
-         //   <DataGrid
-         //     rows={rows}
-         //     columns={columns}
-         //     getRowId={(row) => row.numeroOs}
-         //     rowHeight={40} // Define `numero_projeto` como ID da linha
-         //     columnHeaderHeight={40}
-         //     autosizeOnMount
-         //     autosizeOptions={{
-         //       expand: true,
-         //     }}
-         //     onRowClick={(e) => selectOpportunity(e)}
-         //     sx={{
-         //       width: "100%",
-         //       borderCollapse: "collapse",
-         //       fontFamily: "Arial, sans-serif",
-         //       fontSize: "12px",
-         //       fontWeight: "600",
-         //       color: "#233142",
-         //       "& .MuiDataGrid-columnHeaders": {
-         //         fontWeight: "bold",
-         //         color: "black",
-         //         "& .MuiDataGrid-columnHeader": {
-         //           backgroundColor: "#ececec",
-         //         },
-         //       },
-         //       "& .MuiDataGrid-columnHeaderTitle": {
-         //         fontWeight: "bold",
-         //         fontSize: 12,
-         //       },
-         //       "& .MuiDataGrid-row": {
-         //         cursor: "pointer",
-         //         ":nth-child(even)": {
-         //           backgroundColor: "#ececec",
-         //         },
-         //       },
-         //       "& .MuiDataGrid-cell": {
-         //         paddingLeft: 1.2,
-         //       },
-         //     }}
-         //     autoPageSize
-         //     // pageSizeOptions={[10, 20, 30]}
-         //     disableRowSelectionOnClick
-         //     slots={{
-         //       footer: GridFooter,
-         //     }}
-         //   />
-         // </ThemeProvider>
-       }
-       {isCardViewActive && (
-         <Box
-           ref={GridOuterContainerRef}
-           sx={{
-             display: "flex",
-             flexDirection: "column",
-             alignItems: "center",
-             padding: 1,
-             width: "100%",
-             flexGrow: 1,
-           }}
-         >
-           {gridOuterContainerHeight &&
-             gridRowCount &&
-             cardWidth &&
-             gridColumnsCount && (
-               <FixedSizeGrid
-                 columnCount={gridColumnsCount}
-                 columnWidth={cardWidth} // Width of each column
-                 height={gridOuterContainerHeight} // Height of the grid
-                 rowCount={gridRowCount}
-                 rowHeight={260} // Height of each row
-                 width={gridColumnsCount * cardWidth + 20} // Width of the grid
-               >
-                 {({ columnIndex, rowIndex, style }) => (
-                   <OpportunityCard
-                     row={rows[rowIndex]}
-                     gridCardColumns={gridCardColumns}
-                     style={style}
-                   />
-                 )}
-               </FixedSizeGrid>
+       <Box
+         ref={GridOuterContainerRef}
+         sx={{
+           display: 'flex',
+           flexDirection: "column",
+           alignItems: "center",
+           boxSizing: 'border-box',
+           width: "100%",
+           flexGrow: 1,
+         }}
+       >
+         {!isCardViewActive && !isLoading && gridOuterContainerHeight > 0 && (
+           <ThemeProvider theme={theme}>
+             <DataGrid
+               rows={rows}
+               columns={columns}
+               getRowId={(row) => row.numeroOs}
+               rowHeight={40} // Define `numero_projeto` como ID da linha
+               columnHeaderHeight={40}
+               autosizeOnMount
+               autosizeOptions={{
+                 expand: true,
+               }}
+               
+               onRowClick={(e) => selectOpportunity(e)}
+               sx={{
+                 width: "100%",
+                 borderCollapse: "collapse",
+                 fontFamily: "Arial, sans-serif",
+                 fontSize: "12px",
+                 fontWeight: "600",
+                 borderRadius: 0,
+                 maxHeight: gridOuterContainerHeight - 5,
+                 color: "#233142",
+                 "& .MuiDataGrid-columnHeaders": {
+                   fontWeight: "bold",
+                   color: "black",
+                   "& .MuiDataGrid-columnHeader": {
+                     backgroundColor: "#ececec",
+                     borderRadius: 0
+                   },
+                 },
+                 "& .MuiDataGrid-topContainer": {
+                   borderRadius: 0
+                 },
+                 "& .MuiDataGrid-columnHeaderTitle": {
+                   fontWeight: "bold",
+                   fontSize: 12,
+                 },
+                 "& .MuiDataGrid-row": {
+                   cursor: "pointer",
+                   ":nth-child(even)": {
+                     backgroundColor: "#ececec",
+                   },
+                 },
+                 "& .MuiDataGrid-cell": {
+                   paddingLeft: 1.2,
+                 },
+               }}
+               disableRowSelectionOnClick
+               slots={{
+                 footer: GridFooter,
+               }}
+             />
+           </ThemeProvider>
+         )}
+
+
+         {!isLoading && shouldShowGrid() && (
+           <FixedSizeGrid
+             columnCount={gridColumnsCount}
+             columnWidth={cardWidth} // Width of each column
+             height={gridOuterContainerHeight} // Height of the grid
+             rowCount={gridRowCount}
+             rowHeight={320} // Height of each row
+             width={gridColumnsCount * cardWidth + 20} // Width of the grid
+           >
+             {({ columnIndex, rowIndex, style }) => (
+               <OpportunityCard
+                 row={rows[rowIndex]}
+                 gridCardColumns={gridCardColumns}
+                 style={style}
+               />
              )}
+           </FixedSizeGrid>
+         )}
+
+         {isLoading && (
+           <Box
+             sx={{
+               position: "absolute",
+               top: 0,
+               left: 0,
+               right: 0,
+               bottom: 0,
+               display: "flex",
+               justifyContent: "center",
+               alignItems: "center",
+               backgroundColor: "rgba(255, 255, 255, 0.7)", // Fundo semi-transparente
+               zIndex: 1000, // Garante que o spinner fique acima de tudo
+             }}
+           >
+             <CircularProgress />
+           </Box>
+         )}
+
+            
          </Box>
-       )}
+       
        <OpportunityModal />
      </Box>
    );

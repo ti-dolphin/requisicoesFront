@@ -18,7 +18,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { ArrowLeftIcon } from "@mui/x-date-pickers/icons";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { OpportunityInfoContext } from "../context/OpportunityInfoContext";
-import React, { useContext, useState } from "react";
+import React, { Dispatch, memo, SetStateAction, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { defaultDateFilters } from "../context/OpportunityInfoContext";
 import AddIcon from "@mui/icons-material/Add";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
@@ -33,10 +33,18 @@ interface OpportunityTableSearchBarProps {
   columns: GridColDef<OpportunityInfo>[];
   allRows: OpportunityInfo[];
   setRows: React.Dispatch<React.SetStateAction<OpportunityInfo[]>>;
+  setIsCardViewActive: Dispatch<SetStateAction<boolean>>;
+  isCardViewActive : boolean;
 }
-const OpportunityTableSearchBar = 
-  ({ columns, allRows, setRows }: OpportunityTableSearchBarProps) => {
-    console.log("OpportunityTableSearchBar()");
+const OpportunityTableSearchBar = memo(
+  ({
+    columns,
+    allRows,
+    setRows,
+    isCardViewActive,
+    setIsCardViewActive,
+  }: OpportunityTableSearchBarProps) => {
+    // console.log("OpportunityTableSearchBar()");
     const {
       setFinishedOppsEnabled,
       dateFilters,
@@ -46,7 +54,13 @@ const OpportunityTableSearchBar =
     } = useContext(OpportunityInfoContext);
     const [dateFiltersActive, setDateFiltersActive] = useState(false);
     const [searchValue, setSearchValue] = useState("");
-    const [isCardViewActive, setIsCardViewActive] = useState<boolean>(false);
+
+    const setRowsMemo = useCallback(
+      (newRows: OpportunityInfo[]) => setRows(newRows),
+      [setRows]
+    );
+    const columnsMemo = useMemo(() => columns, [columns]);
+    const allRowsMemo = useMemo(() => allRows, [allRows]);
 
     const Search = styled("div")(({ theme }) => ({
       position: "relative",
@@ -79,14 +93,7 @@ const OpportunityTableSearchBar =
       "& .MuiInputBase-input": {
         height: 20,
         padding: theme.spacing(0.5, 0.5, 0.5, 0),
-        paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-        transition: theme.transitions.create("width"),
-        [theme.breakpoints.up("sm")]: {
-          width: "12ch",
-          "&:focus": {
-            width: "20ch",
-          },
-        },
+        paddingLeft: `calc(1em + ${theme.spacing(4)})`
       },
     }));
 
@@ -122,7 +129,6 @@ const OpportunityTableSearchBar =
         isFromParam: false,
       },
     ];
-
 
     const handleChangeShowFinishedOpps = (
       e: React.ChangeEvent<HTMLInputElement>
@@ -178,14 +184,18 @@ const OpportunityTableSearchBar =
     ) => {
       const value = e.target.value.toLowerCase();
       setSearchValue(value);
-      const newFilteredRows = allRows.filter((row) =>
-        columns.some((column) => {
+      const newFilteredRows = allRowsMemo.filter((row) =>
+        columnsMemo.some((column) => {
           const cellValue = row[column.field as keyof OpportunityInfo];
           return cellValue && String(cellValue).toLowerCase().includes(value);
         })
       );
-      setRows(newFilteredRows);
+      setRowsMemo(newFilteredRows);
     };
+
+    useEffect(() => {
+      console.log("OpportunityTableSearchBar renderizou!");
+    });
 
     return (
       <AppBar
@@ -258,9 +268,10 @@ const OpportunityTableSearchBar =
             </SearchIconWrapper>
             <StyledInputBase
               onChange={(e) => handleGeneralSerarch(e)}
+              autoFocus
               placeholder="Buscar..."
               value={searchValue}
-              inputProps={{ "aria-label": "search", height: 20 }}
+              inputProps={{ "aria-label": "search", height: 20, width: 100 }}
             />
           </Search>
 
@@ -403,12 +414,44 @@ const OpportunityTableSearchBar =
             </AnimatePresence>
           )}
         </Toolbar>
-
-  
       </AppBar>
     );
-  }
-OpportunityTableSearchBar.displayName = "OpportunityTableSearchBar";
+  },
+  (prevProps, nextProps) => {
+    const arePropsEqual = (
+      prevProps: OpportunityTableSearchBarProps,
+      nextProps: OpportunityTableSearchBarProps
+    ) => {
+      const prevPropsKeys = Object.keys(
+        prevProps
+      ) as (keyof OpportunityTableSearchBarProps)[];
+      const nextPropsKeys = Object.keys(
+        nextProps
+      ) as (keyof OpportunityTableSearchBarProps)[];
 
+      let hasChanges = false;
+      // Verifica se as chaves dos props são iguais
+      if (prevPropsKeys.length !== nextPropsKeys.length) {
+        console.log("As chaves dos props mudaram.");
+        hasChanges = true;
+      }
+      prevPropsKeys.forEach((key) => {
+        if (prevProps[key] !== nextProps[key]) {
+          console.log(`Prop "${key}" mudou:`, {
+            prev: prevProps[key],
+            next: nextProps[key],
+          });
+          hasChanges = true;
+        }
+      });
+      console.log({ hasChanges });
+      // Se não houver mudanças, o componente não será renderizado novamente
+      return !hasChanges;
+    };
+
+    return arePropsEqual(prevProps, nextProps);
+  }
+);
+OpportunityTableSearchBar.displayName = "OpportunityTableSearchBar";
 
 export default OpportunityTableSearchBar;
