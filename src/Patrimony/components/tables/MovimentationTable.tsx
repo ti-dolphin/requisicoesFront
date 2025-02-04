@@ -10,17 +10,17 @@ import Paper from "@mui/material/Paper";
 import { TableVirtuoso, TableComponents } from "react-virtuoso";
 import { Box, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
-import MovimentationFileModal from "../../modals/MovimentationFileModal";
+import MovimentationFileModal from "../modals/MovimentationFileModal/MovimentationFileModal";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import DeleteMovementationModal from "../../modals/DeleteMovementationModal";
-import EditMovimentationObservationModal from "../../modals/EditMovimentationObservationModal";
+import DeleteMovementationModal from "../modals/DeleteMovementationModal/DeleteMovementationModal";
+import EditMovimentationObservationModal from "../modals/EditMovimentationObservationModal/EditMovimentationObservationModal";
 import { MovimentationContext } from "../../context/movementationContext";
 import { dateTimeRenderer, getMovementationsByPatrimonyId } from "../../utils";
 import { userContext } from "../../../Requisitions/context/userContext";
 import { memo, useContext, useState } from "react";
 import { FixedSizeList } from "react-window";
-import MovementationCard from "../MovementationCard";
+import MovementationCard from "../MovementationCard/MovementationCard";
 import TableViewToggleButton from "../../../components/TableViewToggleButton";
 
 // Tipo Movementation

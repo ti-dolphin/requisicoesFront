@@ -21,12 +21,12 @@ import {
 } from "../utils";
 import { TableVirtuoso, TableComponents } from "react-virtuoso";
 import { checklistContext } from "../context/checklistContext";
-import ChecklistItemsModal from "../modals/ChecklistItemsModal";
+import ChecklistItemsModal from "../components/modals/ChecklistItemsModal/ChecklistItemsModal";
 import { useNavigate } from "react-router-dom";
 import { FixedSizeList } from "react-window";
-import ChecklistCard from "../components/ChecklistCard";
+import ChecklistCard from "../components/ChecklistCard/ChecklistCard";
 import { ChecklistColumnData } from "../../crm/types";
-import ChecklistAppBar from "../components/ChecklistAppBar";
+import ChecklistAppBar from "../components/ChecklistAppBar/ChecklistAppBar";
 
 const columns: ChecklistColumnData[] = [
   {

@@ -15,8 +15,8 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
 
-import PatrimonyFileModal from "../modals/PatrimonyFileModal;";
-import CreateMovementation from "../modals/CreateMovementation";
+import PatrimonyFileModal from "../components/modals/PatrimonyFileModal;/PatrimonyFileModal;";
+import CreateMovementation from "../components/modals/CreateMovementation/CreateMovementation";
 import { PatrimonyInfoContext } from "../context/patrimonyInfoContext";
 import {
   getResponsableForPatrimony,
@@ -30,7 +30,7 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs, { Dayjs } from "dayjs";
 import { ArrowLeftIcon } from "@mui/x-date-pickers/icons";
-import PatrimonyAccessoryModal from "../modals/PatrimonyAccessoriesModal";
+import PatrimonyAccessoryModal from "../components/modals/PatrimonyAccessoriesModal/PatrimonyAccessoriesModal";
 // import { userContext } from "../../Requisitions/context/userContext";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 

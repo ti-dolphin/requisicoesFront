@@ -9,7 +9,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { TableVirtuoso, TableComponents } from "react-virtuoso";
 import { PatrimonyInfo } from "../../types";
-import SearchAppBar from "../SearchAppBar";
+import SearchAppBar from "../SearchAppBar/SearchAppBar";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { dateTimeRenderer, getPatrimonyInfo } from "../../utils";
 import { PatrimonyInfoContext } from "../../context/patrimonyInfoContext";
@@ -25,9 +25,8 @@ import ChecklistIcon from "@mui/icons-material/Checklist";
 import { useNavigate } from "react-router-dom";
 import { FixedSizeList } from 'react-window';
 import { PatrimonyInfoColumnData, patrimonyInfoColumns } from "../../../crm/utils";
-import PatrimonyInfoTableFooter from "../PatrimonyInfoTableFooter";
-import PatrimonyInfoCard from "../PatrimonyInfoCard";
-
+import PatrimonyInfoTableFooter from "../PatrimonyInfoTableFooter/PatrimonyInfoTableFooter";
+import PatrimonyInfoCard from "../PatrimonyInfoCard/PatrimonyInfoCard";
 
 
 const PatrimonyInfoVirtuosoTableComponents: TableComponents<PatrimonyInfo> = {

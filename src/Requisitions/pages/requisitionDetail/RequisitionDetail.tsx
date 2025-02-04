@@ -288,7 +288,7 @@ const RequisitionDetail: React.FC = () => {
           Projeto Alterado!
         </Alert>
       )}
-      <Box sx={{ padding: "1rem", display: "flex", alignItems: "center" }}>
+      <Box className="req-page-header" sx={{ padding: "1rem", display: "flex", alignItems: "center" }}>
         <IconButton onClick={() => handleNavigateHome()}>
           <ArrowCircleLeftIcon />
         </IconButton>
@@ -304,8 +304,7 @@ const RequisitionDetail: React.FC = () => {
           Projeto {requisitionData?.DESCRICAO}
         </Typography>
       </Box>
-
-      <Box sx={{ padding: "0.5rem" }}>
+      <Box className="stepper-container" sx={{ padding: "0.5rem" }}>
         {requisitionData && (
           <HorizontalLinearStepper
             items={requisitionItems}
@@ -314,8 +313,7 @@ const RequisitionDetail: React.FC = () => {
           />
         )}
       </Box>
-
-      <Box sx={{ border: "1px solid #e3e3e3" }}>
+      <Box className="req-items-toolbar-container" sx={{ border: "1px solid #e3e3e3" }}>
         <Stack
           sx={{ paddingX: "2rem", flexWrap: "wrap" }}
           direction="row"
@@ -349,8 +347,8 @@ const RequisitionDetail: React.FC = () => {
           />
         </Stack>
       </Box>
-
       <Stack
+        className="requsition-content"
         direction="row"
         sx={{
           flexWrap: "wrap",
@@ -362,6 +360,7 @@ const RequisitionDetail: React.FC = () => {
         }}
       >
         <Box
+          className="req-details-container"
           sx={{
             padding: "0.5rem",
             maxHeight: "60vh",
@@ -490,7 +489,9 @@ const RequisitionDetail: React.FC = () => {
             />
           )}
         </Box>{" "}
+        
         <Box
+        className="req-items-table-container"
           sx={{
             width: {
               xs: "100%",

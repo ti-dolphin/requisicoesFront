@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import OpportunityInfoTable from "../components/OpportunityInfoTable";
+import OpportunityInfoTable from "../components/tables/OpportunityInfoTable";
 
 
 const CrmHome = () => {
