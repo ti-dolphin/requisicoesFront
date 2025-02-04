@@ -15,6 +15,32 @@ export interface Requisition {
   TIPO : number;
   nome_tipo : string;
 }
+
+export interface QuoteField {
+  dataKey: string;
+  label: string;
+  type: 'string' | 'number' | 'date' | 'boolean';
+}
+export interface Quote {
+  descricao: string;
+  id_cotacao: number; // id_cotacao
+  id_requisicao: number; // id_requisicao
+  condicoes_pagamento: string;
+  fornecedor: string; // fornecedor
+  data_cotacao: string; // data_cotacao
+  observacao?: string; // observacao
+  itens: QuoteItem[]; // Lista de itens vinculados
+}
+
+// Interface para a tabela `web_items_cotacao`
+export interface QuoteItem {
+  id_item_cotacao: number; // id_item_cotacao
+  id_cotacao: number; // id_cotacao
+  descricao_item: string; // descricao_item
+  preco_unitario: number; // preco_unitario
+  quantidade: number; // quantidade
+  subtotal: number; // subtotal calculado
+}
 export interface RequisitionPost {
   STATUS: string;
   DESCRIPTION: string;

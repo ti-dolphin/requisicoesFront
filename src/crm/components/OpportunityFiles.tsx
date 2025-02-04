@@ -9,7 +9,7 @@ import {
   IconButton,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { isPDF } from "../../generalUtilities";
+import { isPDF } from "../../generalUtilities.tsx";
 import DeleteIcon from "@mui/icons-material/Delete";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import FileViewer from "../modals/FileViewer";

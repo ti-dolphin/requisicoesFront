@@ -15,7 +15,7 @@ import { FixedSizeList as ListWindow } from "react-window";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import EditIcon from "@mui/icons-material/Edit";
 import { userContext } from "../../Requisitions/context/userContext";
-import { formatDate } from "../../generalUtilities";
+import { formatDate } from "../../generalUtilities.tsx";
 
 interface RenderFieldProps {
   field: OpportunityColumn;

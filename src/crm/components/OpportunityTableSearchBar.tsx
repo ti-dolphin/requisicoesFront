@@ -28,6 +28,7 @@ import { GridColDef } from "@mui/x-data-grid";
 import { OpportunityInfo } from "../types";
 import { BaseButtonStyles, buttonStylesMobile } from "../../utilStyles";
 import TableViewToggleButton from "../../components/TableViewToggleButton";
+import { useNavigate } from "react-router-dom";
 
 interface OpportunityTableSearchBarProps {
   columns: GridColDef<OpportunityInfo>[];
@@ -45,6 +46,8 @@ const OpportunityTableSearchBar = memo(
     setIsCardViewActive,
   }: OpportunityTableSearchBarProps) => {
     // console.log("OpportunityTableSearchBar()");
+
+    const navigate = useNavigate();
     const {
       setFinishedOppsEnabled,
       dateFilters,
@@ -214,7 +217,7 @@ const OpportunityTableSearchBar = memo(
         }}
       >
         <Stack direction="row" alignItems="center" padding={0}>
-          <IconButton onClick={() => window.open("/home")}>
+          <IconButton onClick={() => navigate("/home")}>
             <ArrowLeftIcon sx={{ color: "white" }} />
           </IconButton>
           <Typography color="white" fontSize="medium" fontFamily="Roboto">

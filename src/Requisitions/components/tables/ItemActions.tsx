@@ -24,6 +24,28 @@ const ItemActions = ({
   handleCopyContent,
 }: ItemActionsProps) => {
   const { selection, toggleDeleting } = useContext(ItemsContext);
+  const menuActions = [
+    {
+      label: "Excluir",
+      onClick: () => toggleDeleting(),
+    },
+    {
+      label: "Copiar",
+      onClick: () => handleCopyContent(selection.items),
+    },
+    {
+      label: "Inativar",
+      onClick: () => handleCancelItems(selection.items),
+    },
+    {
+      label: "Ativar",
+      onClick: () => handleActivateItems(selection.items),
+    },
+    { 
+      label: 'Gerar cotação',
+      onClick: () => {}
+    }
+  ];
 
   return (
     <Dropdown>
@@ -31,16 +53,11 @@ const ItemActions = ({
         <ArrowDropDownIcon />
       </MenuButton>
       <Menu slots={{ listbox: AnimatedListbox }}>
-        <MenuItem onClick={() => toggleDeleting()}>Exluir</MenuItem>
-        <MenuItem onClick={() => handleCopyContent(selection.items)}>
-          Copiar
-        </MenuItem>
-        <MenuItem onClick={() => handleCancelItems(selection.items)}>
-          Inativar
-        </MenuItem>
-        <MenuItem onClick={() => handleActivateItems(selection.items)}>
-          Ativar
-        </MenuItem>
+        {menuActions.map((action, index) => (
+          <MenuItem key={index} onClick={action.onClick}>
+            {action.label}
+          </MenuItem>
+        ))}
       </Menu>
     </Dropdown>
   );

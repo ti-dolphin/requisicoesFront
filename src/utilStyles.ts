@@ -12,7 +12,40 @@ export const BaseButtonStyles = {
     backgroundColor: "#ff9800",
   },
 };
-
+export const OpportunityGridStyles = { 
+     width: "100%",
+                 borderCollapse: "collapse",
+                 fontFamily: "Arial, sans-serif",
+                 fontSize: "12px",
+                 fontWeight: "600",
+                 borderRadius: 0,
+                 color: "#233142",
+                 "& .MuiDataGrid-columnHeaders": {
+                   fontWeight: "bold",
+                   color: "black",
+                   "& .MuiDataGrid-columnHeader": {
+                     backgroundColor: "#ececec",
+                     borderRadius: 0
+                   },
+                 },
+                 "& .MuiDataGrid-topContainer": {
+                   borderRadius: 0
+                 },
+                 "& .MuiDataGrid-columnHeaderTitle": {
+                   fontWeight: "bold",
+                   fontSize: 12,
+                 },
+                 "& .MuiDataGrid-row": {
+                   cursor: "pointer",
+                   ":nth-child(even)": {
+                     backgroundColor: "#ececec",
+                   },
+                 },
+                 "& .MuiDataGrid-cell": {
+                   paddingLeft: 1.2,
+                 },
+               
+}
 export const buttonStylesMobile = {
   backgroundColor: "orange",
   color: "white",
@@ -31,7 +64,6 @@ export const basicAppbarStyles = {
   justifyContent: "center",
   padding: "0.2rem",
 };
-
 export const basicCardStyles = {
   boxShadow: "none",
   display: "flex",

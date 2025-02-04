@@ -31,7 +31,7 @@ import {
 import { PatrimonyFileContext } from "../context/patrimonyFileContext";
 import DeletePatrimonyFileModal from "./DeletePatrimonyFileModal";
 import { userContext } from "../../Requisitions/context/userContext";
-import { isPDF } from "../../generalUtilities";
+import { isPDF } from "../../generalUtilities.tsx";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",

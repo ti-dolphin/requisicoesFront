@@ -33,7 +33,7 @@ import { CircularProgress } from "@mui/material";
 import CardChecklistItem from "../components/CardChecklistItem";
 import SliderPagination from "../components/SliderPagination";
 import FileViewer from "../../crm/modals/FileViewer";
-import { isPDF } from "../../generalUtilities";
+import { isPDF } from "../../generalUtilities.tsx";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

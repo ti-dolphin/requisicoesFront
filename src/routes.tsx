@@ -14,6 +14,7 @@ import ChecklistTasks from "./Patrimony/pages/ChecklistTasks";
 import { MovimentationContextProvider } from "./Patrimony/context/movementationContext";
 import { MovementationFileContextProvider } from "./Patrimony/context/movementationFileContext";
 import { PatrimonyFileContextProvider } from "./Patrimony/context/patrimonyFileContext";
+import QuoteDetail from "./Requisitions/pages/quoteDetail/QuoteDetail";
 // import { ChecklistContextProvider } from "./Patrimony/context/checklistContext";
 
 const router = createBrowserRouter([
@@ -43,6 +44,14 @@ const router = createBrowserRouter([
         <RequisitionDetail />
       </ItemsContextProvider>
     ),
+  },
+  { 
+    path: "requisitions/quote/:quoteId",
+    element : ( 
+      <QuoteDetail>
+        
+      </QuoteDetail>
+    )
   },
   { 
     path: 'tasks',

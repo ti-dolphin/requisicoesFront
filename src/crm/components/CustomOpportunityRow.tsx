@@ -1,11 +1,16 @@
-import React from "react";
-import { DataGrid, GridRowProps } from "@mui/x-data-grid";
-import { Box } from "@mui/material";
+import { GridRow, GridRowProps } from "@mui/x-data-grid";
+import React, { useState } from "react";
 
-const CustomOpportunityRow = (props: GridRowProps) => {
+const CustomOpportunityRow = React.memo((props: GridRowProps) => {
+
+
+
     return (
-        <Box {...props}>
-            {props.children}
-        </Box>
+        <>
+            <GridRow {...props} />
+
+        </>
+
     );
-};
+});
+export default CustomOpportunityRow;

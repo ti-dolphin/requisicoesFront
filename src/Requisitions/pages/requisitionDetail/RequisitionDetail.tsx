@@ -218,7 +218,6 @@ const RequisitionDetail: React.FC = () => {
     label: string;
     id: number;
   }
-
   const handleSelectProject = async (
     event: React.SyntheticEvent<Element, Event>,
     value: ProjectOption | null,

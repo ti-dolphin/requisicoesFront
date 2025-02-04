@@ -751,12 +751,13 @@ export const OpportunityModal = () => {
             //responsive width
             xs: "95%",
             md: "40%",
+            lg: "50%"
           },
           height: {
             //responsive height
             xs: "90%",
-            md: "75%",
-            lg: "70%",
+            md: "80%",
+            xl: '75%'
           },
           bgcolor: "background.paper",
           boxShadow: 24,
