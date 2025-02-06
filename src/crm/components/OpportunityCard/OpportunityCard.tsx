@@ -10,7 +10,6 @@ interface OpportunityCardProps {
   style?: React.CSSProperties;
 }
 
-
 const OpportunityCard: React.FC<OpportunityCardProps> = memo(
   ({ row, gridCardColumns, style }: OpportunityCardProps) => {
     // console.log("OpportunityCard()");

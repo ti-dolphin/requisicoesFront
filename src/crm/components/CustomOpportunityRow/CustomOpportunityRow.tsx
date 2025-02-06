@@ -1,5 +1,5 @@
 import { GridRow, GridRowProps } from "@mui/x-data-grid";
-import React, { useState } from "react";
+import React from "react";
 
 const CustomOpportunityRow = React.memo((props: GridRowProps) => {
 

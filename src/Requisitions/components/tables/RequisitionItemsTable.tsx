@@ -2,38 +2,19 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   Item,
-  deleteRequisitionItem,
   fetchItems,
   updateRequisitionItems,
 } from "../../utils";
-import EditIcon from "@mui/icons-material/Edit";
 import {
   Alert,
   AlertColor,
-  Box,
   Button,
-  Checkbox,
-  IconButton,
-  Paper,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Typography,
 } from "@mui/material";
-import DeleteRequisitionItemModal from "../modals/warnings/DeleteRequisitionITemModal";
-import ItemObservationModal from "../modals/ItemObservation";
-import ItemFilesModal from "../modals/ItemFilesModal";
-import { ItemsContext } from "../../context/ItemsContext";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import ItemActions from "./ItemActions";
 import { userContext } from "../../context/userContext";
-import { DataGrid, GridCallbackDetails, GridColDef, GridFooter, GridFooterContainer, GridFooterContainerProps, GridRowModel, GridRowModesModel } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridFooter, GridFooterContainer, GridFooterContainerProps, GridRowModel, GridRowModesModel, useGridApiRef } from "@mui/x-data-grid";
 import styles from "./RequisitionItemsTable.styles";
-import { alertAnimation, alertStyles, BaseButtonStyles } from "../../../utilStyles";
+import { alertAnimation, BaseButtonStyles } from "../../../utilStyles";
 import { AlertInterface } from "../../types";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -136,27 +117,26 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({ requisiti
   const [items, setItems] = useState<Item[]>([]);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>({});
+  const gridApiRef = useGridApiRef();
   const [alert, setAlert] = useState<AlertInterface>();
 
+  console.log({user});
   const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
-    console.log({ prevRowModesModel: rowModesModel });
+    console.log({ newRowModesModel });
     setRowModesModel(newRowModesModel);
   };
-  const processRowUpdate = (newRow: GridRowModel) => {
+
+  const processRowUpdate = async (newRow: GridRowModel) => {
+    console.log('processRowUpdate');
     const updatedRow = { ...newRow } as Item;
     setItems(items.map(item => (item.ID === updatedRow.ID ? updatedRow : item)));
     return updatedRow;
   };
 
-  const displayAlert = async (severety: string, message: string) => {
-    setTimeout(() => {
-      setAlert(undefined);
-    }, 3000);
-    setAlert({ severety, message });
-    return;
-  } 
-
   const handleSave = async () => {
+    const rowId = Object.keys(rowModesModel)[0];
+    gridApiRef.current.stopRowEditMode({ id : rowId, ignoreModifications: false });
+
     try {
       const response = await updateRequisitionItems(items, requisitionId);
       if (response.status === 200) {
@@ -168,6 +148,14 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({ requisiti
       displayAlert('error', 'Houve algum erro ao atualizar os itens');
     }
   }
+
+  const displayAlert = async (severety: string, message: string) => {
+    setTimeout(() => {
+      setAlert(undefined);
+    }, 3000);
+    setAlert({ severety, message });
+    return;
+  } 
 
    const ReqItemsFooter = (props : GridFooterContainerProps ) =>  {
     return ( 
@@ -209,11 +197,13 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({ requisiti
             },
           },
         }}
+        apiRef={gridApiRef}
         editMode="row"
         pageSizeOptions={[100]}
         checkboxSelection
         disableRowSelectionOnClick
         onRowEditStart={() => setIsEditing(true)}
+        onRowEditStop={() => setIsEditing(false)}
         processRowUpdate={processRowUpdate}
         slots={{
           footer : ReqItemsFooter

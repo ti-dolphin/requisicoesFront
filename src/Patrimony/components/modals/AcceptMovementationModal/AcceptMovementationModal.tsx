@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Modal, Box, IconButton, Stack, Typography, Button, CircularProgress, styled } from '@mui/material';
 import React, { useContext, useState } from 'react'
-import { MovimentationContext } from '../../context/movementationContext';
-import { acceptMovementation, createMovementationfile } from '../../utils';
+import { MovimentationContext } from '../../../context/movementationContext';
+import { acceptMovementation, createMovementationfile } from '../../../utils';
 import CloseIcon from "@mui/icons-material/Close";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 

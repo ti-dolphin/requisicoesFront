@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 import { QuoteItem } from '../../types';
 import { DataGrid, GridColDef, GridColumnHeaders, GridColumnHeadersProps, GridRowSelectionModel } from '@mui/x-data-grid';
-import { Box, Button, Stack, Toolbar, Typography } from '@mui/material';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import { BaseButtonStyles } from '../../../utilStyles';
 import typographyStyles from '../../utilStyles';
 
@@ -14,7 +14,12 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
     const [currentItems, setCurrentItems] = useState<QuoteItem[]>([...items]);
     const [isSelecting, setIsSelecting] = useState<boolean>(false);
     const [selectionModel, setSelectionModel] = useState<number[]>();
-
+    console.log({
+        currentItems,
+        isSelecting,
+        selectionModel,
+        setCurrentItems
+    })
     const handleGenerateSupplierUrl = () => {
         const url = new URL(window.location.href);
         url.searchParams.set('supplier', '1');
@@ -71,6 +76,8 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
             <GridColumnHeaders {...props} />
         );
     }
+
+    console.log(CustomColumnHeaders)
 
     useEffect(() => {
 

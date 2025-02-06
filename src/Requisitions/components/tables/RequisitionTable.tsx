@@ -40,41 +40,7 @@ import React from "react";
 import { useContext } from "react";
 import { RequisitionContext } from "../../context/RequisitionContext";
 import { userContext } from "../../context/userContext";
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function getComparator<Key extends keyof any>(
-  order: Order,
-  orderBy: Key
-): (
-  a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string }
-) => number {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-function stableSort<T>(
-  array: readonly T[],
-  comparator: (a: T, b: T) => number
-) {
-  const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
+
 
 const headCells: readonly HeadCell[] = [
   {
@@ -244,8 +210,6 @@ export default function EnhancedTable() {
   const [dense, setDense] = React.useState(true);
   const [rowsPerPage, setRowsPerPage] = React.useState(50);
   const [filteredRows, setFilteredRows] = useState<Requisition[]>([]);
-
-
   
   const navigate = useNavigate();
 
@@ -323,17 +287,6 @@ export default function EnhancedTable() {
       toggleRefreshRequisition();
     }
   };
-
-  const visibleRows = React.useMemo(
-    () =>
-      stableSort(filteredRows, getComparator(order, orderBy)).slice(
-        page * rowsPerPage,
-        page * rowsPerPage + rowsPerPage
-      ),
-
-    [order, orderBy, page, rowsPerPage, filteredRows]
-  );
-
   const handleRequestSort = (
     _event: React.MouseEvent<unknown>,
     property: keyof Requisition
@@ -399,12 +352,12 @@ export default function EnhancedTable() {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={visibleRows.length}
+              rowCount={filteredRows.length}
               handleSearch={handleSearch}
             />
             <TableBody>
-              {visibleRows ? (
-                visibleRows.map((row, index) => {
+              {filteredRows ? (
+                filteredRows.map((row, index) => {
                   const isItemSelected = isSelected(Number(row.ID_REQUISICAO));
                   const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -435,7 +388,7 @@ export default function EnhancedTable() {
                         align="left"
                       >
                         <Typography fontSize="" textTransform="capitalize">
-                          {row.DESCRIPTION.toLowerCase()}
+                          {String(row.DESCRIPTION).toLowerCase()}
                         </Typography>
                       </TableCell>
 
@@ -446,7 +399,7 @@ export default function EnhancedTable() {
                         }
                       >
                         <Typography fontSize="small" textTransform="capitalize">
-                          {row.STATUS.toLowerCase()}
+                          {String(row.STATUS).toLowerCase()}
                         </Typography>
                       </TableCell>
 
@@ -458,7 +411,7 @@ export default function EnhancedTable() {
                         sx={{ textTransform: "lowercase" }}
                       >
                         <Typography fontSize="small" textTransform="capitalize">
-                          {row.NOME_RESPONSAVEL.toLowerCase()}
+                          {String(row.NOME_RESPONSAVEL).toLowerCase()}
                         </Typography>
                       </TableCell>
 
@@ -514,7 +467,7 @@ export default function EnhancedTable() {
                         align="left"
                       >
                         <Typography fontSize="small" textTransform="capitalize">
-                          {row.LAST_MODIFIED_BY_NAME.toLowerCase()}
+                          {String(row.LAST_MODIFIED_BY_NAME).toLowerCase()}
                         </Typography>
                       </TableCell>
 

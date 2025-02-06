@@ -44,7 +44,6 @@ const gridCardColumns: { headerName: string; field: keyof OpportunityInfo }[] = 
   { field: "nomeStatus", headerName: "Status" }, // s.NOME
 
 ];
-
 const OpportunityInfoTable: React.FC = () => {
   // console.log("OpportunityInfoTable()");
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -57,10 +56,7 @@ const OpportunityInfoTable: React.FC = () => {
   const [cardWidth, setCardWidth] = useState<number>(0);
   const [isCardViewActive, setIsCardViewActive] = useState<boolean>(false);
   const [gridOuterContainerHeight, setgridOuterContainerHeight] = useState(0);
-
   const GridOuterContainerRef = useRef<HTMLDivElement>(null);
-
-
   const [gridColumnsCount, setGridColumnsCount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const {
@@ -157,6 +153,7 @@ const OpportunityInfoTable: React.FC = () => {
         setAllRows(opps);
         setRows(opps);
         calculateLayoutProps(opps.length);
+        console.log({opps})
       }
     }
     setIsLoading(false);
@@ -410,13 +407,20 @@ const OpportunityInfoTable: React.FC = () => {
             rowHeight={320} // Height of each row
             width={gridColumnsCount * cardWidth + 20} // Width of the grid
           >
-            {({ columnIndex, rowIndex, style }) => (
-              <OpportunityCard
-                row={rows[rowIndex]}
-                gridCardColumns={gridCardColumns}
-                style={style}
-              />
-            )}
+            {({ columnIndex, rowIndex, style }) => {
+              console.log(columnIndex)
+              return ( 
+                (
+                  <OpportunityCard
+
+                    key={rows[rowIndex].numeroOs}
+                    row={rows[rowIndex]}
+                    gridCardColumns={gridCardColumns}
+                    style={style}
+                  />
+                )
+              )
+            }}
           </FixedSizeGrid>
         )}
 

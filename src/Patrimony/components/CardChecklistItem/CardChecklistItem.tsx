@@ -2,7 +2,7 @@ import { Card, CardMedia, CardContent, Stack, Typography, Button, TextField } fr
 import ErrorIcon from "@mui/icons-material/Error";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { CardChecklistItemProps } from "../../crm/types";
+import { CardChecklistItemProps } from "../../../crm/types";
 
 
 const CardChecklistItem = ({

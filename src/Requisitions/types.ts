@@ -14,9 +14,9 @@ export interface Requisition {
   DESCRICAO: string;
   RESPONSAVEL: string;
   NOME_RESPONSAVEL : string;
-  LAST_UPDATE_ON: string | number;
+  LAST_UPDATE_ON: string;
   LAST_MODIFIED_BY_NAME: string;
-  CREATED_ON: string | number;
+  CREATED_ON: string;
   TIPO : number;
   nome_tipo : string;
   projectOption : Option;

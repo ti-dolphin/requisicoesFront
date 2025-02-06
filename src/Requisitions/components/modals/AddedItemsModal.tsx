@@ -62,8 +62,7 @@ const AddedItemsModal: React.FC<AddedItemsModalProps> = ({ addedItems }) => {
         <DialogContent dividers sx={{ maxHeight: "70vh", overflowY: "auto" }}>
           {addedItems && (
             <RequisitionItemsTable
-              currentStatus="Em edição"
-              items={addedItems}
+               requisitionId={addedItems[0].ID_REQUISICAO}
             />
           )}
         </DialogContent>

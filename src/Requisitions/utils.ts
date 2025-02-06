@@ -14,7 +14,6 @@ import {
   anexoRequisicao,
 } from "./types";
 import { User } from "./context/userContext";
-import { error } from "console";
 
 const logIn = async (username: string, password: string) => {
   try {

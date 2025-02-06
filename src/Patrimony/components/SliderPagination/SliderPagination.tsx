@@ -2,7 +2,7 @@ import { Box, Stack, IconButton } from "@mui/material";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import CircleIcon from "@mui/icons-material/Circle";
-import { ChecklistItemFile } from "../types";
+import { ChecklistItemFile } from "../../types";
 
 interface SliderPaginationProps {
   ChecklistItems: ChecklistItemFile[];

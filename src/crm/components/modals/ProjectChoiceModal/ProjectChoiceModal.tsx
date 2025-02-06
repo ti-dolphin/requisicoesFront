@@ -1,6 +1,6 @@
 import { Modal, Box, Typography, Autocomplete, TextField, Button, AutocompleteChangeDetails, AutocompleteChangeReason, IconButton } from '@mui/material';
 import React from 'react'
-import { OpportunityOptionField } from '../../types';
+import { OpportunityOptionField } from '../../../types';
 import CloseIcon from "@mui/icons-material/Close";
 
 interface ProjectChoiceModalProps {

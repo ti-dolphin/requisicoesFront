@@ -3,10 +3,9 @@ import quoteFields, { defaultQuote, dummyQuotes } from '../../utils'
 import { Box, Button, TextField, Typography } from '@mui/material';
 import typographyStyles, { boxDefaultStyles, quoteDetailPageStyles } from '../../utilStyles';
 import { Quote } from '../../types';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import QuoteItemsTable from '../../components/tables/QuoteItemsTable';
 import { BaseButtonStyles } from '../../../utilStyles';
-import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Loader } from '../../../generalUtilities';
 
 const QuoteDetail = () => {
@@ -16,6 +15,7 @@ const QuoteDetail = () => {
   const [currentQuoteData, setCurrentQuoteData] = useState<Quote>(defaultQuote);
   const [isSupplier, setIsSupplier] = useState<boolean>(false);
   
+  console.log({currentQuoteData});
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, dataKey : string) => {
     const { value } = e.target;

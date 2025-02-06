@@ -69,6 +69,7 @@ const RequisitionFields = () => {
   }
 
   const handleChangeAutoComplete = (e: any, value: any, field: any) => {
+    console.log(e)
     if (requisitionData) {
       if (field.key === 'projectOption') {
         setOptionsState({

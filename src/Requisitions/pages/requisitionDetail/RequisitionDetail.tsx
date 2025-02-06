@@ -27,6 +27,8 @@ const RequisitionDetail: React.FC = () => {
   const [requisitionItems, setRequisitionItems] = useState<Item[]>([]);
   const { refreshRequisition } = useContext(RequisitionContext);
   const { logedIn, user } = useContext(userContext);
+  console.log(user);
+  console.log(setRequisitionItems);
   const navigate = useNavigate();
 
   const fetchRequisitionData = async () => {
@@ -73,7 +75,6 @@ const RequisitionDetail: React.FC = () => {
           Projeto {requisitionData?.DESCRICAO}
         </Typography>
       </Box>
-
       <Box className="stepper-container" sx={styles.requisitionStepper}>
         {requisitionData && (
           <HorizontalLinearStepper

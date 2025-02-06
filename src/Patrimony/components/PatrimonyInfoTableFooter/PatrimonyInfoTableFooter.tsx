@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import { PatrimonyInfo } from "../types";
+import { PatrimonyInfo } from "../../types";
 
 
 interface PatrimonyInfoTableFooterProps {
