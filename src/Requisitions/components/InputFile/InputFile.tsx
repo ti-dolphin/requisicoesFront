@@ -1,7 +1,7 @@
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
-import { postItemFile, postRequisitionFile } from "../../../utils";
-import { inputFileProps } from "../../../types";
+import { postItemFile, postRequisitionFile } from "../../utils";
+import { inputFileProps } from "../../types";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 const VisuallyHiddenInput = styled("input")({
@@ -23,7 +23,7 @@ const InputFile = ({
   setIsLoading,
   refreshToggler,
 }: inputFileProps) => {
-  
+
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log('handleChange Input File');
     if (e.target.files) {
@@ -40,10 +40,10 @@ const InputFile = ({
       }
 
       const response = await postRequisitionFile(id, formData);
-      if (response === 200){ 
-         console.log('response === 200')
-         setRefreshToggler(!refreshToggler);
-         setIsLoading(false);
+      if (response === 200) {
+        console.log('response === 200')
+        setRefreshToggler(!refreshToggler);
+        setIsLoading(false);
       }
       return;
     }

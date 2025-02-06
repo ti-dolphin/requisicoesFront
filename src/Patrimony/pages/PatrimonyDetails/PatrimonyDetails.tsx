@@ -9,20 +9,20 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import MovimentationTable from "../components/tables/MovimentationTable";
-import { Patrimony } from "../types";
+import MovimentationTable from "../../components/tables/MovimentationTable";
+import { Patrimony } from "../../types";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
 
-import PatrimonyFileModal from "../components/modals/PatrimonyFileModal;/PatrimonyFileModal;";
-import CreateMovementation from "../components/modals/CreateMovementation/CreateMovementation";
-import { PatrimonyInfoContext } from "../context/patrimonyInfoContext";
+import PatrimonyFileModal from "../../components/modals/PatrimonyFileModal;/PatrimonyFileModal;";
+import CreateMovementation from "../../components/modals/CreateMovementation/CreateMovementation";
+import { PatrimonyInfoContext } from "../../context/patrimonyInfoContext";
 import {
   getResponsableForPatrimony,
   getSinglePatrimony,
   upatePatrimony,
-} from "../utils";
+} from "../../utils";
 import { useNavigate, useParams } from "react-router-dom";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateField } from "@mui/x-date-pickers/DateField";
@@ -30,7 +30,7 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs, { Dayjs } from "dayjs";
 import { ArrowLeftIcon } from "@mui/x-date-pickers/icons";
-import PatrimonyAccessoryModal from "../components/modals/PatrimonyAccessoriesModal/PatrimonyAccessoriesModal";
+import PatrimonyAccessoryModal from "../../components/modals/PatrimonyAccessoriesModal/PatrimonyAccessoriesModal";
 // import { userContext } from "../../Requisitions/context/userContext";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 
@@ -87,8 +87,8 @@ const PatrimonyDetails = () => {
     if (patrimonyData) {
       const formattedValorCompra = patrimonyData.valor_compra
         ? parseFloat(
-            patrimonyData.valor_compra.toString().replace(",", ".")
-          ).toFixed(2)
+          patrimonyData.valor_compra.toString().replace(",", ".")
+        ).toFixed(2)
         : null;
       const updatedData = {
         ...patrimonyData,

@@ -14,6 +14,7 @@ import {
   anexoRequisicao,
 } from "./types";
 import { User } from "./context/userContext";
+import { error } from "console";
 
 const logIn = async (username: string, password: string) => {
   try {
@@ -158,10 +159,11 @@ const postRequisition = async (requistions: RequisitionPost[]) => {
   try {
     const response = await api.post("/requisition", requistions);
     return response;
-  } catch (e) {
-    console.log(e);
+  } catch (e : any) {
+    throw new Error(e);
   }
 };
+
 const fetchAllTypes = async () => {
   try{
     const response = await api.get(`requisition/types`);
@@ -292,23 +294,27 @@ const fetchPersonById = async (id: number) => {
 
 const updateRequisitionItems = async (items: Item[], requisitonId: number) => {
   try {
-    await api.put(`/requisition/requisitionItems/${requisitonId}`, items);
-  } catch (e) {
+    const response = await api.put(`/requisition/requisitionItems/${requisitonId}`, items);
+    return response;
+  } catch (e : any) {
     console.log(e);
+    throw new Error(e)
   }
 };
+
 
 const updateRequisition = async (
   codpessoa: number,
   requisition: Requisition
 ) => {
   try {
-    await api.put(`requisition/${requisition.ID_REQUISICAO}`, {
+   const response = await api.put(`requisition/${requisition.ID_REQUISICAO}`, {
       codpessoa,
       requisition,
     });
-  } catch (e) {
-    console.log(e);
+    return response
+  } catch (e : any) {
+    throw new Error(e)
   }
 };
 

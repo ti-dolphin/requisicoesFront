@@ -5,18 +5,18 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { Item, Requisition, updateRequisition } from "../../../utils";
+import { Item, Requisition, updateRequisition } from "../../utils";
 import { useContext } from "react";
 import { useState } from "react";
-import { RequisitionContext } from "../../../context/RequisitionContext";
-import { userContext } from "../../../context/userContext";
+import { RequisitionContext } from "../../context/RequisitionContext";
+import { userContext } from "../../context/userContext";
 import { Alert } from "@mui/material";
 
 const steps = ["Em edição", "Requisitado", "Em cotação", "Cotado", "Concluído"];
 interface props {
   requisitionData: Requisition;
   setRequisitionData: (requisition: Requisition) => void;
-  items? : Item[];
+  items?: Item[];
 }
 const HorizontalLinearStepper: React.FC<props> = ({
   requisitionData,
@@ -26,11 +26,8 @@ const HorizontalLinearStepper: React.FC<props> = ({
   const { user } = useContext(userContext);
   const { toggleRefreshRequisition, changeActiveStep, refreshRequisition } =
     useContext(RequisitionContext);
-
-
   const [nonPurchaserAlert, toggleNonPurchaserAlert] = useState<boolean>(false);
   const [nonRegisteredProductsAlert, toggleNonRegisteredProductsAlert] = useState<boolean>(false);
-
   const [activeStep, setActiveStep] = useState(
     steps.indexOf(requisitionData.STATUS) === steps.length - 1
       ? steps.length
@@ -43,24 +40,23 @@ const HorizontalLinearStepper: React.FC<props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeStep, refreshRequisition]);
 
-  const displayAlert = (alertType : string) => {
-   if(alertType === 'nonPurchaser'){ 
-     setTimeout(() => {
-       toggleNonPurchaserAlert(false);
-     }, 3 * 1000);
-     toggleNonPurchaserAlert(true);
-     return;
-   }
-      if(alertType === 'nonRegistreredProduct'){ 
-       setTimeout(() => {
-          toggleNonRegisteredProductsAlert(false);
-        }, 3 * 1000);
-        toggleNonRegisteredProductsAlert(true);
-        return;
-      }
-   }
-
-
+  const displayAlert = (alertType: string) => {
+    if (alertType === 'nonPurchaser') {
+      setTimeout(() => {
+        toggleNonPurchaserAlert(false);
+      }, 3 * 1000);
+      toggleNonPurchaserAlert(true);
+      return;
+    }
+    if (alertType === 'nonRegistreredProduct') {
+      setTimeout(() => {
+        toggleNonRegisteredProductsAlert(false);
+      }, 3 * 1000);
+      toggleNonRegisteredProductsAlert(true);
+      return;
+    }
+  }
+  
   const [skipped] = React.useState(new Set<number>());
 
   const isStepOptional = (step: number) => {
@@ -77,23 +73,23 @@ const HorizontalLinearStepper: React.FC<props> = ({
       return;
     }
     const nextStep = activeStep + 1;
-    if (isThereNonRegisteredProducts() && nextStep > 3) { 
+    if (isThereNonRegisteredProducts() && nextStep > 3) {
       displayAlert('nonRegistreredProduct');
       return;
     }
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
     changeActiveStep(nextStep);
     if (nextStep < steps.length) {
       const editedRequisition = {
         ...requisitionData,
         ["STATUS"]: steps[activeStep + 1],
       };
-      
+
       if (user) {
         console.log('editRequisition: ', editedRequisition);
         try {
           await updateRequisition(user.CODPESSOA, editedRequisition);
-          
+
           setRequisitionData(editedRequisition);
           toggleRefreshRequisition();
         } catch (e) {
@@ -103,7 +99,7 @@ const HorizontalLinearStepper: React.FC<props> = ({
     }
   };
 
-   const isThereNonRegisteredProducts = () => {
+  const isThereNonRegisteredProducts = () => {
     const nonRegisteredProducts = items?.filter((item) =>
       productNotRegistered(item.nome_fantasia)
     );
@@ -111,11 +107,11 @@ const HorizontalLinearStepper: React.FC<props> = ({
       return true;
     }
     return false;
-   };
+  };
 
-   const productNotRegistered = (productName: string) => {
-     return productName.toUpperCase() === "MATERIAL/SERVIÇO - NÃO CADASTRADO";
-   };
+  const productNotRegistered = (productName: string) => {
+    return productName.toUpperCase() === "MATERIAL/SERVIÇO - NÃO CADASTRADO";
+  };
 
   const handleBack = async () => {
     const isPurchaser = user?.PERM_COMPRADOR;
@@ -127,11 +123,11 @@ const HorizontalLinearStepper: React.FC<props> = ({
         ...requisitionData,
         ["STATUS"]: steps[activeStep - 1],
       };
-      
+
       if (user) {
         try {
           await updateRequisition(user.CODPESSOA, editedRequisition);
-          
+
           setRequisitionData(editedRequisition);
           toggleRefreshRequisition();
         } catch (e) {

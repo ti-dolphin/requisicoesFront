@@ -96,3 +96,16 @@ export const cardTitleStyle = {
   color: "textPrimary",
   fontWeight: "500",
 };
+export const alertStyles = { 
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    zIndex: 1000
+}
+export const alertAnimation = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: { duration: 0.5 }
+}

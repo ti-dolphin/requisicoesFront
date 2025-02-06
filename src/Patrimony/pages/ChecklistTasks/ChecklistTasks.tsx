@@ -12,21 +12,21 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { userContext } from "../../Requisitions/context/userContext";
-import { MovementationChecklist } from "../types";
+import { userContext } from "../../../Requisitions/context/userContext";
+import { MovementationChecklist } from "../../types";
 import {
   dateTimeRenderer,
   getPatrimonyNotifications,
   renderValue,
-} from "../utils";
+} from "../../utils";
 import { TableVirtuoso, TableComponents } from "react-virtuoso";
-import { checklistContext } from "../context/checklistContext";
-import ChecklistItemsModal from "../components/modals/ChecklistItemsModal/ChecklistItemsModal";
+import { checklistContext } from "../../context/checklistContext";
+import ChecklistItemsModal from "../../components/modals/ChecklistItemsModal/ChecklistItemsModal";
 import { useNavigate } from "react-router-dom";
 import { FixedSizeList } from "react-window";
-import ChecklistCard from "../components/ChecklistCard/ChecklistCard";
-import { ChecklistColumnData } from "../../crm/types";
-import ChecklistAppBar from "../components/ChecklistAppBar/ChecklistAppBar";
+import ChecklistCard from "../../components/ChecklistCard/ChecklistCard";
+import { ChecklistColumnData } from "../../../crm/types";
+import ChecklistAppBar from "../../components/ChecklistAppBar/ChecklistAppBar";
 
 const columns: ChecklistColumnData[] = [
   {
@@ -198,9 +198,9 @@ const ChecklistTasks = () => {
     const changedColumnFilters = currentColumnFilters.map((columnfilter) =>
       columnfilter.dataKey === column.dataKey
         ? {
-            ...columnfilter,
-            filterValue: value,
-          }
+          ...columnfilter,
+          filterValue: value,
+        }
         : columnfilter
     );
     setCurrentColumnFilters(changedColumnFilters);

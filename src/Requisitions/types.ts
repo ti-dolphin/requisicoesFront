@@ -1,4 +1,9 @@
 import { Dispatch, SetStateAction } from "react";
+
+export interface Option {
+  label: string;
+  id: number;
+}
 export interface Requisition {
   OBSERVACAO: string;
   ID_REQUISICAO: number;
@@ -14,7 +19,14 @@ export interface Requisition {
   CREATED_ON: string | number;
   TIPO : number;
   nome_tipo : string;
+  projectOption : Option;
+  projectOptions: Option[];
+  responsableOption: Option
+  responsableOptions :  Option[];
+  typeOption : Option;
+  typeOptions : Option[];
 }
+
 
 export interface QuoteField {
   dataKey: string;
@@ -78,6 +90,20 @@ export interface RequisitionType{
 export interface Project {
   DESCRICAO: string;
   ID: number;
+}
+
+export interface OptionsState {
+  projectOption?: Option
+  responsableOption?: Option
+  typeOption?: Option
+  projectOptions? : Option[];
+  responsableOptions?: Option[];
+  typeOptions? : Option[]
+}
+
+export interface AlertInterface{
+  severety : string
+  message: string
 }
 export interface Item {
   UNIDADE?: string;
@@ -218,7 +244,3 @@ export interface AddedItemsModalProps {
   setIsCreating?: (value: boolean) => void;
 }
 
-export interface requisitionItemsTableProps { 
-    items : Item[];
-    currentStatus? : string;
-}

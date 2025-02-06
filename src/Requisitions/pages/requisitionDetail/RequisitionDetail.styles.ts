@@ -107,18 +107,14 @@ const styles = {
     cursor: "pointer",
   },
   requisitionItemsTableContainer: {
-    width: {
-      xs: "100%",
-      md: "50%",
-      lg: "75%",
-    },
-    height: {
-      lg: "100%",
-    },
+    height: 500,
+    width: '100%',
     border: "0.5px solid #e3e3e3",
     overflowY: "auto",
     display: "flex",
-    justifyContent: "center",
+    flexDirection: 'column',
+    padding: 1,
+    flexGrow: 1
   },
 };
 

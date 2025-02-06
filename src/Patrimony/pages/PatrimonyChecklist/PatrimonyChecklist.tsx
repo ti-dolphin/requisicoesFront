@@ -1,4 +1,4 @@
-import {  useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -14,20 +14,20 @@ import {
   GridFooterContainer,
   GridPagination,
 } from "@mui/x-data-grid";
-import { MovementationChecklist } from "../types";
-import { checklistContext } from "../context/checklistContext";
+import { MovementationChecklist } from "../../types";
+import { checklistContext } from "../../context/checklistContext";
 import { ArrowLeftIcon } from "@mui/x-date-pickers/icons";
 import { useNavigate, useParams } from "react-router-dom";
-import ChecklistItemsModal from "../components/modals/ChecklistItemsModal/ChecklistItemsModal";
-import { dateTimeRenderer, getChecklistDataByPatrimonyId, renderValue } from "../utils";
+import ChecklistItemsModal from "../../components/modals/ChecklistItemsModal/ChecklistItemsModal";
+import { dateTimeRenderer, getChecklistDataByPatrimonyId, renderValue } from "../../utils";
 import { ptBR } from "@mui/x-data-grid/locales";
 import { ptBR as pickersPtBr } from "@mui/x-date-pickers/locales";
 import { ptBR as corePtBr } from "@mui/material/locale";
 import { FixedSizeList } from "react-window";
-import ChecklistCard from "../components/ChecklistCard/ChecklistCard";
-import { ChecklistColumnData } from "../../crm/types";
-import { basicAppbarStyles } from "../../utilStyles";
-import TableViewToggleButton from "../../components/TableViewToggleButton";
+import ChecklistCard from "../../components/ChecklistCard/ChecklistCard";
+import { ChecklistColumnData } from "../../../crm/types";
+import { basicAppbarStyles } from "../../../utilStyles";
+import TableViewToggleButton from "../../../components/TableViewToggleButton";
 
 const theme = createTheme(
   {
@@ -42,7 +42,7 @@ const theme = createTheme(
 const PatrimonyChecklist = () => {
   const navigate = useNavigate();
   const { id_patrimonio } = useParams();
-  const { toggleChecklistOpen, refreshChecklist } =useContext(checklistContext);
+  const { toggleChecklistOpen, refreshChecklist } = useContext(checklistContext);
   const [checklistData, setChecklistData] = useState<MovementationChecklist[]>(
     []
   );
@@ -138,7 +138,7 @@ const PatrimonyChecklist = () => {
       </GridFooterContainer>
     );
   };
-  
+
 
   return (
     <Box

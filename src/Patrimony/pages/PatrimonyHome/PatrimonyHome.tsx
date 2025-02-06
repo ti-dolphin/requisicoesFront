@@ -1,6 +1,6 @@
 import { Box, IconButton, Stack, Typography } from "@mui/material";
-import PatrimonyInfoTable from "../components/tables/PatrimonyInfoTable";
-import logoUrl from '../assets/logodolphin.jpg';
+import PatrimonyInfoTable from "../../components/tables/PatrimonyInfoTable";
+import logoUrl from '../../assets/logodolphin.jpg';
 import { ArrowLeftIcon } from "@mui/x-date-pickers/icons";
 import { useNavigate } from "react-router-dom";
 import { useMemo } from "react";

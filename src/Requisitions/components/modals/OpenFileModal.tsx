@@ -12,7 +12,7 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import FolderIcon from "@mui/icons-material/Folder";
 import DeleteIcon from "@mui/icons-material/Delete";
-import InputFile from "../../pages/requisitionDetail/components/InputFile";
+import InputFile from "../InputFile/InputFile";
 import { Badge, BadgeProps, Button, CircularProgress, Stack } from "@mui/material";
 import {
   deleteRequisitionFile,

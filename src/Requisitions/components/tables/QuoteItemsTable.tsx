@@ -111,12 +111,10 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
                         },
                     },
                 }}
-
                 onRowSelectionModelChange={handleSelection}
                 density='compact'
                 autosizeOnMount
                 pageSizeOptions={[50, 100]}
-
                 disableRowSelectionOnClick
             />
         </Box>
