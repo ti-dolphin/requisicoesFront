@@ -36625,7 +36625,7 @@ axios.getAdapter = adapters.getAdapter;
 axios.HttpStatusCode = HttpStatusCode;
 axios.default = axios;
 const api = axios.create({
-  baseURL: "http://localhost:3001",
+  baseURL: "https://apicontrolehomologacao.dse.com.br",
   headers: {
     "Content-Type": "application/json",
     Authorization: window.localStorage.getItem("token")
@@ -92918,6 +92918,7 @@ const OpportunityModal = /* @__PURE__ */ __name(() => {
         updatedFormData.append("files", file);
         return updatedFormData;
       });
+      e2.target.value = "";
     }
   }, "handleChangeFiles");
   const handlesaveProgressAction = /* @__PURE__ */ __name(async () => {

@@ -681,7 +681,6 @@ export const OpportunityModal = () => {
   const handleChangeFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const file = e.target.files[0];
-
       const newFile: OpportunityFile = {
         id_anexo_os: Date.now(), // Gera um ID único temporário
         arquivo: URL.createObjectURL(file), // Gera a URL temporária para o preview
@@ -701,6 +700,7 @@ export const OpportunityModal = () => {
         updatedFormData.append("files", file);
         return updatedFormData;
       });
+      e.target.value = '';
     }
   };
 
