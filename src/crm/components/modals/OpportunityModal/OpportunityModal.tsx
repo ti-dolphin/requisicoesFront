@@ -51,6 +51,9 @@ import GuideSelector from "../../GuideSelector/GuideSelector";
 import { BaseButtonStyles } from "../../../../utilStyles";
 import AdicionalChoice from "../AdicionalChoice/AdicionalChoice";
 import ProjectChoiceModal from "../ProjectChoiceModal/ProjectChoiceModal";
+import { styles } from "./OpportunityModal.styles";
+import utilStyles from "../../../../Requisitions/utilStyles";
+import typographyStyles from "../../../../Requisitions/utilStyles";
 
 
 export const OpportunityModal = () => {
@@ -743,32 +746,7 @@ export const OpportunityModal = () => {
       aria-describedby="modal-modal-description"
     >
       <Box
-        sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: {
-            //responsive width
-            xs: "95%",
-            md: "40%",
-            lg: "50%"
-          },
-          height: {
-            //responsive height
-            xs: "90%",
-            md: "80%",
-            xl: '75%'
-          },
-          bgcolor: "background.paper",
-          boxShadow: 24,
-          overFlow: "hidden",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          p: 1,
-          gap: 4,
-        }}
+        sx={styles.modal}
       >
         <IconButton
           sx={{
@@ -780,16 +758,16 @@ export const OpportunityModal = () => {
         >
           <CloseIcon />
         </IconButton>{" "}
-        <Typography fontFamily="Roboto" fontSize="large">
+        <Typography sx={typographyStyles.heading1}>
           Proposta
         </Typography>
-        <Typography>
+        <Typography sx={typographyStyles.heading2}>
           {currentOppIdSelected > 0 ? `${opportunity.nome}` : ""}
         </Typography>
+        
         <Stack
           direction="column"
           width="100%"
-          gap={1}
           padding={1}
           overflow="scroll"
           position="relative"

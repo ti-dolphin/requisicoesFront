@@ -4,6 +4,7 @@ import { OpportunityGuideProps } from "../../types";
 import OpportunityFiles from "../OpportunityFiles/OpportunityFiles";
 import RenderOpportunityFields from "../OpportunityFields/OpportunityFields";
 import FollowersTable from "../tables/FollowersTable";
+import { styles } from "./OpportunityGuide.styles";
 
 const OpportunityGuide = ({
   guide,
@@ -32,26 +33,12 @@ const OpportunityGuide = ({
   return (
     <Box
       key={guide.name}
-      sx={{
-        width: "100%",
-        display: "flex !important",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 0.5,
-
-      }}
+      sx={styles.guideContainer}
     >
       <Box
         sx={{
-          display: "flex",
-          justifyContent: justifyStartGuide(guide.name) ? `start` : `center`,
-          alignItems: "flex-start",
-          flexWrap: "wrap",
-          gap: 2,
-          width: "100%",
-          minWidth: 0,
-        }}
+           ...styles.contentContainer,
+            justifyContent: justifyStartGuide(guide.name) ? `start` : `center`, }}
       >
         {guide.name === "Escopo" && (
           <OpportunityFiles
