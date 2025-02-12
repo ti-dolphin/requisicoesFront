@@ -52,7 +52,6 @@ import { BaseButtonStyles } from "../../../../utilStyles";
 import AdicionalChoice from "../AdicionalChoice/AdicionalChoice";
 import ProjectChoiceModal from "../ProjectChoiceModal/ProjectChoiceModal";
 import { styles } from "./OpportunityModal.styles";
-import utilStyles from "../../../../Requisitions/utilStyles";
 import typographyStyles from "../../../../Requisitions/utilStyles";
 
 

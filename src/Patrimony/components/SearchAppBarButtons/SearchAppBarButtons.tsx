@@ -82,6 +82,7 @@ const PatrimonySearchAppBarButtons = React.memo(
               <ArrowDropDownCircleIcon />
             </Button>
             <Menu
+            key={index + 1}
               id="basic-menu"
               anchorEl={actionsMenu}
               open={actionsMenuOpen}

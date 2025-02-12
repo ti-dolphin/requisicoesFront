@@ -18500,7 +18500,7 @@ function getStyleValue(value) {
   return parseInt(value, 10) || 0;
 }
 __name(getStyleValue, "getStyleValue");
-const styles$6 = {
+const styles$9 = {
   shadow: {
     // Visibility needed to hide the extra text area on iPads
     visibility: "hidden",
@@ -18631,7 +18631,7 @@ const TextareaAutosize = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */
       readOnly: true,
       ref: shadowRef,
       tabIndex: -1,
-      style: _extends$4({}, styles$6.shadow, style2, {
+      style: _extends$4({}, styles$9.shadow, style2, {
         paddingTop: 0,
         paddingBottom: 0
       })
@@ -21049,7 +21049,7 @@ function getScale$1(value) {
   return `scale(${value}, ${value ** 2})`;
 }
 __name(getScale$1, "getScale$1");
-const styles$5 = {
+const styles$8 = {
   entering: {
     opacity: 1,
     transform: getScale$1(1)
@@ -21189,7 +21189,7 @@ const Grow = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(func
           opacity: 0,
           transform: getScale$1(0.75),
           visibility: state === "exited" && !inProp ? "hidden" : void 0
-        }, styles$5[state], style2, children.props.style),
+        }, styles$8[state], style2, children.props.style),
         ref: handleRef
       }, childProps));
     }
@@ -21643,7 +21643,7 @@ const Portal$1 = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(
   });
 }, "Portal2"));
 const _excluded$1Z = ["addEndListener", "appear", "children", "easing", "in", "onEnter", "onEntered", "onEntering", "onExit", "onExited", "onExiting", "style", "timeout", "TransitionComponent"];
-const styles$4 = {
+const styles$7 = {
   entering: {
     opacity: 1
   },
@@ -21742,7 +21742,7 @@ const Fade = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(func
         style: _extends$4({
           opacity: 0,
           visibility: state === "exited" && !inProp ? "hidden" : void 0
-        }, styles$4[state], style2, children.props.style),
+        }, styles$7[state], style2, children.props.style),
         ref: handleRef
       }, childProps));
     }
@@ -31784,7 +31784,7 @@ const body = /* @__PURE__ */ __name((theme2) => _extends$4({
     backgroundColor: (theme2.vars || theme2).palette.common.white
   }
 }), "body");
-const styles$3 = /* @__PURE__ */ __name((theme2, enableColorScheme = false) => {
+const styles$6 = /* @__PURE__ */ __name((theme2, enableColorScheme = false) => {
   var _theme$components;
   const colorSchemeStyles = {};
   if (enableColorScheme && theme2.colorSchemes) {
@@ -31818,7 +31818,7 @@ const styles$3 = /* @__PURE__ */ __name((theme2, enableColorScheme = false) => {
     defaultStyles = [defaultStyles, themeOverrides];
   }
   return defaultStyles;
-}, "styles$3");
+}, "styles$6");
 function CssBaseline(inProps) {
   const props = useDefaultProps({
     props: inProps,
@@ -31830,7 +31830,7 @@ function CssBaseline(inProps) {
   } = props;
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(reactExports.Fragment, {
     children: [/* @__PURE__ */ jsxRuntimeExports.jsx(GlobalStyles, {
-      styles: (theme2) => styles$3(theme2, enableColorScheme)
+      styles: (theme2) => styles$6(theme2, enableColorScheme)
     }), children]
   });
 }
@@ -37112,34 +37112,6 @@ const defaultQuote = {
     }
   ]
 };
-const userContext = reactExports.createContext({
-  logedIn: window.localStorage.getItem("token") ? true : false,
-  toggleLogedIn: () => {
-  },
-  defineUser: () => {
-  }
-});
-const UserContextProvider = /* @__PURE__ */ __name(({ children }) => {
-  const [logedIn, setLogedIn] = reactExports.useState(
-    window.localStorage.getItem("token") ? true : false
-  );
-  const [user, setUser] = reactExports.useState(
-    window.localStorage.getItem("user") ? JSON.parse(window.localStorage.getItem("user") || "") : void 0
-  );
-  const toggleLogedIn = /* @__PURE__ */ __name((value) => {
-    setLogedIn(value);
-  }, "toggleLogedIn");
-  const defineUser = /* @__PURE__ */ __name((user2) => {
-    setUser(user2);
-  }, "defineUser");
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(
-    userContext.Provider,
-    {
-      value: user ? { user, logedIn, toggleLogedIn, defineUser } : { logedIn, toggleLogedIn, defineUser },
-      children
-    }
-  );
-}, "UserContextProvider");
 const GridApiContext = /* @__PURE__ */ reactExports.createContext(void 0);
 function useGridApiContext() {
   const apiRef = reactExports.useContext(GridApiContext);
@@ -56394,7 +56366,7 @@ DataGridRaw.propTypes = {
    */
   unstable_rowSpanning: PropTypes.bool
 };
-const styles$2 = {
+const styles$5 = {
   gridFooterContainer: {
     display: "flex",
     justifyContent: "center"
@@ -63805,15 +63777,13 @@ const columns$5 = [
   }
 ];
 const RequisitionItemsTable = /* @__PURE__ */ __name(({ requisitionId }) => {
-  const { user } = reactExports.useContext(userContext);
   const [items, setItems] = reactExports.useState([]);
   const [isEditing, setIsEditing] = reactExports.useState(false);
+  const [toggleSave, setToggleSave] = reactExports.useState(false);
   const [rowModesModel, setRowModesModel] = React$1.useState({});
   const gridApiRef = useGridApiRef();
   const [alert2, setAlert] = reactExports.useState();
-  console.log({ user });
   const handleRowModesModelChange = /* @__PURE__ */ __name((newRowModesModel) => {
-    console.log({ newRowModesModel });
     setRowModesModel(newRowModesModel);
   }, "handleRowModesModelChange");
   const processRowUpdate = /* @__PURE__ */ __name(async (newRow) => {
@@ -63822,18 +63792,14 @@ const RequisitionItemsTable = /* @__PURE__ */ __name(({ requisitionId }) => {
     setItems(items.map((item) => item.ID === updatedRow.ID ? updatedRow : item));
     return updatedRow;
   }, "processRowUpdate");
+  const stopEditMode = /* @__PURE__ */ __name(async (row, fieldToFocus) => {
+    gridApiRef.current.stopRowEditMode({ id: row, field: fieldToFocus, ignoreModifications: false });
+  }, "stopEditMode");
   const handleSave = /* @__PURE__ */ __name(async () => {
-    const rowId = Object.keys(rowModesModel)[0];
-    gridApiRef.current.stopRowEditMode({ id: rowId, ignoreModifications: false });
-    try {
-      const response = await updateRequisitionItems(items, requisitionId);
-      if (response.status === 200) {
-        displayAlert("success", "Items atualizados com sucesso!");
-        return;
-      }
-    } catch (e2) {
-      displayAlert("error", "Houve algum erro ao atualizar os itens");
-    }
+    const row = Object.keys(rowModesModel)[0];
+    const { fieldToFocus } = rowModesModel[row];
+    await stopEditMode(Number(row), fieldToFocus);
+    setToggleSave(!toggleSave);
   }, "handleSave");
   const displayAlert = /* @__PURE__ */ __name(async (severety, message) => {
     setTimeout(() => {
@@ -63843,7 +63809,7 @@ const RequisitionItemsTable = /* @__PURE__ */ __name(({ requisitionId }) => {
     return;
   }, "displayAlert");
   const ReqItemsFooter = /* @__PURE__ */ __name((props) => {
-    return /* @__PURE__ */ jsxRuntimeExports.jsxs(GridFooterContainer, { sx: { ...props.style, ...styles$2.gridFooterContainer }, ...props, children: [
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs(GridFooterContainer, { sx: { ...props.style, ...styles$5.gridFooterContainer }, ...props, children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: alert2 && /* @__PURE__ */ jsxRuntimeExports.jsx(motion.div, { ...alertAnimation, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Alert, { severity: alert2.severety, children: alert2.message }) }) }),
       /* @__PURE__ */ jsxRuntimeExports.jsx(GridFooter, {}),
       isEditing && /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { onClick: handleSave, sx: BaseButtonStyles, children: "Salvar" })
@@ -63855,9 +63821,24 @@ const RequisitionItemsTable = /* @__PURE__ */ __name(({ requisitionId }) => {
       setItems(items2);
     }
   }, []);
+  const saveItems = reactExports.useCallback(async () => {
+    console.log("items before save: ", items);
+    try {
+      const response = await updateRequisitionItems(items, requisitionId);
+      if (response.status === 200) {
+        displayAlert("success", "Items atualizados com sucesso!");
+        return;
+      }
+    } catch (e2) {
+      displayAlert("error", "Houve algum erro ao atualizar os itens");
+    }
+  }, [toggleSave]);
   reactExports.useEffect(() => {
     fetchReqItems();
   }, []);
+  reactExports.useEffect(() => {
+    saveItems();
+  }, [toggleSave, saveItems]);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(
     DataGrid,
     {
@@ -64030,6 +64011,34 @@ const RequisitionContextProvider = /* @__PURE__ */ __name(({
     }
   );
 }, "RequisitionContextProvider");
+const userContext = reactExports.createContext({
+  logedIn: window.localStorage.getItem("token") ? true : false,
+  toggleLogedIn: () => {
+  },
+  defineUser: () => {
+  }
+});
+const UserContextProvider = /* @__PURE__ */ __name(({ children }) => {
+  const [logedIn, setLogedIn] = reactExports.useState(
+    window.localStorage.getItem("token") ? true : false
+  );
+  const [user, setUser] = reactExports.useState(
+    window.localStorage.getItem("user") ? JSON.parse(window.localStorage.getItem("user") || "") : void 0
+  );
+  const toggleLogedIn = /* @__PURE__ */ __name((value) => {
+    setLogedIn(value);
+  }, "toggleLogedIn");
+  const defineUser = /* @__PURE__ */ __name((user2) => {
+    setUser(user2);
+  }, "defineUser");
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    userContext.Provider,
+    {
+      value: user ? { user, logedIn, toggleLogedIn, defineUser } : { logedIn, toggleLogedIn, defineUser },
+      children
+    }
+  );
+}, "UserContextProvider");
 const PUBLISH = 0;
 const SUBSCRIBE = 1;
 const RESET = 2;
@@ -69943,7 +69952,7 @@ var _jsxRuntime$m = jsxRuntimeExports;
 default_1$m = ArrowCircleLeft.default = (0, _createSvgIcon$m.default)(/* @__PURE__ */ (0, _jsxRuntime$m.jsx)("path", {
   d: "M2 12c0 5.52 4.48 10 10 10s10-4.48 10-10S17.52 2 12 2 2 6.48 2 12m10-1h4v2h-4v3l-4-4 4-4z"
 }), "ArrowCircleLeft");
-const styles$1 = {
+const styles$4 = {
   fieldsGridContainer: {
     display: "flex",
     flexDirection: "column",
@@ -70581,7 +70590,6 @@ const StyledInputBase = styled(InputBase)(({ theme: theme2 }) => ({
   width: "100%",
   "& .MuiInputBase-input": {
     padding: theme2.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme2.spacing(4)})`,
     transition: theme2.transitions.create("width"),
     [theme2.breakpoints.up("sm")]: {
@@ -71059,7 +71067,7 @@ const RequisitionFields = /* @__PURE__ */ __name(() => {
   reactExports.useEffect(() => {
     fetchRequisitionData();
   }, []);
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: styles$1.fieldsGridContainer, children: [
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: styles$4.fieldsGridContainer, children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", gap: 2, alignItems: "center", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { sx: typographyStyles.heading1, children: "Detalhes da requisição" }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs(Typography, { sx: typographyStyles.heading2, children: [
@@ -71072,7 +71080,7 @@ const RequisitionFields = /* @__PURE__ */ __name(() => {
         dateTimeRenderer(requisitionData == null ? void 0 : requisitionData.CREATED_ON)
       ] })
     ] }),
-    requisitionData && optionsState && /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: styles$1.fieldsGrid, children: fields.map((field) => {
+    requisitionData && optionsState && /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: styles$4.fieldsGrid, children: fields.map((field) => {
       if (field.autoComplete) {
         return /* @__PURE__ */ jsxRuntimeExports.jsx(
           Autocomplete,
@@ -71081,7 +71089,7 @@ const RequisitionFields = /* @__PURE__ */ __name(() => {
             getOptionKey: (option) => option.id,
             onChange: (event, value) => handleChangeAutoComplete(event, value, field),
             disablePortal: true,
-            sx: styles$1.autoComplete,
+            sx: styles$4.autoComplete,
             options: renderOptions(field),
             value: renderAutoCompleteValue(field),
             renderInput: (params) => /* @__PURE__ */ jsxRuntimeExports.jsx(TextField, { ...params, label: field.label })
@@ -71101,14 +71109,14 @@ const RequisitionFields = /* @__PURE__ */ __name(() => {
         field.key
       );
     }) }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: isEditing && /* @__PURE__ */ jsxRuntimeExports.jsx(motion.div, { ...alertAnimation, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", sx: styles$1.actionsStack, children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: isEditing && /* @__PURE__ */ jsxRuntimeExports.jsx(motion.div, { ...alertAnimation, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", sx: styles$4.actionsStack, children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { onClick: handleSave, sx: BaseButtonStyles, className: "shadow-md", children: "Salvar Alterações" }),
       /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { onClick: handleCancelEditing, sx: BaseButtonStyles, className: "shadow-md", children: "Cancelar edição" })
     ] }) }) }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: alert2 && /* @__PURE__ */ jsxRuntimeExports.jsx(motion.div, { ...alertAnimation, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Alert, { severity: alert2.severety, children: alert2.message }) }) })
   ] });
 }, "RequisitionFields");
-const styles = {
+const styles$3 = {
   requisitionPageContainer: {
     width: "100%",
     border: "1px solid #d3d6db",
@@ -71260,9 +71268,9 @@ const RequisitionDetail = /* @__PURE__ */ __name(() => {
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     Box,
     {
-      sx: styles.requisitionPageContainer,
+      sx: styles$3.requisitionPageContainer,
       children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { className: "req-page-header", sx: styles.requisitionPageHeader, children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { className: "req-page-header", sx: styles$3.requisitionPageHeader, children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: () => handleNavigateHome(), children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$m, {}) }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs(
             Typography,
@@ -71284,7 +71292,7 @@ const RequisitionDetail = /* @__PURE__ */ __name(() => {
             }
           )
         ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { className: "stepper-container", sx: styles.requisitionStepper, children: requisitionData && /* @__PURE__ */ jsxRuntimeExports.jsx(
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { className: "stepper-container", sx: styles$3.requisitionStepper, children: requisitionData && /* @__PURE__ */ jsxRuntimeExports.jsx(
           HorizontalLinearStepper,
           {
             items: requisitionItems,
@@ -71309,7 +71317,7 @@ const RequisitionDetail = /* @__PURE__ */ __name(() => {
                 Box,
                 {
                   className: "req-items-table-container",
-                  sx: styles.requisitionItemsTableContainer,
+                  sx: styles$3.requisitionItemsTableContainer,
                   children: /* @__PURE__ */ jsxRuntimeExports.jsx(RequisitionItemsTable, { requisitionId: Number(id2) })
                 }
               )
@@ -80647,7 +80655,8 @@ const PatrimonySearchAppBarButtons = React$1.memo(
                 },
                 action
               ))
-            }
+            },
+            index2 + 1
           )
         ] })
       },
@@ -80925,12 +80934,12 @@ const SearchAppBar = React$1.memo(
             justifyContent: "space-between",
             gap: 1,
             children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsxs(default_1$q, { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs(Search, { children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsx(SearchIconWrapper, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$q, {}) }),
                 /* @__PURE__ */ jsxRuntimeExports.jsx(
                   StyledInputBase,
                   {
-                    placeholder: "Search…",
+                    placeholder: "Buscar...",
                     inputProps: { "aria-label": "search" },
                     onChange: handleSearch
                   }
@@ -91900,6 +91909,24 @@ const FollowersTable = /* @__PURE__ */ __name(({
   ] });
 }, "FollowersTable");
 FollowersTable.displayName = "FollowersTable";
+const styles$2 = {
+  guideContainer: {
+    width: "100%",
+    display: "flex !important",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 0.5
+  },
+  contentContainer: {
+    display: "flex",
+    alignItems: "flex-start",
+    flexWrap: "wrap",
+    gap: 2,
+    width: "100%",
+    minWidth: 0
+  }
+};
 const OpportunityGuide = /* @__PURE__ */ __name(({
   guide,
   renderAutoCompleteValue,
@@ -91926,26 +91953,14 @@ const OpportunityGuide = /* @__PURE__ */ __name(({
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     Box,
     {
-      sx: {
-        width: "100%",
-        display: "flex !important",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 0.5
-      },
+      sx: styles$2.guideContainer,
       children: [
         /* @__PURE__ */ jsxRuntimeExports.jsxs(
           Box,
           {
             sx: {
-              display: "flex",
-              justifyContent: justifyStartGuide(guide.name) ? `start` : `center`,
-              alignItems: "flex-start",
-              flexWrap: "wrap",
-              gap: 2,
-              width: "100%",
-              minWidth: 0
+              ...styles$2.contentContainer,
+              justifyContent: justifyStartGuide(guide.name) ? `start` : `center`
             },
             children: [
               guide.name === "Escopo" && /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -91992,6 +92007,37 @@ const OpportunityGuide = /* @__PURE__ */ __name(({
   );
 }, "OpportunityGuide");
 OpportunityGuide.displayName = "OpportunityGuide";
+const styles$1 = {
+  guideSelectorContainer: {
+    display: "flex",
+    width: "100%",
+    height: 300,
+    justifyContent: "space-around",
+    alignItems: "center",
+    overflowX: "scroll",
+    minHeight: "4rem",
+    position: "sticky",
+    top: 0,
+    padding: 1,
+    backgroundColor: "white",
+    // Cor de fundo
+    zIndex: 20,
+    "&::-webkit-scrollbar": {
+      width: "4px",
+      // Largura da barra de rolagem
+      height: "2px"
+    },
+    "&::-webkit-scrollbar-thumb": {
+      display: "none",
+      height: "2px",
+      backgroundColor: "#888",
+      // Cor da barra de rolagem
+      borderRadius: "4px"
+      // Bordas arredondadas
+    },
+    transform: `translateY(-1rem)`
+  }
+};
 const GuideSelector = /* @__PURE__ */ __name(({
   guides,
   currentSlideIndex,
@@ -92002,35 +92048,7 @@ const GuideSelector = /* @__PURE__ */ __name(({
     {
       direction: "row",
       gap: 1,
-      sx: {
-        display: "flex",
-        width: "100%",
-        height: 300,
-        justifyContent: "space-around",
-        alignItems: "center",
-        overflowX: "scroll",
-        minHeight: "4rem",
-        position: "sticky",
-        top: 0,
-        padding: 1,
-        backgroundColor: "white",
-        // Cor de fundo
-        zIndex: 20,
-        "&::-webkit-scrollbar": {
-          width: "4px",
-          // Largura da barra de rolagem
-          height: "2px"
-        },
-        "&::-webkit-scrollbar-thumb": {
-          display: "none",
-          height: "2px",
-          backgroundColor: "#888",
-          // Cor da barra de rolagem
-          borderRadius: "4px"
-          // Bordas arredondadas
-        },
-        transform: `translateY(-1rem)`
-      },
+      sx: styles$1.guideSelectorContainer,
       children: guides.map((guide, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
         Chip,
         {
@@ -92211,6 +92229,32 @@ const ProjectChoiceModal = /* @__PURE__ */ __name(({
   );
 }, "ProjectChoiceModal");
 ProjectChoiceModal.displayName = "ProjectChoiceModal";
+const styles = {
+  modal: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: {
+      //responsive width
+      xs: "95%",
+      md: "40%",
+      lg: "50%"
+    },
+    height: {
+      xs: "90%",
+      xl: "85%"
+    },
+    bgcolor: "background.paper",
+    boxShadow: 24,
+    overFlow: "hidden",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    p: 1,
+    gap: 0.5
+  }
+};
 const OpportunityModal = /* @__PURE__ */ __name(() => {
   const guides = [
     {
@@ -92960,32 +93004,7 @@ const OpportunityModal = /* @__PURE__ */ __name(() => {
       children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
         Box,
         {
-          sx: {
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: {
-              //responsive width
-              xs: "95%",
-              md: "40%",
-              lg: "50%"
-            },
-            height: {
-              //responsive height
-              xs: "90%",
-              md: "80%",
-              xl: "75%"
-            },
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            overFlow: "hidden",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            p: 1,
-            gap: 4
-          },
+          sx: styles.modal,
           children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(
               IconButton,
@@ -93000,14 +93019,13 @@ const OpportunityModal = /* @__PURE__ */ __name(() => {
               }
             ),
             " ",
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { fontFamily: "Roboto", fontSize: "large", children: "Proposta" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { children: currentOppIdSelected > 0 ? `${opportunity.nome}` : "" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { sx: typographyStyles.heading1, children: "Proposta" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { sx: typographyStyles.heading2, children: currentOppIdSelected > 0 ? `${opportunity.nome}` : "" }),
             /* @__PURE__ */ jsxRuntimeExports.jsxs(
               Stack,
               {
                 direction: "column",
                 width: "100%",
-                gap: 1,
                 padding: 1,
                 overflow: "scroll",
                 position: "relative",

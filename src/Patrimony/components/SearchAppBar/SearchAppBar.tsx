@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import Search from "@mui/icons-material/Search";
 import { Box, AppBar, Toolbar, Stack, Tooltip, IconButton, Menu, MenuItem, Typography, Modal, Button } from "@mui/material";
 import React, { Dispatch, SetStateAction, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -9,7 +8,7 @@ import { basicAppbarStyles } from "../../../utilStyles";
 import { checklistContext } from "../../context/checklistContext";
 import { PatrimonyInfoContext } from "../../context/patrimonyInfoContext";
 import { PatrimonyInfo, MovementationChecklist } from "../../types";
-import { deleteMultiplePatrimonies, updateMultiplePatrimonies, getPatrimonyNotifications, SearchIconWrapper, StyledInputBase } from "../../utils";
+import { deleteMultiplePatrimonies, updateMultiplePatrimonies, getPatrimonyNotifications, SearchIconWrapper, Search, StyledInputBase } from "../../utils";
 import CreatePatrimonyInfoModal from "../modals/CreatePatrimonyAccessoryModal/CreatePatrimonyInfoModal";
 import PatrimonySearchAppBarButtons from "../SearchAppBarButtons/SearchAppBarButtons";
 import AddIcon from '@mui/icons-material/Add';
@@ -236,8 +235,10 @@ const SearchAppBar = React.memo(
             <Stack
               direction="row"
               width="100%"
+   
               flexWrap="wrap"
               justifyContent="space-between"
+           
               gap={1}
             >
               <Search>
@@ -245,84 +246,84 @@ const SearchAppBar = React.memo(
                   <SearchIcon />
                 </SearchIconWrapper>
                 <StyledInputBase
-                  placeholder="Search…"
+                  placeholder="Buscar..."
                   inputProps={{ "aria-label": "search" }}
                   onChange={handleSearch}
                 />
               </Search>
-              {user && notifications && (
-                <PatrimonySearchAppBarButtons
-                  setIsCardViewActive={setIsCardViewActive}
-                  isCardViewActive={isCardViewActive}
-                  user={user}
-                  isMobile={isMobile}
-                  actionsMenuOpen={actionsMenuOpen}
-                  actionsMenu={actionsMenu}
-                  handleClickAction={handleClickAction}
-                  handleCloseActions={handleCloseActions}
-                  handleOpenActionModal={handleOpenActionModal}
-                  filterMenuOpen={filterMenuOpen}
-                  filterMenu={filterMenu}
-                  handleClickFilter={handleClickFilter}
-                  handleCloseFilter={handleCloseFilter}
-                  handleSelectFilter={handleSelectFilter}
-                  currentFilter={currentFilter}
-                  handleOpenChecklistTasks={handleOpenChecklistTasks}
-                  notifications={notifications}
-                />
-              )}
-              <Stack direction="row" alignItems="center" gap={2}>
-                {user?.PERM_CADASTRAR_PAT && (
-                  <Tooltip title="Novo Patrimônio">
-                    <IconButton
-                      onClick={toggleCreatingPatrimonyInfo}
-                      sx={{
-                        backgroundColor: "#F7941E",
-                        color: "white",
-                        "&:hover": { backgroundColor: "#f1b963" },
-                      }}
-                    >
-                      <AddIcon sx={{ color: "#2B3990" }} />
-                    </IconButton>
-                  </Tooltip>
-                )}
-              </Stack>
-              <Menu
-                id="basic-menu"
-                anchorEl={notificationsMenu}
-                open={notificationsMenuOpen}
-                onClose={handleCloseNotificationsMenu}
-                sx={{
-                  marginTop: "0.4rem",
-                  whiteSpace: "normal", // Permite que o texto quebre
-                  display: "block", // Garante que o conteúdo fique em bloco no menu
-                  width: "100%", // Garante que o item ocupe toda a largura disponível
-                }}
-                MenuListProps={{
-                  "aria-labelledby": "basic-button",
-                }}
-              >
-                {notifications &&
-                  notifications.map((notification) => (
-                    <MenuItem
-                      onClick={() => handleSelectNotification(notification)}
-                      key={notification.id_checklist_movimentacao}
-                      sx={{ overFlowX: "scroll" }}
-                    >
-                      <Typography
-                        fontSize="small"
-                        sx={{
-                          maxWidth: "100%",
-                          whiteSpace: "normal",
-                          wordBreak: "break-word",
-                        }}
-                      >
-                        Você deve verificar ou realizar o checklist do
-                        patrimônio {notification.nome}
-                      </Typography>
-                    </MenuItem>
-                  ))}
-              </Menu>
+                      {user && notifications && (
+                        <PatrimonySearchAppBarButtons
+                          setIsCardViewActive={setIsCardViewActive}
+                          isCardViewActive={isCardViewActive}
+                          user={user}
+                          isMobile={isMobile}
+                          actionsMenuOpen={actionsMenuOpen}
+                          actionsMenu={actionsMenu}
+                          handleClickAction={handleClickAction}
+                          handleCloseActions={handleCloseActions}
+                          handleOpenActionModal={handleOpenActionModal}
+                          filterMenuOpen={filterMenuOpen}
+                          filterMenu={filterMenu}
+                          handleClickFilter={handleClickFilter}
+                          handleCloseFilter={handleCloseFilter}
+                          handleSelectFilter={handleSelectFilter}
+                          currentFilter={currentFilter}
+                          handleOpenChecklistTasks={handleOpenChecklistTasks}
+                          notifications={notifications}
+                        />
+                      )}
+                    <Stack direction="row" alignItems="center" gap={2}>
+                      {user?.PERM_CADASTRAR_PAT && (
+                        <Tooltip title="Novo Patrimônio">
+                          <IconButton
+                            onClick={toggleCreatingPatrimonyInfo}
+                            sx={{
+                              backgroundColor: "#F7941E",
+                              color: "white",
+                              "&:hover": { backgroundColor: "#f1b963" },
+                            }}
+                          >
+                            <AddIcon sx={{ color: "#2B3990" }} />
+                          </IconButton>
+                        </Tooltip>
+                      )}
+                    </Stack>
+                        <Menu
+                          id="basic-menu"
+                          anchorEl={notificationsMenu}
+                          open={notificationsMenuOpen}
+                          onClose={handleCloseNotificationsMenu}
+                          sx={{
+                            marginTop: "0.4rem",
+                            whiteSpace: "normal", // Permite que o texto quebre
+                            display: "block", // Garante que o conteúdo fique em bloco no menu
+                            width: "100%", // Garante que o item ocupe toda a largura disponível
+                          }}
+                          MenuListProps={{
+                            "aria-labelledby": "basic-button",
+                          }}
+                        >
+                          {notifications &&
+                            notifications.map((notification) => (
+                              <MenuItem
+                                onClick={() => handleSelectNotification(notification)}
+                                key={notification.id_checklist_movimentacao}
+                                sx={{ overFlowX: "scroll" }}
+                              >
+                                <Typography
+                                  fontSize="small"
+                                  sx={{
+                                    maxWidth: "100%",
+                                    whiteSpace: "normal",
+                                    wordBreak: "break-word",
+                                  }}
+                                >
+                                  Você deve verificar ou realizar o checklist do
+                                  patrimônio {notification.nome}
+                                </Typography>
+                              </MenuItem>
+                            ))}
+                        </Menu>
             </Stack>
           </Toolbar>
         </AppBar>

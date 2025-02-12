@@ -1,6 +1,6 @@
 import { AddedItemsModalProps } from "../../types";
 import { useState } from "react";
-import RequisitionItemsTable from "../tables/RequisitionItemsTable";
+import RequisitionItemsTable from "../tables/RequisitionItemsTable/RequisitionItemsTable";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   Button,

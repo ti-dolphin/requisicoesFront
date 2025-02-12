@@ -102,7 +102,7 @@ export interface OptionsState {
 }
 
 export interface AlertInterface{
-  severety : string
+  severity : string
   message: string
 }
 export interface Item {

@@ -64,7 +64,8 @@ const OpportunityGuide = ({
             editingComment={editingComment}
             setEditingComment={setEditingComment}
           />
-        ))}
+        ))
+        }
       </Box>
       {guide.name === "Seguidores" && (
         <FollowersTable

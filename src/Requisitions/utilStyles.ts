@@ -27,7 +27,7 @@ const typographyStyles: { [key: string]: SxProps<Theme> } = {
     lineHeight: 1.4,
   },
   bodyText: {
-    fontSize: "1rem",
+    fontSize: '0.9rem',
     fontWeight: 400,
     color: "text.primary",
     lineHeight: 1.6,

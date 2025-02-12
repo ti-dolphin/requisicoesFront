@@ -19,22 +19,18 @@ import { useContext } from "react";
 import { userContext } from "../../context/userContext";
 import RequisitionFields from "../../components/RequisitionFields/RequisitionFields";
 import styles from "./RequisitionDetail.styles";
-import RequisitionItemsTable from "../../components/tables/RequisitionItemsTable";
+import RequisitionItemsTable from "../../components/tables/RequisitionItemsTable/RequisitionItemsTable";
 
 const RequisitionDetail: React.FC = () => {
   const { id } = useParams();
   const [requisitionData, setRequisitionData] = useState<Requisition>();
   const [requisitionItems, setRequisitionItems] = useState<Item[]>([]);
   const { refreshRequisition } = useContext(RequisitionContext);
-  const { logedIn, user } = useContext(userContext);
-  console.log(user);
-  console.log(setRequisitionItems);
+  const { logedIn } = useContext(userContext);
   const navigate = useNavigate();
-
   const fetchRequisitionData = async () => {
     const data = await fetchRequsitionById(Number(id));
     if (data) {
-      console.log('data', data);
       const personData = await fetchPersonById(data.ID_RESPONSAVEL);
       if (personData) {
         setRequisitionData({ ...data, ["RESPONSAVEL"]: personData?.NOME });

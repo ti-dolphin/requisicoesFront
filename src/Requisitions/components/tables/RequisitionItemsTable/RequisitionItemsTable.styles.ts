@@ -1,7 +1,8 @@
 const styles = { 
     gridFooterContainer  : {
         display : 'flex',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        gap: 2
     }
 }
 export default styles

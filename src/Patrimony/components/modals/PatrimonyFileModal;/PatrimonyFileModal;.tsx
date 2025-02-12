@@ -32,6 +32,7 @@ import { PatrimonyFileContext } from "../../../context/patrimonyFileContext.tsx"
 import DeletePatrimonyFileModal from "../DeletePatrimonyFileModal/DeletePatrimonyFileModal.tsx";
 import { userContext } from "../../../../Requisitions/context/userContext.tsx";
 import { isPDF } from "../../../../generalUtilities.tsx";
+import { basicCardContentStyles } from "../../../../utilStyles.ts";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -103,7 +104,6 @@ export default function PatrimonyFileModal() {
     return /\.(jpg|jpeg|png|gif)$/i.test(file.arquivo);
   };
 
-
   const openFile = (file: PatrimonyFile) => {
     setFileSelected(file.arquivo);
   };
@@ -138,10 +138,11 @@ export default function PatrimonyFileModal() {
           <ModalContent
             sx={{
               ...style,
+             
               minWidth: "260px",
               overflowY: "scroll",
               width: {
-                xs: "260px",
+                xs: "95%",
                 sm: "400px",
                 md: "500px",
                 lg: "600px",
@@ -197,16 +198,14 @@ export default function PatrimonyFileModal() {
                 <Typography sx={{ ml: 2 }}>Enviando...</Typography>
               </Stack>
             )}
-            <Stack maxHeight={400} overflow={'scroll'} gap={2}>
+            <Stack maxHeight={400} padding={1} overflow={'scroll'} gap={2}>
               {fileData?.map((file) => (
                 <Card
                   key={file.id_anexo_patrimonio}
                   sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    minHeight: 350,
-                    borderRadius: "10px",
-                    boxShadow: 2
+                   ...basicCardContentStyles,
+                   minHeight: 350,
+                   width: '100%'
                   }}
                 >
                   <CardMedia

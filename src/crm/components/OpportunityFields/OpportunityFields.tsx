@@ -123,7 +123,6 @@ const OpportunityFields: React.FC<RenderFieldProps> = ({
       </ListItem>
     );
   };
-
   if (field.autoComplete) {
     return (
       <Box
@@ -145,11 +144,9 @@ const OpportunityFields: React.FC<RenderFieldProps> = ({
       </Box>
     );
   }
-
   if (field.dataKey === "descricao" && adicional) {
     return null; // Não renderizar nada para a coluna descrição quando adicional for true
   }
-
   if (field.dataKey === "valorTotal") {
     return (
       <Box
@@ -176,7 +173,6 @@ const OpportunityFields: React.FC<RenderFieldProps> = ({
       </Box>
     );
   }
-
   if (field.dataKey === "comentarios") {
     return (
       <Box
