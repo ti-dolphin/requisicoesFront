@@ -18,6 +18,7 @@ const FileViewer: React.FC<FileViewerProps> = ({
   isPDF,
   handleCloseFileViewer,
 }) => {
+  console.log(fileName)
   return (
     <Modal
       open={fileViewerOpen}

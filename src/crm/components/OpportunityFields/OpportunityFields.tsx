@@ -63,8 +63,7 @@ const OpportunityFields: React.FC<RenderFieldProps> = ({
   setEditingComment,
   editingComment,
 }) => {
-  const isFullWidthField =
-    field.dataKey === "observacao" || field.dataKey === "comentarios";
+  const isFullWidthField = field.dataKey === "observacao" || field.dataKey === "comentarios";
 
   const isFieldDisabled = (field: OpportunityColumn) => {
     if (field.dataKey === "numeroAdicional") {

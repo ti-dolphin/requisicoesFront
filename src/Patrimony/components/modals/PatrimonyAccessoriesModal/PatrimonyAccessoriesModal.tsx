@@ -35,6 +35,7 @@ import CreatePatrimonyAccessoryModal from "../CreatePatrimonyAccessory/CreatePat
 import CameraFileLogo from '../../../assets/cameraFileLogo-Chy76Qi9-Chy76Qi9.png';
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import HomeRepairServiceIcon from "@mui/icons-material/HomeRepairService";
+import { BaseButtonStyles } from "../../../../utilStyles";
 // Styles using breakpoints for responsiveness
 const modalStyle = (theme: Theme) => ({
   position: "absolute" as const,
@@ -254,6 +255,7 @@ export default function PatrimonyAccessoryModal() {
                         onChange={(e) =>
                           handleUploadFile(e, accessory.id_acessorio_patrimonio)
                         }
+                        sx={BaseButtonStyles}
                         type="file"
                       />
                     </Button>

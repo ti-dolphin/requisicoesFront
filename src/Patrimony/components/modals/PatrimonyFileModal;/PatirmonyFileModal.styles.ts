@@ -12,6 +12,19 @@ export const styles = {
     modalContent: {
         minWidth: '260px',
         overflowY: 'scroll',
+        backgroundColor: 'white',
+      
+        ':: -webkit-scrollbar': {
+            display: 'none' 
+        },
+        paddingY: 2,
+        borderRadius: 5,
+        minHeight: 500,
+        maxHeight: 600,
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
         width: {
             xs: '95%',
             sm: '400px',
@@ -22,15 +35,25 @@ export const styles = {
 
     modalHeader: {
         display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
+        justifyContent: 'start',
+        alignItems: 'start',
+        gap: 1,
+        top: 0,
+        transform: 'translateY(-1rem)',
+        padding: 2,
+        zIndex: 20,
+        position: 'sticky',
+        backgroundColor: 'white',
+        width: '100%'
+
     } as SxProps<Theme>,
 
     closeIconButton: {
         color: 'red',
-        position: 'absolute',
-        right: '1rem',
-        top: '1rem',
+        position: 'fixed',
+        right: 0,
+        top: 0,
+        zIndex: 30,
     } as SxProps<Theme>,
 
     uploadButton: {
@@ -38,14 +61,14 @@ export const styles = {
     } as SxProps<Theme>,
 
     loadingStack: {
+        
         mt: 2,
+        mx: 'auto'
     } as SxProps<Theme>,
 
     fileListStack: {
-        maxHeight: 400,
+        gap: 1,
         padding: 1,
-        overflow: 'scroll',
-        gap: 2,
     } as SxProps<Theme>,
 
     card: {
@@ -55,6 +78,7 @@ export const styles = {
 
     cardMedia: (file: any) => ({
         height: 300,
+        borderRadius: 5,
         width: '100%',
         background: isImage(file) ? `url('${file.arquivo}')` : 'none',
         backgroundPosition: 'center',
@@ -66,6 +90,7 @@ export const styles = {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
+        flexWrap: 'wrap',
         padding: 1,
     } as SxProps<Theme>,
 

@@ -1,15 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import * as React from "react";
-import { styled, css } from "@mui/system";
+import { styled } from "@mui/system";
 import { Modal as BaseModal } from "@mui/base/Modal";
 import Fade from "@mui/material/Fade";
 import {
   Badge,
   Box,
   Button,
-  Card,
-  CardContent,
-  CardMedia,
   CircularProgress,
   IconButton,
   Stack,
@@ -19,7 +16,6 @@ import {
 import AttachFile from "@mui/icons-material/AttachFile";
 import CloseIcon from "@mui/icons-material/Close";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { useParams } from "react-router-dom";
 import { PatrimonyFile } from "../../../types.ts";
 import { useContext, useEffect, useState } from "react";
@@ -31,8 +27,10 @@ import {
 import { PatrimonyFileContext } from "../../../context/patrimonyFileContext.tsx";
 import DeletePatrimonyFileModal from "../DeletePatrimonyFileModal/DeletePatrimonyFileModal.tsx";
 import { userContext } from "../../../../Requisitions/context/userContext.tsx";
-import { isPDF } from "../../../../generalUtilities.tsx";
-import { basicCardContentStyles } from "../../../../utilStyles.ts";
+import { BaseButtonStyles } from "../../../../utilStyles.ts";
+import { styles } from "./PatirmonyFileModal.styles.ts";
+import typographyStyles from "../../../../Requisitions/utilStyles.ts";
+import PatrimonyFileCard from "../../PatrimonyFileCard/PatrionyFileCard.tsx";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -56,10 +54,10 @@ export default function PatrimonyFileModal() {
   const [fileData, setFileData] = useState<PatrimonyFile[]>();
   const { refreshPatrimonyFile, toggleRefreshPatrimonyFile } =
     useContext(PatrimonyFileContext);
-  const { toggleDeletingPatrimonyFile } = useContext(PatrimonyFileContext);
+  useContext(PatrimonyFileContext);
   const [responsable, setResponsable] = useState<number>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [fileSelected, setFileSelected] = useState<string | null>();
+  const modaleHeaderRef = React.useRef<HTMLDivElement>(null)
 
   const fetchPatrimonyFiles = async () => {
     console.log('fetchPatrimonyFiles')
@@ -75,9 +73,7 @@ export default function PatrimonyFileModal() {
       setFileData(data);
     }
   };
-  const handleOpenLink = (url: string) => {
-    window.open(url, "_blank");
-  };
+ 
   const handleUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && id_patrimonio) {
       setIsLoading(true);
@@ -95,37 +91,31 @@ export default function PatrimonyFileModal() {
         return;
       }
       window.alert("Erro ao fazer upload!");
+      setIsLoading(false);
     }
   };
   const allowedToAttachFile = () => {
     return user?.CODPESSOA === responsable || user?.PERM_ADMINISTRADOR;
   };
-  const isImage = (file: PatrimonyFile) => {
-    return /\.(jpg|jpeg|png|gif)$/i.test(file.arquivo);
-  };
 
-  const openFile = (file: PatrimonyFile) => {
-    setFileSelected(file.arquivo);
-  };
-
-  const handleCloseImageModal = () => {
-    setFileSelected(null);
-  };
   useEffect(() => {
 
     fetchPatrimonyFiles();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshPatrimonyFile]);
 
+ 
+
   return (
     <div>
-      <Badge badgeContent={fileData?.length || 0} color="primary">
+      <Badge badgeContent={fileData?.length || 0} color="primary" sx={styles.badge}>
         <Tooltip title="Anexos do patrimônio">
-          <IconButton onClick={handleOpen}>
-            <AttachFile sx={{ color: "#F7941E" }} />
+          <IconButton onClick={handleOpen} sx={styles.iconButton}>
+            <AttachFile />
           </IconButton>
         </Tooltip>
       </Badge>
+
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -135,177 +125,61 @@ export default function PatrimonyFileModal() {
         slots={{ backdrop: StyledBackdrop }}
       >
         <Fade in={open}>
-          <ModalContent
-            sx={{
-              ...style,
-             
-              minWidth: "260px",
-              overflowY: "scroll",
-              width: {
-                xs: "95%",
-                sm: "400px",
-                md: "500px",
-                lg: "600px",
-              },
-            }}
-          >
+          <Box sx={styles.modalContent}>
+         
             <DeletePatrimonyFileModal />
-            <Stack direction="row" justifyContent="center">
-              <Typography variant="h6" textAlign="center">
-                Anexos
-              </Typography>
-              <IconButton
-                onClick={handleClose}
-                sx={{
-                  color: "red",
-                  position: "absolute",
-                  right: "1rem",
-                  top: "1rem",
-                }}
-              >
+            
+            <Stack sx={styles.modalHeader} ref={modaleHeaderRef}>
+              <IconButton onClick={handleClose} sx={styles.closeIconButton}>
                 <CloseIcon />
               </IconButton>
+              <Typography sx={typographyStyles.heading2}>
+                Anexos do patrimônio
+              </Typography>
+              {allowedToAttachFile() && (
+                <Button
+                  component="label"
+                  role={undefined}
+                  variant="contained"
+                  tabIndex={-1}
+                  startIcon={<CloudUploadIcon />}
+                  sx={{ ...BaseButtonStyles, width: 100 }}
+                >
+                  Anexar
+                  <VisuallyHiddenInput
+                    accept="image/*, application/pdf"
+                    capture="environment"
+                    onChange={handleUploadFile}
+                    type="file"
+                    sx={BaseButtonStyles}
+                  />
+                </Button>
+              )}
             </Stack>
-
-            {allowedToAttachFile() ? (
-              <Button
-                component="label"
-                role={undefined}
-                variant="contained"
-                tabIndex={-1}
-                startIcon={<CloudUploadIcon />}
-              >
-                Anexar
-                <VisuallyHiddenInput
-                  accept="image/*, application/pdf"
-                  capture="environment"
-                  onChange={handleUploadFile}
-                  type="file"
-                />
-              </Button>
-            ) : (
-              ""
-            )}
 
             {isLoading && (
-              <Stack
-                direction="row"
-                justifyContent="center"
-                alignItems="center"
-                sx={{ mt: 2 }}
-              >
+              <Stack sx={styles.loadingStack}>
                 <CircularProgress />
-                <Typography sx={{ ml: 2 }}>Enviando...</Typography>
               </Stack>
             )}
-            <Stack maxHeight={400} padding={1} overflow={'scroll'} gap={2}>
-              {fileData?.map((file) => (
-                <Card
-                  key={file.id_anexo_patrimonio}
-                  sx={{
-                   ...basicCardContentStyles,
-                   minHeight: 350,
-                   width: '100%'
-                  }}
-                >
-                  <CardMedia
-                    component={isPDF(file.arquivo) ? "object" : "div"}
-                    data={isPDF(file.arquivo) ? file.arquivo : undefined}
-                    src={isPDF(file.arquivo) ? undefined : file.arquivo}
-                    type={isPDF(file.arquivo) ? "application/pdf" : undefined}
-                    onClick={() => openFile(file)}
-                    sx={{
-                      height: 300,
-                      width: "100%",
-                      background: isImage(file)
-                        ? `url('${file.arquivo}')`
-                        : "none",
-                      backgroundPosition: "center",
-                      backgroundSize: "cover",
-                      backgroundRepeat: "no-repeat",
-                    }}
-                  />
-                  <CardContent
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      padding: 1,
-                    }}
-                  >
-                    <Typography
-                      onClick={() => handleOpenLink(file.arquivo)}
-                      fontSize="small"
-                      sx={{
-                        cursor: "pointer",
-                        color: "blue",
-                        textDecoration: "underline",
-                        flex: 1,
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                    >
-                      {file.nome_arquivo}
-                    </Typography>
-                    <IconButton
-                      onClick={() => toggleDeletingPatrimonyFile(true, file)}
-                      sx={{ color: "#F7941E" }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </CardContent>
-                </Card>
-              ))}
-            </Stack>
-          </ModalContent>
+            {
+              modaleHeaderRef && 
+              <Stack sx={{ ...styles.fileListStack }}>
+                {fileData?.map((file) => (
+                    <PatrimonyFileCard 
+                      file={file}
+                    />
+                ))}
+              </Stack>
+            }
+          </Box>
         </Fade>
       </Modal>
-      <Modal
-        open={fileSelected ? true : false}
-        onClose={handleCloseImageModal}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "90%",
-            height: "90%",
-            bgcolor: "background.paper",
-            border: "1px solid #000",
-            boxShadow: 24,
-            p: 2,
-          }}
-        >
-          <IconButton
-            onClick={handleCloseImageModal}
-            sx={{
-              position: "absolute",
-              top: 8,
-              right: 8,
-            }}
-          >
-            <CloseIcon sx={{ color: "red" }} />
-          </IconButton>
-          <Box
-            sx={{
-              height: "100%",
-              backgroundImage: `url('${fileSelected}')`,
-              backgroundSize: "contain",
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "center",
-            }}
-          ></Box>
-        </Box>
-      </Modal>
+
+     
     </div>
   );
 }
-//MAIN COMPONENT
 
 const Backdrop = React.forwardRef<HTMLDivElement, { open?: boolean }>(
   (props, ref) => {
@@ -317,19 +191,6 @@ const Backdrop = React.forwardRef<HTMLDivElement, { open?: boolean }>(
     );
   }
 );
-
-const grey = {
-  50: "#F3F6F9",
-  100: "#E5EAF2",
-  200: "#DAE2ED",
-  300: "#C7D0DD",
-  400: "#B0B8C4",
-  500: "#9DA8B7",
-  600: "#6B7A90",
-  700: "#434D5B",
-  800: "#303740",
-  900: "#1C2025",
-};
 
 const Modal = styled(BaseModal)`
   position: fixed;
@@ -348,48 +209,3 @@ const StyledBackdrop = styled(Backdrop)`
   -webkit-tap-highlight-color: transparent;
 `;
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  display: "flex",
-  flexDirection: "column",
-  gap: "1rem",
-  overFlowX: "scroll",
-};
-
-const ModalContent = styled("div")(
-  ({ theme }) => css`
-    font-family: "IBM Plex Sans", sans-serif;
-    font-weight: 500;
-    text-align: start;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    overflow: hidden;
-
-    flex-shrink: 1;
-    background-color: ${theme.palette.mode === "dark" ? grey[900] : "#fff"};
-    border-radius: 8px;
-    border: 1px solid ${theme.palette.mode === "dark" ? grey[700] : grey[200]};
-    box-shadow: 0 4px 12px
-      ${theme.palette.mode === "dark" ? "rgb(0 0 0 / 0.5)" : "rgb(0 0 0 / 0.2)"};
-    padding: 10px;
-    color: ${theme.palette.mode === "dark" ? grey[50] : grey[900]};
-    & .modal-title {
-      margin: 0;
-      line-height: 1.5rem;
-      margin-bottom: 8px;
-    }
-
-    & .modal-description {
-      margin: 0;
-      line-height: 1.5rem;
-      font-weight: 400;
-      color: ${theme.palette.mode === "dark" ? grey[400] : grey[800]};
-      margin-bottom: 4px;
-    }
-  `
-);

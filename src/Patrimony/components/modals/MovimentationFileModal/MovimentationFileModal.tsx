@@ -29,6 +29,7 @@ import { MovementationFile } from "../../../types";
 import { memo, useCallback, useEffect, useState } from "react";
 import { userContext } from "../../../../Requisitions/context/userContext";
 import { useParams } from "react-router-dom";
+import { BaseButtonStyles } from "../../../../utilStyles";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -190,6 +191,7 @@ const MovimentationFileModal = memo(
                   variant="contained"
                   tabIndex={-1}
                   startIcon={<CloudUploadIcon />}
+                  sx={BaseButtonStyles}
                 >
                   Anexar
                   <VisuallyHiddenInput

@@ -3,6 +3,7 @@ import Button from "@mui/material/Button";
 import { postItemFile, postRequisitionFile } from "../../utils";
 import { inputFileProps } from "../../types";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { BaseButtonStyles } from "../../../utilStyles";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -55,6 +56,7 @@ const InputFile = ({
       variant="contained"
       tabIndex={-1}
       startIcon={<CloudUploadIcon />}
+      sx={BaseButtonStyles}
     >
       Anexar Arquivo
       <VisuallyHiddenInput
