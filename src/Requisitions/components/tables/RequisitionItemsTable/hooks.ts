@@ -13,17 +13,16 @@ const useRequisitionItems = (requisitionId: number) => {
     const gridApiRef = useGridApiRef();
     const [alert, setAlert] = useState<AlertInterface>();
     const [reverseChanges, setReverseChanges] = useState(false);
-    const isFirstRender = useRef(true);
     const shouldExecuteSaveItems = useRef(false);
     const shouldExecuteResetItems = useRef(false);
 
 
 
-    const displayAlert = async (severety: string, message: string) => {
+    const displayAlert = async (severity: string, message: string) => {
         setTimeout(() => {
             setAlert(undefined);
         }, 3000);
-        setAlert({ severety, message });
+        setAlert({ severity, message });
         return;
     }
 

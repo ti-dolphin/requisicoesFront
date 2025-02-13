@@ -25,6 +25,7 @@ const RequisitionDetail: React.FC = () => {
   const { id } = useParams();
   const [requisitionData, setRequisitionData] = useState<Requisition>();
   const [requisitionItems, setRequisitionItems] = useState<Item[]>([]);
+  console.log(setRequisitionItems)
   const { refreshRequisition } = useContext(RequisitionContext);
   const { logedIn } = useContext(userContext);
   const navigate = useNavigate();
