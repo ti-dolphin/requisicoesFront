@@ -1,4 +1,4 @@
-import { Typography, TextField, Box, IconButton } from "@mui/material";
+import { Typography, TextField, Box } from "@mui/material";
 import Autocomplete, {
   AutocompleteChangeDetails,
   AutocompleteChangeReason,
@@ -9,13 +9,9 @@ import {
   OpportunityColumn,
   OpportunityOptionField,
 } from "../../types.ts";
-import React, { Dispatch, SetStateAction, useContext } from "react";
-import { ListItem, ListItemAvatar, ListItemText, Avatar } from "@mui/material";
-import { FixedSizeList as ListWindow } from "react-window";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import EditIcon from "@mui/icons-material/Edit";
-import { userContext } from "../../../Requisitions/context/userContext.tsx";
-import { formatDate } from "../../../generalUtilities.tsx";
+import React, { Dispatch, SetStateAction } from "react";
+
+
 
 interface RenderFieldProps {
   field: OpportunityColumn;
@@ -60,7 +56,6 @@ const OpportunityFields: React.FC<RenderFieldProps> = ({
   isDateField,
   handleChangeComentarios,
   currentCommentValue,
-  setEditingComment,
   editingComment,
 }) => {
   const isFullWidthField = field.dataKey === "observacao" || field.dataKey === "comentarios";
@@ -82,46 +77,7 @@ const OpportunityFields: React.FC<RenderFieldProps> = ({
       ? opportunity[field.dataKey as keyof typeof opportunity]
       : "";
   };
-  const Row = ({
-    index,
-    style,
-  }: {
-    index: number;
-    style: React.CSSProperties;
-  }) => {
-    const comentario = opportunity.comentarios[index];
-    const { user } = useContext(userContext);
-
-    return (
-      <ListItem
-        key={comentario.codigoComentario}
-        alignItems="flex-start"
-        style={style}
-      >
-        <ListItemAvatar>
-          <Avatar>
-            <AccountCircleIcon />
-          </Avatar>
-        </ListItemAvatar>
-        <ListItemText
-          primary={comentario.descricao || "Comentário vazio"}
-          secondary={
-            comentario.criadoPor
-              ? `Por: ${comentario.criadoPor} | ${formatDate(
-                comentario.criadoEm || ""
-              )}`
-              : "Autor desconhecido"
-          }
-        />
-        {user?.CODPESSOA === 2 && (
-          //Icon button de editar comentario
-          <IconButton onClick={() => setEditingComment(comentario)}>
-            <EditIcon />
-          </IconButton>
-        )}
-      </ListItem>
-    );
-  };
+ 
   if (field.autoComplete) {
     return (
       <Box
@@ -222,14 +178,7 @@ const OpportunityFields: React.FC<RenderFieldProps> = ({
             },
           }}
         />
-        <ListWindow
-          height={300} // Define a altura da área visível
-          itemCount={opportunity.comentarios?.length || 0} // Número total de itens
-          itemSize={80} // Tamanho de cada item
-          width="100%" // Largura da lista
-        >
-          {Row}
-        </ListWindow>
+      
       </Box>
     );
   }

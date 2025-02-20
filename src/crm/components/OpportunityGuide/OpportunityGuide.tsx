@@ -1,81 +1,111 @@
-
-import { Box } from "@mui/material";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import { OpportunityGuideProps } from "../../types";
-import OpportunityFiles from "../OpportunityFiles/OpportunityFiles";
-import RenderOpportunityFields from "../OpportunityFields/OpportunityFields";
-import FollowersTable from "../tables/FollowersTable";
 import { styles } from "./OpportunityGuide.styles";
+import OpportunityRegistration from "../OpportunityRegistration/OpportunityRegistration";
+import typographyStyles from "../../../Requisitions/utilStyles";
+import OpportunityInteraction from "../OpportunityInteraction/OpportunityInteraction";
+import OpportunityScope from "../OpportunityScope/OpportunityScope";
+import OpportunitySale from "../OpportunitySale/OpportunitySale";
+import OpportunityFollowers from "../OpportunityFollowers/OpportunityFollowers";
 
 const OpportunityGuide = ({
+  guidesReference,
   guide,
-  renderAutoCompleteValue,
-  handleChangeAutoComplete,
-  renderOptions,
-  adicional,
-  currentOppIdSelected,
-  opportunity,
-  handleChangeTextField,
-  isDateField,
-  currentCommentValue,
-  handleChangeComentarios,
-  editingComment,
-  setEditingComment,
-  setCurrentOpportunity,
-  handleSaveOpportunity,
-  handleChangeFiles,
-  handleDeleteFile,
+  formDataFilesRef,
+  isLoading,
 }: OpportunityGuideProps) => {
-
-  const justifyStartGuide = (guideName: string) => {
-    return guideName === "Escopo" || guideName === "Interação";
-  }
-
   return (
-    <Box
-      key={guide.name}
-      sx={styles.guideContainer}
-    >
-      <Box
-        sx={{
-           ...styles.contentContainer,
-            justifyContent: justifyStartGuide(guide.name) ? `start` : `center`, }}
-      >
-        {guide.name === "Escopo" && (
-          <OpportunityFiles
-            handleChangeFiles={handleChangeFiles}
-            handleDeleteFile={handleDeleteFile}
-            opportunity={opportunity}
+    <Box sx={{ ...styles.guideContainer }}>
+      <Typography sx={typographyStyles.heading2}>{guide.name}</Typography>
+     { 
+       !isLoading ? (
+      <>
+        {guide.name === "Cadastro" && (
+          <OpportunityRegistration
+            guidesReference={guidesReference}
+            guide={guide}
           />
         )}
-        {guide.fields?.map((field) => (
-          <RenderOpportunityFields
-            key={field.dataKey}
-            field={field}
-            renderAutoCompleteValue={renderAutoCompleteValue}
-            handleChangeAutoComplete={handleChangeAutoComplete}
-            renderOptions={renderOptions}
-            adicional={adicional}
-            currentOppIdSelected={currentOppIdSelected}
-            opportunity={opportunity}
-            handleChangeTextField={handleChangeTextField}
-            isDateField={isDateField}
-            currentCommentValue={currentCommentValue}
-            handleChangeComentarios={handleChangeComentarios}
-            editingComment={editingComment}
-            setEditingComment={setEditingComment}
+        {guide.name === "Interação" && (
+          <OpportunityInteraction
+            guide={guide}
+            guidesReference={guidesReference}
           />
-        ))
-        }
+        )}
+        {guide.name === "Escopo" && (
+          <OpportunityScope
+            guide={guide}
+            guidesReference={guidesReference}
+            formDataFilesRef={formDataFilesRef}
+          />
+        )}
+        {guide.name === "Venda" && (
+          <OpportunitySale guide={guide} guidesReference={guidesReference} />
+        )}
+        {guide.name === "Seguidores" && (
+          <OpportunityFollowers
+            guide={guide}
+            guidesReference={guidesReference}
+          />
+        )}
+      </>
+      ) : (
+      <Box
+        sx={{
+          height: 200,
+          width: 200,
+          display: "flex",
+          padding: 2,
+          justifyContent: "center",
+        }}
+      >
+        <CircularProgress />
       </Box>
-      {guide.name === "Seguidores" && (
-        <FollowersTable
-          setCurrentOpportunity={setCurrentOpportunity}
-          opportunity={opportunity}
-          handleSaveOpportunity={handleSaveOpportunity}
+      )
+     }
+
+
+
+      {/* !isLoading ? (
+      {guide.name === "Cadastro" && (
+        <OpportunityRegistration
+          guidesReference={guidesReference}
+          guide={guide}
         />
       )}
+      {guide.name === "Interação" && (
+        <OpportunityInteraction
+          guide={guide}
+          guidesReference={guidesReference}
+        />
+      )}
+      {guide.name === "Escopo" && (
+        <OpportunityScope
+          guide={guide}
+          guidesReference={guidesReference}
+          formDataFilesRef={formDataFilesRef}
+        />
+      )}
+      {guide.name === "Venda" && (
+        <OpportunitySale guide={guide} guidesReference={guidesReference} />
+      )}
+      {guide.name === "Seguidores" && (
+        <OpportunityFollowers guide={guide} guidesReference={guidesReference} />
+      )}
+      ) : (
+      <Box
+        sx={{
+          height: 200,
+          width: 200,
+          display: "flex",
+          padding: 2,
+          justifyContent: "center",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+      ) */}
     </Box>
   );
 };
-OpportunityGuide.displayName = "OpportunityGuide";
 export default OpportunityGuide;

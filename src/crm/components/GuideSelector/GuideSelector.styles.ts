@@ -2,16 +2,15 @@ export const styles = {
     guideSelectorContainer: {
         display: "flex",
         width: "100%",
-        height: 300,
-        justifyContent: "space-around",
+        gap: 1,
         alignItems: "center",
         overflowX: "scroll",
-        minHeight: "4rem",
-        position: 'sticky',
-        top: 0,
-        padding: 1,
+        padding: 2,
         backgroundColor: "white", // Cor de fundo
         zIndex: 20,
+        border: '1px solid lightgray',
+        borderRadius: 10,
+        height: 50,
         "&::-webkit-scrollbar": {
             width: "4px", // Largura da barra de rolagem
             height: "2px",
@@ -22,6 +21,6 @@ export const styles = {
             backgroundColor: "#888", // Cor da barra de rolagem
             borderRadius: "4px", // Bordas arredondadas
         },
-        transform: `translateY(-1rem)`
+        
       }
 }

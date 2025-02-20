@@ -33,17 +33,10 @@ const AdicionalChoice = ({
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: {
-            //responsive width
-            xs: "90%",
-            sm: "65%",
-            md: "50%",
-            lg: "40%",
-            xl: "30%"
-          },
+          width: 300,
           bgcolor: "background.paper",
           boxShadow: 24,
-          height: "20%",
+          height: 150,
           overFlow: "hidden",
           display: "flex",
           flexDirection: "column",

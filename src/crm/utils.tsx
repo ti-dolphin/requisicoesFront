@@ -320,3 +320,54 @@ export const opportunityInputFields: OpportunityColumn[] = [
   // }
 ];
 
+export const opportunityDefault = {
+  codOs: 0, // Exemplo de código de OS (AUTO_INCREMENT, não precisa definir)
+  codTipoOs: 1, // Valor padrão para o tipo de OS (campo com valor padrão '1')
+  codCCusto: null, // Opcional
+  obra: null, // Opcional
+  dataSolicitacao: null, // Data atual (pode ser null se não obrigatório)
+  dataNecessidade: null, // Data atual (pode ser null se não obrigatório)
+  docReferencia: null, // Opcional
+  listaMateriais: null, // Opcional
+  dataInicio: null, // Opcional
+  dataPrevEntrega: null, // Opcional
+  dataEntrega: null, // Opcional
+  codStatus: 1, // Valor padrão para o status (campo com valor padrão '1')
+  nome: "", // Nome obrigatório
+  descricao: '', // Opcional
+  atividades: null, // Opcional
+  prioridade: 0, // Valor padrão (campo com valor padrão '0')
+  solicitante: 1, // Valor padrão para o solicitante (campo com valor padrão '1')
+  responsavel: 1, // Valor padrão para o responsável (campo com valor padrão '1')
+  codDisciplina: 1, // Valor padrão para o código de disciplina (campo com valor padrão '1')
+  gut: 1, // Valor padrão para o GUT (campo com valor padrão '1')
+  gravidade: 1, // Valor padrão para a gravidade (campo com valor padrão '1')
+  urgencia: 1, // Valor padrão para urgência (campo com valor padrão '1')
+  tendencia: 1, // Valor padrão para tendência (campo com valor padrão '1')
+  dataLiberacao: null, // Opcional
+  relacionamento: 1, // Valor padrão para relacionamento (campo com valor padrão '1')
+  fkCodCliente: "-", // Valor padrão (campo com valor padrão '-')
+  fkCodColigada: 0, // Valor padrão para código de coligada (campo com valor padrão '0')
+  valorFatDireto: 0.0, // Valor padrão (campo com valor padrão '0.00')
+  valorServicoMO: 0.0, // Valor padrão (campo com valor padrão '0.00')
+  valorServicoMatAplicado: 0.0, // Valor padrão (campo com valor padrão '0.00')
+  valorMaterial: 0.0, // Valor padrão (campo com valor padrão '0.00')
+  valorTotal: 0.0, // Valor padrão (campo com valor padrão '0.00')
+  codSegmento: 1, // Valor padrão para código de segmento (campo com valor padrão '1')
+  codCidade: 0, // Valor padrão para código de cidade (campo com valor padrão '0')
+  valorLocacao: 0.0, // Valor padrão (campo com valor padrão '0.00')
+  idAdicional: 0, // Valor padrão (campo com valor padrão '0')
+  idProjeto: 0, // Valor padrão (campo com valor padrão '0')
+  dataInteracao: null, // Valor padrão (campo com valor padrão '1111-11-11')
+  valorFatDolphin: 0.0, // Valor padrão para faturamento Dolphin (campo com valor padrão '0.00')
+  principal: true, // Valor padrão (campo com valor padrão '1')
+  valorComissao: 0.0, // Valor obrigatório
+  idMotivoPerdido: 1, // Valor obrigatório (campo não pode ser nulo)
+  observacoes: "", // Opcional
+  descricaoVenda: "", // Opcional
+  emailVendaEnviado: false, // Valor padrão (campo com valor padrão '0')
+  numeroAdicional: 0, // Valor padrão com
+  comentarios: [],
+  seguidores: [],
+}
+

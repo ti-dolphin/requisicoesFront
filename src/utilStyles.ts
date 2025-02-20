@@ -17,7 +17,7 @@ export const OpportunityGridStyles = {
                  borderCollapse: "collapse",
                  fontFamily: "Arial, sans-serif",
                  fontSize: "12px",
-                 fontWeight: "600",
+                 fontWeight: "500",
                  borderRadius: 0,
                  color: "#233142",
                  "& .MuiDataGrid-columnHeaders": {

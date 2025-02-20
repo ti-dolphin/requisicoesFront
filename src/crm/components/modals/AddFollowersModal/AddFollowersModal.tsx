@@ -1,17 +1,40 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState } from 'react'
+import React, { MutableRefObject, useEffect, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
-import { Box, Button, createTheme, IconButton, Modal, ThemeProvider, Tooltip, Typography } from '@mui/material';
-import { Opportunity } from '../../../types';
-import { DataGrid, GridCallbackDetails, GridColDef, GridColumnMenu, GridColumnMenuProps, GridFilterPanel, GridFooterContainer, GridPagination, GridRowSelectionModel, GridSelectedRowCount } from '@mui/x-data-grid';
+import {
+  Box,
+  Button,
+  createTheme,
+  IconButton,
+  Modal,
+  Stack,
+  TextField,
+  ThemeProvider,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import { Follower, Guide } from "../../../types";
+import {
+  DataGrid,
+  GridCallbackDetails,
+  GridColDef,
+  GridColumnMenu,
+  GridColumnMenuProps,
+  GridFilterPanel,
+  GridFooterContainer,
+  GridPagination,
+  GridRowSelectionModel,
+  GridSelectedRowCount,
+} from "@mui/x-data-grid";
 import { ptBR } from "@mui/x-data-grid/locales";
 import { ptBR as pickersPtBr } from "@mui/x-date-pickers/locales";
 import { ptBR as corePtBr } from "@mui/material/locale";
 import CloseIcon from "@mui/icons-material/Close";
-import { fetchPersonList } from '../../../utils';
-import { Person } from '../../../../Requisitions/types';
-import { GridFilterPanelProps } from '@mui/x-data-grid/components/panel/filterPanel/GridFilterPanel';
+import { fetchPersonList } from "../../../utils";
+import { Person } from "../../../../Requisitions/types";
+import { GridFilterPanelProps } from "@mui/x-data-grid/components/panel/filterPanel/GridFilterPanel";
+import { BaseButtonStyles, buttonStylesMobile } from "../../../../utilStyles";
 
 const theme = createTheme(
   {
@@ -28,36 +51,36 @@ const columns: GridColDef[] = [
   {
     field: "NOME",
     headerName: "Nome",
-
     type: "string",
     align: "left",
     headerAlign: "center",
     filterable: true,
-
+    width: 300,
   },
 ];
 
-
-
 interface AddFollowersModalProps {
-  opportunity: Opportunity;
-  setCurrentOpportunity: React.Dispatch<React.SetStateAction<Opportunity>>;
-  handleSaveOpportunity: () => Promise<void>;
+  setFollowers: React.Dispatch<React.SetStateAction<Follower[]>>;
+  followers: Follower[];
+  guide: Guide;
+  guidesReference: MutableRefObject<Guide[] | undefined>;
 }
 const AddFollowersModal = ({
-  opportunity,
-  setCurrentOpportunity, handleSaveOpportunity }: AddFollowersModalProps) => {
-
+  setFollowers,
+  followers,
+  guide,
+  guidesReference,
+}: AddFollowersModalProps) => {
   const [addingFollowrs, setAddingFollowers] = useState<boolean>(false);
   const [personList, setPersonList] = useState<Person[]>([]);
-  const [previousSelectedList, setPreviousSelectedList] = useState<number[]>([]);
+  const [previousSelectedList, setPreviousSelectedList] = useState<number[]>(
+    []
+  );
+  const [filteredPersonList, setFilteredPersonList] = useState<Person[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [newFollowers, setNewFollowers] = useState<Follower[]>();
+
   const GridFooter = () => {
-
-    const handleConclude = async () => {
-      await handleSaveOpportunity();
-      setAddingFollowers(false); //
-    };
-
     return (
       <GridFooterContainer
         sx={{
@@ -75,8 +98,8 @@ const AddFollowersModal = ({
           height: "30px",
         }}
       >
-        <Button variant="contained" onClick={() => handleConclude()}>
-          <Typography fontSize="Medium" textTransform="capitalize">
+        <Button sx={BaseButtonStyles} onClick={() => handleConclude()}>
+          <Typography fontSize="small" textTransform="capitalize">
             Concluir
           </Typography>
         </Button>
@@ -86,11 +109,12 @@ const AddFollowersModal = ({
           sx={{
             padding: 0,
             display: "flex",
-            maxWidth: "200px",
             alignItems: "center",
             justifyContent: "end",
             overflowY: "hidden",
-            overflowX: "hidden",
+            "& .MuiTablePagination-displayedRows": {
+              display: "none",
+            },
             height: "30px",
           }}
         />
@@ -101,60 +125,69 @@ const AddFollowersModal = ({
   const fetchOptions = async () => {
     const peopleList = await fetchPersonList();
     console.log({
-      peopleList
-    })
+      peopleList,
+    });
     setPersonList(peopleList || []);
-  }
+    setFilteredPersonList(peopleList || []);
+  };
+  const handleConclude = async () => {
+    console.log("handleConclude ", followers);
+    if (newFollowers && guidesReference.current) {
+      const newOppFollowers = newFollowers.filter(
+        (newFollower) =>
+          !followers.find(
+            (follower) => follower.codpessoa === newFollower.codpessoa
+          )
+      );
+      guide.fields[0].data = [...followers, ...newOppFollowers];
+      guidesReference.current[4] = guide;
+      setFollowers([...followers, ...newOppFollowers]);
+    }
+
+    setAddingFollowers(false);
+  };
 
   const handleRowSelection = (
-    currentSelecionList: GridRowSelectionModel,
-    details: GridCallbackDetails<any>
+    currentSelectionList: GridRowSelectionModel,
+    _details: GridCallbackDetails<any>
   ) => {
-    console.log(details);
-    setPreviousSelectedList(currentSelecionList as number[]);
-    const currentFolowersId = opportunity.seguidores.map((seguidor) => seguidor.codpessoa);
-    const newFollowerIds = currentSelecionList.filter((codpessoa) => currentFolowersId.indexOf(Number(codpessoa)) < 0);
-    const removedFollowersIds = previousSelectedList.filter((codpessoa) => currentSelecionList.indexOf(codpessoa) < 0);
-    console.log({ newFollowerIds });
-    if (newFollowerIds.length) {
-      const newOppFollowers = [...opportunity.seguidores];
-      for (const newFollowerId of newFollowerIds) {
-        const person = personList.find(person => person.CODPESSOA === newFollowerId);
-        if (person) {
-          newOppFollowers.push({
-            id_seguidor_projeto: 0,
-            id_projeto: opportunity.idProjeto || 0,
-            codpessoa: person.CODPESSOA,
-            ativo: 1,
-            nome: person.NOME,
-          });
-        }
-      }
-      setCurrentOpportunity({
-        ...opportunity,
-        seguidores: newOppFollowers,
-      });
-      console.log({ newOppFollowers });
-      return;
-    }
-    if (removedFollowersIds.length > 0) {
-      const newOppFollowers = opportunity.seguidores.filter(seguidor => removedFollowersIds.indexOf(seguidor.codpessoa) < 0);
-      setCurrentOpportunity({
-        ...opportunity,
-        seguidores: newOppFollowers,
-      });
-      console.log({ newOppFollowers });
-      return;
-    }
-
+    setPreviousSelectedList(currentSelectionList as number[]);
+    const selectedFollowers: Follower[] = currentSelectionList.map((id) => {
+      const selectedPerson = personList.find(
+        (person) => person.CODPESSOA === id
+      );
+      return {
+        id_seguidor_projeto: 0, // ID fictício, pode ser gerado ou obtido do backend
+        id_projeto: 0, // ID do projeto (deve ser passado como prop ou contexto)
+        codpessoa: selectedPerson?.CODPESSOA || 0,
+        ativo: 1, // Define como ativo por padrão
+        nome: selectedPerson?.NOME || "",
+      };
+    });
+    setNewFollowers(selectedFollowers);
   };
 
   useEffect(() => {
     fetchOptions();
-  }, [opportunity.seguidores]);
+  }, [addingFollowrs]);
+
+  useEffect(() => {
+    if (searchTerm) {
+      const filtered = personList.filter((person) =>
+        person.NOME.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredPersonList(filtered);
+    } else {
+      setFilteredPersonList(personList); // Se não houver termo de busca, exibe a lista completa
+    }
+  }, [searchTerm, personList]);
+
   return (
     <Box>
-      <IconButton onClick={() => setAddingFollowers(!addingFollowrs)}>
+      <IconButton
+        sx={buttonStylesMobile}
+        onClick={() => setAddingFollowers(!addingFollowrs)}
+      >
         <Tooltip title="adicionar seguidores">
           <AddIcon />
         </Tooltip>
@@ -192,25 +225,39 @@ const AddFollowersModal = ({
           >
             <CloseIcon />
           </IconButton>{" "}
-          <Typography fontWeight="bold" className="text-gray-600">
-            Adicionar seguidores à proposta
-          </Typography>
+          <Stack>
+            <Typography fontWeight="bold" className="text-gray-600">
+              Adicionar seguidores à proposta
+            </Typography>
+            <TextField
+              variant="outlined"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              margin="normal"
+              InputProps={{
+                sx: { borderRadius: 10, height: 40 },
+                placeholder: "busque por nome...",
+              }}
+            />
+          </Stack>
           <Box
             sx={{
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              maxHeight: "90%",
+              maxHeight: "80%",
+              width: "100%",
             }}
           >
             <ThemeProvider theme={theme}>
               <DataGrid
-                rows={personList}
+                rows={filteredPersonList}
                 columns={columns}
                 getRowId={(row: Person) => row.CODPESSOA} // Usando CODPESSOA como ID único
                 sx={{
                   "& .MuiDataGrid-columnHeaders": {
-                    backgroundColor: "#f5f5f5",
+                    backgroundColor: "blue",
+                    display: "none",
                   },
 
                   maxWidth: {
@@ -227,23 +274,21 @@ const AddFollowersModal = ({
                     },
                   },
                 }}
-                autosizeOnMount
                 slots={{
-
                   columnMenu: (props: GridColumnMenuProps) => (
-                    <Box sx={{
-                      "& .MuiMenuItem-root": {
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                      },
-                      maxWidth: {
-                        xs: 260,
-                        sm: 300
-                      }
-                    }}>
-                      <GridColumnMenu {...props}>
-
-                      </GridColumnMenu>
+                    <Box
+                      sx={{
+                        "& .MuiMenuItem-root": {
+                          display: "flex",
+                          flexWrap: "wrap",
+                        },
+                        maxWidth: {
+                          xs: 260,
+                          sm: 300,
+                        },
+                      }}
+                    >
+                      <GridColumnMenu {...props}></GridColumnMenu>
                     </Box>
                   ),
                   footer: GridFooter,
@@ -279,4 +324,4 @@ const AddFollowersModal = ({
   );
 };
 AddFollowersModal.displayName = "AddFollowersModal";
-export default AddFollowersModal
+export default AddFollowersModal;

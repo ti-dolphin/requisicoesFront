@@ -96,6 +96,7 @@ export const OpportunityInfoProvider = ({
   const [currentOppIdSelected, setCurrentOppIdSelected] = useState(0);
 
   const toggleCreatingOpportunity = () => {
+    console.log("toggleCreatingOpportunity: ", !creatingOpportunity);
     setCreatingOpportunity((prev) => !prev);
   };
 

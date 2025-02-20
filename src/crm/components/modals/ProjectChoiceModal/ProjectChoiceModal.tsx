@@ -1,7 +1,10 @@
 import { Modal, Box, Typography, Autocomplete, TextField, Button, AutocompleteChangeDetails, AutocompleteChangeReason, IconButton } from '@mui/material';
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { OpportunityOptionField } from '../../../types';
 import CloseIcon from "@mui/icons-material/Close";
+import { fetchAllProjects, Project } from '../../../../Requisitions/utils';
+import typographyStyles from '../../../../Requisitions/utilStyles';
+import { BaseButtonStyles } from '../../../../utilStyles';
 
 interface ProjectChoiceModalProps {
   handleSaveProjectChoiceAdicional: () => Promise<void>;
@@ -18,21 +21,44 @@ interface ProjectChoiceModalProps {
       }>
       | undefined
   ) => void;
-  renderOptions: (column: {
-    label: string;
-    dataKey: string;
-    autoComplete?: boolean;
-  }) => OpportunityOptionField[] | undefined;
   setProjectChoiceModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 const ProjectChoiceModal = ({
   handleSaveProjectChoiceAdicional,
   projectChoiceModalOpen,
   handleChangeAutoComplete,
-  renderOptions,
   setProjectChoiceModalOpen
 
 }: ProjectChoiceModalProps) => {
+    const [projectOptions, setProjectOptions] = useState<
+      OpportunityOptionField[]
+    >([]);
+
+   const fetchProjectsOps = useCallback(async () => {
+     const projects = await fetchAllProjects();
+     const options =
+       (projects &&
+         projects.map((project: Project) => ({
+           label: project.DESCRICAO,
+           id: project.ID,
+           object: "project",
+           key: project.ID,
+         }))) ||
+       [];
+     setProjectOptions([...options]);
+   }, [setProjectOptions]);
+
+  useEffect(() => { 
+      fetchProjectsOps();
+  }, []);
+
+  const renderOptions = (column: {
+         label: string;
+         dataKey: string;
+         autoComplete?: boolean;
+       }) => {
+         if (column.dataKey === "idProjeto") return projectOptions;
+       };
   return (
     <Modal
       open={projectChoiceModalOpen}
@@ -45,17 +71,22 @@ const ProjectChoiceModal = ({
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: 400,
+          width: {
+            xs: '90%',
+            md: "40%",
+            lg: "25%"
+          },
+        
           bgcolor: "background.paper",
           boxShadow: 24,
-          height: "20%",
+          height: 300,
           overFlow: "hidden",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
           gap: 2,
-          p: 2,
+          p: 1,
         }}
       >
         <IconButton
@@ -68,10 +99,11 @@ const ProjectChoiceModal = ({
         >
           <CloseIcon />
         </IconButton>{" "}
-        <Typography>Escolha o projeto</Typography>
+        <Typography sx={typographyStyles.heading2}>Escolha o projeto</Typography>
         <Autocomplete
           disablePortal
           onChange={handleChangeAutoComplete}
+          fullWidth
           options={
             renderOptions({
               label: "Nº Projeto",
@@ -94,7 +126,7 @@ const ProjectChoiceModal = ({
             />
           )}
         />
-        <Button variant="outlined" onClick={handleSaveProjectChoiceAdicional}>
+        <Button sx={BaseButtonStyles} onClick={handleSaveProjectChoiceAdicional}>
           Salvar
         </Button>
       </Box>

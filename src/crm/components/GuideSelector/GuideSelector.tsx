@@ -11,7 +11,7 @@ const GuideSelector = ({
   return (
     <Stack
       direction="row"
-      gap={1}
+     
       sx={styles.guideSelectorContainer}
     >
       {guides.map((guide, index) => (
@@ -21,6 +21,7 @@ const GuideSelector = ({
           sx={{
             cursor: "pointer",
           }}
+          
           label={guide.name}
           variant={currentSlideIndex === index ? "filled" : "outlined"}
         />
@@ -28,5 +29,4 @@ const GuideSelector = ({
     </Stack>
   );
 };
-GuideSelector.displayName = "GuideSelector";
 export default GuideSelector;

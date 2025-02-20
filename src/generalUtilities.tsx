@@ -16,6 +16,14 @@ export const  formatDate = (value : Date | string) =>  {
       return `${formattedDate}, ${formattedTime}`;
     }
 }
+export const formatDateWithNoTime = (value: Date | string) => {
+  if (typeof value === "string") {
+    const brazilianDateTime = dayjs.utc(value);
+    const formattedDate = brazilianDateTime.format("DD/MM/YYYY");
+    return `${formattedDate}`;
+  }
+};
+
  export const isPDF = (url: string) => {
    console.log({ url });
    if (/\.pdf$/i.test(url)) {
@@ -35,6 +43,8 @@ export const Loader = ( ) =>  {
         bottom: 0,
         display: "flex",
         justifyContent: "center",
+        height: '100%',
+        width: '100%',
         alignItems: "center",
         backgroundColor: "rgba(255, 255, 255, 0.7)", // Fundo semi-transparente
         zIndex: 1000, // Garante que o spinner fique acima de tudo

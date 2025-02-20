@@ -11826,7 +11826,7 @@ function getFormSubmissionInfo(target, basename) {
   };
 }
 __name(getFormSubmissionInfo, "getFormSubmissionInfo");
-const _excluded$2u = ["onClick", "relative", "reloadDocument", "replace", "state", "target", "to", "preventScrollReset", "unstable_viewTransition"], _excluded3$6 = ["fetcherKey", "navigate", "reloadDocument", "replace", "state", "method", "action", "onSubmit", "relative", "preventScrollReset", "unstable_viewTransition"];
+const _excluded$2v = ["onClick", "relative", "reloadDocument", "replace", "state", "target", "to", "preventScrollReset", "unstable_viewTransition"], _excluded3$6 = ["fetcherKey", "navigate", "reloadDocument", "replace", "state", "method", "action", "onSubmit", "relative", "preventScrollReset", "unstable_viewTransition"];
 const REACT_ROUTER_VERSION = "6";
 try {
   window.__reactRouterVersion = REACT_ROUTER_VERSION;
@@ -12142,7 +12142,7 @@ const Link = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(func
     to,
     preventScrollReset,
     unstable_viewTransition
-  } = _ref7, rest = _objectWithoutPropertiesLoose$2(_ref7, _excluded$2u);
+  } = _ref7, rest = _objectWithoutPropertiesLoose$2(_ref7, _excluded$2v);
   let {
     basename
   } = reactExports.useContext(NavigationContext);
@@ -14177,7 +14177,7 @@ const deepmerge = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.definePro
   default: deepmerge$1,
   isPlainObject: isPlainObject$2
 }, Symbol.toStringTag, { value: "Module" }));
-const _excluded$2t = ["values", "unit", "step"];
+const _excluded$2u = ["values", "unit", "step"];
 const sortBreakpointsValues = /* @__PURE__ */ __name((values2) => {
   const breakpointsAsArray = Object.keys(values2).map((key) => ({
     key,
@@ -14208,7 +14208,7 @@ function createBreakpoints(breakpoints) {
     },
     unit = "px",
     step = 5
-  } = breakpoints, other = _objectWithoutPropertiesLoose$1(breakpoints, _excluded$2t);
+  } = breakpoints, other = _objectWithoutPropertiesLoose$1(breakpoints, _excluded$2u);
   const sortedValues = sortBreakpointsValues(values2);
   const keys = Object.keys(sortedValues);
   function up(key) {
@@ -14431,7 +14431,7 @@ function getStyleValue$1(themeMapping, transform, propValueFinal, userValue = pr
   return value;
 }
 __name(getStyleValue$1, "getStyleValue$1");
-function style$e(options) {
+function style$h(options) {
   const {
     prop,
     cssProperty = options.prop,
@@ -14463,7 +14463,7 @@ function style$e(options) {
   fn2.filterProps = [prop];
   return fn2;
 }
-__name(style$e, "style$e");
+__name(style$h, "style$h");
 function memoize(fn2) {
   const cache2 = {};
   return (arg) => {
@@ -14569,19 +14569,19 @@ function resolveCssProperty(props, keys, prop, transformer) {
   return handleBreakpoints(props, propValue, styleFromPropValue);
 }
 __name(resolveCssProperty, "resolveCssProperty");
-function style$d(props, keys) {
+function style$g(props, keys) {
   const transformer = createUnarySpacing(props.theme);
   return Object.keys(props).map((prop) => resolveCssProperty(props, keys, prop, transformer)).reduce(merge$2, {});
 }
-__name(style$d, "style$d");
+__name(style$g, "style$g");
 function margin(props) {
-  return style$d(props, marginKeys);
+  return style$g(props, marginKeys);
 }
 __name(margin, "margin");
 margin.propTypes = {};
 margin.filterProps = marginKeys;
 function padding(props) {
-  return style$d(props, paddingKeys);
+  return style$g(props, paddingKeys);
 }
 __name(padding, "padding");
 padding.propTypes = {};
@@ -14632,7 +14632,7 @@ function borderTransform(value) {
 }
 __name(borderTransform, "borderTransform");
 function createBorderStyle(prop, transform) {
-  return style$e({
+  return style$h({
     prop,
     themeKey: "borders",
     transform
@@ -14700,31 +14700,31 @@ const rowGap = /* @__PURE__ */ __name((props) => {
 }, "rowGap");
 rowGap.propTypes = {};
 rowGap.filterProps = ["rowGap"];
-const gridColumn = style$e({
+const gridColumn = style$h({
   prop: "gridColumn"
 });
-const gridRow = style$e({
+const gridRow = style$h({
   prop: "gridRow"
 });
-const gridAutoFlow = style$e({
+const gridAutoFlow = style$h({
   prop: "gridAutoFlow"
 });
-const gridAutoColumns = style$e({
+const gridAutoColumns = style$h({
   prop: "gridAutoColumns"
 });
-const gridAutoRows = style$e({
+const gridAutoRows = style$h({
   prop: "gridAutoRows"
 });
-const gridTemplateColumns = style$e({
+const gridTemplateColumns = style$h({
   prop: "gridTemplateColumns"
 });
-const gridTemplateRows = style$e({
+const gridTemplateRows = style$h({
   prop: "gridTemplateRows"
 });
-const gridTemplateAreas = style$e({
+const gridTemplateAreas = style$h({
   prop: "gridTemplateAreas"
 });
-const gridArea = style$e({
+const gridArea = style$h({
   prop: "gridArea"
 });
 compose$1(gap, columnGap, rowGap, gridColumn, gridRow, gridAutoFlow, gridAutoColumns, gridAutoRows, gridTemplateColumns, gridTemplateRows, gridTemplateAreas, gridArea);
@@ -14735,18 +14735,18 @@ function paletteTransform(value, userValue) {
   return value;
 }
 __name(paletteTransform, "paletteTransform");
-const color$1 = style$e({
+const color$1 = style$h({
   prop: "color",
   themeKey: "palette",
   transform: paletteTransform
 });
-const bgcolor = style$e({
+const bgcolor = style$h({
   prop: "bgcolor",
   cssProperty: "backgroundColor",
   themeKey: "palette",
   transform: paletteTransform
 });
-const backgroundColor = style$e({
+const backgroundColor = style$h({
   prop: "backgroundColor",
   themeKey: "palette",
   transform: paletteTransform
@@ -14756,7 +14756,7 @@ function sizingTransform(value) {
   return value <= 1 && value !== 0 ? `${value * 100}%` : value;
 }
 __name(sizingTransform, "sizingTransform");
-const width = style$e({
+const width = style$h({
   prop: "width",
   transform: sizingTransform
 });
@@ -14784,33 +14784,33 @@ const maxWidth = /* @__PURE__ */ __name((props) => {
   return null;
 }, "maxWidth");
 maxWidth.filterProps = ["maxWidth"];
-const minWidth = style$e({
+const minWidth = style$h({
   prop: "minWidth",
   transform: sizingTransform
 });
-const height = style$e({
+const height = style$h({
   prop: "height",
   transform: sizingTransform
 });
-const maxHeight = style$e({
+const maxHeight = style$h({
   prop: "maxHeight",
   transform: sizingTransform
 });
-const minHeight = style$e({
+const minHeight = style$h({
   prop: "minHeight",
   transform: sizingTransform
 });
-style$e({
+style$h({
   prop: "size",
   cssProperty: "width",
   transform: sizingTransform
 });
-style$e({
+style$h({
   prop: "size",
   cssProperty: "height",
   transform: sizingTransform
 });
-const boxSizing = style$e({
+const boxSizing = style$h({
   prop: "boxSizing"
 });
 compose$1(width, maxWidth, minWidth, height, maxHeight, minHeight, boxSizing);
@@ -15228,14 +15228,14 @@ function applyStyles$2(key, styles2) {
   return {};
 }
 __name(applyStyles$2, "applyStyles$2");
-const _excluded$2s = ["breakpoints", "palette", "spacing", "shape"];
+const _excluded$2t = ["breakpoints", "palette", "spacing", "shape"];
 function createTheme$2(options = {}, ...args) {
   const {
     breakpoints: breakpointsInput = {},
     palette: paletteInput = {},
     spacing: spacingInput,
     shape: shapeInput = {}
-  } = options, other = _objectWithoutPropertiesLoose$1(options, _excluded$2s);
+  } = options, other = _objectWithoutPropertiesLoose$1(options, _excluded$2t);
   const breakpoints = createBreakpoints(breakpointsInput);
   const spacing = createSpacing(spacingInput);
   let muiTheme = deepmerge$1({
@@ -15293,7 +15293,7 @@ function GlobalStyles$1({
   });
 }
 __name(GlobalStyles$1, "GlobalStyles$1");
-const _excluded$2r = ["sx"];
+const _excluded$2s = ["sx"];
 const splitProps = /* @__PURE__ */ __name((props) => {
   var _props$theme$unstable, _props$theme;
   const result = {
@@ -15313,7 +15313,7 @@ const splitProps = /* @__PURE__ */ __name((props) => {
 function extendSxProp(props) {
   const {
     sx: inSx
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$2r);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$2s);
   const {
     systemProps,
     otherProps
@@ -15381,7 +15381,7 @@ function clsx() {
   return n2;
 }
 __name(clsx, "clsx");
-const _excluded$2q = ["className", "component"];
+const _excluded$2r = ["className", "component"];
 function createBox$1(options = {}) {
   const {
     themeId,
@@ -15397,7 +15397,7 @@ function createBox$1(options = {}) {
     const _extendSxProp = extendSxProp(inProps), {
       className,
       component = "div"
-    } = _extendSxProp, other = _objectWithoutPropertiesLoose$1(_extendSxProp, _excluded$2q);
+    } = _extendSxProp, other = _objectWithoutPropertiesLoose$1(_extendSxProp, _excluded$2r);
     return /* @__PURE__ */ jsxRuntimeExports.jsx(BoxRoot, _extends$4({
       as: component,
       ref,
@@ -15585,7 +15585,7 @@ const getDisplayName = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defi
   default: getDisplayName$1,
   getFunctionName
 }, Symbol.toStringTag, { value: "Module" }));
-const _excluded$2p = ["ownerState"], _excluded2$i = ["variants"], _excluded3$5 = ["name", "slot", "skipVariantsResolver", "skipSx", "overridesResolver"];
+const _excluded$2q = ["ownerState"], _excluded2$i = ["variants"], _excluded3$5 = ["name", "slot", "skipVariantsResolver", "skipSx", "overridesResolver"];
 function isEmpty$3(obj) {
   return Object.keys(obj).length === 0;
 }
@@ -15626,7 +15626,7 @@ __name(defaultOverridesResolver$1, "defaultOverridesResolver$1");
 function processStyleArg$1(callableStyle, _ref) {
   let {
     ownerState
-  } = _ref, props = _objectWithoutPropertiesLoose$1(_ref, _excluded$2p);
+  } = _ref, props = _objectWithoutPropertiesLoose$1(_ref, _excluded$2q);
   const resolvedStylesArg = typeof callableStyle === "function" ? callableStyle(_extends$4({
     ownerState
   }, props)) : callableStyle;
@@ -16475,7 +16475,7 @@ function resolveComponentProps$1(componentProps, ownerState, slotState) {
   return componentProps;
 }
 __name(resolveComponentProps$1, "resolveComponentProps$1");
-const _excluded$2o = ["elementType", "externalSlotProps", "ownerState", "skipResolvingSlotProps"];
+const _excluded$2p = ["elementType", "externalSlotProps", "ownerState", "skipResolvingSlotProps"];
 function useSlotProps$1(parameters) {
   var _parameters$additiona;
   const {
@@ -16483,7 +16483,7 @@ function useSlotProps$1(parameters) {
     externalSlotProps,
     ownerState,
     skipResolvingSlotProps = false
-  } = parameters, rest = _objectWithoutPropertiesLoose$1(parameters, _excluded$2o);
+  } = parameters, rest = _objectWithoutPropertiesLoose$1(parameters, _excluded$2p);
   const resolvedComponentsProps = skipResolvingSlotProps ? {} : resolveComponentProps$1(externalSlotProps, ownerState);
   const {
     props: mergedProps,
@@ -16533,12 +16533,12 @@ function ThemeProvider$2(props) {
   });
 }
 __name(ThemeProvider$2, "ThemeProvider$2");
-const _excluded$2n = ["value"];
+const _excluded$2o = ["value"];
 const RtlContext = /* @__PURE__ */ reactExports.createContext();
 function RtlProvider(_ref) {
   let {
     value
-  } = _ref, props = _objectWithoutPropertiesLoose$1(_ref, _excluded$2n);
+  } = _ref, props = _objectWithoutPropertiesLoose$1(_ref, _excluded$2o);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(RtlContext.Provider, _extends$4({
     value: value != null ? value : true
   }, props));
@@ -16665,7 +16665,7 @@ function toPropertyKey(t2) {
   return "symbol" == _typeof$5(i) ? i : i + "";
 }
 __name(toPropertyKey, "toPropertyKey");
-const _excluded$2m = ["className", "component", "disableGutters", "fixed", "maxWidth", "classes"];
+const _excluded$2n = ["className", "component", "disableGutters", "fixed", "maxWidth", "classes"];
 const defaultTheme$4 = createTheme$2();
 const defaultCreateStyledComponent$1 = styled$1("div", {
   name: "MuiContainer",
@@ -16682,7 +16682,7 @@ const useThemePropsDefault$1 = /* @__PURE__ */ __name((inProps) => useThemeProps
   name: "MuiContainer",
   defaultTheme: defaultTheme$4
 }), "useThemePropsDefault$1");
-const useUtilityClasses$1S = /* @__PURE__ */ __name((ownerState, componentName) => {
+const useUtilityClasses$1T = /* @__PURE__ */ __name((ownerState, componentName) => {
   const getContainerUtilityClass = /* @__PURE__ */ __name((slot) => {
     return generateUtilityClass$1(componentName, slot);
   }, "getContainerUtilityClass");
@@ -16696,7 +16696,7 @@ const useUtilityClasses$1S = /* @__PURE__ */ __name((ownerState, componentName) 
     root: ["root", maxWidth2 && `maxWidth${capitalize$1(String(maxWidth2))}`, fixed && "fixed", disableGutters && "disableGutters"]
   };
   return composeClasses(slots, getContainerUtilityClass, classes2);
-}, "useUtilityClasses$1S");
+}, "useUtilityClasses$1T");
 function createContainer(options = {}) {
   const {
     // This will allow adding custom styled fn (for example for custom sx style function)
@@ -16758,14 +16758,14 @@ function createContainer(options = {}) {
       disableGutters = false,
       fixed = false,
       maxWidth: maxWidth2 = "lg"
-    } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$2m);
+    } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$2n);
     const ownerState = _extends$4({}, props, {
       component,
       disableGutters,
       fixed,
       maxWidth: maxWidth2
     });
-    const classes2 = useUtilityClasses$1S(ownerState, componentName);
+    const classes2 = useUtilityClasses$1T(ownerState, componentName);
     return (
       // @ts-ignore theme is injected by the styled util
       /* @__PURE__ */ jsxRuntimeExports.jsx(ContainerRoot, _extends$4({
@@ -16779,7 +16779,7 @@ function createContainer(options = {}) {
   return Container2;
 }
 __name(createContainer, "createContainer");
-const _excluded$2l = ["component", "direction", "spacing", "divider", "children", "className", "useFlexGap"];
+const _excluded$2m = ["component", "direction", "spacing", "divider", "children", "className", "useFlexGap"];
 const defaultTheme$3 = createTheme$2();
 const defaultCreateStyledComponent = styled$1("div", {
   name: "MuiStack",
@@ -16815,7 +16815,7 @@ const getSideFromDirection = /* @__PURE__ */ __name((direction) => {
     "column-reverse": "Bottom"
   }[direction];
 }, "getSideFromDirection");
-const style$c = /* @__PURE__ */ __name(({
+const style$f = /* @__PURE__ */ __name(({
   ownerState,
   theme: theme2
 }) => {
@@ -16878,7 +16878,7 @@ const style$c = /* @__PURE__ */ __name(({
   }
   styles2 = mergeBreakpointsInOrder(theme2.breakpoints, styles2);
   return styles2;
-}, "style$c");
+}, "style$f");
 function createStack(options = {}) {
   const {
     // This will allow adding custom styled fn (for example for custom sx style function)
@@ -16892,7 +16892,7 @@ function createStack(options = {}) {
     };
     return composeClasses(slots, (slot) => generateUtilityClass$1(componentName, slot), {});
   }, "useUtilityClasses");
-  const StackRoot = createStyledComponent(style$c);
+  const StackRoot = createStyledComponent(style$f);
   const Stack2 = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(function Grid2(inProps, ref) {
     const themeProps = useThemeProps2(inProps);
     const props = extendSxProp(themeProps);
@@ -16904,7 +16904,7 @@ function createStack(options = {}) {
       children,
       className,
       useFlexGap = false
-    } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$2l);
+    } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$2m);
     const ownerState = {
       direction,
       spacing,
@@ -17339,7 +17339,7 @@ const green = {
   A400: "#00e676",
   A700: "#00c853"
 };
-const _excluded$2k = ["mode", "contrastThreshold", "tonalOffset"];
+const _excluded$2l = ["mode", "contrastThreshold", "tonalOffset"];
 const light = {
   // The colors used to style the text.
   text: {
@@ -17514,7 +17514,7 @@ function createPalette(palette) {
     mode = "light",
     contrastThreshold = 3,
     tonalOffset = 0.2
-  } = palette, other = _objectWithoutPropertiesLoose$1(palette, _excluded$2k);
+  } = palette, other = _objectWithoutPropertiesLoose$1(palette, _excluded$2l);
   const primary = palette.primary || getDefaultPrimary(mode);
   const secondary = palette.secondary || getDefaultSecondary(mode);
   const error = palette.error || getDefaultError(mode);
@@ -17610,7 +17610,7 @@ function createPalette(palette) {
   return paletteOutput;
 }
 __name(createPalette, "createPalette");
-const _excluded$2j = ["fontFamily", "fontSize", "fontWeightLight", "fontWeightRegular", "fontWeightMedium", "fontWeightBold", "htmlFontSize", "allVariants", "pxToRem"];
+const _excluded$2k = ["fontFamily", "fontSize", "fontWeightLight", "fontWeightRegular", "fontWeightMedium", "fontWeightBold", "htmlFontSize", "allVariants", "pxToRem"];
 function round$5(value) {
   return Math.round(value * 1e5) / 1e5;
 }
@@ -17635,7 +17635,7 @@ function createTypography(palette, typography) {
     // Apply the CSS properties to all the variants.
     allVariants,
     pxToRem: pxToRem2
-  } = _ref, other = _objectWithoutPropertiesLoose$1(_ref, _excluded$2j);
+  } = _ref, other = _objectWithoutPropertiesLoose$1(_ref, _excluded$2k);
   const coef = fontSize / 14;
   const pxToRem = pxToRem2 || ((size2) => `${size2 / htmlFontSize * coef}rem`);
   const buildVariant = /* @__PURE__ */ __name((fontWeight, size2, lineHeight, letterSpacing, casing) => _extends$4({
@@ -17693,7 +17693,7 @@ function createShadow(...px2) {
 }
 __name(createShadow, "createShadow");
 const shadows = ["none", createShadow(0, 2, 1, -1, 0, 1, 1, 0, 0, 1, 3, 0), createShadow(0, 3, 1, -2, 0, 2, 2, 0, 0, 1, 5, 0), createShadow(0, 3, 3, -2, 0, 3, 4, 0, 0, 1, 8, 0), createShadow(0, 2, 4, -1, 0, 4, 5, 0, 0, 1, 10, 0), createShadow(0, 3, 5, -1, 0, 5, 8, 0, 0, 1, 14, 0), createShadow(0, 3, 5, -1, 0, 6, 10, 0, 0, 1, 18, 0), createShadow(0, 4, 5, -2, 0, 7, 10, 1, 0, 2, 16, 1), createShadow(0, 5, 5, -3, 0, 8, 10, 1, 0, 3, 14, 2), createShadow(0, 5, 6, -3, 0, 9, 12, 1, 0, 3, 16, 2), createShadow(0, 6, 6, -3, 0, 10, 14, 1, 0, 4, 18, 3), createShadow(0, 6, 7, -4, 0, 11, 15, 1, 0, 4, 20, 3), createShadow(0, 7, 8, -4, 0, 12, 17, 2, 0, 5, 22, 4), createShadow(0, 7, 8, -4, 0, 13, 19, 2, 0, 5, 24, 4), createShadow(0, 7, 9, -4, 0, 14, 21, 2, 0, 5, 26, 4), createShadow(0, 8, 9, -5, 0, 15, 22, 2, 0, 6, 28, 5), createShadow(0, 8, 10, -5, 0, 16, 24, 2, 0, 6, 30, 5), createShadow(0, 8, 11, -5, 0, 17, 26, 2, 0, 6, 32, 5), createShadow(0, 9, 11, -5, 0, 18, 28, 2, 0, 7, 34, 6), createShadow(0, 9, 12, -6, 0, 19, 29, 2, 0, 7, 36, 6), createShadow(0, 10, 13, -6, 0, 20, 31, 3, 0, 8, 38, 7), createShadow(0, 10, 13, -6, 0, 21, 33, 3, 0, 8, 40, 7), createShadow(0, 10, 14, -6, 0, 22, 35, 3, 0, 8, 42, 7), createShadow(0, 11, 14, -7, 0, 23, 36, 3, 0, 9, 44, 8), createShadow(0, 11, 15, -7, 0, 24, 38, 3, 0, 9, 46, 8)];
-const _excluded$2i = ["duration", "easing", "delay"];
+const _excluded$2j = ["duration", "easing", "delay"];
 const easing = {
   // This is the most common easing curve.
   easeInOut: "cubic-bezier(0.4, 0, 0.2, 1)",
@@ -17739,7 +17739,7 @@ function createTransitions(inputTransitions) {
       easing: easingOption = mergedEasing.easeInOut,
       delay: delay2 = 0
     } = options;
-    _objectWithoutPropertiesLoose$1(options, _excluded$2i);
+    _objectWithoutPropertiesLoose$1(options, _excluded$2j);
     return (Array.isArray(props) ? props : [props]).map((animatedProp) => `${animatedProp} ${typeof durationOption === "string" ? durationOption : formatMs(durationOption)} ${easingOption} ${typeof delay2 === "string" ? delay2 : formatMs(delay2)}`).join(",");
   }, "create");
   return _extends$4({
@@ -17761,14 +17761,14 @@ const zIndex = {
   snackbar: 1400,
   tooltip: 1500
 };
-const _excluded$2h = ["breakpoints", "mixins", "spacing", "palette", "transitions", "typography", "shape"];
+const _excluded$2i = ["breakpoints", "mixins", "spacing", "palette", "transitions", "typography", "shape"];
 function createTheme(options = {}, ...args) {
   const {
     mixins: mixinsInput = {},
     palette: paletteInput = {},
     transitions: transitionsInput = {},
     typography: typographyInput = {}
-  } = options, other = _objectWithoutPropertiesLoose$1(options, _excluded$2h);
+  } = options, other = _objectWithoutPropertiesLoose$1(options, _excluded$2i);
   if (options.vars) {
     throw new Error(formatMuiErrorMessage$1(18));
   }
@@ -17868,7 +17868,7 @@ _interopRequireDefault$y(require$$5);
 _interopRequireDefault$y(require$$6);
 var _createTheme = _interopRequireDefault$y(require$$7);
 var _styleFunctionSx = _interopRequireDefault$y(require$$8$1);
-const _excluded$2g = ["ownerState"], _excluded2$h = ["variants"], _excluded3$4 = ["name", "slot", "skipVariantsResolver", "skipSx", "overridesResolver"];
+const _excluded$2h = ["ownerState"], _excluded2$h = ["variants"], _excluded3$4 = ["name", "slot", "skipVariantsResolver", "skipSx", "overridesResolver"];
 function _getRequireWildcardCache$1(e2) {
   if ("function" != typeof WeakMap)
     return null;
@@ -17935,7 +17935,7 @@ __name(defaultOverridesResolver, "defaultOverridesResolver");
 function processStyleArg(callableStyle, _ref) {
   let {
     ownerState
-  } = _ref, props = (0, _objectWithoutPropertiesLoose2.default)(_ref, _excluded$2g);
+  } = _ref, props = (0, _objectWithoutPropertiesLoose2.default)(_ref, _excluded$2h);
   const resolvedStylesArg = typeof callableStyle === "function" ? callableStyle((0, _extends2.default)({
     ownerState
   }, props)) : callableStyle;
@@ -18103,11 +18103,11 @@ const styled = _default({
   defaultTheme: defaultTheme$2,
   rootShouldForwardProp
 });
-const _excluded$2f = ["theme"];
+const _excluded$2g = ["theme"];
 function ThemeProvider2(_ref) {
   let {
     theme: themeInput
-  } = _ref, props = _objectWithoutPropertiesLoose$1(_ref, _excluded$2f);
+  } = _ref, props = _objectWithoutPropertiesLoose$1(_ref, _excluded$2g);
   const scopedTheme = themeInput[THEME_ID];
   return /* @__PURE__ */ jsxRuntimeExports.jsx(ThemeProvider$1, _extends$4({}, props, {
     themeId: scopedTheme ? THEME_ID : void 0,
@@ -18142,8 +18142,8 @@ function getTableUtilityClass(slot) {
 }
 __name(getTableUtilityClass, "getTableUtilityClass");
 generateUtilityClasses$1("MuiTable", ["root", "stickyHeader"]);
-const _excluded$2e = ["className", "component", "padding", "size", "stickyHeader"];
-const useUtilityClasses$1R = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$2f = ["className", "component", "padding", "size", "stickyHeader"];
+const useUtilityClasses$1S = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     stickyHeader
@@ -18152,7 +18152,7 @@ const useUtilityClasses$1R = /* @__PURE__ */ __name((ownerState) => {
     root: ["root", stickyHeader && "stickyHeader"]
   };
   return composeClasses(slots, getTableUtilityClass, classes2);
-}, "useUtilityClasses$1R");
+}, "useUtilityClasses$1S");
 const TableRoot$1 = styled("table", {
   name: "MuiTable",
   slot: "Root",
@@ -18191,14 +18191,14 @@ const Table$1 = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(f
     padding: padding2 = "normal",
     size: size2 = "medium",
     stickyHeader = false
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$2e);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$2f);
   const ownerState = _extends$4({}, props, {
     component,
     padding: padding2,
     size: size2,
     stickyHeader
   });
-  const classes2 = useUtilityClasses$1R(ownerState);
+  const classes2 = useUtilityClasses$1S(ownerState);
   const table = reactExports.useMemo(() => ({
     padding: padding2,
     size: size2,
@@ -18221,8 +18221,8 @@ function getTableBodyUtilityClass(slot) {
 }
 __name(getTableBodyUtilityClass, "getTableBodyUtilityClass");
 generateUtilityClasses$1("MuiTableBody", ["root"]);
-const _excluded$2d = ["className", "component"];
-const useUtilityClasses$1Q = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$2e = ["className", "component"];
+const useUtilityClasses$1R = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2
   } = ownerState;
@@ -18230,7 +18230,7 @@ const useUtilityClasses$1Q = /* @__PURE__ */ __name((ownerState) => {
     root: ["root"]
   };
   return composeClasses(slots, getTableBodyUtilityClass, classes2);
-}, "useUtilityClasses$1Q");
+}, "useUtilityClasses$1R");
 const TableBodyRoot = styled("tbody", {
   name: "MuiTableBody",
   slot: "Root",
@@ -18250,11 +18250,11 @@ const TableBody = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name
   const {
     className,
     component = defaultComponent$2
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$2d);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$2e);
   const ownerState = _extends$4({}, props, {
     component
   });
-  const classes2 = useUtilityClasses$1Q(ownerState);
+  const classes2 = useUtilityClasses$1R(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(Tablelvl2Context.Provider, {
     value: tablelvl2$1,
     children: /* @__PURE__ */ jsxRuntimeExports.jsx(TableBodyRoot, _extends$4({
@@ -18271,8 +18271,8 @@ function getTableCellUtilityClass(slot) {
 }
 __name(getTableCellUtilityClass, "getTableCellUtilityClass");
 const tableCellClasses = generateUtilityClasses$1("MuiTableCell", ["root", "head", "body", "footer", "sizeSmall", "sizeMedium", "paddingCheckbox", "paddingNone", "alignLeft", "alignCenter", "alignRight", "alignJustify", "stickyHeader"]);
-const _excluded$2c = ["align", "className", "component", "padding", "scope", "size", "sortDirection", "variant"];
-const useUtilityClasses$1P = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$2d = ["align", "className", "component", "padding", "scope", "size", "sortDirection", "variant"];
+const useUtilityClasses$1Q = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     variant,
@@ -18285,7 +18285,7 @@ const useUtilityClasses$1P = /* @__PURE__ */ __name((ownerState) => {
     root: ["root", variant, stickyHeader && "stickyHeader", align !== "inherit" && `align${capitalize$1(align)}`, padding2 !== "normal" && `padding${capitalize$1(padding2)}`, `size${capitalize$1(size2)}`]
   };
   return composeClasses(slots, getTableCellUtilityClass, classes2);
-}, "useUtilityClasses$1P");
+}, "useUtilityClasses$1Q");
 const TableCellRoot = styled("td", {
   name: "MuiTableCell",
   slot: "Root",
@@ -18362,7 +18362,7 @@ const TableCell = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name
     size: sizeProp,
     sortDirection,
     variant: variantProp
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$2c);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$2d);
   const table = reactExports.useContext(TableContext);
   const tablelvl22 = reactExports.useContext(Tablelvl2Context);
   const isHeadCell = tablelvl22 && tablelvl22.variant === "head";
@@ -18388,7 +18388,7 @@ const TableCell = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name
     stickyHeader: variant === "head" && table && table.stickyHeader,
     variant
   });
-  const classes2 = useUtilityClasses$1P(ownerState);
+  const classes2 = useUtilityClasses$1Q(ownerState);
   let ariaSort = null;
   if (sortDirection) {
     ariaSort = sortDirection === "asc" ? "ascending" : "descending";
@@ -18407,8 +18407,8 @@ function getTableContainerUtilityClass(slot) {
 }
 __name(getTableContainerUtilityClass, "getTableContainerUtilityClass");
 generateUtilityClasses$1("MuiTableContainer", ["root"]);
-const _excluded$2b = ["className", "component"];
-const useUtilityClasses$1O = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$2c = ["className", "component"];
+const useUtilityClasses$1P = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2
   } = ownerState;
@@ -18416,7 +18416,7 @@ const useUtilityClasses$1O = /* @__PURE__ */ __name((ownerState) => {
     root: ["root"]
   };
   return composeClasses(slots, getTableContainerUtilityClass, classes2);
-}, "useUtilityClasses$1O");
+}, "useUtilityClasses$1P");
 const TableContainerRoot = styled("div", {
   name: "MuiTableContainer",
   slot: "Root",
@@ -18433,11 +18433,11 @@ const TableContainer = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ _
   const {
     className,
     component = "div"
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$2b);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$2c);
   const ownerState = _extends$4({}, props, {
     component
   });
-  const classes2 = useUtilityClasses$1O(ownerState);
+  const classes2 = useUtilityClasses$1P(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(TableContainerRoot, _extends$4({
     ref,
     as: component,
@@ -18450,8 +18450,8 @@ function getTableHeadUtilityClass(slot) {
 }
 __name(getTableHeadUtilityClass, "getTableHeadUtilityClass");
 generateUtilityClasses$1("MuiTableHead", ["root"]);
-const _excluded$2a = ["className", "component"];
-const useUtilityClasses$1N = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$2b = ["className", "component"];
+const useUtilityClasses$1O = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2
   } = ownerState;
@@ -18459,7 +18459,7 @@ const useUtilityClasses$1N = /* @__PURE__ */ __name((ownerState) => {
     root: ["root"]
   };
   return composeClasses(slots, getTableHeadUtilityClass, classes2);
-}, "useUtilityClasses$1N");
+}, "useUtilityClasses$1O");
 const TableHeadRoot = styled("thead", {
   name: "MuiTableHead",
   slot: "Root",
@@ -18479,11 +18479,11 @@ const TableHead = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name
   const {
     className,
     component = defaultComponent$1
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$2a);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$2b);
   const ownerState = _extends$4({}, props, {
     component
   });
-  const classes2 = useUtilityClasses$1N(ownerState);
+  const classes2 = useUtilityClasses$1O(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(Tablelvl2Context.Provider, {
     value: tablelvl2,
     children: /* @__PURE__ */ jsxRuntimeExports.jsx(TableHeadRoot, _extends$4({
@@ -18495,12 +18495,12 @@ const TableHead = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name
     }, other))
   });
 }, "TableHead2"));
-const _excluded$29 = ["onChange", "maxRows", "minRows", "style", "value"];
+const _excluded$2a = ["onChange", "maxRows", "minRows", "style", "value"];
 function getStyleValue(value) {
   return parseInt(value, 10) || 0;
 }
 __name(getStyleValue, "getStyleValue");
-const styles$a = {
+const styles$c = {
   shadow: {
     // Visibility needed to hide the extra text area on iPads
     visibility: "hidden",
@@ -18526,7 +18526,7 @@ const TextareaAutosize = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */
     minRows = 1,
     style: style2,
     value
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$29);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$2a);
   const {
     current: isControlled
   } = reactExports.useRef(value != null);
@@ -18631,7 +18631,7 @@ const TextareaAutosize = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */
       readOnly: true,
       ref: shadowRef,
       tabIndex: -1,
-      style: _extends$4({}, styles$a.shadow, style2, {
+      style: _extends$4({}, styles$c.shadow, style2, {
         paddingTop: 0,
         paddingBottom: 0
       })
@@ -18683,7 +18683,7 @@ function getInputBaseUtilityClass(slot) {
 }
 __name(getInputBaseUtilityClass, "getInputBaseUtilityClass");
 const inputBaseClasses = generateUtilityClasses$1("MuiInputBase", ["root", "formControl", "focused", "disabled", "adornedStart", "adornedEnd", "error", "sizeSmall", "multiline", "colorSecondary", "fullWidth", "hiddenLabel", "readOnly", "input", "inputSizeSmall", "inputMultiline", "inputTypeSearch", "inputAdornedStart", "inputAdornedEnd", "inputHiddenLabel"]);
-const _excluded$28 = ["aria-describedby", "autoComplete", "autoFocus", "className", "color", "components", "componentsProps", "defaultValue", "disabled", "disableInjectingGlobalStyles", "endAdornment", "error", "fullWidth", "id", "inputComponent", "inputProps", "inputRef", "margin", "maxRows", "minRows", "multiline", "name", "onBlur", "onChange", "onClick", "onFocus", "onKeyDown", "onKeyUp", "placeholder", "readOnly", "renderSuffix", "rows", "size", "slotProps", "slots", "startAdornment", "type", "value"];
+const _excluded$29 = ["aria-describedby", "autoComplete", "autoFocus", "className", "color", "components", "componentsProps", "defaultValue", "disabled", "disableInjectingGlobalStyles", "endAdornment", "error", "fullWidth", "id", "inputComponent", "inputProps", "inputRef", "margin", "maxRows", "minRows", "multiline", "name", "onBlur", "onChange", "onClick", "onFocus", "onKeyDown", "onKeyUp", "placeholder", "readOnly", "renderSuffix", "rows", "size", "slotProps", "slots", "startAdornment", "type", "value"];
 const rootOverridesResolver = /* @__PURE__ */ __name((props, styles2) => {
   const {
     ownerState
@@ -18696,7 +18696,7 @@ const inputOverridesResolver = /* @__PURE__ */ __name((props, styles2) => {
   } = props;
   return [styles2.input, ownerState.size === "small" && styles2.inputSizeSmall, ownerState.multiline && styles2.inputMultiline, ownerState.type === "search" && styles2.inputTypeSearch, ownerState.startAdornment && styles2.inputAdornedStart, ownerState.endAdornment && styles2.inputAdornedEnd, ownerState.hiddenLabel && styles2.inputHiddenLabel];
 }, "inputOverridesResolver");
-const useUtilityClasses$1M = /* @__PURE__ */ __name((ownerState) => {
+const useUtilityClasses$1N = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     color: color2,
@@ -18718,7 +18718,7 @@ const useUtilityClasses$1M = /* @__PURE__ */ __name((ownerState) => {
     input: ["input", disabled && "disabled", type === "search" && "inputTypeSearch", multiline && "inputMultiline", size2 === "small" && "inputSizeSmall", hiddenLabel && "inputHiddenLabel", startAdornment && "inputAdornedStart", endAdornment && "inputAdornedEnd", readOnly && "readOnly"]
   };
   return composeClasses(slots, getInputBaseUtilityClass, classes2);
-}, "useUtilityClasses$1M");
+}, "useUtilityClasses$1N");
 const InputBaseRoot = styled("div", {
   name: "MuiInputBase",
   slot: "Root",
@@ -18907,7 +18907,7 @@ const InputBase = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name
     startAdornment,
     type = "text",
     value: valueProp
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$28);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$29);
   const value = inputPropsProp.value != null ? inputPropsProp.value : valueProp;
   const {
     current: isControlled
@@ -19050,7 +19050,7 @@ const InputBase = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name
     startAdornment,
     type
   });
-  const classes2 = useUtilityClasses$1M(ownerState);
+  const classes2 = useUtilityClasses$1N(ownerState);
   const Root = slots.root || components.Root || InputBaseRoot;
   const rootProps = slotProps.root || componentsProps.root || {};
   const Input3 = slots.input || components.Input || InputBaseComponent;
@@ -19606,7 +19606,7 @@ function Ripple(props) {
 }
 __name(Ripple, "Ripple");
 const touchRippleClasses = generateUtilityClasses$1("MuiTouchRipple", ["root", "ripple", "rippleVisible", "ripplePulsate", "child", "childLeaving", "childPulsate"]);
-const _excluded$27 = ["center", "classes", "className"];
+const _excluded$28 = ["center", "classes", "className"];
 let _$3 = /* @__PURE__ */ __name((t2) => t2, "_$3"), _t$3, _t2$3, _t3$3, _t4$3;
 const DURATION = 550;
 const DELAY_RIPPLE = 80;
@@ -19721,7 +19721,7 @@ const TouchRipple = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __na
     center: centerProp = false,
     classes: classes2 = {},
     className
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$27);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$28);
   const [ripples, setRipples] = reactExports.useState([]);
   const nextKey = reactExports.useRef(0);
   const rippleCallback = reactExports.useRef(null);
@@ -19880,8 +19880,8 @@ function getButtonBaseUtilityClass(slot) {
 }
 __name(getButtonBaseUtilityClass, "getButtonBaseUtilityClass");
 const buttonBaseClasses = generateUtilityClasses$1("MuiButtonBase", ["root", "disabled", "focusVisible"]);
-const _excluded$26 = ["action", "centerRipple", "children", "className", "component", "disabled", "disableRipple", "disableTouchRipple", "focusRipple", "focusVisibleClassName", "LinkComponent", "onBlur", "onClick", "onContextMenu", "onDragLeave", "onFocus", "onFocusVisible", "onKeyDown", "onKeyUp", "onMouseDown", "onMouseLeave", "onMouseUp", "onTouchEnd", "onTouchMove", "onTouchStart", "tabIndex", "TouchRippleProps", "touchRippleRef", "type"];
-const useUtilityClasses$1L = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$27 = ["action", "centerRipple", "children", "className", "component", "disabled", "disableRipple", "disableTouchRipple", "focusRipple", "focusVisibleClassName", "LinkComponent", "onBlur", "onClick", "onContextMenu", "onDragLeave", "onFocus", "onFocusVisible", "onKeyDown", "onKeyUp", "onMouseDown", "onMouseLeave", "onMouseUp", "onTouchEnd", "onTouchMove", "onTouchStart", "tabIndex", "TouchRippleProps", "touchRippleRef", "type"];
+const useUtilityClasses$1M = /* @__PURE__ */ __name((ownerState) => {
   const {
     disabled,
     focusVisible,
@@ -19896,7 +19896,7 @@ const useUtilityClasses$1L = /* @__PURE__ */ __name((ownerState) => {
     composedClasses.root += ` ${focusVisibleClassName}`;
   }
   return composedClasses;
-}, "useUtilityClasses$1L");
+}, "useUtilityClasses$1M");
 const ButtonBaseRoot = styled("button", {
   name: "MuiButtonBase",
   slot: "Root",
@@ -19975,7 +19975,7 @@ const ButtonBase = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __nam
     TouchRippleProps,
     touchRippleRef,
     type
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$26);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$27);
   const buttonRef = reactExports.useRef(null);
   const rippleRef = reactExports.useRef(null);
   const handleRippleRef = useForkRef(rippleRef, touchRippleRef);
@@ -20123,7 +20123,7 @@ const ButtonBase = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __nam
     tabIndex,
     focusVisible
   });
-  const classes2 = useUtilityClasses$1L(ownerState);
+  const classes2 = useUtilityClasses$1M(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(ButtonBaseRoot, _extends$4({
     as: ComponentProp,
     className: clsx(classes2.root, className),
@@ -20159,8 +20159,8 @@ function getDividerUtilityClass(slot) {
 }
 __name(getDividerUtilityClass, "getDividerUtilityClass");
 const dividerClasses = generateUtilityClasses$1("MuiDivider", ["root", "absolute", "fullWidth", "inset", "middle", "flexItem", "light", "vertical", "withChildren", "withChildrenVertical", "textAlignRight", "textAlignLeft", "wrapper", "wrapperVertical"]);
-const _excluded$25 = ["absolute", "children", "className", "component", "flexItem", "light", "orientation", "role", "textAlign", "variant"];
-const useUtilityClasses$1K = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$26 = ["absolute", "children", "className", "component", "flexItem", "light", "orientation", "role", "textAlign", "variant"];
+const useUtilityClasses$1L = /* @__PURE__ */ __name((ownerState) => {
   const {
     absolute,
     children,
@@ -20176,7 +20176,7 @@ const useUtilityClasses$1K = /* @__PURE__ */ __name((ownerState) => {
     wrapper: ["wrapper", orientation === "vertical" && "wrapperVertical"]
   };
   return composeClasses(slots, getDividerUtilityClass, classes2);
-}, "useUtilityClasses$1K");
+}, "useUtilityClasses$1L");
 const DividerRoot = styled("div", {
   name: "MuiDivider",
   slot: "Root",
@@ -20304,7 +20304,7 @@ const Divider = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(f
     role = component !== "hr" ? "separator" : void 0,
     textAlign = "center",
     variant = "fullWidth"
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$25);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$26);
   const ownerState = _extends$4({}, props, {
     absolute,
     component,
@@ -20315,7 +20315,7 @@ const Divider = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(f
     textAlign,
     variant
   });
-  const classes2 = useUtilityClasses$1K(ownerState);
+  const classes2 = useUtilityClasses$1L(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(DividerRoot, _extends$4({
     as: component,
     className: clsx(classes2.root, className),
@@ -20336,8 +20336,8 @@ function getListItemIconUtilityClass(slot) {
 }
 __name(getListItemIconUtilityClass, "getListItemIconUtilityClass");
 const listItemIconClasses = generateUtilityClasses$1("MuiListItemIcon", ["root", "alignItemsFlexStart"]);
-const _excluded$24 = ["className"];
-const useUtilityClasses$1J = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$25 = ["className"];
+const useUtilityClasses$1K = /* @__PURE__ */ __name((ownerState) => {
   const {
     alignItems,
     classes: classes2
@@ -20346,7 +20346,7 @@ const useUtilityClasses$1J = /* @__PURE__ */ __name((ownerState) => {
     root: ["root", alignItems === "flex-start" && "alignItemsFlexStart"]
   };
   return composeClasses(slots, getListItemIconUtilityClass, classes2);
-}, "useUtilityClasses$1J");
+}, "useUtilityClasses$1K");
 const ListItemIconRoot = styled("div", {
   name: "MuiListItemIcon",
   slot: "Root",
@@ -20374,12 +20374,12 @@ const ListItemIcon = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __n
   });
   const {
     className
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$24);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$25);
   const context = reactExports.useContext(ListContext$1);
   const ownerState = _extends$4({}, props, {
     alignItems: context.alignItems
   });
-  const classes2 = useUtilityClasses$1J(ownerState);
+  const classes2 = useUtilityClasses$1K(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(ListItemIconRoot, _extends$4({
     className: clsx(classes2.root, className),
     ownerState,
@@ -20391,8 +20391,8 @@ function getTypographyUtilityClass(slot) {
 }
 __name(getTypographyUtilityClass, "getTypographyUtilityClass");
 generateUtilityClasses$1("MuiTypography", ["root", "h1", "h2", "h3", "h4", "h5", "h6", "subtitle1", "subtitle2", "body1", "body2", "inherit", "button", "caption", "overline", "alignLeft", "alignRight", "alignCenter", "alignJustify", "noWrap", "gutterBottom", "paragraph"]);
-const _excluded$23 = ["align", "className", "component", "gutterBottom", "noWrap", "paragraph", "variant", "variantMapping"];
-const useUtilityClasses$1I = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$24 = ["align", "className", "component", "gutterBottom", "noWrap", "paragraph", "variant", "variantMapping"];
+const useUtilityClasses$1J = /* @__PURE__ */ __name((ownerState) => {
   const {
     align,
     gutterBottom,
@@ -20405,7 +20405,7 @@ const useUtilityClasses$1I = /* @__PURE__ */ __name((ownerState) => {
     root: ["root", variant, ownerState.align !== "inherit" && `align${capitalize$1(align)}`, gutterBottom && "gutterBottom", noWrap && "noWrap", paragraph && "paragraph"]
   };
   return composeClasses(slots, getTypographyUtilityClass, classes2);
-}, "useUtilityClasses$1I");
+}, "useUtilityClasses$1J");
 const TypographyRoot = styled("span", {
   name: "MuiTypography",
   slot: "Root",
@@ -20475,7 +20475,7 @@ const Typography = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __nam
     paragraph = false,
     variant = "body1",
     variantMapping = defaultVariantMapping
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$23);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$24);
   const ownerState = _extends$4({}, props, {
     align,
     color: color2,
@@ -20488,7 +20488,7 @@ const Typography = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __nam
     variantMapping
   });
   const Component = component || (paragraph ? "p" : variantMapping[variant] || defaultVariantMapping[variant]) || "span";
-  const classes2 = useUtilityClasses$1I(ownerState);
+  const classes2 = useUtilityClasses$1J(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(TypographyRoot, _extends$4({
     as: Component,
     ref,
@@ -20501,8 +20501,8 @@ function getListItemTextUtilityClass(slot) {
 }
 __name(getListItemTextUtilityClass, "getListItemTextUtilityClass");
 const listItemTextClasses = generateUtilityClasses$1("MuiListItemText", ["root", "multiline", "dense", "inset", "primary", "secondary"]);
-const _excluded$22 = ["children", "className", "disableTypography", "inset", "primary", "primaryTypographyProps", "secondary", "secondaryTypographyProps"];
-const useUtilityClasses$1H = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$23 = ["children", "className", "disableTypography", "inset", "primary", "primaryTypographyProps", "secondary", "secondaryTypographyProps"];
+const useUtilityClasses$1I = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     inset,
@@ -20516,7 +20516,7 @@ const useUtilityClasses$1H = /* @__PURE__ */ __name((ownerState) => {
     secondary: ["secondary"]
   };
   return composeClasses(slots, getListItemTextUtilityClass, classes2);
-}, "useUtilityClasses$1H");
+}, "useUtilityClasses$1I");
 const ListItemTextRoot = styled("div", {
   name: "MuiListItemText",
   slot: "Root",
@@ -20557,7 +20557,7 @@ const ListItemText = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __n
     primaryTypographyProps,
     secondary: secondaryProp,
     secondaryTypographyProps
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$22);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$23);
   const {
     dense
   } = reactExports.useContext(ListContext$1);
@@ -20570,7 +20570,7 @@ const ListItemText = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __n
     secondary: !!secondary,
     dense
   });
-  const classes2 = useUtilityClasses$1H(ownerState);
+  const classes2 = useUtilityClasses$1I(ownerState);
   if (primary != null && primary.type !== Typography && !disableTypography) {
     primary = /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, _extends$4({
       variant: dense ? "body2" : "body1",
@@ -20604,14 +20604,14 @@ function getMenuItemUtilityClass(slot) {
 }
 __name(getMenuItemUtilityClass, "getMenuItemUtilityClass");
 const menuItemClasses = generateUtilityClasses$1("MuiMenuItem", ["root", "focusVisible", "dense", "disabled", "divider", "gutters", "selected"]);
-const _excluded$21 = ["autoFocus", "component", "dense", "divider", "disableGutters", "focusVisibleClassName", "role", "tabIndex", "className"];
-const overridesResolver$2 = /* @__PURE__ */ __name((props, styles2) => {
+const _excluded$22 = ["autoFocus", "component", "dense", "divider", "disableGutters", "focusVisibleClassName", "role", "tabIndex", "className"];
+const overridesResolver$3 = /* @__PURE__ */ __name((props, styles2) => {
   const {
     ownerState
   } = props;
   return [styles2.root, ownerState.dense && styles2.dense, ownerState.divider && styles2.divider, !ownerState.disableGutters && styles2.gutters];
-}, "overridesResolver$2");
-const useUtilityClasses$1G = /* @__PURE__ */ __name((ownerState) => {
+}, "overridesResolver$3");
+const useUtilityClasses$1H = /* @__PURE__ */ __name((ownerState) => {
   const {
     disabled,
     dense,
@@ -20625,12 +20625,12 @@ const useUtilityClasses$1G = /* @__PURE__ */ __name((ownerState) => {
   };
   const composedClasses = composeClasses(slots, getMenuItemUtilityClass, classes2);
   return _extends$4({}, classes2, composedClasses);
-}, "useUtilityClasses$1G");
+}, "useUtilityClasses$1H");
 const MenuItemRoot = styled(ButtonBase, {
   shouldForwardProp: (prop) => rootShouldForwardProp(prop) || prop === "classes",
   name: "MuiMenuItem",
   slot: "Root",
-  overridesResolver: overridesResolver$2
+  overridesResolver: overridesResolver$3
 })(({
   theme: theme2,
   ownerState
@@ -20725,7 +20725,7 @@ const MenuItem = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(
     role = "menuitem",
     tabIndex: tabIndexProp,
     className
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$21);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$22);
   const context = reactExports.useContext(ListContext$1);
   const childContext = reactExports.useMemo(() => ({
     dense: dense || context.dense || false,
@@ -20744,7 +20744,7 @@ const MenuItem = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(
     divider,
     disableGutters
   });
-  const classes2 = useUtilityClasses$1G(props);
+  const classes2 = useUtilityClasses$1H(props);
   const handleRef = useForkRef(menuItemRef, ref);
   let tabIndex;
   if (!props.disabled) {
@@ -20770,8 +20770,8 @@ function getListUtilityClass(slot) {
 }
 __name(getListUtilityClass, "getListUtilityClass");
 generateUtilityClasses$1("MuiList", ["root", "padding", "dense", "subheader"]);
-const _excluded$20 = ["children", "className", "component", "dense", "disablePadding", "subheader"];
-const useUtilityClasses$1F = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$21 = ["children", "className", "component", "dense", "disablePadding", "subheader"];
+const useUtilityClasses$1G = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     disablePadding,
@@ -20782,7 +20782,7 @@ const useUtilityClasses$1F = /* @__PURE__ */ __name((ownerState) => {
     root: ["root", !disablePadding && "padding", dense && "dense", subheader && "subheader"]
   };
   return composeClasses(slots, getListUtilityClass, classes2);
-}, "useUtilityClasses$1F");
+}, "useUtilityClasses$1G");
 const ListRoot = styled("ul", {
   name: "MuiList",
   slot: "Root",
@@ -20817,7 +20817,7 @@ const List = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(func
     dense = false,
     disablePadding = false,
     subheader
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$20);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$21);
   const context = reactExports.useMemo(() => ({
     dense
   }), [dense]);
@@ -20826,7 +20826,7 @@ const List = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(func
     dense,
     disablePadding
   });
-  const classes2 = useUtilityClasses$1F(ownerState);
+  const classes2 = useUtilityClasses$1G(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(ListContext$1.Provider, {
     value: context,
     children: /* @__PURE__ */ jsxRuntimeExports.jsxs(ListRoot, _extends$4({
@@ -20839,7 +20839,7 @@ const List = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(func
     }))
   });
 }, "List2"));
-const _excluded$1$ = ["actions", "autoFocus", "autoFocusItem", "children", "className", "disabledItemsFocusable", "disableListWrap", "onKeyDown", "variant"];
+const _excluded$20 = ["actions", "autoFocus", "autoFocusItem", "children", "className", "disabledItemsFocusable", "disableListWrap", "onKeyDown", "variant"];
 function nextItem(list, item, disableListWrap) {
   if (list === item) {
     return list.firstChild;
@@ -20912,7 +20912,7 @@ const MenuList = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(
     disableListWrap = false,
     onKeyDown,
     variant = "selectedMenu"
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1$);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$20);
   const listRef = reactExports.useRef(null);
   const textCriteriaRef = reactExports.useRef({
     keys: [],
@@ -21044,12 +21044,12 @@ function getTransitionProps(props, options) {
   };
 }
 __name(getTransitionProps, "getTransitionProps");
-const _excluded$1_ = ["addEndListener", "appear", "children", "easing", "in", "onEnter", "onEntered", "onEntering", "onExit", "onExited", "onExiting", "style", "timeout", "TransitionComponent"];
+const _excluded$1$ = ["addEndListener", "appear", "children", "easing", "in", "onEnter", "onEntered", "onEntering", "onExit", "onExited", "onExiting", "style", "timeout", "TransitionComponent"];
 function getScale$1(value) {
   return `scale(${value}, ${value ** 2})`;
 }
 __name(getScale$1, "getScale$1");
-const styles$9 = {
+const styles$b = {
   entering: {
     opacity: 1,
     transform: getScale$1(1)
@@ -21077,7 +21077,7 @@ const Grow = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(func
     timeout = "auto",
     // eslint-disable-next-line react/prop-types
     TransitionComponent = Transition
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1_);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1$);
   const timer = useTimeout();
   const autoTimeout = reactExports.useRef();
   const theme2 = useTheme$1();
@@ -21189,7 +21189,7 @@ const Grow = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(func
           opacity: 0,
           transform: getScale$1(0.75),
           visibility: state === "exited" && !inProp ? "hidden" : void 0
-        }, styles$9[state], style2, children.props.style),
+        }, styles$b[state], style2, children.props.style),
         ref: handleRef
       }, childProps));
     }
@@ -21642,8 +21642,8 @@ const Portal$1 = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(
     children: mountNode ? /* @__PURE__ */ reactDomExports.createPortal(children, mountNode) : mountNode
   });
 }, "Portal2"));
-const _excluded$1Z = ["addEndListener", "appear", "children", "easing", "in", "onEnter", "onEntered", "onEntering", "onExit", "onExited", "onExiting", "style", "timeout", "TransitionComponent"];
-const styles$8 = {
+const _excluded$1_ = ["addEndListener", "appear", "children", "easing", "in", "onEnter", "onEntered", "onEntering", "onExit", "onExited", "onExiting", "style", "timeout", "TransitionComponent"];
+const styles$a = {
   entering: {
     opacity: 1
   },
@@ -21673,7 +21673,7 @@ const Fade = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(func
     timeout = defaultTimeout,
     // eslint-disable-next-line react/prop-types
     TransitionComponent = Transition
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1Z);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1_);
   const nodeRef = reactExports.useRef(null);
   const handleRef = useForkRef(nodeRef, children.ref, ref);
   const normalizedTransitionCallback = /* @__PURE__ */ __name((callback) => (maybeIsAppearing) => {
@@ -21742,7 +21742,7 @@ const Fade = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(func
         style: _extends$4({
           opacity: 0,
           visibility: state === "exited" && !inProp ? "hidden" : void 0
-        }, styles$8[state], style2, children.props.style),
+        }, styles$a[state], style2, children.props.style),
         ref: handleRef
       }, childProps));
     }
@@ -21753,8 +21753,8 @@ function getBackdropUtilityClass(slot) {
 }
 __name(getBackdropUtilityClass, "getBackdropUtilityClass");
 generateUtilityClasses$1("MuiBackdrop", ["root", "invisible"]);
-const _excluded$1Y = ["children", "className", "component", "components", "componentsProps", "invisible", "open", "slotProps", "slots", "TransitionComponent", "transitionDuration"];
-const useUtilityClasses$1E = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1Z = ["children", "className", "component", "components", "componentsProps", "invisible", "open", "slotProps", "slots", "TransitionComponent", "transitionDuration"];
+const useUtilityClasses$1F = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     invisible
@@ -21763,7 +21763,7 @@ const useUtilityClasses$1E = /* @__PURE__ */ __name((ownerState) => {
     root: ["root", invisible && "invisible"]
   };
   return composeClasses(slots, getBackdropUtilityClass, classes2);
-}, "useUtilityClasses$1E");
+}, "useUtilityClasses$1F");
 const BackdropRoot = styled("div", {
   name: "MuiBackdrop",
   slot: "Root",
@@ -21807,12 +21807,12 @@ const Backdrop$2 = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __nam
     slots = {},
     TransitionComponent = Fade,
     transitionDuration
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1Y);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1Z);
   const ownerState = _extends$4({}, props, {
     component,
     invisible
   });
-  const classes2 = useUtilityClasses$1E(ownerState);
+  const classes2 = useUtilityClasses$1F(ownerState);
   const rootSlotProps = (_slotProps$root = slotProps.root) != null ? _slotProps$root : componentsProps.root;
   return /* @__PURE__ */ jsxRuntimeExports.jsx(TransitionComponent, _extends$4({
     in: open2,
@@ -21995,8 +21995,8 @@ function getModalUtilityClass$1(slot) {
 }
 __name(getModalUtilityClass$1, "getModalUtilityClass$1");
 generateUtilityClasses$1("MuiModal", ["root", "hidden", "backdrop"]);
-const _excluded$1X = ["BackdropComponent", "BackdropProps", "classes", "className", "closeAfterTransition", "children", "container", "component", "components", "componentsProps", "disableAutoFocus", "disableEnforceFocus", "disableEscapeKeyDown", "disablePortal", "disableRestoreFocus", "disableScrollLock", "hideBackdrop", "keepMounted", "onBackdropClick", "onClose", "onTransitionEnter", "onTransitionExited", "open", "slotProps", "slots", "theme"];
-const useUtilityClasses$1D = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1Y = ["BackdropComponent", "BackdropProps", "classes", "className", "closeAfterTransition", "children", "container", "component", "components", "componentsProps", "disableAutoFocus", "disableEnforceFocus", "disableEscapeKeyDown", "disablePortal", "disableRestoreFocus", "disableScrollLock", "hideBackdrop", "keepMounted", "onBackdropClick", "onClose", "onTransitionEnter", "onTransitionExited", "open", "slotProps", "slots", "theme"];
+const useUtilityClasses$1E = /* @__PURE__ */ __name((ownerState) => {
   const {
     open: open2,
     exited,
@@ -22007,7 +22007,7 @@ const useUtilityClasses$1D = /* @__PURE__ */ __name((ownerState) => {
     backdrop: ["backdrop"]
   };
   return composeClasses(slots, getModalUtilityClass$1, classes2);
-}, "useUtilityClasses$1D");
+}, "useUtilityClasses$1E");
 const ModalRoot = styled("div", {
   name: "MuiModal",
   slot: "Root",
@@ -22068,7 +22068,7 @@ const Modal$3 = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(f
     slotProps,
     slots
     // eslint-disable-next-line react/prop-types
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1X);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1Y);
   const propsWithDefaults = _extends$4({}, props, {
     closeAfterTransition,
     disableAutoFocus,
@@ -22094,7 +22094,7 @@ const Modal$3 = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(f
   const ownerState = _extends$4({}, propsWithDefaults, {
     exited
   });
-  const classes2 = useUtilityClasses$1D(ownerState);
+  const classes2 = useUtilityClasses$1E(ownerState);
   const childProps = {};
   if (children.props.tabIndex === void 0) {
     childProps.tabIndex = "-1";
@@ -22166,8 +22166,8 @@ function getPaperUtilityClass(slot) {
 }
 __name(getPaperUtilityClass, "getPaperUtilityClass");
 generateUtilityClasses$1("MuiPaper", ["root", "rounded", "outlined", "elevation", "elevation0", "elevation1", "elevation2", "elevation3", "elevation4", "elevation5", "elevation6", "elevation7", "elevation8", "elevation9", "elevation10", "elevation11", "elevation12", "elevation13", "elevation14", "elevation15", "elevation16", "elevation17", "elevation18", "elevation19", "elevation20", "elevation21", "elevation22", "elevation23", "elevation24"]);
-const _excluded$1W = ["className", "component", "elevation", "square", "variant"];
-const useUtilityClasses$1C = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1X = ["className", "component", "elevation", "square", "variant"];
+const useUtilityClasses$1D = /* @__PURE__ */ __name((ownerState) => {
   const {
     square,
     elevation,
@@ -22178,7 +22178,7 @@ const useUtilityClasses$1C = /* @__PURE__ */ __name((ownerState) => {
     root: ["root", variant, !square && "rounded", variant === "elevation" && `elevation${elevation}`]
   };
   return composeClasses(slots, getPaperUtilityClass, classes2);
-}, "useUtilityClasses$1C");
+}, "useUtilityClasses$1D");
 const PaperRoot = styled("div", {
   name: "MuiPaper",
   slot: "Root",
@@ -22220,14 +22220,14 @@ const Paper = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(fun
     elevation = 1,
     square = false,
     variant = "elevation"
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1W);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1X);
   const ownerState = _extends$4({}, props, {
     component,
     elevation,
     square,
     variant
   });
-  const classes2 = useUtilityClasses$1C(ownerState);
+  const classes2 = useUtilityClasses$1D(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(PaperRoot, _extends$4({
     as: component,
     ownerState,
@@ -22240,7 +22240,7 @@ function getPopoverUtilityClass(slot) {
 }
 __name(getPopoverUtilityClass, "getPopoverUtilityClass");
 generateUtilityClasses$1("MuiPopover", ["root", "paper"]);
-const _excluded$1V = ["onEntering"], _excluded2$g = ["action", "anchorEl", "anchorOrigin", "anchorPosition", "anchorReference", "children", "className", "container", "elevation", "marginThreshold", "open", "PaperProps", "slots", "slotProps", "transformOrigin", "TransitionComponent", "transitionDuration", "TransitionProps", "disableScrollLock"], _excluded3$3 = ["slotProps"];
+const _excluded$1W = ["onEntering"], _excluded2$g = ["action", "anchorEl", "anchorOrigin", "anchorPosition", "anchorReference", "children", "className", "container", "elevation", "marginThreshold", "open", "PaperProps", "slots", "slotProps", "transformOrigin", "TransitionComponent", "transitionDuration", "TransitionProps", "disableScrollLock"], _excluded3$3 = ["slotProps"];
 function getOffsetTop(rect, vertical) {
   let offset2 = 0;
   if (typeof vertical === "number") {
@@ -22273,7 +22273,7 @@ function resolveAnchorEl$1(anchorEl) {
   return typeof anchorEl === "function" ? anchorEl() : anchorEl;
 }
 __name(resolveAnchorEl$1, "resolveAnchorEl$1");
-const useUtilityClasses$1B = /* @__PURE__ */ __name((ownerState) => {
+const useUtilityClasses$1C = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2
   } = ownerState;
@@ -22282,7 +22282,7 @@ const useUtilityClasses$1B = /* @__PURE__ */ __name((ownerState) => {
     paper: ["paper"]
   };
   return composeClasses(slots, getPopoverUtilityClass, classes2);
-}, "useUtilityClasses$1B");
+}, "useUtilityClasses$1C");
 const PopoverRoot = styled(Modal$3, {
   name: "MuiPopover",
   slot: "Root",
@@ -22339,7 +22339,7 @@ const Popover = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(f
       onEntering
     } = {},
     disableScrollLock = false
-  } = props, TransitionProps = _objectWithoutPropertiesLoose$1(props.TransitionProps, _excluded$1V), other = _objectWithoutPropertiesLoose$1(props, _excluded2$g);
+  } = props, TransitionProps = _objectWithoutPropertiesLoose$1(props.TransitionProps, _excluded$1W), other = _objectWithoutPropertiesLoose$1(props, _excluded2$g);
   const externalPaperSlotProps = (_slotProps$paper = slotProps == null ? void 0 : slotProps.paper) != null ? _slotProps$paper : PaperPropsProp;
   const paperRef = reactExports.useRef();
   const handlePaperRef = useForkRef(paperRef, externalPaperSlotProps.ref);
@@ -22354,7 +22354,7 @@ const Popover = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(f
     transitionDuration: transitionDurationProp,
     TransitionProps
   });
-  const classes2 = useUtilityClasses$1B(ownerState);
+  const classes2 = useUtilityClasses$1C(ownerState);
   const getAnchorOffset = reactExports.useCallback(() => {
     if (anchorReference === "anchorPosition") {
       return anchorPosition;
@@ -22535,7 +22535,7 @@ function getMenuUtilityClass$1(slot) {
 }
 __name(getMenuUtilityClass$1, "getMenuUtilityClass$1");
 generateUtilityClasses$1("MuiMenu", ["root", "paper", "list"]);
-const _excluded$1U = ["onEntering"], _excluded2$f = ["autoFocus", "children", "className", "disableAutoFocusItem", "MenuListProps", "onClose", "open", "PaperProps", "PopoverClasses", "transitionDuration", "TransitionProps", "variant", "slots", "slotProps"];
+const _excluded$1V = ["onEntering"], _excluded2$f = ["autoFocus", "children", "className", "disableAutoFocusItem", "MenuListProps", "onClose", "open", "PaperProps", "PopoverClasses", "transitionDuration", "TransitionProps", "variant", "slots", "slotProps"];
 const RTL_ORIGIN = {
   vertical: "top",
   horizontal: "right"
@@ -22544,7 +22544,7 @@ const LTR_ORIGIN = {
   vertical: "top",
   horizontal: "left"
 };
-const useUtilityClasses$1A = /* @__PURE__ */ __name((ownerState) => {
+const useUtilityClasses$1B = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2
   } = ownerState;
@@ -22554,7 +22554,7 @@ const useUtilityClasses$1A = /* @__PURE__ */ __name((ownerState) => {
     list: ["list"]
   };
   return composeClasses(slots, getMenuUtilityClass$1, classes2);
-}, "useUtilityClasses$1A");
+}, "useUtilityClasses$1B");
 const MenuRoot = styled(Popover, {
   shouldForwardProp: (prop) => rootShouldForwardProp(prop) || prop === "classes",
   name: "MuiMenu",
@@ -22604,7 +22604,7 @@ const Menu$1 = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(fu
     variant = "selectedMenu",
     slots = {},
     slotProps = {}
-  } = props, TransitionProps = _objectWithoutPropertiesLoose$1(props.TransitionProps, _excluded$1U), other = _objectWithoutPropertiesLoose$1(props, _excluded2$f);
+  } = props, TransitionProps = _objectWithoutPropertiesLoose$1(props.TransitionProps, _excluded$1V), other = _objectWithoutPropertiesLoose$1(props, _excluded2$f);
   const isRtl = useRtl();
   const ownerState = _extends$4({}, props, {
     autoFocus,
@@ -22616,7 +22616,7 @@ const Menu$1 = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(fu
     TransitionProps,
     variant
   });
-  const classes2 = useUtilityClasses$1A(ownerState);
+  const classes2 = useUtilityClasses$1B(ownerState);
   const autoFocusItem = autoFocus && !disableAutoFocusItem && open2;
   const menuListActionsRef = reactExports.useRef(null);
   const handleEntering = /* @__PURE__ */ __name((element, isAppearing) => {
@@ -22705,8 +22705,8 @@ function getNativeSelectUtilityClasses(slot) {
 }
 __name(getNativeSelectUtilityClasses, "getNativeSelectUtilityClasses");
 const nativeSelectClasses = generateUtilityClasses$1("MuiNativeSelect", ["root", "select", "multiple", "filled", "outlined", "standard", "disabled", "icon", "iconOpen", "iconFilled", "iconOutlined", "iconStandard", "nativeInput", "error"]);
-const _excluded$1T = ["className", "disabled", "error", "IconComponent", "inputRef", "variant"];
-const useUtilityClasses$1z = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1U = ["className", "disabled", "error", "IconComponent", "inputRef", "variant"];
+const useUtilityClasses$1A = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     variant,
@@ -22720,7 +22720,7 @@ const useUtilityClasses$1z = /* @__PURE__ */ __name((ownerState) => {
     icon: ["icon", `icon${capitalize$1(variant)}`, open2 && "iconOpen", disabled && "disabled"]
   };
   return composeClasses(slots, getNativeSelectUtilityClasses, classes2);
-}, "useUtilityClasses$1z");
+}, "useUtilityClasses$1A");
 const nativeSelectSelectStyles = /* @__PURE__ */ __name(({
   ownerState,
   theme: theme2
@@ -22830,13 +22830,13 @@ const NativeSelectInput = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ *
     IconComponent,
     inputRef,
     variant = "standard"
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1T);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1U);
   const ownerState = _extends$4({}, props, {
     disabled,
     variant,
     error
   });
-  const classes2 = useUtilityClasses$1z(ownerState);
+  const classes2 = useUtilityClasses$1A(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(reactExports.Fragment, {
     children: [/* @__PURE__ */ jsxRuntimeExports.jsx(NativeSelectSelect, _extends$4({
       ownerState,
@@ -22856,7 +22856,7 @@ function getSelectUtilityClasses(slot) {
 __name(getSelectUtilityClasses, "getSelectUtilityClasses");
 const selectClasses = generateUtilityClasses$1("MuiSelect", ["root", "select", "multiple", "filled", "outlined", "standard", "disabled", "focused", "icon", "iconOpen", "iconFilled", "iconOutlined", "iconStandard", "nativeInput", "error"]);
 var _span$3;
-const _excluded$1S = ["aria-describedby", "aria-label", "autoFocus", "autoWidth", "children", "className", "defaultOpen", "defaultValue", "disabled", "displayEmpty", "error", "IconComponent", "inputRef", "labelId", "MenuProps", "multiple", "name", "onBlur", "onChange", "onClose", "onFocus", "onOpen", "open", "readOnly", "renderValue", "SelectDisplayProps", "tabIndex", "type", "value", "variant"];
+const _excluded$1T = ["aria-describedby", "aria-label", "autoFocus", "autoWidth", "children", "className", "defaultOpen", "defaultValue", "disabled", "displayEmpty", "error", "IconComponent", "inputRef", "labelId", "MenuProps", "multiple", "name", "onBlur", "onChange", "onClose", "onFocus", "onOpen", "open", "readOnly", "renderValue", "SelectDisplayProps", "tabIndex", "type", "value", "variant"];
 const SelectSelect = styled("div", {
   name: "MuiSelect",
   slot: "Select",
@@ -22927,7 +22927,7 @@ function isEmpty(display) {
   return display == null || typeof display === "string" && !display.trim();
 }
 __name(isEmpty, "isEmpty");
-const useUtilityClasses$1y = /* @__PURE__ */ __name((ownerState) => {
+const useUtilityClasses$1z = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     variant,
@@ -22942,7 +22942,7 @@ const useUtilityClasses$1y = /* @__PURE__ */ __name((ownerState) => {
     nativeInput: ["nativeInput"]
   };
   return composeClasses(slots, getSelectUtilityClasses, classes2);
-}, "useUtilityClasses$1y");
+}, "useUtilityClasses$1z");
 const SelectInput = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(function SelectInput2(props, ref) {
   var _MenuProps$slotProps;
   const {
@@ -22975,7 +22975,7 @@ const SelectInput = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __na
     tabIndex: tabIndexProp,
     value: valueProp,
     variant = "standard"
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1S);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1T);
   const [value, setValueState] = useControlled({
     controlled: valueProp,
     default: defaultValue,
@@ -23225,7 +23225,7 @@ const SelectInput = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __na
     open: open2,
     error
   });
-  const classes2 = useUtilityClasses$1y(ownerState);
+  const classes2 = useUtilityClasses$1z(ownerState);
   const paperProps = _extends$4({}, MenuProps.PaperProps, (_MenuProps$slotProps = MenuProps.slotProps) == null ? void 0 : _MenuProps$slotProps.paper);
   const listboxId = useId();
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(reactExports.Fragment, {
@@ -23308,8 +23308,8 @@ function getSvgIconUtilityClass(slot) {
 }
 __name(getSvgIconUtilityClass, "getSvgIconUtilityClass");
 generateUtilityClasses$1("MuiSvgIcon", ["root", "colorPrimary", "colorSecondary", "colorAction", "colorError", "colorDisabled", "fontSizeInherit", "fontSizeSmall", "fontSizeMedium", "fontSizeLarge"]);
-const _excluded$1R = ["children", "className", "color", "component", "fontSize", "htmlColor", "inheritViewBox", "titleAccess", "viewBox"];
-const useUtilityClasses$1x = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1S = ["children", "className", "color", "component", "fontSize", "htmlColor", "inheritViewBox", "titleAccess", "viewBox"];
+const useUtilityClasses$1y = /* @__PURE__ */ __name((ownerState) => {
   const {
     color: color2,
     fontSize,
@@ -23319,7 +23319,7 @@ const useUtilityClasses$1x = /* @__PURE__ */ __name((ownerState) => {
     root: ["root", color2 !== "inherit" && `color${capitalize$1(color2)}`, `fontSize${capitalize$1(fontSize)}`]
   };
   return composeClasses(slots, getSvgIconUtilityClass, classes2);
-}, "useUtilityClasses$1x");
+}, "useUtilityClasses$1y");
 const SvgIconRoot = styled("svg", {
   name: "MuiSvgIcon",
   slot: "Root",
@@ -23375,7 +23375,7 @@ const SvgIcon = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(f
     inheritViewBox = false,
     titleAccess,
     viewBox = "0 0 24 24"
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1R);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1S);
   const hasSvgAsChild = /* @__PURE__ */ reactExports.isValidElement(children) && children.type === "svg";
   const ownerState = _extends$4({}, props, {
     color: color2,
@@ -23390,7 +23390,7 @@ const SvgIcon = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(f
   if (!inheritViewBox) {
     more.viewBox = viewBox;
   }
-  const classes2 = useUtilityClasses$1x(ownerState);
+  const classes2 = useUtilityClasses$1y(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(SvgIconRoot, _extends$4({
     as: component,
     className: clsx(classes2.root, className),
@@ -23429,8 +23429,8 @@ function getInputUtilityClass(slot) {
 }
 __name(getInputUtilityClass, "getInputUtilityClass");
 const inputClasses = _extends$4({}, inputBaseClasses, generateUtilityClasses$1("MuiInput", ["root", "underline", "input"]));
-const _excluded$1Q = ["disableUnderline", "components", "componentsProps", "fullWidth", "inputComponent", "multiline", "slotProps", "slots", "type"];
-const useUtilityClasses$1w = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1R = ["disableUnderline", "components", "componentsProps", "fullWidth", "inputComponent", "multiline", "slotProps", "slots", "type"];
+const useUtilityClasses$1x = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     disableUnderline
@@ -23441,7 +23441,7 @@ const useUtilityClasses$1w = /* @__PURE__ */ __name((ownerState) => {
   };
   const composedClasses = composeClasses(slots, getInputUtilityClass, classes2);
   return _extends$4({}, classes2, composedClasses);
-}, "useUtilityClasses$1w");
+}, "useUtilityClasses$1x");
 const InputRoot = styled(InputBaseRoot, {
   shouldForwardProp: (prop) => rootShouldForwardProp(prop) || prop === "classes",
   name: "MuiInput",
@@ -23541,8 +23541,8 @@ const Input = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(fun
     slotProps,
     slots = {},
     type = "text"
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1Q);
-  const classes2 = useUtilityClasses$1w(props);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1R);
+  const classes2 = useUtilityClasses$1x(props);
   const ownerState = {
     disableUnderline
   };
@@ -23575,8 +23575,8 @@ function getFilledInputUtilityClass(slot) {
 }
 __name(getFilledInputUtilityClass, "getFilledInputUtilityClass");
 const filledInputClasses = _extends$4({}, inputBaseClasses, generateUtilityClasses$1("MuiFilledInput", ["root", "underline", "input"]));
-const _excluded$1P = ["disableUnderline", "components", "componentsProps", "fullWidth", "hiddenLabel", "inputComponent", "multiline", "slotProps", "slots", "type"];
-const useUtilityClasses$1v = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1Q = ["disableUnderline", "components", "componentsProps", "fullWidth", "hiddenLabel", "inputComponent", "multiline", "slotProps", "slots", "type"];
+const useUtilityClasses$1w = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     disableUnderline
@@ -23587,7 +23587,7 @@ const useUtilityClasses$1v = /* @__PURE__ */ __name((ownerState) => {
   };
   const composedClasses = composeClasses(slots, getFilledInputUtilityClass, classes2);
   return _extends$4({}, classes2, composedClasses);
-}, "useUtilityClasses$1v");
+}, "useUtilityClasses$1w");
 const FilledInputRoot = styled(InputBaseRoot, {
   shouldForwardProp: (prop) => rootShouldForwardProp(prop) || prop === "classes",
   name: "MuiFilledInput",
@@ -23761,14 +23761,14 @@ const FilledInput = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __na
     slotProps,
     slots = {},
     type = "text"
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1P);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1Q);
   const ownerState = _extends$4({}, props, {
     fullWidth,
     inputComponent,
     multiline,
     type
   });
-  const classes2 = useUtilityClasses$1v(props);
+  const classes2 = useUtilityClasses$1w(props);
   const filledInputComponentsProps = {
     root: {
       ownerState
@@ -23797,7 +23797,7 @@ const FilledInput = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __na
 }, "FilledInput2"));
 FilledInput.muiName = "Input";
 var _span$2;
-const _excluded$1O = ["children", "classes", "className", "label", "notched"];
+const _excluded$1P = ["children", "classes", "className", "label", "notched"];
 const NotchedOutlineRoot$1 = styled("fieldset", {
   shouldForwardProp: rootShouldForwardProp
 })({
@@ -23869,7 +23869,7 @@ function NotchedOutline(props) {
     className,
     label,
     notched
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1O);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1P);
   const withLabel = label != null && label !== "";
   const ownerState = _extends$4({}, props, {
     notched,
@@ -23900,8 +23900,8 @@ function getOutlinedInputUtilityClass(slot) {
 }
 __name(getOutlinedInputUtilityClass, "getOutlinedInputUtilityClass");
 const outlinedInputClasses = _extends$4({}, inputBaseClasses, generateUtilityClasses$1("MuiOutlinedInput", ["root", "notchedOutline", "input"]));
-const _excluded$1N = ["components", "fullWidth", "inputComponent", "label", "multiline", "notched", "slots", "type"];
-const useUtilityClasses$1u = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1O = ["components", "fullWidth", "inputComponent", "label", "multiline", "notched", "slots", "type"];
+const useUtilityClasses$1v = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2
   } = ownerState;
@@ -23912,7 +23912,7 @@ const useUtilityClasses$1u = /* @__PURE__ */ __name((ownerState) => {
   };
   const composedClasses = composeClasses(slots, getOutlinedInputUtilityClass, classes2);
   return _extends$4({}, classes2, composedClasses);
-}, "useUtilityClasses$1u");
+}, "useUtilityClasses$1v");
 const OutlinedInputRoot = styled(InputBaseRoot, {
   shouldForwardProp: (prop) => rootShouldForwardProp(prop) || prop === "classes",
   name: "MuiOutlinedInput",
@@ -24018,8 +24018,8 @@ const OutlinedInput = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __
     notched,
     slots = {},
     type = "text"
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1N);
-  const classes2 = useUtilityClasses$1u(props);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1O);
+  const classes2 = useUtilityClasses$1v(props);
   const muiFormControl = useFormControl();
   const fcs = formControlState({
     props,
@@ -24065,13 +24065,13 @@ const OutlinedInput = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __
   }));
 }, "OutlinedInput2"));
 OutlinedInput.muiName = "Input";
-const _excluded$1M = ["autoWidth", "children", "classes", "className", "defaultOpen", "displayEmpty", "IconComponent", "id", "input", "inputProps", "label", "labelId", "MenuProps", "multiple", "native", "onClose", "onOpen", "open", "renderValue", "SelectDisplayProps", "variant"], _excluded2$e = ["root"];
-const useUtilityClasses$1t = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1N = ["autoWidth", "children", "classes", "className", "defaultOpen", "displayEmpty", "IconComponent", "id", "input", "inputProps", "label", "labelId", "MenuProps", "multiple", "native", "onClose", "onOpen", "open", "renderValue", "SelectDisplayProps", "variant"], _excluded2$e = ["root"];
+const useUtilityClasses$1u = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2
   } = ownerState;
   return classes2;
-}, "useUtilityClasses$1t");
+}, "useUtilityClasses$1u");
 const styledRootConfig = {
   name: "MuiSelect",
   overridesResolver: (props, styles2) => styles2.root,
@@ -24108,7 +24108,7 @@ const Select = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(fu
     renderValue: renderValue2,
     SelectDisplayProps,
     variant: variantProp = "outlined"
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1M);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1N);
   const inputComponent = native ? NativeSelectInput : SelectInput;
   const muiFormControl = useFormControl();
   const fcs = formControlState({
@@ -24121,7 +24121,7 @@ const Select = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(fu
     variant,
     classes: classesProp
   });
-  const classes2 = useUtilityClasses$1t(ownerState);
+  const classes2 = useUtilityClasses$1u(ownerState);
   const restOfClasses = _objectWithoutPropertiesLoose$1(classes2, _excluded2$e);
   const InputComponent = input || {
     standard: /* @__PURE__ */ jsxRuntimeExports.jsx(StyledInput, {
@@ -24183,8 +24183,8 @@ function getToolbarUtilityClass(slot) {
 }
 __name(getToolbarUtilityClass, "getToolbarUtilityClass");
 generateUtilityClasses$1("MuiToolbar", ["root", "gutters", "regular", "dense"]);
-const _excluded$1L = ["className", "component", "disableGutters", "variant"];
-const useUtilityClasses$1s = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1M = ["className", "component", "disableGutters", "variant"];
+const useUtilityClasses$1t = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     disableGutters,
@@ -24194,7 +24194,7 @@ const useUtilityClasses$1s = /* @__PURE__ */ __name((ownerState) => {
     root: ["root", !disableGutters && "gutters", variant]
   };
   return composeClasses(slots, getToolbarUtilityClass, classes2);
-}, "useUtilityClasses$1s");
+}, "useUtilityClasses$1t");
 const ToolbarRoot = styled("div", {
   name: "MuiToolbar",
   slot: "Root",
@@ -24234,13 +24234,13 @@ const Toolbar = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(f
     component = "div",
     disableGutters = false,
     variant = "regular"
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1L);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1M);
   const ownerState = _extends$4({}, props, {
     component,
     disableGutters,
     variant
   });
-  const classes2 = useUtilityClasses$1s(ownerState);
+  const classes2 = useUtilityClasses$1t(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(ToolbarRoot, _extends$4({
     as: component,
     className: clsx(classes2.root, className),
@@ -24259,8 +24259,8 @@ function getIconButtonUtilityClass(slot) {
 }
 __name(getIconButtonUtilityClass, "getIconButtonUtilityClass");
 const iconButtonClasses = generateUtilityClasses$1("MuiIconButton", ["root", "disabled", "colorInherit", "colorPrimary", "colorSecondary", "colorError", "colorInfo", "colorSuccess", "colorWarning", "edgeStart", "edgeEnd", "sizeSmall", "sizeMedium", "sizeLarge"]);
-const _excluded$1K = ["edge", "children", "className", "color", "disabled", "disableFocusRipple", "size"];
-const useUtilityClasses$1r = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1L = ["edge", "children", "className", "color", "disabled", "disableFocusRipple", "size"];
+const useUtilityClasses$1s = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     disabled,
@@ -24272,7 +24272,7 @@ const useUtilityClasses$1r = /* @__PURE__ */ __name((ownerState) => {
     root: ["root", disabled && "disabled", color2 !== "default" && `color${capitalize$1(color2)}`, edge && `edge${capitalize$1(edge)}`, `size${capitalize$1(size2)}`]
   };
   return composeClasses(slots, getIconButtonUtilityClass, classes2);
-}, "useUtilityClasses$1r");
+}, "useUtilityClasses$1s");
 const IconButtonRoot = styled(ButtonBase, {
   name: "MuiIconButton",
   slot: "Root",
@@ -24354,7 +24354,7 @@ const IconButton = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __nam
     disabled = false,
     disableFocusRipple = false,
     size: size2 = "medium"
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1K);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1L);
   const ownerState = _extends$4({}, props, {
     edge,
     color: color2,
@@ -24362,7 +24362,7 @@ const IconButton = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __nam
     disableFocusRipple,
     size: size2
   });
-  const classes2 = useUtilityClasses$1r(ownerState);
+  const classes2 = useUtilityClasses$1s(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(IconButtonRoot, _extends$4({
     className: clsx(classes2.root, className),
     centerRipple: true,
@@ -24380,7 +24380,7 @@ const LastPageIcon = createSvgIcon$1(/* @__PURE__ */ jsxRuntimeExports.jsx("path
 const FirstPageIcon = createSvgIcon$1(/* @__PURE__ */ jsxRuntimeExports.jsx("path", {
   d: "M18.41 16.59L13.82 12l4.59-4.59L17 6l-6 6 6 6zM6 6h2v12H6z"
 }), "FirstPage");
-const _excluded$1J = ["backIconButtonProps", "count", "disabled", "getItemAriaLabel", "nextIconButtonProps", "onPageChange", "page", "rowsPerPage", "showFirstButton", "showLastButton", "slots", "slotProps"];
+const _excluded$1K = ["backIconButtonProps", "count", "disabled", "getItemAriaLabel", "nextIconButtonProps", "onPageChange", "page", "rowsPerPage", "showFirstButton", "showLastButton", "slots", "slotProps"];
 const TablePaginationActions = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(function TablePaginationActions2(props, ref) {
   var _slots$firstButton, _slots$lastButton, _slots$nextButton, _slots$previousButton, _slots$firstButtonIco, _slots$lastButtonIcon, _slots$nextButtonIcon, _slots$previousButton2;
   const {
@@ -24396,7 +24396,7 @@ const TablePaginationActions = /* @__PURE__ */ reactExports.forwardRef(/* @__PUR
     showLastButton,
     slots = {},
     slotProps = {}
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1J);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1K);
   const isRtl = useRtl();
   const handleFirstPageButtonClick = /* @__PURE__ */ __name((event) => {
     onPageChange(event, 0);
@@ -24468,7 +24468,7 @@ function getTablePaginationUtilityClass(slot) {
 __name(getTablePaginationUtilityClass, "getTablePaginationUtilityClass");
 const tablePaginationClasses = generateUtilityClasses$1("MuiTablePagination", ["root", "toolbar", "spacer", "selectLabel", "selectRoot", "select", "selectIcon", "input", "menuItem", "displayedRows", "actions"]);
 var _InputBase;
-const _excluded$1I = ["ActionsComponent", "backIconButtonProps", "className", "colSpan", "component", "count", "disabled", "getItemAriaLabel", "labelDisplayedRows", "labelRowsPerPage", "nextIconButtonProps", "onPageChange", "onRowsPerPageChange", "page", "rowsPerPage", "rowsPerPageOptions", "SelectProps", "showFirstButton", "showLastButton", "slotProps", "slots"];
+const _excluded$1J = ["ActionsComponent", "backIconButtonProps", "className", "colSpan", "component", "count", "disabled", "getItemAriaLabel", "labelDisplayedRows", "labelRowsPerPage", "nextIconButtonProps", "onPageChange", "onRowsPerPageChange", "page", "rowsPerPage", "rowsPerPageOptions", "SelectProps", "showFirstButton", "showLastButton", "slotProps", "slots"];
 const TablePaginationRoot = styled(TableCell, {
   name: "MuiTablePagination",
   slot: "Root",
@@ -24570,7 +24570,7 @@ function defaultGetAriaLabel(type) {
   return `Go to ${type} page`;
 }
 __name(defaultGetAriaLabel, "defaultGetAriaLabel");
-const useUtilityClasses$1q = /* @__PURE__ */ __name((ownerState) => {
+const useUtilityClasses$1r = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2
   } = ownerState;
@@ -24587,7 +24587,7 @@ const useUtilityClasses$1q = /* @__PURE__ */ __name((ownerState) => {
     actions: ["actions"]
   };
   return composeClasses(slots, getTablePaginationUtilityClass, classes2);
-}, "useUtilityClasses$1q");
+}, "useUtilityClasses$1r");
 const TablePagination = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(function TablePagination2(inProps, ref) {
   var _slotProps$select;
   const props = useDefaultProps({
@@ -24616,9 +24616,9 @@ const TablePagination = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ 
     showLastButton = false,
     slotProps = {},
     slots = {}
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1I);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1J);
   const ownerState = props;
-  const classes2 = useUtilityClasses$1q(ownerState);
+  const classes2 = useUtilityClasses$1r(ownerState);
   const selectProps = (_slotProps$select = slotProps == null ? void 0 : slotProps.select) != null ? _slotProps$select : SelectProps;
   const MenuItemComponent = selectProps.native ? "option" : TablePaginationMenuItem;
   let colSpan;
@@ -24704,8 +24704,8 @@ function getTableRowUtilityClass(slot) {
 }
 __name(getTableRowUtilityClass, "getTableRowUtilityClass");
 const tableRowClasses = generateUtilityClasses$1("MuiTableRow", ["root", "selected", "hover", "head", "footer"]);
-const _excluded$1H = ["className", "component", "hover", "selected"];
-const useUtilityClasses$1p = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1I = ["className", "component", "hover", "selected"];
+const useUtilityClasses$1q = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     selected,
@@ -24717,7 +24717,7 @@ const useUtilityClasses$1p = /* @__PURE__ */ __name((ownerState) => {
     root: ["root", selected && "selected", hover && "hover", head && "head", footer && "footer"]
   };
   return composeClasses(slots, getTableRowUtilityClass, classes2);
-}, "useUtilityClasses$1p");
+}, "useUtilityClasses$1q");
 const TableRowRoot = styled("tr", {
   name: "MuiTableRow",
   slot: "Root",
@@ -24756,7 +24756,7 @@ const TableRow = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(
     component = defaultComponent,
     hover = false,
     selected = false
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1H);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1I);
   const tablelvl22 = reactExports.useContext(Tablelvl2Context);
   const ownerState = _extends$4({}, props, {
     component,
@@ -24765,7 +24765,7 @@ const TableRow = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(
     head: tablelvl22 && tablelvl22.variant === "head",
     footer: tablelvl22 && tablelvl22.variant === "footer"
   });
-  const classes2 = useUtilityClasses$1p(ownerState);
+  const classes2 = useUtilityClasses$1q(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(TableRowRoot, _extends$4({
     as: component,
     ref,
@@ -24782,8 +24782,8 @@ function getTableSortLabelUtilityClass(slot) {
 }
 __name(getTableSortLabelUtilityClass, "getTableSortLabelUtilityClass");
 const tableSortLabelClasses = generateUtilityClasses$1("MuiTableSortLabel", ["root", "active", "icon", "iconDirectionDesc", "iconDirectionAsc"]);
-const _excluded$1G = ["active", "children", "className", "direction", "hideSortIcon", "IconComponent"];
-const useUtilityClasses$1o = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1H = ["active", "children", "className", "direction", "hideSortIcon", "IconComponent"];
+const useUtilityClasses$1p = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     direction,
@@ -24794,7 +24794,7 @@ const useUtilityClasses$1o = /* @__PURE__ */ __name((ownerState) => {
     icon: ["icon", `iconDirection${capitalize$1(direction)}`]
   };
   return composeClasses(slots, getTableSortLabelUtilityClass, classes2);
-}, "useUtilityClasses$1o");
+}, "useUtilityClasses$1p");
 const TableSortLabelRoot = styled(ButtonBase, {
   name: "MuiTableSortLabel",
   slot: "Root",
@@ -24867,14 +24867,14 @@ const TableSortLabel = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ _
     direction = "asc",
     hideSortIcon = false,
     IconComponent = ArrowDownwardIcon
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1G);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1H);
   const ownerState = _extends$4({}, props, {
     active,
     direction,
     hideSortIcon,
     IconComponent
   });
-  const classes2 = useUtilityClasses$1o(ownerState);
+  const classes2 = useUtilityClasses$1p(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(TableSortLabelRoot, _extends$4({
     className: clsx(classes2.root, className),
     component: "span",
@@ -26359,7 +26359,7 @@ function getPopperUtilityClass(slot) {
 }
 __name(getPopperUtilityClass, "getPopperUtilityClass");
 generateUtilityClasses$1("MuiPopper", ["root"]);
-const _excluded$1F = ["anchorEl", "children", "direction", "disablePortal", "modifiers", "open", "placement", "popperOptions", "popperRef", "slotProps", "slots", "TransitionProps", "ownerState"], _excluded2$d = ["anchorEl", "children", "container", "direction", "disablePortal", "keepMounted", "modifiers", "open", "placement", "popperOptions", "popperRef", "style", "transition", "slotProps", "slots"];
+const _excluded$1G = ["anchorEl", "children", "direction", "disablePortal", "modifiers", "open", "placement", "popperOptions", "popperRef", "slotProps", "slots", "TransitionProps", "ownerState"], _excluded2$d = ["anchorEl", "children", "container", "direction", "disablePortal", "keepMounted", "modifiers", "open", "placement", "popperOptions", "popperRef", "style", "transition", "slotProps", "slots"];
 function flipPlacement(placement, direction) {
   if (direction === "ltr") {
     return placement;
@@ -26386,7 +26386,7 @@ function isHTMLElement$1(element) {
   return element.nodeType !== void 0;
 }
 __name(isHTMLElement$1, "isHTMLElement$1");
-const useUtilityClasses$1n = /* @__PURE__ */ __name((ownerState) => {
+const useUtilityClasses$1o = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2
   } = ownerState;
@@ -26394,7 +26394,7 @@ const useUtilityClasses$1n = /* @__PURE__ */ __name((ownerState) => {
     root: ["root"]
   };
   return composeClasses(slots, getPopperUtilityClass, classes2);
-}, "useUtilityClasses$1n");
+}, "useUtilityClasses$1o");
 const defaultPopperOptions = {};
 const PopperTooltip = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(function PopperTooltip2(props, forwardedRef) {
   var _slots$root;
@@ -26413,7 +26413,7 @@ const PopperTooltip = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __
     TransitionProps
     // @ts-ignore internal logic
     // prevent from spreading to DOM, it can come from the parent component e.g. Select.
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1F);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1G);
   const tooltipRef = reactExports.useRef(null);
   const ownRef = useForkRef(tooltipRef, forwardedRef);
   const popperRef = reactExports.useRef(null);
@@ -26486,7 +26486,7 @@ const PopperTooltip = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __
   if (TransitionProps !== null) {
     childProps.TransitionProps = TransitionProps;
   }
-  const classes2 = useUtilityClasses$1n(props);
+  const classes2 = useUtilityClasses$1o(props);
   const Root = (_slots$root = slots.root) != null ? _slots$root : "div";
   const rootProps = useSlotProps$1({
     elementType: Root,
@@ -26573,7 +26573,7 @@ const Popper$1 = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(
     }))
   });
 }, "Popper2"));
-const _excluded$1E = ["anchorEl", "component", "components", "componentsProps", "container", "disablePortal", "keepMounted", "modifiers", "open", "placement", "popperOptions", "popperRef", "transition", "slots", "slotProps"];
+const _excluded$1F = ["anchorEl", "component", "components", "componentsProps", "container", "disablePortal", "keepMounted", "modifiers", "open", "placement", "popperOptions", "popperRef", "transition", "slots", "slotProps"];
 const PopperRoot = styled(Popper$1, {
   name: "MuiPopper",
   slot: "Root",
@@ -26602,7 +26602,7 @@ const Popper = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(fu
     transition,
     slots,
     slotProps
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1E);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1F);
   const RootComponent = (_slots$root = slots == null ? void 0 : slots.root) != null ? _slots$root : components == null ? void 0 : components.Root;
   const otherProps = _extends$4({
     anchorEl,
@@ -26632,12 +26632,12 @@ function getTooltipUtilityClass(slot) {
 }
 __name(getTooltipUtilityClass, "getTooltipUtilityClass");
 const tooltipClasses = generateUtilityClasses$1("MuiTooltip", ["popper", "popperInteractive", "popperArrow", "popperClose", "tooltip", "tooltipArrow", "touch", "tooltipPlacementLeft", "tooltipPlacementRight", "tooltipPlacementTop", "tooltipPlacementBottom", "arrow"]);
-const _excluded$1D = ["arrow", "children", "classes", "components", "componentsProps", "describeChild", "disableFocusListener", "disableHoverListener", "disableInteractive", "disableTouchListener", "enterDelay", "enterNextDelay", "enterTouchDelay", "followCursor", "id", "leaveDelay", "leaveTouchDelay", "onClose", "onOpen", "open", "placement", "PopperComponent", "PopperProps", "slotProps", "slots", "title", "TransitionComponent", "TransitionProps"];
+const _excluded$1E = ["arrow", "children", "classes", "components", "componentsProps", "describeChild", "disableFocusListener", "disableHoverListener", "disableInteractive", "disableTouchListener", "enterDelay", "enterNextDelay", "enterTouchDelay", "followCursor", "id", "leaveDelay", "leaveTouchDelay", "onClose", "onOpen", "open", "placement", "PopperComponent", "PopperProps", "slotProps", "slots", "title", "TransitionComponent", "TransitionProps"];
 function round$3(value) {
   return Math.round(value * 1e5) / 1e5;
 }
 __name(round$3, "round$3");
-const useUtilityClasses$1m = /* @__PURE__ */ __name((ownerState) => {
+const useUtilityClasses$1n = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     disableInteractive,
@@ -26651,7 +26651,7 @@ const useUtilityClasses$1m = /* @__PURE__ */ __name((ownerState) => {
     arrow: ["arrow"]
   };
   return composeClasses(slots, getTooltipUtilityClass, classes2);
-}, "useUtilityClasses$1m");
+}, "useUtilityClasses$1n");
 const TooltipPopper = styled(Popper, {
   name: "MuiTooltip",
   slot: "Popper",
@@ -26853,7 +26853,7 @@ const Tooltip = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(f
     title,
     TransitionComponent: TransitionComponentProp = Grow,
     TransitionProps
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1D);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1E);
   const children = /* @__PURE__ */ reactExports.isValidElement(childrenProp) ? childrenProp : /* @__PURE__ */ jsxRuntimeExports.jsx("span", {
     children: childrenProp
   });
@@ -27079,7 +27079,7 @@ const Tooltip = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(f
     PopperComponentProp,
     touch: ignoreNonTouchEvents.current
   });
-  const classes2 = useUtilityClasses$1m(ownerState);
+  const classes2 = useUtilityClasses$1n(ownerState);
   const PopperComponent = (_ref = (_slots$popper = slots.popper) != null ? _slots$popper : components.Popper) != null ? _ref : TooltipPopper;
   const TransitionComponent = (_ref2 = (_ref3 = (_slots$transition = slots.transition) != null ? _slots$transition : components.Transition) != null ? _ref3 : TransitionComponentProp) != null ? _ref2 : Grow;
   const TooltipComponent = (_ref4 = (_slots$tooltip = slots.tooltip) != null ? _slots$tooltip : components.Tooltip) != null ? _ref4 : TooltipTooltip;
@@ -27133,8 +27133,8 @@ function getFormControlUtilityClasses(slot) {
 }
 __name(getFormControlUtilityClasses, "getFormControlUtilityClasses");
 generateUtilityClasses$1("MuiFormControl", ["root", "marginNone", "marginNormal", "marginDense", "fullWidth", "disabled"]);
-const _excluded$1C = ["children", "className", "color", "component", "disabled", "error", "focused", "fullWidth", "hiddenLabel", "margin", "required", "size", "variant"];
-const useUtilityClasses$1l = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1D = ["children", "className", "color", "component", "disabled", "error", "focused", "fullWidth", "hiddenLabel", "margin", "required", "size", "variant"];
+const useUtilityClasses$1m = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     margin: margin2,
@@ -27144,7 +27144,7 @@ const useUtilityClasses$1l = /* @__PURE__ */ __name((ownerState) => {
     root: ["root", margin2 !== "none" && `margin${capitalize$1(margin2)}`, fullWidth && "fullWidth"]
   };
   return composeClasses(slots, getFormControlUtilityClasses, classes2);
-}, "useUtilityClasses$1l");
+}, "useUtilityClasses$1m");
 const FormControlRoot = styled("div", {
   name: "MuiFormControl",
   slot: "Root",
@@ -27193,7 +27193,7 @@ const FormControl = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __na
     required = false,
     size: size2 = "medium",
     variant = "outlined"
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1C);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1D);
   const ownerState = _extends$4({}, props, {
     color: color2,
     component,
@@ -27206,7 +27206,7 @@ const FormControl = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __na
     size: size2,
     variant
   });
-  const classes2 = useUtilityClasses$1l(ownerState);
+  const classes2 = useUtilityClasses$1m(ownerState);
   const [adornedStart, setAdornedStart] = reactExports.useState(() => {
     let initialAdornedStart = false;
     if (children) {
@@ -27300,8 +27300,8 @@ function getFormControlLabelUtilityClasses(slot) {
 }
 __name(getFormControlLabelUtilityClasses, "getFormControlLabelUtilityClasses");
 const formControlLabelClasses = generateUtilityClasses$1("MuiFormControlLabel", ["root", "labelPlacementStart", "labelPlacementTop", "labelPlacementBottom", "disabled", "label", "error", "required", "asterisk"]);
-const _excluded$1B = ["checked", "className", "componentsProps", "control", "disabled", "disableTypography", "inputRef", "label", "labelPlacement", "name", "onChange", "required", "slotProps", "value"];
-const useUtilityClasses$1k = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1C = ["checked", "className", "componentsProps", "control", "disabled", "disableTypography", "inputRef", "label", "labelPlacement", "name", "onChange", "required", "slotProps", "value"];
+const useUtilityClasses$1l = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     disabled,
@@ -27315,7 +27315,7 @@ const useUtilityClasses$1k = /* @__PURE__ */ __name((ownerState) => {
     asterisk: ["asterisk", error && "error"]
   };
   return composeClasses(slots, getFormControlLabelUtilityClasses, classes2);
-}, "useUtilityClasses$1k");
+}, "useUtilityClasses$1l");
 const FormControlLabelRoot = styled("label", {
   name: "MuiFormControlLabel",
   slot: "Root",
@@ -27388,7 +27388,7 @@ const FormControlLabel = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */
     labelPlacement = "end",
     required: requiredProp,
     slotProps = {}
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1B);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1C);
   const muiFormControl = useFormControl();
   const disabled = (_ref = disabledProp != null ? disabledProp : control.props.disabled) != null ? _ref : muiFormControl == null ? void 0 : muiFormControl.disabled;
   const required = requiredProp != null ? requiredProp : control.props.required;
@@ -27412,7 +27412,7 @@ const FormControlLabel = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */
     required,
     error: fcs.error
   });
-  const classes2 = useUtilityClasses$1k(ownerState);
+  const classes2 = useUtilityClasses$1l(ownerState);
   const typographySlotProps = (_slotProps$typography = slotProps.typography) != null ? _slotProps$typography : componentsProps.typography;
   let label = labelProp;
   if (label != null && label.type !== Typography && !disableTypography) {
@@ -27444,8 +27444,8 @@ function getSwitchBaseUtilityClass(slot) {
 }
 __name(getSwitchBaseUtilityClass, "getSwitchBaseUtilityClass");
 generateUtilityClasses$1("PrivateSwitchBase", ["root", "checked", "disabled", "input", "edgeStart", "edgeEnd"]);
-const _excluded$1A = ["autoFocus", "checked", "checkedIcon", "className", "defaultChecked", "disabled", "disableFocusRipple", "edge", "icon", "id", "inputProps", "inputRef", "name", "onBlur", "onChange", "onFocus", "readOnly", "required", "tabIndex", "type", "value"];
-const useUtilityClasses$1j = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1B = ["autoFocus", "checked", "checkedIcon", "className", "defaultChecked", "disabled", "disableFocusRipple", "edge", "icon", "id", "inputProps", "inputRef", "name", "onBlur", "onChange", "onFocus", "readOnly", "required", "tabIndex", "type", "value"];
+const useUtilityClasses$1k = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     checked,
@@ -27457,7 +27457,7 @@ const useUtilityClasses$1j = /* @__PURE__ */ __name((ownerState) => {
     input: ["input"]
   };
   return composeClasses(slots, getSwitchBaseUtilityClass, classes2);
-}, "useUtilityClasses$1j");
+}, "useUtilityClasses$1k");
 const SwitchBaseRoot = styled(ButtonBase)(({
   ownerState
 }) => _extends$4({
@@ -27505,7 +27505,7 @@ const SwitchBase = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __nam
     tabIndex,
     type,
     value
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1A);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1B);
   const [checked, setCheckedState] = useControlled({
     controlled: checkedProp,
     default: Boolean(defaultChecked),
@@ -27552,7 +27552,7 @@ const SwitchBase = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __nam
     disableFocusRipple,
     edge
   });
-  const classes2 = useUtilityClasses$1j(ownerState);
+  const classes2 = useUtilityClasses$1k(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(SwitchBaseRoot, _extends$4({
     component: "span",
     className: clsx(classes2.root, className),
@@ -27591,8 +27591,8 @@ function getSwitchUtilityClass(slot) {
 }
 __name(getSwitchUtilityClass, "getSwitchUtilityClass");
 const switchClasses = generateUtilityClasses$1("MuiSwitch", ["root", "edgeStart", "edgeEnd", "switchBase", "colorPrimary", "colorSecondary", "sizeSmall", "sizeMedium", "checked", "disabled", "input", "thumb", "track"]);
-const _excluded$1z = ["className", "color", "edge", "size", "sx"];
-const useUtilityClasses$1i = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1A = ["className", "color", "edge", "size", "sx"];
+const useUtilityClasses$1j = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     edge,
@@ -27610,7 +27610,7 @@ const useUtilityClasses$1i = /* @__PURE__ */ __name((ownerState) => {
   };
   const composedClasses = composeClasses(slots, getSwitchUtilityClass, classes2);
   return _extends$4({}, classes2, composedClasses);
-}, "useUtilityClasses$1i");
+}, "useUtilityClasses$1j");
 const SwitchRoot = styled("span", {
   name: "MuiSwitch",
   slot: "Root",
@@ -27784,13 +27784,13 @@ const Switch = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(fu
     edge = false,
     size: size2 = "medium",
     sx
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1z);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1A);
   const ownerState = _extends$4({}, props, {
     color: color2,
     edge,
     size: size2
   });
-  const classes2 = useUtilityClasses$1i(ownerState);
+  const classes2 = useUtilityClasses$1j(ownerState);
   const icon = /* @__PURE__ */ jsxRuntimeExports.jsx(SwitchThumb, {
     className: classes2.thumb,
     ownerState
@@ -27875,7 +27875,7 @@ var _jsxRuntime$s = jsxRuntimeExports;
 default_1$s = FilterList.default = (0, _createSvgIcon$s.default)(/* @__PURE__ */ (0, _jsxRuntime$s.jsx)("path", {
   d: "M10 18h4v-2h-4zM3 6v2h18V6zm3 7h12v-2H6z"
 }), "FilterList");
-const _excluded$1y = ["className", "elementType", "ownerState", "externalForwardedProps", "getSlotOwnerState", "internalForwardedProps"], _excluded2$c = ["component", "slots", "slotProps"], _excluded3$2 = ["component"];
+const _excluded$1z = ["className", "elementType", "ownerState", "externalForwardedProps", "getSlotOwnerState", "internalForwardedProps"], _excluded2$c = ["component", "slots", "slotProps"], _excluded3$2 = ["component"];
 function useSlot(name, parameters) {
   const {
     className,
@@ -27884,7 +27884,7 @@ function useSlot(name, parameters) {
     externalForwardedProps,
     getSlotOwnerState,
     internalForwardedProps
-  } = parameters, useSlotPropsParams = _objectWithoutPropertiesLoose$1(parameters, _excluded$1y);
+  } = parameters, useSlotPropsParams = _objectWithoutPropertiesLoose$1(parameters, _excluded$1z);
   const {
     component: rootComponent,
     slots = {
@@ -27942,8 +27942,8 @@ const InfoOutlinedIcon = createSvgIcon$1(/* @__PURE__ */ jsxRuntimeExports.jsx("
 const ClearIcon$1 = createSvgIcon$1(/* @__PURE__ */ jsxRuntimeExports.jsx("path", {
   d: "M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
 }), "Close");
-const _excluded$1x = ["action", "children", "className", "closeText", "color", "components", "componentsProps", "icon", "iconMapping", "onClose", "role", "severity", "slotProps", "slots", "variant"];
-const useUtilityClasses$1h = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1y = ["action", "children", "className", "closeText", "color", "components", "componentsProps", "icon", "iconMapping", "onClose", "role", "severity", "slotProps", "slots", "variant"];
+const useUtilityClasses$1i = /* @__PURE__ */ __name((ownerState) => {
   const {
     variant,
     color: color2,
@@ -27957,7 +27957,7 @@ const useUtilityClasses$1h = /* @__PURE__ */ __name((ownerState) => {
     action: ["action"]
   };
   return composeClasses(slots, getAlertUtilityClass, classes2);
-}, "useUtilityClasses$1h");
+}, "useUtilityClasses$1i");
 const AlertRoot = styled(Paper, {
   name: "MuiAlert",
   slot: "Root",
@@ -28087,14 +28087,14 @@ const Alert = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(fun
     slotProps = {},
     slots = {},
     variant = "standard"
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1x);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1y);
   const ownerState = _extends$4({}, props, {
     color: color2,
     severity,
     variant,
     colorSeverity: color2 || severity
   });
-  const classes2 = useUtilityClasses$1h(ownerState);
+  const classes2 = useUtilityClasses$1i(ownerState);
   const externalForwardedProps = {
     slots: _extends$4({
       closeButton: components.CloseButton,
@@ -28153,8 +28153,8 @@ function getAppBarUtilityClass(slot) {
 }
 __name(getAppBarUtilityClass, "getAppBarUtilityClass");
 generateUtilityClasses$1("MuiAppBar", ["root", "positionFixed", "positionAbsolute", "positionSticky", "positionStatic", "positionRelative", "colorDefault", "colorPrimary", "colorSecondary", "colorInherit", "colorTransparent", "colorError", "colorInfo", "colorSuccess", "colorWarning"]);
-const _excluded$1w = ["className", "color", "enableColorOnDark", "position"];
-const useUtilityClasses$1g = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1x = ["className", "color", "enableColorOnDark", "position"];
+const useUtilityClasses$1h = /* @__PURE__ */ __name((ownerState) => {
   const {
     color: color2,
     position: position2,
@@ -28164,7 +28164,7 @@ const useUtilityClasses$1g = /* @__PURE__ */ __name((ownerState) => {
     root: ["root", `color${capitalize$1(color2)}`, `position${capitalize$1(position2)}`]
   };
   return composeClasses(slots, getAppBarUtilityClass, classes2);
-}, "useUtilityClasses$1g");
+}, "useUtilityClasses$1h");
 const joinVars = /* @__PURE__ */ __name((var1, var2) => var1 ? `${var1 == null ? void 0 : var1.replace(")", "")}, ${var2})` : var2, "joinVars");
 const AppBarRoot = styled(Paper, {
   name: "MuiAppBar",
@@ -28256,13 +28256,13 @@ const AppBar = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(fu
     color: color2 = "primary",
     enableColorOnDark = false,
     position: position2 = "fixed"
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1w);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1x);
   const ownerState = _extends$4({}, props, {
     color: color2,
     position: position2,
     enableColorOnDark
   });
-  const classes2 = useUtilityClasses$1g(ownerState);
+  const classes2 = useUtilityClasses$1h(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(AppBarRoot, _extends$4({
     square: true,
     component: "header",
@@ -29158,8 +29158,8 @@ function getListSubheaderUtilityClass(slot) {
 }
 __name(getListSubheaderUtilityClass, "getListSubheaderUtilityClass");
 generateUtilityClasses$1("MuiListSubheader", ["root", "colorPrimary", "colorInherit", "gutters", "inset", "sticky"]);
-const _excluded$1v = ["className", "color", "component", "disableGutters", "disableSticky", "inset"];
-const useUtilityClasses$1f = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1w = ["className", "color", "component", "disableGutters", "disableSticky", "inset"];
+const useUtilityClasses$1g = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     color: color2,
@@ -29171,7 +29171,7 @@ const useUtilityClasses$1f = /* @__PURE__ */ __name((ownerState) => {
     root: ["root", color2 !== "default" && `color${capitalize$1(color2)}`, !disableGutters && "gutters", inset && "inset", !disableSticky && "sticky"]
   };
   return composeClasses(slots, getListSubheaderUtilityClass, classes2);
-}, "useUtilityClasses$1f");
+}, "useUtilityClasses$1g");
 const ListSubheaderRoot = styled("li", {
   name: "MuiListSubheader",
   slot: "Root",
@@ -29219,7 +29219,7 @@ const ListSubheader = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __
     disableGutters = false,
     disableSticky = false,
     inset = false
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1v);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1w);
   const ownerState = _extends$4({}, props, {
     color: color2,
     component,
@@ -29227,7 +29227,7 @@ const ListSubheader = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __
     disableSticky,
     inset
   });
-  const classes2 = useUtilityClasses$1f(ownerState);
+  const classes2 = useUtilityClasses$1g(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(ListSubheaderRoot, _extends$4({
     as: component,
     className: clsx(classes2.root, className),
@@ -29244,8 +29244,8 @@ function getChipUtilityClass(slot) {
 }
 __name(getChipUtilityClass, "getChipUtilityClass");
 const chipClasses = generateUtilityClasses$1("MuiChip", ["root", "sizeSmall", "sizeMedium", "colorError", "colorInfo", "colorPrimary", "colorSecondary", "colorSuccess", "colorWarning", "disabled", "clickable", "clickableColorPrimary", "clickableColorSecondary", "deletable", "deletableColorPrimary", "deletableColorSecondary", "outlined", "filled", "outlinedPrimary", "outlinedSecondary", "filledPrimary", "filledSecondary", "avatar", "avatarSmall", "avatarMedium", "avatarColorPrimary", "avatarColorSecondary", "icon", "iconSmall", "iconMedium", "iconColorPrimary", "iconColorSecondary", "label", "labelSmall", "labelMedium", "deleteIcon", "deleteIconSmall", "deleteIconMedium", "deleteIconColorPrimary", "deleteIconColorSecondary", "deleteIconOutlinedColorPrimary", "deleteIconOutlinedColorSecondary", "deleteIconFilledColorPrimary", "deleteIconFilledColorSecondary", "focusVisible"]);
-const _excluded$1u = ["avatar", "className", "clickable", "color", "component", "deleteIcon", "disabled", "icon", "label", "onClick", "onDelete", "onKeyDown", "onKeyUp", "size", "variant", "tabIndex", "skipFocusWhenDisabled"];
-const useUtilityClasses$1e = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1v = ["avatar", "className", "clickable", "color", "component", "deleteIcon", "disabled", "icon", "label", "onClick", "onDelete", "onKeyDown", "onKeyUp", "size", "variant", "tabIndex", "skipFocusWhenDisabled"];
+const useUtilityClasses$1f = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     disabled,
@@ -29264,7 +29264,7 @@ const useUtilityClasses$1e = /* @__PURE__ */ __name((ownerState) => {
     deleteIcon: ["deleteIcon", `deleteIcon${capitalize$1(size2)}`, `deleteIconColor${capitalize$1(color2)}`, `deleteIcon${capitalize$1(variant)}Color${capitalize$1(color2)}`]
   };
   return composeClasses(slots, getChipUtilityClass, classes2);
-}, "useUtilityClasses$1e");
+}, "useUtilityClasses$1f");
 const ChipRoot = styled("div", {
   name: "MuiChip",
   slot: "Root",
@@ -29527,7 +29527,7 @@ const Chip = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(func
     tabIndex,
     skipFocusWhenDisabled = false
     // TODO v6: Rename to `focusableWhenDisabled`.
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1u);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1v);
   const chipRef = reactExports.useRef(null);
   const handleRef = useForkRef(chipRef, ref);
   const handleDeleteIconClick = /* @__PURE__ */ __name((event) => {
@@ -29568,7 +29568,7 @@ const Chip = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(func
     clickable,
     variant
   });
-  const classes2 = useUtilityClasses$1e(ownerState);
+  const classes2 = useUtilityClasses$1f(ownerState);
   const moreProps = component === ButtonBase ? _extends$4({
     component: ComponentProp || "div",
     focusVisibleClassName: classes2.focusVisible
@@ -29621,8 +29621,8 @@ function getAutocompleteUtilityClass(slot) {
 __name(getAutocompleteUtilityClass, "getAutocompleteUtilityClass");
 const autocompleteClasses = generateUtilityClasses$1("MuiAutocomplete", ["root", "expanded", "fullWidth", "focused", "focusVisible", "tag", "tagSizeSmall", "tagSizeMedium", "hasPopupIcon", "hasClearIcon", "inputRoot", "input", "inputFocused", "endAdornment", "clearIndicator", "popupIndicator", "popupIndicatorOpen", "popper", "popperDisablePortal", "paper", "listbox", "loading", "noOptions", "option", "groupLabel", "groupUl"]);
 var _ClearIcon, _ArrowDropDownIcon;
-const _excluded$1t = ["autoComplete", "autoHighlight", "autoSelect", "blurOnSelect", "ChipProps", "className", "clearIcon", "clearOnBlur", "clearOnEscape", "clearText", "closeText", "componentsProps", "defaultValue", "disableClearable", "disableCloseOnSelect", "disabled", "disabledItemsFocusable", "disableListWrap", "disablePortal", "filterOptions", "filterSelectedOptions", "forcePopupIcon", "freeSolo", "fullWidth", "getLimitTagsText", "getOptionDisabled", "getOptionKey", "getOptionLabel", "isOptionEqualToValue", "groupBy", "handleHomeEndKeys", "id", "includeInputInList", "inputValue", "limitTags", "ListboxComponent", "ListboxProps", "loading", "loadingText", "multiple", "noOptionsText", "onChange", "onClose", "onHighlightChange", "onInputChange", "onOpen", "open", "openOnFocus", "openText", "options", "PaperComponent", "PopperComponent", "popupIcon", "readOnly", "renderGroup", "renderInput", "renderOption", "renderTags", "selectOnFocus", "size", "slotProps", "value"], _excluded2$b = ["ref"], _excluded3$1 = ["key"], _excluded4 = ["key"];
-const useUtilityClasses$1d = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1u = ["autoComplete", "autoHighlight", "autoSelect", "blurOnSelect", "ChipProps", "className", "clearIcon", "clearOnBlur", "clearOnEscape", "clearText", "closeText", "componentsProps", "defaultValue", "disableClearable", "disableCloseOnSelect", "disabled", "disabledItemsFocusable", "disableListWrap", "disablePortal", "filterOptions", "filterSelectedOptions", "forcePopupIcon", "freeSolo", "fullWidth", "getLimitTagsText", "getOptionDisabled", "getOptionKey", "getOptionLabel", "isOptionEqualToValue", "groupBy", "handleHomeEndKeys", "id", "includeInputInList", "inputValue", "limitTags", "ListboxComponent", "ListboxProps", "loading", "loadingText", "multiple", "noOptionsText", "onChange", "onClose", "onHighlightChange", "onInputChange", "onOpen", "open", "openOnFocus", "openText", "options", "PaperComponent", "PopperComponent", "popupIcon", "readOnly", "renderGroup", "renderInput", "renderOption", "renderTags", "selectOnFocus", "size", "slotProps", "value"], _excluded2$b = ["ref"], _excluded3$1 = ["key"], _excluded4 = ["key"];
+const useUtilityClasses$1e = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     disablePortal,
@@ -29653,7 +29653,7 @@ const useUtilityClasses$1d = /* @__PURE__ */ __name((ownerState) => {
     groupUl: ["groupUl"]
   };
   return composeClasses(slots, getAutocompleteUtilityClass, classes2);
-}, "useUtilityClasses$1d");
+}, "useUtilityClasses$1e");
 const AutocompleteRoot = styled("div", {
   name: "MuiAutocomplete",
   slot: "Root",
@@ -30050,7 +30050,7 @@ const Autocomplete = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __n
     selectOnFocus = !props.freeSolo,
     size: size2 = "medium",
     slotProps = {}
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1t);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1u);
   const {
     getRootProps,
     getInputProps,
@@ -30103,7 +30103,7 @@ const Autocomplete = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __n
     popupOpen,
     size: size2
   });
-  const classes2 = useUtilityClasses$1d(ownerState);
+  const classes2 = useUtilityClasses$1e(ownerState);
   let startAdornment;
   if (multiple && value.length > 0) {
     const getCustomizedTagProps = /* @__PURE__ */ __name((params) => _extends$4({
@@ -30291,8 +30291,8 @@ function getAvatarUtilityClass(slot) {
 }
 __name(getAvatarUtilityClass, "getAvatarUtilityClass");
 generateUtilityClasses$1("MuiAvatar", ["root", "colorDefault", "circular", "rounded", "square", "img", "fallback"]);
-const _excluded$1s = ["alt", "children", "className", "component", "slots", "slotProps", "imgProps", "sizes", "src", "srcSet", "variant"];
-const useUtilityClasses$1c = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1t = ["alt", "children", "className", "component", "slots", "slotProps", "imgProps", "sizes", "src", "srcSet", "variant"];
+const useUtilityClasses$1d = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     variant,
@@ -30304,7 +30304,7 @@ const useUtilityClasses$1c = /* @__PURE__ */ __name((ownerState) => {
     fallback: ["fallback"]
   };
   return composeClasses(slots, getAvatarUtilityClass, classes2);
-}, "useUtilityClasses$1c");
+}, "useUtilityClasses$1d");
 const AvatarRoot = styled("div", {
   name: "MuiAvatar",
   slot: "Root",
@@ -30438,7 +30438,7 @@ const Avatar = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(fu
     src: src2,
     srcSet,
     variant = "circular"
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1s);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1t);
   let children = null;
   const loaded = useLoaded(_extends$4({}, imgProps, {
     src: src2,
@@ -30451,7 +30451,7 @@ const Avatar = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(fu
     component,
     variant
   });
-  const classes2 = useUtilityClasses$1c(ownerState);
+  const classes2 = useUtilityClasses$1d(ownerState);
   const [ImgSlot, imgSlotProps] = useSlot("img", {
     className: classes2.img,
     elementType: AvatarImg,
@@ -30550,10 +30550,10 @@ const badgeClasses = generateUtilityClasses$1("MuiBadge", [
   "anchorOriginBottomRightCircular",
   "anchorOriginBottomRightRectangular"
 ]);
-const _excluded$1r = ["anchorOrigin", "className", "classes", "component", "components", "componentsProps", "children", "overlap", "color", "invisible", "max", "badgeContent", "slots", "slotProps", "showZero", "variant"];
+const _excluded$1s = ["anchorOrigin", "className", "classes", "component", "components", "componentsProps", "children", "overlap", "color", "invisible", "max", "badgeContent", "slots", "slotProps", "showZero", "variant"];
 const RADIUS_STANDARD = 10;
 const RADIUS_DOT = 4;
-const useUtilityClasses$1b = /* @__PURE__ */ __name((ownerState) => {
+const useUtilityClasses$1c = /* @__PURE__ */ __name((ownerState) => {
   const {
     color: color2,
     anchorOrigin,
@@ -30567,7 +30567,7 @@ const useUtilityClasses$1b = /* @__PURE__ */ __name((ownerState) => {
     badge: ["badge", variant, invisible && "invisible", `anchorOrigin${capitalize$1(anchorOrigin.vertical)}${capitalize$1(anchorOrigin.horizontal)}`, `anchorOrigin${capitalize$1(anchorOrigin.vertical)}${capitalize$1(anchorOrigin.horizontal)}${capitalize$1(overlap)}`, `overlap${capitalize$1(overlap)}`, color2 !== "default" && `color${capitalize$1(color2)}`]
   };
   return composeClasses(slots, getBadgeUtilityClass, classes2);
-}, "useUtilityClasses$1b");
+}, "useUtilityClasses$1c");
 const BadgeRoot = styled("span", {
   name: "MuiBadge",
   slot: "Root",
@@ -30778,7 +30778,7 @@ const Badge = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(fun
     slotProps,
     showZero = false,
     variant: variantProp = "standard"
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1r);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1s);
   const {
     badgeContent,
     invisible: invisibleFromHook,
@@ -30816,7 +30816,7 @@ const Badge = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(fun
     overlap,
     variant
   });
-  const classes2 = useUtilityClasses$1b(ownerState);
+  const classes2 = useUtilityClasses$1c(ownerState);
   const RootSlot = (_ref = (_slots$root = slots == null ? void 0 : slots.root) != null ? _slots$root : components.Root) != null ? _ref : BadgeRoot;
   const BadgeSlot = (_ref2 = (_slots$badge = slots == null ? void 0 : slots.badge) != null ? _slots$badge : components.Badge) != null ? _ref2 : BadgeBadge;
   const rootSlotProps = (_slotProps$root = slotProps == null ? void 0 : slotProps.root) != null ? _slotProps$root : componentsProps.root;
@@ -30851,8 +30851,8 @@ __name(getButtonUtilityClass, "getButtonUtilityClass");
 const buttonClasses = generateUtilityClasses$1("MuiButton", ["root", "text", "textInherit", "textPrimary", "textSecondary", "textSuccess", "textError", "textInfo", "textWarning", "outlined", "outlinedInherit", "outlinedPrimary", "outlinedSecondary", "outlinedSuccess", "outlinedError", "outlinedInfo", "outlinedWarning", "contained", "containedInherit", "containedPrimary", "containedSecondary", "containedSuccess", "containedError", "containedInfo", "containedWarning", "disableElevation", "focusVisible", "disabled", "colorInherit", "colorPrimary", "colorSecondary", "colorSuccess", "colorError", "colorInfo", "colorWarning", "textSizeSmall", "textSizeMedium", "textSizeLarge", "outlinedSizeSmall", "outlinedSizeMedium", "outlinedSizeLarge", "containedSizeSmall", "containedSizeMedium", "containedSizeLarge", "sizeMedium", "sizeSmall", "sizeLarge", "fullWidth", "startIcon", "endIcon", "icon", "iconSizeSmall", "iconSizeMedium", "iconSizeLarge"]);
 const ButtonGroupContext = /* @__PURE__ */ reactExports.createContext({});
 const ButtonGroupButtonContext = /* @__PURE__ */ reactExports.createContext(void 0);
-const _excluded$1q = ["children", "color", "component", "className", "disabled", "disableElevation", "disableFocusRipple", "endIcon", "focusVisibleClassName", "fullWidth", "size", "startIcon", "type", "variant"];
-const useUtilityClasses$1a = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1r = ["children", "color", "component", "className", "disabled", "disableElevation", "disableFocusRipple", "endIcon", "focusVisibleClassName", "fullWidth", "size", "startIcon", "type", "variant"];
+const useUtilityClasses$1b = /* @__PURE__ */ __name((ownerState) => {
   const {
     color: color2,
     disableElevation,
@@ -30869,7 +30869,7 @@ const useUtilityClasses$1a = /* @__PURE__ */ __name((ownerState) => {
   };
   const composedClasses = composeClasses(slots, getButtonUtilityClass, classes2);
   return _extends$4({}, classes2, composedClasses);
-}, "useUtilityClasses$1a");
+}, "useUtilityClasses$1b");
 const commonIconStyles = /* @__PURE__ */ __name((ownerState) => _extends$4({}, ownerState.size === "small" && {
   "& > *:nth-of-type(1)": {
     fontSize: 18
@@ -31077,7 +31077,7 @@ const Button = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(fu
     startIcon: startIconProp,
     type,
     variant = "text"
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1q);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1r);
   const ownerState = _extends$4({}, props, {
     color: color2,
     component,
@@ -31089,7 +31089,7 @@ const Button = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(fu
     type,
     variant
   });
-  const classes2 = useUtilityClasses$1a(ownerState);
+  const classes2 = useUtilityClasses$1b(ownerState);
   const startIcon = startIconProp && /* @__PURE__ */ jsxRuntimeExports.jsx(ButtonStartIcon, {
     className: classes2.startIcon,
     ownerState,
@@ -31120,8 +31120,8 @@ function getCardUtilityClass(slot) {
 }
 __name(getCardUtilityClass, "getCardUtilityClass");
 generateUtilityClasses$1("MuiCard", ["root"]);
-const _excluded$1p = ["className", "raised"];
-const useUtilityClasses$19 = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1q = ["className", "raised"];
+const useUtilityClasses$1a = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2
   } = ownerState;
@@ -31129,7 +31129,7 @@ const useUtilityClasses$19 = /* @__PURE__ */ __name((ownerState) => {
     root: ["root"]
   };
   return composeClasses(slots, getCardUtilityClass, classes2);
-}, "useUtilityClasses$19");
+}, "useUtilityClasses$1a");
 const CardRoot = styled(Paper, {
   name: "MuiCard",
   slot: "Root",
@@ -31147,11 +31147,11 @@ const Card = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(func
   const {
     className,
     raised = false
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1p);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1q);
   const ownerState = _extends$4({}, props, {
     raised
   });
-  const classes2 = useUtilityClasses$19(ownerState);
+  const classes2 = useUtilityClasses$1a(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(CardRoot, _extends$4({
     className: clsx(classes2.root, className),
     elevation: raised ? 8 : void 0,
@@ -31164,8 +31164,8 @@ function getCardActionAreaUtilityClass(slot) {
 }
 __name(getCardActionAreaUtilityClass, "getCardActionAreaUtilityClass");
 const cardActionAreaClasses = generateUtilityClasses$1("MuiCardActionArea", ["root", "focusVisible", "focusHighlight"]);
-const _excluded$1o = ["children", "className", "focusVisibleClassName"];
-const useUtilityClasses$18 = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1p = ["children", "className", "focusVisibleClassName"];
+const useUtilityClasses$19 = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2
   } = ownerState;
@@ -31174,7 +31174,7 @@ const useUtilityClasses$18 = /* @__PURE__ */ __name((ownerState) => {
     focusHighlight: ["focusHighlight"]
   };
   return composeClasses(slots, getCardActionAreaUtilityClass, classes2);
-}, "useUtilityClasses$18");
+}, "useUtilityClasses$19");
 const CardActionAreaRoot = styled(ButtonBase, {
   name: "MuiCardActionArea",
   slot: "Root",
@@ -31227,9 +31227,9 @@ const CardActionArea = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ _
     children,
     className,
     focusVisibleClassName
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1o);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1p);
   const ownerState = props;
-  const classes2 = useUtilityClasses$18(ownerState);
+  const classes2 = useUtilityClasses$19(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(CardActionAreaRoot, _extends$4({
     className: clsx(classes2.root, className),
     focusVisibleClassName: clsx(focusVisibleClassName, classes2.focusVisible),
@@ -31247,8 +31247,8 @@ function getCardContentUtilityClass(slot) {
 }
 __name(getCardContentUtilityClass, "getCardContentUtilityClass");
 generateUtilityClasses$1("MuiCardContent", ["root"]);
-const _excluded$1n = ["className", "component"];
-const useUtilityClasses$17 = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1o = ["className", "component"];
+const useUtilityClasses$18 = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2
   } = ownerState;
@@ -31256,7 +31256,7 @@ const useUtilityClasses$17 = /* @__PURE__ */ __name((ownerState) => {
     root: ["root"]
   };
   return composeClasses(slots, getCardContentUtilityClass, classes2);
-}, "useUtilityClasses$17");
+}, "useUtilityClasses$18");
 const CardContentRoot = styled("div", {
   name: "MuiCardContent",
   slot: "Root",
@@ -31277,11 +31277,11 @@ const CardContent = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __na
   const {
     className,
     component = "div"
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1n);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1o);
   const ownerState = _extends$4({}, props, {
     component
   });
-  const classes2 = useUtilityClasses$17(ownerState);
+  const classes2 = useUtilityClasses$18(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(CardContentRoot, _extends$4({
     as: component,
     className: clsx(classes2.root, className),
@@ -31294,8 +31294,8 @@ function getCardMediaUtilityClass(slot) {
 }
 __name(getCardMediaUtilityClass, "getCardMediaUtilityClass");
 generateUtilityClasses$1("MuiCardMedia", ["root", "media", "img"]);
-const _excluded$1m = ["children", "className", "component", "image", "src", "style"];
-const useUtilityClasses$16 = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1n = ["children", "className", "component", "image", "src", "style"];
+const useUtilityClasses$17 = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     isMediaComponent,
@@ -31305,7 +31305,7 @@ const useUtilityClasses$16 = /* @__PURE__ */ __name((ownerState) => {
     root: ["root", isMediaComponent && "media", isImageComponent && "img"]
   };
   return composeClasses(slots, getCardMediaUtilityClass, classes2);
-}, "useUtilityClasses$16");
+}, "useUtilityClasses$17");
 const CardMediaRoot = styled("div", {
   name: "MuiCardMedia",
   slot: "Root",
@@ -31346,7 +31346,7 @@ const CardMedia = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name
     image,
     src: src2,
     style: style2
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1m);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1n);
   const isMediaComponent = MEDIA_COMPONENTS.indexOf(component) !== -1;
   const composedStyle = !isMediaComponent && image ? _extends$4({
     backgroundImage: `url("${image}")`
@@ -31356,7 +31356,7 @@ const CardMedia = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name
     isMediaComponent,
     isImageComponent: IMAGE_COMPONENTS.indexOf(component) !== -1
   });
-  const classes2 = useUtilityClasses$16(ownerState);
+  const classes2 = useUtilityClasses$17(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(CardMediaRoot, _extends$4({
     className: clsx(classes2.root, className),
     as: component,
@@ -31383,8 +31383,8 @@ function getCheckboxUtilityClass(slot) {
 }
 __name(getCheckboxUtilityClass, "getCheckboxUtilityClass");
 const checkboxClasses = generateUtilityClasses$1("MuiCheckbox", ["root", "checked", "disabled", "indeterminate", "colorPrimary", "colorSecondary", "sizeSmall", "sizeMedium"]);
-const _excluded$1l = ["checkedIcon", "color", "icon", "indeterminate", "indeterminateIcon", "inputProps", "size", "className"];
-const useUtilityClasses$15 = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1m = ["checkedIcon", "color", "icon", "indeterminate", "indeterminateIcon", "inputProps", "size", "className"];
+const useUtilityClasses$16 = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     indeterminate,
@@ -31396,7 +31396,7 @@ const useUtilityClasses$15 = /* @__PURE__ */ __name((ownerState) => {
   };
   const composedClasses = composeClasses(slots, getCheckboxUtilityClass, classes2);
   return _extends$4({}, classes2, composedClasses);
-}, "useUtilityClasses$15");
+}, "useUtilityClasses$16");
 const CheckboxRoot = styled(SwitchBase, {
   shouldForwardProp: (prop) => rootShouldForwardProp(prop) || prop === "classes",
   name: "MuiCheckbox",
@@ -31446,7 +31446,7 @@ const Checkbox = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(
     inputProps,
     size: size2 = "medium",
     className
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1l);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1m);
   const icon = indeterminate ? indeterminateIconProp : iconProp;
   const indeterminateIcon = indeterminate ? indeterminateIconProp : checkedIcon;
   const ownerState = _extends$4({}, props, {
@@ -31454,7 +31454,7 @@ const Checkbox = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(
     indeterminate,
     size: size2
   });
-  const classes2 = useUtilityClasses$15(ownerState);
+  const classes2 = useUtilityClasses$16(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(CheckboxRoot, _extends$4({
     type: "checkbox",
     inputProps: _extends$4({
@@ -31478,7 +31478,7 @@ function getCircularProgressUtilityClass(slot) {
 }
 __name(getCircularProgressUtilityClass, "getCircularProgressUtilityClass");
 generateUtilityClasses$1("MuiCircularProgress", ["root", "determinate", "indeterminate", "colorPrimary", "colorSecondary", "svg", "circle", "circleDeterminate", "circleIndeterminate", "circleDisableShrink"]);
-const _excluded$1k = ["className", "color", "disableShrink", "size", "style", "thickness", "value", "variant"];
+const _excluded$1l = ["className", "color", "disableShrink", "size", "style", "thickness", "value", "variant"];
 let _$2 = /* @__PURE__ */ __name((t2) => t2, "_$2"), _t$2, _t2$2, _t3$2, _t4$2;
 const SIZE = 44;
 const circularRotateKeyframe = keyframes$1(_t$2 || (_t$2 = _$2`
@@ -31506,7 +31506,7 @@ const circularDashKeyframe = keyframes$1(_t2$2 || (_t2$2 = _$2`
     stroke-dashoffset: -125px;
   }
 `));
-const useUtilityClasses$14 = /* @__PURE__ */ __name((ownerState) => {
+const useUtilityClasses$15 = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     variant,
@@ -31519,7 +31519,7 @@ const useUtilityClasses$14 = /* @__PURE__ */ __name((ownerState) => {
     circle: ["circle", `circle${capitalize$1(variant)}`, disableShrink && "circleDisableShrink"]
   };
   return composeClasses(slots, getCircularProgressUtilityClass, classes2);
-}, "useUtilityClasses$14");
+}, "useUtilityClasses$15");
 const CircularProgressRoot = styled("span", {
   name: "MuiCircularProgress",
   slot: "Root",
@@ -31591,7 +31591,7 @@ const CircularProgress = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */
     thickness = 3.6,
     value = 0,
     variant = "indeterminate"
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1k);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1l);
   const ownerState = _extends$4({}, props, {
     color: color2,
     disableShrink,
@@ -31600,7 +31600,7 @@ const CircularProgress = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */
     value,
     variant
   });
-  const classes2 = useUtilityClasses$14(ownerState);
+  const classes2 = useUtilityClasses$15(ownerState);
   const circleStyle = {};
   const rootStyle = {};
   const rootProps = {};
@@ -31784,7 +31784,7 @@ const body = /* @__PURE__ */ __name((theme2) => _extends$4({
     backgroundColor: (theme2.vars || theme2).palette.common.white
   }
 }), "body");
-const styles$7 = /* @__PURE__ */ __name((theme2, enableColorScheme = false) => {
+const styles$9 = /* @__PURE__ */ __name((theme2, enableColorScheme = false) => {
   var _theme$components;
   const colorSchemeStyles = {};
   if (enableColorScheme && theme2.colorSchemes) {
@@ -31818,7 +31818,7 @@ const styles$7 = /* @__PURE__ */ __name((theme2, enableColorScheme = false) => {
     defaultStyles = [defaultStyles, themeOverrides];
   }
   return defaultStyles;
-}, "styles$7");
+}, "styles$9");
 function CssBaseline(inProps) {
   const props = useDefaultProps({
     props: inProps,
@@ -31830,7 +31830,7 @@ function CssBaseline(inProps) {
   } = props;
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(reactExports.Fragment, {
     children: [/* @__PURE__ */ jsxRuntimeExports.jsx(GlobalStyles, {
-      styles: (theme2) => styles$7(theme2, enableColorScheme)
+      styles: (theme2) => styles$9(theme2, enableColorScheme)
     }), children]
   });
 }
@@ -31841,7 +31841,7 @@ function getDialogUtilityClass(slot) {
 __name(getDialogUtilityClass, "getDialogUtilityClass");
 const dialogClasses = generateUtilityClasses$1("MuiDialog", ["root", "scrollPaper", "scrollBody", "container", "paper", "paperScrollPaper", "paperScrollBody", "paperWidthFalse", "paperWidthXs", "paperWidthSm", "paperWidthMd", "paperWidthLg", "paperWidthXl", "paperFullWidth", "paperFullScreen"]);
 const DialogContext = /* @__PURE__ */ reactExports.createContext({});
-const _excluded$1j = ["aria-describedby", "aria-labelledby", "BackdropComponent", "BackdropProps", "children", "className", "disableEscapeKeyDown", "fullScreen", "fullWidth", "maxWidth", "onBackdropClick", "onClick", "onClose", "open", "PaperComponent", "PaperProps", "scroll", "TransitionComponent", "transitionDuration", "TransitionProps"];
+const _excluded$1k = ["aria-describedby", "aria-labelledby", "BackdropComponent", "BackdropProps", "children", "className", "disableEscapeKeyDown", "fullScreen", "fullWidth", "maxWidth", "onBackdropClick", "onClick", "onClose", "open", "PaperComponent", "PaperProps", "scroll", "TransitionComponent", "transitionDuration", "TransitionProps"];
 const DialogBackdrop = styled(Backdrop$2, {
   name: "MuiDialog",
   slot: "Backdrop",
@@ -31850,7 +31850,7 @@ const DialogBackdrop = styled(Backdrop$2, {
   // Improve scrollable dialog support.
   zIndex: -1
 });
-const useUtilityClasses$13 = /* @__PURE__ */ __name((ownerState) => {
+const useUtilityClasses$14 = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     scroll,
@@ -31864,7 +31864,7 @@ const useUtilityClasses$13 = /* @__PURE__ */ __name((ownerState) => {
     paper: ["paper", `paperScroll${capitalize$1(scroll)}`, `paperWidth${capitalize$1(String(maxWidth2))}`, fullWidth && "paperFullWidth", fullScreen && "paperFullScreen"]
   };
   return composeClasses(slots, getDialogUtilityClass, classes2);
-}, "useUtilityClasses$13");
+}, "useUtilityClasses$14");
 const DialogRoot = styled(Modal$3, {
   name: "MuiDialog",
   slot: "Root",
@@ -32000,7 +32000,7 @@ const Dialog = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(fu
     TransitionComponent = Fade,
     transitionDuration = defaultTransitionDuration,
     TransitionProps
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1j);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1k);
   const ownerState = _extends$4({}, props, {
     disableEscapeKeyDown,
     fullScreen,
@@ -32008,7 +32008,7 @@ const Dialog = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(fu
     maxWidth: maxWidth2,
     scroll
   });
-  const classes2 = useUtilityClasses$13(ownerState);
+  const classes2 = useUtilityClasses$14(ownerState);
   const backdropClick = reactExports.useRef();
   const handleMouseDown = /* @__PURE__ */ __name((event) => {
     backdropClick.current = event.target === event.currentTarget;
@@ -32086,8 +32086,8 @@ function getDialogActionsUtilityClass(slot) {
 }
 __name(getDialogActionsUtilityClass, "getDialogActionsUtilityClass");
 generateUtilityClasses$1("MuiDialogActions", ["root", "spacing"]);
-const _excluded$1i = ["className", "disableSpacing"];
-const useUtilityClasses$12 = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1j = ["className", "disableSpacing"];
+const useUtilityClasses$13 = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     disableSpacing
@@ -32096,7 +32096,7 @@ const useUtilityClasses$12 = /* @__PURE__ */ __name((ownerState) => {
     root: ["root", !disableSpacing && "spacing"]
   };
   return composeClasses(slots, getDialogActionsUtilityClass, classes2);
-}, "useUtilityClasses$12");
+}, "useUtilityClasses$13");
 const DialogActionsRoot = styled("div", {
   name: "MuiDialogActions",
   slot: "Root",
@@ -32127,11 +32127,11 @@ const DialogActions = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __
   const {
     className,
     disableSpacing = false
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1i);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1j);
   const ownerState = _extends$4({}, props, {
     disableSpacing
   });
-  const classes2 = useUtilityClasses$12(ownerState);
+  const classes2 = useUtilityClasses$13(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(DialogActionsRoot, _extends$4({
     className: clsx(classes2.root, className),
     ownerState,
@@ -32148,8 +32148,8 @@ function getDialogTitleUtilityClass(slot) {
 }
 __name(getDialogTitleUtilityClass, "getDialogTitleUtilityClass");
 const dialogTitleClasses = generateUtilityClasses$1("MuiDialogTitle", ["root"]);
-const _excluded$1h = ["className", "dividers"];
-const useUtilityClasses$11 = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1i = ["className", "dividers"];
+const useUtilityClasses$12 = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     dividers
@@ -32158,7 +32158,7 @@ const useUtilityClasses$11 = /* @__PURE__ */ __name((ownerState) => {
     root: ["root", dividers && "dividers"]
   };
   return composeClasses(slots, getDialogContentUtilityClass, classes2);
-}, "useUtilityClasses$11");
+}, "useUtilityClasses$12");
 const DialogContentRoot = styled("div", {
   name: "MuiDialogContent",
   slot: "Root",
@@ -32194,11 +32194,11 @@ const DialogContent = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __
   const {
     className,
     dividers = false
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1h);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1i);
   const ownerState = _extends$4({}, props, {
     dividers
   });
-  const classes2 = useUtilityClasses$11(ownerState);
+  const classes2 = useUtilityClasses$12(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(DialogContentRoot, _extends$4({
     className: clsx(classes2.root, className),
     ownerState,
@@ -32210,8 +32210,8 @@ function getDialogContentTextUtilityClass(slot) {
 }
 __name(getDialogContentTextUtilityClass, "getDialogContentTextUtilityClass");
 generateUtilityClasses$1("MuiDialogContentText", ["root"]);
-const _excluded$1g = ["children", "className"];
-const useUtilityClasses$10 = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1h = ["children", "className"];
+const useUtilityClasses$11 = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2
   } = ownerState;
@@ -32220,7 +32220,7 @@ const useUtilityClasses$10 = /* @__PURE__ */ __name((ownerState) => {
   };
   const composedClasses = composeClasses(slots, getDialogContentTextUtilityClass, classes2);
   return _extends$4({}, classes2, composedClasses);
-}, "useUtilityClasses$10");
+}, "useUtilityClasses$11");
 const DialogContentTextRoot = styled(Typography, {
   shouldForwardProp: (prop) => rootShouldForwardProp(prop) || prop === "classes",
   name: "MuiDialogContentText",
@@ -32234,8 +32234,8 @@ const DialogContentText = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ *
   });
   const {
     className
-  } = props, ownerState = _objectWithoutPropertiesLoose$1(props, _excluded$1g);
-  const classes2 = useUtilityClasses$10(ownerState);
+  } = props, ownerState = _objectWithoutPropertiesLoose$1(props, _excluded$1h);
+  const classes2 = useUtilityClasses$11(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(DialogContentTextRoot, _extends$4({
     component: "p",
     variant: "body1",
@@ -32247,8 +32247,8 @@ const DialogContentText = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ *
     classes: classes2
   }));
 }, "DialogContentText2"));
-const _excluded$1f = ["className", "id"];
-const useUtilityClasses$$ = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1g = ["className", "id"];
+const useUtilityClasses$10 = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2
   } = ownerState;
@@ -32256,7 +32256,7 @@ const useUtilityClasses$$ = /* @__PURE__ */ __name((ownerState) => {
     root: ["root"]
   };
   return composeClasses(slots, getDialogTitleUtilityClass, classes2);
-}, "useUtilityClasses$$");
+}, "useUtilityClasses$10");
 const DialogTitleRoot = styled(Typography, {
   name: "MuiDialogTitle",
   slot: "Root",
@@ -32273,9 +32273,9 @@ const DialogTitle = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __na
   const {
     className,
     id: idProp
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1f);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1g);
   const ownerState = props;
-  const classes2 = useUtilityClasses$$(ownerState);
+  const classes2 = useUtilityClasses$10(ownerState);
   const {
     titleId = idProp
   } = reactExports.useContext(DialogContext);
@@ -32294,8 +32294,8 @@ function getFormHelperTextUtilityClasses(slot) {
 __name(getFormHelperTextUtilityClasses, "getFormHelperTextUtilityClasses");
 const formHelperTextClasses = generateUtilityClasses$1("MuiFormHelperText", ["root", "error", "disabled", "sizeSmall", "sizeMedium", "contained", "focused", "filled", "required"]);
 var _span$1;
-const _excluded$1e = ["children", "className", "component", "disabled", "error", "filled", "focused", "margin", "required", "variant"];
-const useUtilityClasses$_ = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1f = ["children", "className", "component", "disabled", "error", "filled", "focused", "margin", "required", "variant"];
+const useUtilityClasses$$ = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     contained,
@@ -32310,7 +32310,7 @@ const useUtilityClasses$_ = /* @__PURE__ */ __name((ownerState) => {
     root: ["root", disabled && "disabled", error && "error", size2 && `size${capitalize$1(size2)}`, contained && "contained", focused && "focused", filled && "filled", required && "required"]
   };
   return composeClasses(slots, getFormHelperTextUtilityClasses, classes2);
-}, "useUtilityClasses$_");
+}, "useUtilityClasses$$");
 const FormHelperTextRoot = styled("p", {
   name: "MuiFormHelperText",
   slot: "Root",
@@ -32352,7 +32352,7 @@ const FormHelperText = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ _
     children,
     className,
     component = "p"
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1e);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1f);
   const muiFormControl = useFormControl();
   const fcs = formControlState({
     props,
@@ -32370,7 +32370,7 @@ const FormHelperText = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ _
     focused: fcs.focused,
     required: fcs.required
   });
-  const classes2 = useUtilityClasses$_(ownerState);
+  const classes2 = useUtilityClasses$$(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(FormHelperTextRoot, _extends$4({
     as: component,
     ownerState,
@@ -32391,8 +32391,8 @@ function getFormLabelUtilityClasses(slot) {
 }
 __name(getFormLabelUtilityClasses, "getFormLabelUtilityClasses");
 const formLabelClasses = generateUtilityClasses$1("MuiFormLabel", ["root", "colorSecondary", "focused", "disabled", "error", "filled", "required", "asterisk"]);
-const _excluded$1d = ["children", "className", "color", "component", "disabled", "error", "filled", "focused", "required"];
-const useUtilityClasses$Z = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1e = ["children", "className", "color", "component", "disabled", "error", "filled", "focused", "required"];
+const useUtilityClasses$_ = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     color: color2,
@@ -32407,7 +32407,7 @@ const useUtilityClasses$Z = /* @__PURE__ */ __name((ownerState) => {
     asterisk: ["asterisk", error && "error"]
   };
   return composeClasses(slots, getFormLabelUtilityClasses, classes2);
-}, "useUtilityClasses$Z");
+}, "useUtilityClasses$_");
 const FormLabelRoot = styled("label", {
   name: "MuiFormLabel",
   slot: "Root",
@@ -32455,7 +32455,7 @@ const FormLabel = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name
     children,
     className,
     component = "label"
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1d);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1e);
   const muiFormControl = useFormControl();
   const fcs = formControlState({
     props,
@@ -32471,7 +32471,7 @@ const FormLabel = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name
     focused: fcs.focused,
     required: fcs.required
   });
-  const classes2 = useUtilityClasses$Z(ownerState);
+  const classes2 = useUtilityClasses$_(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(FormLabelRoot, _extends$4({
     as: component,
     ownerState,
@@ -32492,14 +32492,14 @@ function getInputAdornmentUtilityClass(slot) {
 __name(getInputAdornmentUtilityClass, "getInputAdornmentUtilityClass");
 const inputAdornmentClasses = generateUtilityClasses$1("MuiInputAdornment", ["root", "filled", "standard", "outlined", "positionStart", "positionEnd", "disablePointerEvents", "hiddenLabel", "sizeSmall"]);
 var _span;
-const _excluded$1c = ["children", "className", "component", "disablePointerEvents", "disableTypography", "position", "variant"];
-const overridesResolver$1 = /* @__PURE__ */ __name((props, styles2) => {
+const _excluded$1d = ["children", "className", "component", "disablePointerEvents", "disableTypography", "position", "variant"];
+const overridesResolver$2 = /* @__PURE__ */ __name((props, styles2) => {
   const {
     ownerState
   } = props;
   return [styles2.root, styles2[`position${capitalize$1(ownerState.position)}`], ownerState.disablePointerEvents === true && styles2.disablePointerEvents, styles2[ownerState.variant]];
-}, "overridesResolver$1");
-const useUtilityClasses$Y = /* @__PURE__ */ __name((ownerState) => {
+}, "overridesResolver$2");
+const useUtilityClasses$Z = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     disablePointerEvents,
@@ -32512,11 +32512,11 @@ const useUtilityClasses$Y = /* @__PURE__ */ __name((ownerState) => {
     root: ["root", disablePointerEvents && "disablePointerEvents", position2 && `position${capitalize$1(position2)}`, variant, hiddenLabel && "hiddenLabel", size2 && `size${capitalize$1(size2)}`]
   };
   return composeClasses(slots, getInputAdornmentUtilityClass, classes2);
-}, "useUtilityClasses$Y");
+}, "useUtilityClasses$Z");
 const InputAdornmentRoot = styled("div", {
   name: "MuiInputAdornment",
   slot: "Root",
-  overridesResolver: overridesResolver$1
+  overridesResolver: overridesResolver$2
 })(({
   theme: theme2,
   ownerState
@@ -32556,7 +32556,7 @@ const InputAdornment = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ _
     disableTypography = false,
     position: position2,
     variant: variantProp
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1c);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1d);
   const muiFormControl = useFormControl() || {};
   let variant = variantProp;
   if (variantProp && muiFormControl.variant)
@@ -32571,7 +32571,7 @@ const InputAdornment = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ _
     position: position2,
     variant
   });
-  const classes2 = useUtilityClasses$Y(ownerState);
+  const classes2 = useUtilityClasses$Z(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(FormControlContext.Provider, {
     value: null,
     children: /* @__PURE__ */ jsxRuntimeExports.jsx(InputAdornmentRoot, _extends$4({
@@ -32600,8 +32600,8 @@ function getInputLabelUtilityClasses(slot) {
 }
 __name(getInputLabelUtilityClasses, "getInputLabelUtilityClasses");
 generateUtilityClasses$1("MuiInputLabel", ["root", "focused", "disabled", "error", "required", "asterisk", "formControl", "sizeSmall", "shrink", "animated", "standard", "filled", "outlined"]);
-const _excluded$1b = ["disableAnimation", "margin", "shrink", "variant", "className"];
-const useUtilityClasses$X = /* @__PURE__ */ __name((ownerState) => {
+const _excluded$1c = ["disableAnimation", "margin", "shrink", "variant", "className"];
+const useUtilityClasses$Y = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     formControl,
@@ -32617,7 +32617,7 @@ const useUtilityClasses$X = /* @__PURE__ */ __name((ownerState) => {
   };
   const composedClasses = composeClasses(slots, getInputLabelUtilityClasses, classes2);
   return _extends$4({}, classes2, composedClasses);
-}, "useUtilityClasses$X");
+}, "useUtilityClasses$Y");
 const InputLabelRoot = styled(FormLabel, {
   shouldForwardProp: (prop) => rootShouldForwardProp(prop) || prop === "classes",
   name: "MuiInputLabel",
@@ -32701,7 +32701,7 @@ const InputLabel = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __nam
     disableAnimation = false,
     shrink: shrinkProp,
     className
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1b);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1c);
   const muiFormControl = useFormControl();
   let shrink = shrinkProp;
   if (typeof shrink === "undefined" && muiFormControl) {
@@ -32721,7 +32721,7 @@ const InputLabel = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __nam
     required: fcs.required,
     focused: fcs.focused
   });
-  const classes2 = useUtilityClasses$X(ownerState);
+  const classes2 = useUtilityClasses$Y(ownerState);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(InputLabelRoot, _extends$4({
     "data-shrink": shrink,
     ownerState,
@@ -32736,7 +32736,7 @@ function getLinearProgressUtilityClass(slot) {
 }
 __name(getLinearProgressUtilityClass, "getLinearProgressUtilityClass");
 generateUtilityClasses$1("MuiLinearProgress", ["root", "colorPrimary", "colorSecondary", "determinate", "indeterminate", "buffer", "query", "dashed", "dashedColorPrimary", "dashedColorSecondary", "bar", "barColorPrimary", "barColorSecondary", "bar1Indeterminate", "bar1Determinate", "bar1Buffer", "bar2Indeterminate", "bar2Buffer"]);
-const _excluded$1a = ["className", "color", "value", "valueBuffer", "variant"];
+const _excluded$1b = ["className", "color", "value", "valueBuffer", "variant"];
 let _$1 = /* @__PURE__ */ __name((t2) => t2, "_$1"), _t$1, _t2$1, _t3$1, _t4$1, _t5, _t6;
 const TRANSITION_DURATION = 4;
 const indeterminate1Keyframe = keyframes$1(_t$1 || (_t$1 = _$1`
@@ -32787,7 +32787,7 @@ const bufferKeyframe = keyframes$1(_t3$1 || (_t3$1 = _$1`
     background-position: -200px -23px;
   }
 `));
-const useUtilityClasses$W = /* @__PURE__ */ __name((ownerState) => {
+const useUtilityClasses$X = /* @__PURE__ */ __name((ownerState) => {
   const {
     classes: classes2,
     variant,
@@ -32800,7 +32800,7 @@ const useUtilityClasses$W = /* @__PURE__ */ __name((ownerState) => {
     bar2: ["bar", variant !== "buffer" && `barColor${capitalize$1(color2)}`, variant === "buffer" && `color${capitalize$1(color2)}`, (variant === "indeterminate" || variant === "query") && "bar2Indeterminate", variant === "buffer" && "bar2Buffer"]
   };
   return composeClasses(slots, getLinearProgressUtilityClass, classes2);
-}, "useUtilityClasses$W");
+}, "useUtilityClasses$X");
 const getColorShade = /* @__PURE__ */ __name((theme2, color2) => {
   if (color2 === "inherit") {
     return "currentColor";
@@ -32955,12 +32955,12 @@ const LinearProgress = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ _
     value,
     valueBuffer,
     variant = "indeterminate"
-  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1a);
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1b);
   const ownerState = _extends$4({}, props, {
     color: color2,
     variant
   });
-  const classes2 = useUtilityClasses$W(ownerState);
+  const classes2 = useUtilityClasses$X(ownerState);
   const isRtl = useRtl();
   const rootProps = {};
   const inlineStyles = {
@@ -33014,7 +33014,151 @@ function getListItemUtilityClass(slot) {
 }
 __name(getListItemUtilityClass, "getListItemUtilityClass");
 const listItemClasses = generateUtilityClasses$1("MuiListItem", ["root", "container", "focusVisible", "dense", "alignItemsFlexStart", "disabled", "divider", "gutters", "padding", "button", "secondaryAction", "selected"]);
+function getListItemButtonUtilityClass(slot) {
+  return generateUtilityClass$1("MuiListItemButton", slot);
+}
+__name(getListItemButtonUtilityClass, "getListItemButtonUtilityClass");
 const listItemButtonClasses = generateUtilityClasses$1("MuiListItemButton", ["root", "focusVisible", "dense", "alignItemsFlexStart", "disabled", "divider", "gutters", "selected"]);
+const _excluded$1a = ["alignItems", "autoFocus", "component", "children", "dense", "disableGutters", "divider", "focusVisibleClassName", "selected", "className"];
+const overridesResolver$1 = /* @__PURE__ */ __name((props, styles2) => {
+  const {
+    ownerState
+  } = props;
+  return [styles2.root, ownerState.dense && styles2.dense, ownerState.alignItems === "flex-start" && styles2.alignItemsFlexStart, ownerState.divider && styles2.divider, !ownerState.disableGutters && styles2.gutters];
+}, "overridesResolver$1");
+const useUtilityClasses$W = /* @__PURE__ */ __name((ownerState) => {
+  const {
+    alignItems,
+    classes: classes2,
+    dense,
+    disabled,
+    disableGutters,
+    divider,
+    selected
+  } = ownerState;
+  const slots = {
+    root: ["root", dense && "dense", !disableGutters && "gutters", divider && "divider", disabled && "disabled", alignItems === "flex-start" && "alignItemsFlexStart", selected && "selected"]
+  };
+  const composedClasses = composeClasses(slots, getListItemButtonUtilityClass, classes2);
+  return _extends$4({}, classes2, composedClasses);
+}, "useUtilityClasses$W");
+const ListItemButtonRoot = styled(ButtonBase, {
+  shouldForwardProp: (prop) => rootShouldForwardProp(prop) || prop === "classes",
+  name: "MuiListItemButton",
+  slot: "Root",
+  overridesResolver: overridesResolver$1
+})(({
+  theme: theme2,
+  ownerState
+}) => _extends$4({
+  display: "flex",
+  flexGrow: 1,
+  justifyContent: "flex-start",
+  alignItems: "center",
+  position: "relative",
+  textDecoration: "none",
+  minWidth: 0,
+  boxSizing: "border-box",
+  textAlign: "left",
+  paddingTop: 8,
+  paddingBottom: 8,
+  transition: theme2.transitions.create("background-color", {
+    duration: theme2.transitions.duration.shortest
+  }),
+  "&:hover": {
+    textDecoration: "none",
+    backgroundColor: (theme2.vars || theme2).palette.action.hover,
+    // Reset on touch devices, it doesn't add specificity
+    "@media (hover: none)": {
+      backgroundColor: "transparent"
+    }
+  },
+  [`&.${listItemButtonClasses.selected}`]: {
+    backgroundColor: theme2.vars ? `rgba(${theme2.vars.palette.primary.mainChannel} / ${theme2.vars.palette.action.selectedOpacity})` : alpha_1(theme2.palette.primary.main, theme2.palette.action.selectedOpacity),
+    [`&.${listItemButtonClasses.focusVisible}`]: {
+      backgroundColor: theme2.vars ? `rgba(${theme2.vars.palette.primary.mainChannel} / calc(${theme2.vars.palette.action.selectedOpacity} + ${theme2.vars.palette.action.focusOpacity}))` : alpha_1(theme2.palette.primary.main, theme2.palette.action.selectedOpacity + theme2.palette.action.focusOpacity)
+    }
+  },
+  [`&.${listItemButtonClasses.selected}:hover`]: {
+    backgroundColor: theme2.vars ? `rgba(${theme2.vars.palette.primary.mainChannel} / calc(${theme2.vars.palette.action.selectedOpacity} + ${theme2.vars.palette.action.hoverOpacity}))` : alpha_1(theme2.palette.primary.main, theme2.palette.action.selectedOpacity + theme2.palette.action.hoverOpacity),
+    // Reset on touch devices, it doesn't add specificity
+    "@media (hover: none)": {
+      backgroundColor: theme2.vars ? `rgba(${theme2.vars.palette.primary.mainChannel} / ${theme2.vars.palette.action.selectedOpacity})` : alpha_1(theme2.palette.primary.main, theme2.palette.action.selectedOpacity)
+    }
+  },
+  [`&.${listItemButtonClasses.focusVisible}`]: {
+    backgroundColor: (theme2.vars || theme2).palette.action.focus
+  },
+  [`&.${listItemButtonClasses.disabled}`]: {
+    opacity: (theme2.vars || theme2).palette.action.disabledOpacity
+  }
+}, ownerState.divider && {
+  borderBottom: `1px solid ${(theme2.vars || theme2).palette.divider}`,
+  backgroundClip: "padding-box"
+}, ownerState.alignItems === "flex-start" && {
+  alignItems: "flex-start"
+}, !ownerState.disableGutters && {
+  paddingLeft: 16,
+  paddingRight: 16
+}, ownerState.dense && {
+  paddingTop: 4,
+  paddingBottom: 4
+}));
+const ListItemButton = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(function ListItemButton2(inProps, ref) {
+  const props = useDefaultProps({
+    props: inProps,
+    name: "MuiListItemButton"
+  });
+  const {
+    alignItems = "center",
+    autoFocus = false,
+    component = "div",
+    children,
+    dense = false,
+    disableGutters = false,
+    divider = false,
+    focusVisibleClassName,
+    selected = false,
+    className
+  } = props, other = _objectWithoutPropertiesLoose$1(props, _excluded$1a);
+  const context = reactExports.useContext(ListContext$1);
+  const childContext = reactExports.useMemo(() => ({
+    dense: dense || context.dense || false,
+    alignItems,
+    disableGutters
+  }), [alignItems, context.dense, dense, disableGutters]);
+  const listItemRef = reactExports.useRef(null);
+  useEnhancedEffect(() => {
+    if (autoFocus) {
+      if (listItemRef.current) {
+        listItemRef.current.focus();
+      }
+    }
+  }, [autoFocus]);
+  const ownerState = _extends$4({}, props, {
+    alignItems,
+    dense: childContext.dense,
+    disableGutters,
+    divider,
+    selected
+  });
+  const classes2 = useUtilityClasses$W(ownerState);
+  const handleRef = useForkRef(listItemRef, ref);
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(ListContext$1.Provider, {
+    value: childContext,
+    children: /* @__PURE__ */ jsxRuntimeExports.jsx(ListItemButtonRoot, _extends$4({
+      ref: handleRef,
+      href: other.href || other.to,
+      component: (other.href || other.to) && component === "div" ? "button" : component,
+      focusVisibleClassName: clsx(classes2.focusVisible, focusVisibleClassName),
+      ownerState,
+      className: clsx(classes2.root, className)
+    }, other, {
+      classes: classes2,
+      children
+    }))
+  });
+}, "ListItemButton2"));
 function getListItemSecondaryActionClassesUtilityClass(slot) {
   return generateUtilityClass$1("MuiListItemSecondaryAction", slot);
 }
@@ -53503,7 +53647,7 @@ DataGridRaw.propTypes = {
    */
   unstable_rowSpanning: PropTypes.bool
 };
-const styles$6 = {
+const styles$8 = {
   gridFooterContainer: {
     display: "flex",
     justifyContent: "center",
@@ -53530,7 +53674,7 @@ const OpportunityGridStyles = {
   borderCollapse: "collapse",
   fontFamily: "Arial, sans-serif",
   fontSize: "12px",
-  fontWeight: "600",
+  fontWeight: "500",
   borderRadius: 0,
   color: "#233142",
   "& .MuiDataGrid-columnHeaders": {
@@ -63270,7 +63414,7 @@ axios.getAdapter = adapters.getAdapter;
 axios.HttpStatusCode = HttpStatusCode;
 axios.default = axios;
 const api = axios.create({
-  baseURL: "https://apicontrole.dse.com.br",
+  baseURL: "http://localhost:3001",
   headers: {
     "Content-Type": "application/json",
     Authorization: window.localStorage.getItem("token")
@@ -63866,7 +64010,7 @@ const useRequisitionItems = /* @__PURE__ */ __name((requisitionId) => {
     setIsEditing
   };
 }, "useRequisitionItems");
-const columns$5 = [
+const columns$4 = [
   {
     field: "nome_fantasia",
     headerName: "Nome Fantasia",
@@ -63949,7 +64093,7 @@ const RequisitionItemsTable = /* @__PURE__ */ __name(({ requisitionId }) => {
     setIsEditing
   } = useRequisitionItems(requisitionId);
   const ReqItemsFooter = /* @__PURE__ */ __name((props) => {
-    return /* @__PURE__ */ jsxRuntimeExports.jsxs(GridFooterContainer, { sx: { ...props.style, ...styles$6.gridFooterContainer }, ...props, children: [
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs(GridFooterContainer, { sx: { ...props.style, ...styles$8.gridFooterContainer }, ...props, children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: alert2 && /* @__PURE__ */ jsxRuntimeExports.jsx(motion.div, { ...alertAnimation, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Alert, { severity: alert2.severity, children: alert2.message }) }) }),
       /* @__PURE__ */ jsxRuntimeExports.jsx(GridFooter, {}),
       isEditing && /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { onClick: handleSave, sx: BaseButtonStyles, children: "Salvar" }),
@@ -63961,7 +64105,7 @@ const RequisitionItemsTable = /* @__PURE__ */ __name(({ requisitionId }) => {
     {
       rows: visibleItems,
       getRowId: (item) => item.ID,
-      columns: columns$5,
+      columns: columns$4,
       initialState: {
         pagination: {
           paginationModel: {
@@ -68451,7 +68595,7 @@ var _jsxRuntime$o = jsxRuntimeExports;
 default_1$o = Add.default = (0, _createSvgIcon$o.default)(/* @__PURE__ */ (0, _jsxRuntime$o.jsx)("path", {
   d: "M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"
 }), "Add");
-const style$b = {
+const style$e = {
   position: "absolute",
   borderRadius: "25px",
   top: "50%",
@@ -68624,7 +68768,7 @@ const ProductsTable = /* @__PURE__ */ __name(({ ID_REQUISICAO, TIPO }) => {
           Box,
           {
             sx: {
-              ...style$b,
+              ...style$e,
               width: {
                 xs: "90%",
                 sm: "80%",
@@ -68695,7 +68839,7 @@ const ProductsTable = /* @__PURE__ */ __name(({ ID_REQUISICAO, TIPO }) => {
     )
   ] });
 }, "ProductsTable");
-const style$a = {
+const style$d = {
   position: "absolute",
   top: "50%",
   left: "50%",
@@ -68746,7 +68890,7 @@ const ProductsTableModal = /* @__PURE__ */ __name(({
       onClose: handleCloseAll,
       "aria-labelledby": "child-modal-title",
       "aria-describedby": "child-modal-description",
-      children: /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: { ...style$a, width: "98vw", height: "98vh" }, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      children: /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: { ...style$d, width: "98vw", height: "98vh" }, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
         Stack,
         {
           sx: {
@@ -68968,7 +69112,7 @@ const AddRequisitionForm = /* @__PURE__ */ __name(() => {
     currentId > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx(ProductsTableModal, { requisitionID: currentId })
   ] });
 }, "AddRequisitionForm");
-const style$9 = {
+const style$c = {
   position: "absolute",
   top: "50%",
   left: "50%",
@@ -69013,7 +69157,7 @@ const NestedModal = /* @__PURE__ */ __name(() => {
           Box,
           {
             sx: {
-              ...style$9,
+              ...style$c,
               width: {
                 xs: 300,
                 lg: 400
@@ -69299,7 +69443,7 @@ function Loader$1() {
   ) });
 }
 __name(Loader$1, "Loader$1");
-const style$8 = {
+const style$b = {
   position: "absolute",
   top: "50%",
   left: "50%",
@@ -69334,7 +69478,7 @@ const DeleteRequisitionModal = /* @__PURE__ */ __name(({
       onClose: handleClose,
       "aria-labelledby": "modal-modal-title",
       "aria-describedby": "modal-modal-description",
-      children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: { ...style$8, gap: "2rem" }, children: [
+      children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: { ...style$b, gap: "2rem" }, children: [
         /* @__PURE__ */ jsxRuntimeExports.jsxs(
           Typography,
           {
@@ -70074,7 +70218,7 @@ var _jsxRuntime$m = jsxRuntimeExports;
 default_1$m = ArrowCircleLeft.default = (0, _createSvgIcon$m.default)(/* @__PURE__ */ (0, _jsxRuntime$m.jsx)("path", {
   d: "M2 12c0 5.52 4.48 10 10 10s10-4.48 10-10S17.52 2 12 2 2 6.48 2 12m10-1h4v2h-4v3l-4-4 4-4z"
 }), "ArrowCircleLeft");
-const styles$5 = {
+const styles$7 = {
   fieldsGridContainer: {
     display: "flex",
     flexDirection: "column",
@@ -71166,7 +71310,7 @@ const RequisitionFields = /* @__PURE__ */ __name(() => {
     handleCancelEditing,
     renderValue: renderValue2
   } = useRequisitionFields();
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: styles$5.fieldsGridContainer, children: [
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: styles$7.fieldsGridContainer, children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", gap: 2, alignItems: "center", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { sx: typographyStyles.heading1, children: "Detalhes da requisição" }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs(Typography, { sx: typographyStyles.heading2, children: [
@@ -71179,7 +71323,7 @@ const RequisitionFields = /* @__PURE__ */ __name(() => {
         dateTimeRenderer(requisitionData == null ? void 0 : requisitionData.CREATED_ON)
       ] })
     ] }),
-    requisitionData && optionsState && /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: styles$5.fieldsGrid, children: fields.map((field) => {
+    requisitionData && optionsState && /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: styles$7.fieldsGrid, children: fields.map((field) => {
       if (field.autoComplete) {
         return /* @__PURE__ */ jsxRuntimeExports.jsx(
           Autocomplete,
@@ -71188,7 +71332,7 @@ const RequisitionFields = /* @__PURE__ */ __name(() => {
             getOptionKey: (option) => option.id,
             onChange: (event, value) => handleChangeAutoComplete(event, value, field),
             disablePortal: true,
-            sx: styles$5.autoComplete,
+            sx: styles$7.autoComplete,
             options: renderOptions(field),
             value: renderAutoCompleteValue(field),
             renderInput: (params) => /* @__PURE__ */ jsxRuntimeExports.jsx(TextField, { ...params, label: field.label })
@@ -71208,14 +71352,14 @@ const RequisitionFields = /* @__PURE__ */ __name(() => {
         field.key
       );
     }) }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: isEditing && /* @__PURE__ */ jsxRuntimeExports.jsx(motion.div, { ...alertAnimation, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", sx: styles$5.actionsStack, children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: isEditing && /* @__PURE__ */ jsxRuntimeExports.jsx(motion.div, { ...alertAnimation, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", sx: styles$7.actionsStack, children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { onClick: handleSave, sx: BaseButtonStyles, className: "shadow-md", children: "Salvar Alterações" }),
       /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { onClick: handleCancelEditing, sx: BaseButtonStyles, className: "shadow-md", children: "Cancelar edição" })
     ] }) }) }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: alert2 && /* @__PURE__ */ jsxRuntimeExports.jsx(motion.div, { ...alertAnimation, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Alert, { severity: alert2.severity, children: alert2.message }) }) })
   ] });
 }, "RequisitionFields");
-const styles$4 = {
+const styles$6 = {
   requisitionPageContainer: {
     width: "100%",
     border: "1px solid #d3d6db",
@@ -71365,9 +71509,9 @@ const RequisitionDetail = /* @__PURE__ */ __name(() => {
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     Box,
     {
-      sx: styles$4.requisitionPageContainer,
+      sx: styles$6.requisitionPageContainer,
       children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { className: "req-page-header", sx: styles$4.requisitionPageHeader, children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { className: "req-page-header", sx: styles$6.requisitionPageHeader, children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: () => handleNavigateHome(), children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$m, {}) }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs(
             Typography,
@@ -71389,7 +71533,7 @@ const RequisitionDetail = /* @__PURE__ */ __name(() => {
             }
           )
         ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { className: "stepper-container", sx: styles$4.requisitionStepper, children: requisitionData && /* @__PURE__ */ jsxRuntimeExports.jsx(
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { className: "stepper-container", sx: styles$6.requisitionStepper, children: requisitionData && /* @__PURE__ */ jsxRuntimeExports.jsx(
           HorizontalLinearStepper,
           {
             items: requisitionItems,
@@ -71414,7 +71558,7 @@ const RequisitionDetail = /* @__PURE__ */ __name(() => {
                 Box,
                 {
                   className: "req-items-table-container",
-                  sx: styles$4.requisitionItemsTableContainer,
+                  sx: styles$6.requisitionItemsTableContainer,
                   children: /* @__PURE__ */ jsxRuntimeExports.jsx(RequisitionItemsTable, { requisitionId: Number(id2) })
                 }
               )
@@ -80370,7 +80514,7 @@ function CreateMovementation({
   ] });
 }
 __name(CreateMovementation, "CreateMovementation");
-const columns$4 = [
+const columns$3 = [
   {
     label: "Tipo",
     dataKey: "tipo",
@@ -80570,7 +80714,7 @@ function CreatePatrimonyInfoModal() {
               )
             ] }),
             /* @__PURE__ */ jsxRuntimeExports.jsxs(Form, { onSubmit: handleNext2, children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(Stack, { direction: "column", spacing: 1.6, children: columns$4.map(
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Stack, { direction: "column", spacing: 1.6, children: columns$3.map(
                 (column2) => column2.dataKey === "data_compra" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
                   LocalizationProvider,
                   {
@@ -81131,7 +81275,7 @@ const SearchAppBar = React$1.memo(
           onClose: handleCloseDeleteModal,
           "aria-labelledby": "modal-modal-title",
           "aria-describedby": "modal-modal-description",
-          children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: style$7, children: [
+          children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: style$a, children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { id: "modal-modal-title", variant: "h6", component: "h2", children: "Tem certeza que deseja excluir os registros selecionados?" }),
             /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", justifyContent: "center", spacing: 2, children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -81165,7 +81309,7 @@ const SearchAppBar = React$1.memo(
           onClose: handleCloseInactivateModal,
           "aria-labelledby": "modal-modal-title",
           "aria-describedby": "modal-modal-description",
-          children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: style$7, children: [
+          children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: style$a, children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { id: "modal-modal-title", variant: "h6", component: "h2", children: "Tem certeza que deseja inativar os registros selecionados?" }),
             /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", justifyContent: "center", spacing: 2, children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -81199,7 +81343,7 @@ const SearchAppBar = React$1.memo(
           onClose: handleCloseActivateModal,
           "aria-labelledby": "modal-modal-title",
           "aria-describedby": "modal-modal-description",
-          children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: style$7, children: [
+          children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: style$a, children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { id: "modal-modal-title", variant: "h6", component: "h2", children: "Tem certeza que deseja ativar os registros selecionados?" }),
             /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", justifyContent: "center", spacing: 2, children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -81229,7 +81373,7 @@ const SearchAppBar = React$1.memo(
     ] });
   }
 );
-const style$7 = {
+const style$a = {
   position: "absolute",
   top: "50%",
   left: "50%",
@@ -82392,6 +82536,102 @@ const createOpportunityFiles = /* @__PURE__ */ __name(async (oppId, files) => {
     console.log(e2);
   }
 }, "createOpportunityFiles");
+const opportunityDefault = {
+  codOs: 0,
+  // Exemplo de código de OS (AUTO_INCREMENT, não precisa definir)
+  codTipoOs: 1,
+  // Valor padrão para o tipo de OS (campo com valor padrão '1')
+  codCCusto: null,
+  // Opcional
+  obra: null,
+  // Opcional
+  dataSolicitacao: null,
+  // Data atual (pode ser null se não obrigatório)
+  dataNecessidade: null,
+  // Data atual (pode ser null se não obrigatório)
+  docReferencia: null,
+  // Opcional
+  listaMateriais: null,
+  // Opcional
+  dataInicio: null,
+  // Opcional
+  dataPrevEntrega: null,
+  // Opcional
+  dataEntrega: null,
+  // Opcional
+  codStatus: 1,
+  // Valor padrão para o status (campo com valor padrão '1')
+  nome: "",
+  // Nome obrigatório
+  descricao: "",
+  // Opcional
+  atividades: null,
+  // Opcional
+  prioridade: 0,
+  // Valor padrão (campo com valor padrão '0')
+  solicitante: 1,
+  // Valor padrão para o solicitante (campo com valor padrão '1')
+  responsavel: 1,
+  // Valor padrão para o responsável (campo com valor padrão '1')
+  codDisciplina: 1,
+  // Valor padrão para o código de disciplina (campo com valor padrão '1')
+  gut: 1,
+  // Valor padrão para o GUT (campo com valor padrão '1')
+  gravidade: 1,
+  // Valor padrão para a gravidade (campo com valor padrão '1')
+  urgencia: 1,
+  // Valor padrão para urgência (campo com valor padrão '1')
+  tendencia: 1,
+  // Valor padrão para tendência (campo com valor padrão '1')
+  dataLiberacao: null,
+  // Opcional
+  relacionamento: 1,
+  // Valor padrão para relacionamento (campo com valor padrão '1')
+  fkCodCliente: "-",
+  // Valor padrão (campo com valor padrão '-')
+  fkCodColigada: 0,
+  // Valor padrão para código de coligada (campo com valor padrão '0')
+  valorFatDireto: 0,
+  // Valor padrão (campo com valor padrão '0.00')
+  valorServicoMO: 0,
+  // Valor padrão (campo com valor padrão '0.00')
+  valorServicoMatAplicado: 0,
+  // Valor padrão (campo com valor padrão '0.00')
+  valorMaterial: 0,
+  // Valor padrão (campo com valor padrão '0.00')
+  valorTotal: 0,
+  // Valor padrão (campo com valor padrão '0.00')
+  codSegmento: 1,
+  // Valor padrão para código de segmento (campo com valor padrão '1')
+  codCidade: 0,
+  // Valor padrão para código de cidade (campo com valor padrão '0')
+  valorLocacao: 0,
+  // Valor padrão (campo com valor padrão '0.00')
+  idAdicional: 0,
+  // Valor padrão (campo com valor padrão '0')
+  idProjeto: 0,
+  // Valor padrão (campo com valor padrão '0')
+  dataInteracao: null,
+  // Valor padrão (campo com valor padrão '1111-11-11')
+  valorFatDolphin: 0,
+  // Valor padrão para faturamento Dolphin (campo com valor padrão '0.00')
+  principal: true,
+  // Valor padrão (campo com valor padrão '1')
+  valorComissao: 0,
+  // Valor obrigatório
+  idMotivoPerdido: 1,
+  // Valor obrigatório (campo não pode ser nulo)
+  observacoes: "",
+  // Opcional
+  descricaoVenda: "",
+  // Opcional
+  emailVendaEnviado: false,
+  // Valor padrão (campo com valor padrão '0')
+  numeroAdicional: 0,
+  // Valor padrão com
+  comentarios: [],
+  seguidores: []
+};
 const PatrimonyInfoTableFooter = /* @__PURE__ */ __name(({
   filteredRows
 }) => {
@@ -83635,7 +83875,7 @@ const MovementationFileContextProvider = /* @__PURE__ */ __name(({
     }
   );
 }, "MovementationFileContextProvider");
-const style$6 = {
+const style$9 = {
   position: "absolute",
   top: "50%",
   left: "50%",
@@ -83673,7 +83913,7 @@ function DeleteMovimentationFileModal() {
         Box,
         {
           sx: {
-            ...style$6,
+            ...style$9,
             display: "flex",
             flexDirection: "column",
             gap: "1rem"
@@ -83809,7 +84049,7 @@ const MovimentationFileModal = reactExports.memo(
             ModalContent,
             {
               sx: {
-                ...style$5,
+                ...style$8,
                 minWidth: "260px",
                 width: {
                   xs: "260px",
@@ -84012,7 +84252,7 @@ const StyledBackdrop$1 = styled$1(Backdrop$1)`
   background-color: rgb(0 0 0 / 0.5);
   -webkit-tap-highlight-color: transparent;
 `;
-const style$5 = {
+const style$8 = {
   position: "absolute",
   top: "50%",
   left: "50%",
@@ -84067,7 +84307,7 @@ var _jsxRuntime$7 = jsxRuntimeExports;
 default_1$7 = Edit.default = (0, _createSvgIcon$7.default)(/* @__PURE__ */ (0, _jsxRuntime$7.jsx)("path", {
   d: "M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75z"
 }), "Edit");
-const style$4 = {
+const style$7 = {
   position: "absolute",
   top: "50%",
   left: "50%",
@@ -84109,7 +84349,7 @@ function DeleteMovementationModal() {
         Box,
         {
           sx: {
-            ...style$4,
+            ...style$7,
             display: "flex",
             flexDirection: "column",
             gap: "1rem"
@@ -84159,7 +84399,7 @@ var _jsxRuntime$6 = jsxRuntimeExports;
 default_1$6 = Cancel.default = (0, _createSvgIcon$6.default)(/* @__PURE__ */ (0, _jsxRuntime$6.jsx)("path", {
   d: "M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2m5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12z"
 }), "Cancel");
-const style$3 = {
+const style$6 = {
   position: "absolute",
   top: "50%",
   left: "50%",
@@ -84209,7 +84449,7 @@ function EditMovimentationObservationModal() {
       onClose: handleClose,
       "aria-labelledby": "modal-modal-title",
       "aria-describedby": "modal-modal-description",
-      children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: style$3, children: [
+      children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: style$6, children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(
           Typography,
           {
@@ -84284,7 +84524,7 @@ const MovementationCard = /* @__PURE__ */ __name(({
     /* @__PURE__ */ jsxRuntimeExports.jsx(MovimentationFileModal, { movementationId: cardData.id_movimentacao })
   ] }) }, key);
 }, "MovementationCard");
-const columns$3 = [
+const columns$2 = [
   { label: "Projeto", width: 190, dataKey: "projeto" },
   { label: "Observação", width: 200, dataKey: "observacao" },
   { label: "Data", width: 150, dataKey: "data" },
@@ -84312,7 +84552,7 @@ const VirtuosoTableComponents$1 = {
   TableBody: reactExports.forwardRef((props, ref) => /* @__PURE__ */ jsxRuntimeExports.jsx(TableBody, { ...props, ref }))
 };
 function fixedHeaderContent() {
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(TableRow, { children: columns$3.map((column2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(TableRow, { children: columns$2.map((column2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
     TableCell,
     {
       sx: {
@@ -84351,7 +84591,7 @@ const RowContent = reactExports.memo(
       toggleDeletingMovementation(row2);
     }, "handleClickDeleteMovimentation");
     const isWhoCreated = /* @__PURE__ */ __name(() => (user == null ? void 0 : user.CODPESSOA) === row.id_ultimo_responsavel, "isWhoCreated");
-    return /* @__PURE__ */ jsxRuntimeExports.jsx(reactExports.Fragment, { children: columns$3.map((column2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(reactExports.Fragment, { children: columns$2.map((column2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
       TableCell,
       {
         sx: {
@@ -84528,7 +84768,7 @@ const PatrimonyFileContextProvider = /* @__PURE__ */ __name(({
     }
   );
 }, "PatrimonyFileContextProvider");
-const style$2 = {
+const style$5 = {
   position: "absolute",
   top: "50%",
   left: "50%",
@@ -84570,7 +84810,7 @@ function DeletePatrimonyFileModal() {
         Box,
         {
           sx: {
-            ...style$2,
+            ...style$5,
             display: "flex",
             flexDirection: "column",
             gap: "1rem"
@@ -84606,7 +84846,7 @@ function DeletePatrimonyFileModal() {
   ) });
 }
 __name(DeletePatrimonyFileModal, "DeletePatrimonyFileModal");
-const styles$3 = {
+const styles$5 = {
   badge: {
     // Estilos para o Badge (se necessário)
   },
@@ -84853,7 +85093,7 @@ const PatrimonyFileCard = /* @__PURE__ */ __name(({
               data: isPDF2(file.arquivo) ? file.arquivo : void 0,
               src: isPDF2(file.arquivo) ? void 0 : file.arquivo,
               type: isPDF2(file.arquivo) ? "application/pdf" : void 0,
-              sx: styles$3.cardMedia(file)
+              sx: styles$5.cardMedia(file)
             }
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -84880,7 +85120,7 @@ const PatrimonyFileCard = /* @__PURE__ */ __name(({
             {
               onClick: () => handleOpenLink(file.arquivo),
               fontSize: "small",
-              sx: styles$3.fileName,
+              sx: styles$5.fileName,
               children: truncateText(file.nome_arquivo, 20)
             }
           ),
@@ -84888,7 +85128,7 @@ const PatrimonyFileCard = /* @__PURE__ */ __name(({
             IconButton,
             {
               onClick: () => toggleDeletingPatrimonyFile(true, file),
-              sx: styles$3.deleteIconButton,
+              sx: styles$5.deleteIconButton,
               children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$r, {})
             }
           ),
@@ -84970,7 +85210,7 @@ function PatrimonyFileModal() {
     fetchPatrimonyFiles();
   }, [refreshPatrimonyFile]);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(Badge, { badgeContent: (fileData == null ? void 0 : fileData.length) || 0, color: "primary", sx: styles$3.badge, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "Anexos do patrimônio", children: /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: handleOpen, sx: styles$3.iconButton, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$9, {}) }) }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Badge, { badgeContent: (fileData == null ? void 0 : fileData.length) || 0, color: "primary", sx: styles$5.badge, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "Anexos do patrimônio", children: /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: handleOpen, sx: styles$5.iconButton, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$9, {}) }) }) }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       Modal,
       {
@@ -84980,10 +85220,10 @@ function PatrimonyFileModal() {
         onClose: handleClose,
         closeAfterTransition: true,
         slots: { backdrop: StyledBackdrop },
-        children: /* @__PURE__ */ jsxRuntimeExports.jsx(Fade, { in: open2, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: styles$3.modalContent, children: [
+        children: /* @__PURE__ */ jsxRuntimeExports.jsx(Fade, { in: open2, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: styles$5.modalContent, children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(DeletePatrimonyFileModal, {}),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { sx: styles$3.modalHeader, ref: modaleHeaderRef, children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: handleClose, sx: styles$3.closeIconButton, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, {}) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { sx: styles$5.modalHeader, ref: modaleHeaderRef, children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: handleClose, sx: styles$5.closeIconButton, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, {}) }),
             /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { sx: typographyStyles.heading2, children: "Anexos do patrimônio" }),
             allowedToAttachFile() && /* @__PURE__ */ jsxRuntimeExports.jsxs(
               Button,
@@ -85010,8 +85250,8 @@ function PatrimonyFileModal() {
               }
             )
           ] }),
-          isLoading && /* @__PURE__ */ jsxRuntimeExports.jsx(Stack, { sx: styles$3.loadingStack, children: /* @__PURE__ */ jsxRuntimeExports.jsx(CircularProgress, {}) }),
-          modaleHeaderRef && /* @__PURE__ */ jsxRuntimeExports.jsx(Stack, { sx: { ...styles$3.fileListStack }, children: fileData == null ? void 0 : fileData.map((file) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+          isLoading && /* @__PURE__ */ jsxRuntimeExports.jsx(Stack, { sx: styles$5.loadingStack, children: /* @__PURE__ */ jsxRuntimeExports.jsx(CircularProgress, {}) }),
+          modaleHeaderRef && /* @__PURE__ */ jsxRuntimeExports.jsx(Stack, { sx: { ...styles$5.fileListStack }, children: fileData == null ? void 0 : fileData.map((file) => /* @__PURE__ */ jsxRuntimeExports.jsx(
             PatrimonyFileCard,
             {
               file
@@ -85055,7 +85295,7 @@ var _jsxRuntime$5 = jsxRuntimeExports;
 default_1$5 = HomeRepairService.default = (0, _createSvgIcon$5.default)(/* @__PURE__ */ (0, _jsxRuntime$5.jsx)("path", {
   d: "M18 16h-2v-1H8v1H6v-1H2v5h20v-5h-4zm2-8h-3V6c0-1.1-.9-2-2-2H9c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v4h4v-2h2v2h8v-2h2v2h4v-4c0-1.1-.9-2-2-2m-5 0H9V6h6z"
 }), "HomeRepairService");
-const style$1 = {
+const style$4 = {
   position: "absolute",
   top: "50%",
   left: "50%",
@@ -85114,7 +85354,7 @@ function CreatePatrimonyAccessoryModal() {
         onClose: handleClose,
         "aria-labelledby": "modal-modal-title",
         "aria-describedby": "modal-modal-description",
-        children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: { ...style$1, gap: "1rem" }, children: [
+        children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: { ...style$4, gap: "1rem" }, children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", justifyContent: "space-between", spacing: 2, children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { id: "modal-modal-title", variant: "h6", component: "h2", children: "Novo Acessório de Patrimônio" }),
             /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -85182,7 +85422,7 @@ const modalStyle = /* @__PURE__ */ __name((theme2) => ({
     p: 2
   }
 }), "modalStyle");
-const style = {
+const style$3 = {
   position: "absolute",
   top: "50%",
   left: "50%",
@@ -85380,7 +85620,7 @@ function PatrimonyAccessoryModal() {
             Box,
             {
               sx: {
-                ...style,
+                ...style$3,
                 display: "flex",
                 flexDirection: "column",
                 gap: "1rem"
@@ -90037,6 +90277,13 @@ const formatDate = /* @__PURE__ */ __name((value) => {
     return `${formattedDate}, ${formattedTime}`;
   }
 }, "formatDate");
+const formatDateWithNoTime = /* @__PURE__ */ __name((value) => {
+  if (typeof value === "string") {
+    const brazilianDateTime = dayjs.utc(value);
+    const formattedDate = brazilianDateTime.format("DD/MM/YYYY");
+    return `${formattedDate}`;
+  }
+}, "formatDateWithNoTime");
 const isPDF = /* @__PURE__ */ __name((url) => {
   console.log({ url });
   if (/\.pdf$/i.test(url)) {
@@ -90056,6 +90303,8 @@ const Loader = /* @__PURE__ */ __name(() => {
         bottom: 0,
         display: "flex",
         justifyContent: "center",
+        height: "100%",
+        width: "100%",
         alignItems: "center",
         backgroundColor: "rgba(255, 255, 255, 0.7)",
         // Fundo semi-transparente
@@ -90379,7 +90628,7 @@ const ChecklistItemsModal = /* @__PURE__ */ __name(() => {
     }
     alert("Não há arquivo!");
   }, "handleOpenItemImage");
-  const shouldShowFinalizeButton = toBeDone2() && isMovimentationResponsable() && (lastItem() || !isMobile);
+  const shouldShowFinalizeButton = toBeDone2() && isMovimentationResponsable() && (lastItem() || !isMobile) || isTypeResponsable2();
   const shouldShowApprovalButtons = toBeAproved2() && (lastItem() || !isMobile);
   reactExports.useEffect(() => {
     if ((ChecklistItems == null ? void 0 : ChecklistItems.length) > 0) {
@@ -90940,7 +91189,7 @@ const ChecklistCard = /* @__PURE__ */ __name(({
     )
   ] }) }, key);
 }, "ChecklistCard");
-const theme$4 = createTheme(
+const theme$3 = createTheme(
   {
     palette: {
       primary: { main: "#1976d2" }
@@ -91095,7 +91344,7 @@ const PatrimonyChecklist = /* @__PURE__ */ __name(() => {
               marginTop: 2
             },
             children: [
-              !isCardViewActive && /* @__PURE__ */ jsxRuntimeExports.jsx(ThemeProvider2, { theme: theme$4, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              !isCardViewActive && /* @__PURE__ */ jsxRuntimeExports.jsx(ThemeProvider2, { theme: theme$3, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
                 DataGrid,
                 {
                   rows: checklistData,
@@ -91247,6 +91496,7 @@ const OpportunityInfoProvider = /* @__PURE__ */ __name(({
   const [finishedOppsEnabled, setFinishedOppsEnabled] = reactExports.useState(false);
   const [currentOppIdSelected, setCurrentOppIdSelected] = reactExports.useState(0);
   const toggleCreatingOpportunity = /* @__PURE__ */ __name(() => {
+    console.log("toggleCreatingOpportunity: ", !creatingOpportunity);
     setCreatingOpportunity((prev2) => !prev2);
   }, "toggleCreatingOpportunity");
   const toggleRefreshOpportunityInfo = /* @__PURE__ */ __name(() => {
@@ -91285,10 +91535,532 @@ const OpportunityInfoProvider = /* @__PURE__ */ __name(({
 const CustomOpportunityRow = React$1.memo((props) => {
   return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(MemoizedGridRow, { ...props }) });
 });
+const styles$4 = {
+  guideContainer: {
+    width: "100%",
+    display: "flex !important",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 0.5,
+    gap: 2,
+    overflowY: "hidden"
+  },
+  contentContainer: {
+    display: "flex",
+    alignItems: "flex-start",
+    flexWrap: "wrap",
+    gap: 2,
+    width: "100%",
+    minWidth: 0
+  }
+};
+const styles$3 = {
+  container: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%"
+  },
+  formGrid: {
+    display: "grid",
+    gridTemplateColumns: {
+      xs: "1fr",
+      md: "1fr 1fr"
+    },
+    gap: 1,
+    rowGap: 2,
+    width: "100%",
+    padding: 1
+  }
+};
+const OpportunityRegistration = /* @__PURE__ */ __name(({ guide, guidesReference }) => {
+  const [statusOptions, setStatusOptions] = reactExports.useState(
+    []
+  );
+  const [clientOptions, setClientOptions] = reactExports.useState(
+    []
+  );
+  const [projectOptions, setProjectOptions] = reactExports.useState([]);
+  const [isEditing, setIseEditing] = reactExports.useState(false);
+  const [opportunityRegistration, setOpportunityRegistration] = reactExports.useState({
+    idProjeto: guide.fields[0].data,
+    numeroAdicional: guide.fields[1].data,
+    nome: guide.fields[2].data,
+    codStatus: guide.fields[3].data,
+    fkCodCliente: guide.fields[4].data,
+    dataSolicitacao: guide.fields[5].data,
+    dataInicio: guide.fields[6].data,
+    dataEntrega: guide.fields[7].data
+  });
+  const renderOptions = /* @__PURE__ */ __name((column2) => {
+    if (column2.dataKey === "idProjeto")
+      return projectOptions;
+    if (column2.dataKey === "codStatus")
+      return statusOptions;
+    if (column2.dataKey === "fkCodCliente")
+      return clientOptions;
+  }, "renderOptions");
+  const changeReference = /* @__PURE__ */ __name((field) => {
+    if (guidesReference.current) {
+      const guideIndex = guidesReference.current.indexOf(guide);
+      const fieldIndex = guidesReference.current[guideIndex].fields.findIndex((referenceField) => referenceField.dataKey === field.dataKey);
+      guidesReference.current[guideIndex].fields[fieldIndex] = field;
+    }
+  }, "changeReference");
+  const handleChangeTextField = /* @__PURE__ */ __name((e2, receivedField) => {
+    const { value } = e2.target;
+    if (receivedField.type === "text") {
+      receivedField.data = value;
+      setOpportunityRegistration({
+        ...opportunityRegistration,
+        [receivedField.dataKey]: value
+      });
+      changeReference(receivedField);
+    }
+    if (receivedField.type === "date") {
+      receivedField.data = value;
+      setOpportunityRegistration({
+        ...opportunityRegistration,
+        [receivedField.dataKey]: value
+      });
+      changeReference(receivedField);
+    }
+    return;
+  }, "handleChangeTextField");
+  const handleChangeAutoComplete = /* @__PURE__ */ __name((field, _event, value, _reason, _details) => {
+    setOpportunityRegistration({
+      ...opportunityRegistration,
+      [field.dataKey]: value == null ? void 0 : value.id
+    });
+    field.data = value == null ? void 0 : value.id;
+    changeReference(field);
+  }, "handleChangeAutoComplete");
+  const editableField = /* @__PURE__ */ __name((field) => {
+    return field.dataKey !== "numeroAdicional";
+  }, "editableField");
+  const fetchClientOps = reactExports.useCallback(async () => {
+    const clients = await fetchAllClients();
+    const options = clients.map((client2) => ({
+      label: client2.NOMEFANTASIA,
+      id: client2.CODCLIENTE,
+      object: "client",
+      key: client2.CODCLIENTE
+    }));
+    setClientOptions([...options]);
+  }, [setClientOptions]);
+  const fetchProjectsOps = reactExports.useCallback(async () => {
+    const projects = await fetchAllProjects();
+    const options = projects && projects.map((project) => ({
+      label: project.DESCRICAO,
+      id: project.ID,
+      object: "project",
+      key: project.ID
+    })) || [];
+    setProjectOptions([...options]);
+  }, [setProjectOptions]);
+  const fetchStatusOps = reactExports.useCallback(async () => {
+    const statusList = await fetchStatusList();
+    const options = statusList.map((status) => ({
+      label: status.NOME,
+      id: status.CODSTATUS,
+      object: "status",
+      key: status.CODSTATUS
+    })) || [];
+    setStatusOptions(options);
+  }, [setStatusOptions]);
+  const renderAutoCompleteValue = /* @__PURE__ */ __name((field) => {
+    if (field.dataKey === "idProjeto") {
+      const optionValueSelected = projectOptions.find(
+        (option) => option.id === field.data
+      );
+      if (optionValueSelected)
+        return optionValueSelected;
+    }
+    if (field.dataKey === "codStatus") {
+      const optionValueSelected = statusOptions.find(
+        (option) => option.id === field.data
+      );
+      if (optionValueSelected)
+        return optionValueSelected;
+    }
+    if (field.dataKey === "fkCodCliente") {
+      const optionValueSelected = clientOptions.find(
+        (option) => option.id === field.data
+      );
+      if (optionValueSelected)
+        return optionValueSelected;
+    }
+    return {
+      label: "",
+      id: 0,
+      object: "",
+      key: 0
+    };
+  }, "renderAutoCompleteValue");
+  reactExports.useEffect(() => {
+    fetchClientOps();
+    fetchProjectsOps();
+    fetchStatusOps();
+  }, []);
+  reactExports.useEffect(() => {
+    if (!isEditing) {
+      setOpportunityRegistration({
+        idProjeto: guide.fields[0].data,
+        numeroAdicional: guide.fields[1].data,
+        nome: guide.fields[2].data,
+        codStatus: guide.fields[3].data,
+        fkCodCliente: guide.fields[4].data,
+        dataSolicitacao: guide.fields[5].data,
+        dataInicio: guide.fields[6].data,
+        dataEntrega: guide.fields[7].data
+      });
+    }
+  }, [guide]);
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: styles$3.container, children: opportunityRegistration && /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: styles$3.formGrid, children: guide.fields.map((field, index2) => {
+    if (editableField(field) && !field.autoComplete && field.dataKey !== "codOs") {
+      return /* @__PURE__ */ jsxRuntimeExports.jsx(
+        TextField,
+        {
+          type: field.type,
+          label: field.label,
+          onChange: (e2) => handleChangeTextField(e2, field),
+          value: opportunityRegistration[field.dataKey],
+          InputLabelProps: {
+            shrink: true
+          },
+          onFocus: () => setIseEditing(true)
+        },
+        index2
+      );
+    }
+    if (editableField(field) && field.autoComplete) {
+      return /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Autocomplete,
+        {
+          value: renderAutoCompleteValue(field),
+          disablePortal: true,
+          getOptionKey: (option) => option.key,
+          disabled: field.dataKey === "idProjeto",
+          onChange: (_event, value, _reason, _details) => handleChangeAutoComplete(field, _event, value),
+          options: renderOptions(field) || [],
+          renderInput: (params) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+            TextField,
+            {
+              ...params,
+              label: field.label,
+              InputLabelProps: { shrink: true }
+            }
+          )
+        },
+        field.dataKey
+      );
+    }
+  }) }) });
+}, "OpportunityRegistration");
+const style$2 = {
+  container: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "start",
+    gap: 2,
+    padding: 1
+  },
+  commentField: {
+    borderRadius: 2,
+    // Bordas arredondadas
+    backgroundColor: "#f9f9f9",
+    // Fundo claro para destacar
+    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+    // Efeito de profundidade
+    "& .MuiOutlinedInput-root": {
+      "& fieldset": {
+        borderColor: "#1976d2"
+        // Cor da borda inicial
+      },
+      "&:hover fieldset": {
+        borderColor: "#1565c0"
+        // Cor da borda ao passar o mouse
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: "#0d47a1",
+        // Cor da borda ao focar
+        borderWidth: "2px"
+        // Aumenta a espessura ao focar
+      }
+    },
+    "& .MuiInputLabel-root": {
+      color: "#757575"
+      // Cor do label
+    },
+    "& .MuiInputLabel-root.Mui-focused": {
+      color: "#0d47a1"
+      // Cor do label ao focar
+    }
+  }
+};
+const CommentRow = /* @__PURE__ */ __name(({ index: index2, comment: comment2, style: style2, setCommentBeingEdit }) => {
+  const { user } = reactExports.useContext(userContext);
+  const [alert2, setAlert] = reactExports.useState();
+  const commentBelongsToUser = /* @__PURE__ */ __name((comment22) => {
+    return (user == null ? void 0 : user.NOME) === comment22.criadoPor;
+  }, "commentBelongsToUser");
+  const displayAlert = /* @__PURE__ */ __name(async (severity, message) => {
+    setTimeout(() => {
+      setAlert(void 0);
+    }, 3e3);
+    setAlert({ severity, message });
+    return;
+  }, "displayAlert");
+  const handleStartEdition = /* @__PURE__ */ __name(() => {
+    if (commentBelongsToUser(comment2)) {
+      setCommentBeingEdit(comment2);
+      return;
+    }
+    displayAlert("warning", "Você não tem permissão para editar o comentário");
+  }, "handleStartEdition");
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    ListItem,
+    {
+      alignItems: "flex-start",
+      style: { ...style2 },
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(ListItemAvatar, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(Avatar, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$i, {}) }) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          ListItemText,
+          {
+            primary: comment2.descricao || "Comentário vazio",
+            secondary: comment2.criadoPor ? `Por: ${comment2.criadoPor} | ${formatDateWithNoTime(
+              comment2.criadoEm || ""
+            )}` : "Autor desconhecido"
+          }
+        ),
+        (user == null ? void 0 : user.CODPESSOA) === 2 && /* @__PURE__ */ jsxRuntimeExports.jsx(
+          IconButton,
+          {
+            sx: { ...buttonStylesMobile, marginX: 2 },
+            onClick: () => handleStartEdition(),
+            children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$7, {})
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: alert2 && /* @__PURE__ */ jsxRuntimeExports.jsx(motion.div, { ...alertAnimation, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Alert, { severity: alert2 == null ? void 0 : alert2.severity, children: alert2 == null ? void 0 : alert2.message }) }) })
+      ]
+    },
+    index2
+  );
+}, "CommentRow");
+const OpportunityInteraction = /* @__PURE__ */ __name(({ guide, guidesReference }) => {
+  const { user } = reactExports.useContext(userContext);
+  const [interactionDate, setInteractionDate] = reactExports.useState();
+  const [comments, setComments] = reactExports.useState();
+  const [commentBeingEdited, setCommentBeingEdited] = reactExports.useState();
+  const [commentBeingAdded, setCommentBeingAdded] = reactExports.useState();
+  const [isMobile, setIsMobile] = reactExports.useState();
+  const handleChangeComment = /* @__PURE__ */ __name((e2, commentId) => {
+    const { value } = e2.target;
+    if (comments) {
+      const updatedComments = comments.map(
+        (comment2) => comment2.codigoComentario === commentId ? { ...comment2, descricao: value } : comment2
+      );
+      setComments(updatedComments);
+    }
+    if (commentBeingEdited) {
+      setCommentBeingEdited({
+        ...commentBeingEdited,
+        descricao: value
+      });
+      return;
+    }
+    if (commentBeingAdded) {
+      setCommentBeingEdited({
+        ...commentBeingAdded,
+        descricao: value
+      });
+      return;
+    }
+  }, "handleChangeComment");
+  const handleChangeInteractonDate = /* @__PURE__ */ __name((e2, _dataKey) => {
+    if (guidesReference.current) {
+      const { value } = e2.target;
+      setInteractionDate(value);
+      guide.fields[0].data = value;
+      guidesReference.current[1] = guide;
+    }
+  }, "handleChangeInteractonDate");
+  const handleCancelAddorEditComment = /* @__PURE__ */ __name(() => {
+    setComments(guide.fields[1].data);
+    setCommentBeingEdited(void 0);
+    setCommentBeingAdded(void 0);
+  }, "handleCancelAddorEditComment");
+  const handleFocus = /* @__PURE__ */ __name(() => {
+    if (guidesReference.current && !commentBeingEdited) {
+      const newComment = {
+        email: "",
+        codOs: guidesReference.current[0].fields[0].data,
+        criadoEm: (/* @__PURE__ */ new Date()).toISOString(),
+        criadoPor: (user == null ? void 0 : user.NOME) || "",
+        descricao: "",
+        codigoComentario: Math.random()
+      };
+      setCommentBeingAdded(newComment);
+      setComments([...comments || [], newComment]);
+    }
+  }, "handleFocus");
+  const handleConclude = /* @__PURE__ */ __name(() => {
+    if (guidesReference.current && comments) {
+      guide.fields[1].data = [...comments];
+      guidesReference.current[1] = guide;
+      handleCancelAddorEditComment();
+    }
+  }, "handleConclude");
+  reactExports.useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
+  reactExports.useEffect(() => {
+    setInteractionDate(guide.fields[0].data);
+    setComments(guide.fields[1].data);
+  }, [guide]);
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    Box,
+    {
+      sx: style$2.container,
+      children: [
+        guide.fields.map((field) => {
+          if (field.dataKey === "dataInteracao") {
+            return /* @__PURE__ */ jsxRuntimeExports.jsx(
+              TextField,
+              {
+                label: field.label,
+                type: field.type,
+                onChange: (e2) => handleChangeInteractonDate(e2, field.dataKey),
+                InputLabelProps: { shrink: true },
+                value: interactionDate
+              }
+            );
+          }
+          if (field.dataKey === "comentarios") {
+            return /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { sx: { width: "100%", gap: 2 }, children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                TextField,
+                {
+                  onChange: (e2) => handleChangeComment(
+                    e2,
+                    (commentBeingEdited == null ? void 0 : commentBeingEdited.codigoComentario) || (commentBeingAdded == null ? void 0 : commentBeingAdded.codigoComentario) || 0
+                  ),
+                  label: "Comentário",
+                  InputLabelProps: { shrink: commentBeingEdited && true },
+                  placeholder: "Digite seu comentário aqui...",
+                  type: "text",
+                  multiline: true,
+                  rows: 3,
+                  onFocus: handleFocus,
+                  onKeyDown: (e2) => {
+                    e2.key === "Enter" && handleConclude();
+                  },
+                  value: (commentBeingEdited == null ? void 0 : commentBeingEdited.descricao) || (commentBeingAdded == null ? void 0 : commentBeingAdded.descricao) || "",
+                  onBlur: handleCancelAddorEditComment,
+                  variant: "outlined",
+                  fullWidth: true,
+                  sx: style$2.commentField
+                },
+                field.dataKey
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: (commentBeingEdited || commentBeingAdded) && /* @__PURE__ */ jsxRuntimeExports.jsx(motion.div, { ...alertAnimation, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", gap: 1, children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  Button,
+                  {
+                    sx: BaseButtonStyles,
+                    onClick: handleCancelAddorEditComment,
+                    children: "Cancelar"
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { onClick: handleConclude, sx: BaseButtonStyles, children: "Concluir" })
+              ] }) }) })
+            ] });
+          }
+        }),
+        comments && /* @__PURE__ */ jsxRuntimeExports.jsx(
+          FixedSizeList,
+          {
+            height: 300,
+            itemCount: comments == null ? void 0 : comments.length,
+            itemSize: isMobile ? 150 : 90,
+            width: "100%",
+            children: ({ index: index2, style: style2 }) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+              CommentRow,
+              {
+                setCommentBeingEdit: setCommentBeingEdited,
+                style: style2,
+                index: index2,
+                comment: comments[index2]
+              },
+              index2
+            )
+          }
+        )
+      ]
+    }
+  );
+}, "OpportunityInteraction");
+const styles$2 = {
+  container: {
+    width: "100%",
+    overflowY: "scroll",
+    overflowX: "hidden",
+    "::-webkit-scrollbar": {
+      width: "4px"
+    }
+  },
+  uploadButton: {
+    ...BaseButtonStyles,
+    width: "fit-content"
+  },
+  gallery: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+    gap: 2,
+    mt: 2,
+    maxHeight: 300
+  },
+  fileContainer: {
+    position: "relative",
+    height: "150px",
+    objectFit: "cover",
+    cursor: "pointer",
+    padding: 0.5
+  },
+  deleteButton: {
+    backgroundColor: "white",
+    position: "absolute",
+    right: -1,
+    top: -2,
+    zIndex: 20,
+    "&:hover": { backgroundColor: "white" }
+  },
+  pdfPreview: {
+    display: "block",
+    height: "150px",
+    width: "100%",
+    textDecoration: "none"
+  },
+  iframe: {
+    height: "100%",
+    width: "100%",
+    objectFit: "fill",
+    pointerEvents: "none"
+  },
+  imagePreview: {
+    cursor: "pointer",
+    width: "100%",
+    height: "100%",
+    borderRadius: "5px"
+  }
+};
 const OpportunityFiles = /* @__PURE__ */ __name(({
-  opportunity,
   handleDeleteFile,
-  handleChangeFiles
+  handleChangeFiles,
+  files
 }) => {
   const [selectedFile, setSelectedFile] = reactExports.useState();
   const handleCloseFileViewer = /* @__PURE__ */ __name(() => {
@@ -91301,118 +92073,59 @@ const OpportunityFiles = /* @__PURE__ */ __name(({
     }
     setSelectedFile(file);
   }, "handleFileClick");
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: { width: "100%" }, children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
-      Button,
-      {
-        component: "span",
-        sx: {
-          height: "20px",
-          width: "fit-content",
-          padding: "0"
-        },
-        children: /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
-            "input",
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: styles$2.container, children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { component: "span", sx: styles$2.uploadButton, children: /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "input",
+        {
+          type: "file",
+          id: "fileUpload",
+          accept: "image/*, application/pdf",
+          style: { display: "none" },
+          onChange: (e2) => handleChangeFiles(e2)
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", alignItems: "center", gap: 0.5, children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { fontSize: "small", children: "Enviar Arquivo" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$8, { sx: { fontSize: "16px" } })
+      ] })
+    ] }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: styles$2.gallery, children: files && files.map((file, index2) => /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: styles$2.fileContainer, children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        IconButton,
+        {
+          sx: styles$2.deleteButton,
+          onClick: () => handleDeleteFile(file),
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$r, { sx: { color: "#2B3990" } })
+        }
+      ),
+      isPDF(file.nome_arquivo) ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Box,
+        {
+          onClick: () => setSelectedFile(file),
+          sx: styles$2.pdfPreview,
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+            Box,
             {
-              type: "file",
-              id: "fileUpload",
-              accept: "image/*, application/pdf",
-              style: { display: "none" },
-              onChange: (e2) => handleChangeFiles(e2)
+              component: "iframe",
+              src: file.arquivo,
+              sx: styles$2.iframe
             }
-          ),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", alignItems: "center", gap: 0.5, children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { fontSize: "small", children: "Enviar Arquivo" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$8, { sx: { fontSize: "16px" } })
-          ] })
-        ] })
-      }
-    ),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
-      Box,
-      {
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
-        gap: 2,
-        mt: 2,
-        children: opportunity.files && opportunity.files.map((file, index2) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          Box,
-          {
-            position: "relative",
-            className: "drop-shadow-md",
-            sx: {
-              height: "150px",
-              objectFit: "cover",
-              cursor: "pointer",
-              padding: 0.5
-            },
-            children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                IconButton,
-                {
-                  className: "drop-shadow-md",
-                  sx: {
-                    backgroundColor: "white",
-                    position: "absolute",
-                    right: -1,
-                    top: -2,
-                    zIndex: 20,
-                    "&:hover": { backgroundColor: "white" }
-                  },
-                  onClick: () => handleDeleteFile(file),
-                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$r, { sx: { color: "#2B3990" } })
-                }
-              ),
-              isPDF(file.nome_arquivo) ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-                Box,
-                {
-                  onClick: () => setSelectedFile(file),
-                  sx: {
-                    display: "block",
-                    height: "150px",
-                    width: "100%",
-                    textDecoration: "none"
-                  },
-                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    Box,
-                    {
-                      height: "150px",
-                      width: "100%",
-                      component: "iframe",
-                      src: file.arquivo,
-                      sx: {
-                        height: "100%",
-                        width: "100%",
-                        objectFit: "fill",
-                        // Força a ocupar a largura total
-                        pointerEvents: "none"
-                        // Desativa interatividade no preview
-                      }
-                    }
-                  )
-                }
-              ) : /* @__PURE__ */ jsxRuntimeExports.jsx(
-                "img",
-                {
-                  onClick: () => handleFileClick(file),
-                  src: file.arquivo,
-                  alt: file.nome_arquivo,
-                  style: {
-                    cursor: "pointer",
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    borderRadius: "5px"
-                  }
-                }
-              )
-            ]
-          },
-          index2
-        ))
-      }
-    ),
+          )
+        }
+      ) : /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "img",
+        {
+          onClick: () => handleFileClick(file),
+          src: file.arquivo,
+          alt: file.nome_arquivo,
+          style: {
+            ...styles$2.imagePreview,
+            objectFit: "cover"
+          }
+        }
+      )
+    ] }, index2)) }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       FileViewer,
       {
@@ -91426,253 +92139,252 @@ const OpportunityFiles = /* @__PURE__ */ __name(({
   ] });
 }, "OpportunityFiles");
 OpportunityFiles.displayName = "OpportunityFiles";
-const OpportunityFields = /* @__PURE__ */ __name(({
-  field,
-  renderAutoCompleteValue,
-  handleChangeAutoComplete,
-  renderOptions,
-  adicional,
-  opportunity,
-  handleChangeTextField,
-  isDateField,
-  handleChangeComentarios,
-  currentCommentValue,
-  setEditingComment,
-  editingComment
+const style$1 = {
+  observationField: {
+    borderRadius: 2,
+    // Bordas arredondadas
+    backgroundColor: "#f9f9f9",
+    // Fundo claro para destacar
+    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+    // Efeito de profundidade
+    "& .MuiOutlinedInput-root": {
+      "& fieldset": {
+        borderColor: "#1976d2"
+        // Cor da borda inicial
+      },
+      "&:hover fieldset": {
+        borderColor: "#1565c0"
+        // Cor da borda ao passar o mouse
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: "#0d47a1",
+        // Cor da borda ao focar
+        borderWidth: "2px"
+        // Aumenta a espessura ao focar
+      }
+    },
+    "& .MuiInputLabel-root": {
+      color: "#757575"
+      // Cor do label
+    },
+    "& .MuiInputLabel-root.Mui-focused": {
+      color: "#0d47a1"
+      // Cor do label ao focar
+    }
+  }
+};
+const OpportunityScope = /* @__PURE__ */ __name(({
+  guide,
+  guidesReference,
+  formDataFilesRef
 }) => {
-  var _a2;
-  const isFullWidthField = field.dataKey === "observacao" || field.dataKey === "comentarios";
-  const isFieldDisabled = /* @__PURE__ */ __name((field2) => {
-    if (field2.dataKey === "numeroAdicional") {
-      return true;
+  const [files, setFiles] = reactExports.useState([]);
+  const [oppId, setOppId] = reactExports.useState();
+  const [isEditing, setIsEditing] = reactExports.useState(false);
+  const [observation, setObservation] = reactExports.useState();
+  const handleDeleteFile = /* @__PURE__ */ __name((file) => {
+    if (files && guidesReference.current) {
+      const newFiles = files.filter(
+        (oppFile) => oppFile.nome_arquivo !== file.nome_arquivo
+      );
+      setFiles(newFiles);
+      guide.fields[1].data = newFiles;
+      guidesReference.current[2] = guide;
     }
-    if (field2.dataKey === "dataEntrega" && ![11, 12, 13, 5].find((statusId) => statusId === opportunity.codStatus)) {
-      return true;
+  }, "handleDeleteFile");
+  const handleChangeFiles = /* @__PURE__ */ __name(async (e2) => {
+    var _a2;
+    if (e2.target.files) {
+      const file = e2.target.files[0];
+      const newFile = {
+        id_anexo_os: Math.random(),
+        arquivo: URL.createObjectURL(file),
+        nome_arquivo: file.name,
+        codos: oppId || 0
+      };
+      setFiles([...files || [], newFile]);
+      const newFormData = new FormData();
+      (_a2 = formDataFilesRef.current) == null ? void 0 : _a2.forEach((value, key) => {
+        newFormData.append(key, value);
+      });
+      newFormData.append("files", file);
+      formDataFilesRef.current = newFormData;
+      e2.target.value = "";
     }
-    return false;
-  }, "isFieldDisabled");
-  const renderFieldValue = /* @__PURE__ */ __name((field2) => {
-    return opportunity[field2.dataKey] ? opportunity[field2.dataKey] : "";
-  }, "renderFieldValue");
-  const Row = /* @__PURE__ */ __name(({
-    index: index2,
-    style: style2
-  }) => {
-    const comentario = opportunity.comentarios[index2];
-    const { user } = reactExports.useContext(userContext);
-    return /* @__PURE__ */ jsxRuntimeExports.jsxs(
-      ListItem,
-      {
-        alignItems: "flex-start",
-        style: style2,
-        children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(ListItemAvatar, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(Avatar, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$i, {}) }) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
-            ListItemText,
-            {
-              primary: comentario.descricao || "Comentário vazio",
-              secondary: comentario.criadoPor ? `Por: ${comentario.criadoPor} | ${formatDate(
-                comentario.criadoEm || ""
-              )}` : "Autor desconhecido"
-            }
-          ),
-          (user == null ? void 0 : user.CODPESSOA) === 2 && //Icon button de editar comentario
-          /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: () => setEditingComment(comentario), children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$7, {}) })
-        ]
+  }, "handleChangeFiles");
+  const cancelObsEdition = /* @__PURE__ */ __name(() => {
+    setIsEditing(false);
+  }, "cancelObsEdition");
+  const handleChangeObservation = /* @__PURE__ */ __name((e2) => {
+    const { value } = e2.target;
+    setObservation(value);
+  }, "handleChangeObservation");
+  const concludeObservationEdition = /* @__PURE__ */ __name(() => {
+    if (guidesReference.current) {
+      guide.fields[0].data = observation;
+      guidesReference.current[2] = guide;
+    }
+    setIsEditing(false);
+  }, "concludeObservationEdition");
+  reactExports.useEffect(() => {
+    if (guidesReference.current) {
+      const oppId2 = guidesReference.current[0].fields[0].data.codOs || 0;
+      setOppId(oppId2);
+      setFiles(guide.fields[1].data);
+    }
+  }, [guide]);
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    Box,
+    {
+      sx: {
+        width: "100%",
+        display: "flex",
+        alignItems: "center",
+        flexDirection: "column",
+        justifyContent: "center",
+        gap: 2,
+        padding: 1
       },
-      comentario.codigoComentario
-    );
-  }, "Row");
-  if (field.autoComplete) {
-    return /* @__PURE__ */ jsxRuntimeExports.jsxs(
-      Box,
-      {
-        sx: { maxWidth: isFullWidthField ? "100%" : "300px", width: "100%" },
-        children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { fontFamily: "Roboto", fontSize: "small", children: field.label }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
-            Autocomplete,
-            {
-              value: renderAutoCompleteValue(field),
-              disablePortal: true,
-              getOptionKey: (option) => option.key,
-              disabled: field.dataKey === "idProjeto",
-              onChange: handleChangeAutoComplete,
-              options: renderOptions(field) || [],
-              renderInput: (params) => /* @__PURE__ */ jsxRuntimeExports.jsx(TextField, { ...params })
-            },
-            field.dataKey
-          )
-        ]
-      }
-    );
-  }
-  if (field.dataKey === "descricao" && adicional) {
-    return null;
-  }
-  if (field.dataKey === "valorTotal") {
-    return /* @__PURE__ */ jsxRuntimeExports.jsxs(
-      Box,
-      {
-        sx: { maxWidth: isFullWidthField ? "100%" : "300px", width: "100%" },
-        children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { fontFamily: "Roboto", fontSize: "small", children: field.label }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
-            TextField,
-            {
-              label: `Valor Total: ${opportunity[field.dataKey]}`,
-              disabled: true,
-              placeholder: `Valor Total: ${opportunity[field.dataKey]}`,
-              type: field.type,
-              onChange: (e2) => handleChangeTextField(e2, field),
-              InputLabelProps: isDateField(field.dataKey) ? { shrink: true } : void 0,
-              variant: "outlined",
-              fullWidth: true
-            },
-            field.dataKey
-          )
-        ]
-      }
-    );
-  }
-  if (field.dataKey === "comentarios") {
-    return /* @__PURE__ */ jsxRuntimeExports.jsxs(
-      Box,
-      {
-        sx: { width: "100%", display: "flex", flexDirection: "column", gap: 1 },
-        children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { variant: "h5", gutterBottom: true, children: "Comentários" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
-            TextField,
-            {
-              onChange: (e2) => handleChangeComentarios(
-                e2,
-                (editingComment == null ? void 0 : editingComment.codigoComentario) || void 0
-              ),
-              label: "Adicionar Comentário",
-              placeholder: "Digite seu comentário aqui...",
-              value: editingComment ? editingComment.descricao : currentCommentValue,
-              type: "text",
-              multiline: true,
-              rows: 3,
-              variant: "outlined",
-              fullWidth: true,
-              sx: {
-                borderRadius: 2,
-                // Bordas arredondadas
-                backgroundColor: "#f9f9f9",
-                // Fundo claro para destacar
-                boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-                // Efeito de profundidade
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "#1976d2"
-                    // Cor da borda inicial
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "#1565c0"
-                    // Cor da borda ao passar o mouse
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "#0d47a1",
-                    // Cor da borda ao focar
-                    borderWidth: "2px"
-                    // Aumenta a espessura ao focar
-                  }
-                },
-                "& .MuiInputLabel-root": {
-                  color: "#757575"
-                  // Cor do label
-                },
-                "& .MuiInputLabel-root.Mui-focused": {
-                  color: "#0d47a1"
-                  // Cor do label ao focar
-                }
-              }
-            },
-            field.dataKey
-          ),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
-            FixedSizeList,
-            {
-              height: 300,
-              itemCount: ((_a2 = opportunity.comentarios) == null ? void 0 : _a2.length) || 0,
-              itemSize: 80,
-              width: "100%",
-              children: Row
-            }
-          )
-        ]
-      }
-    );
-  }
-  if (field.dataKey === "observacoes") {
-    return /* @__PURE__ */ jsxRuntimeExports.jsx(
-      TextField,
-      {
-        onChange: (e2) => handleChangeTextField(e2, field),
-        placeholder: "Digite qualquer observação que ajute a detalhar a proposta...",
-        value: opportunity.observacoes,
-        type: "text",
-        multiline: true,
-        rows: 3,
-        variant: "outlined",
-        fullWidth: true,
-        sx: {
-          borderRadius: 2,
-          // Bordas arredondadas
-          backgroundColor: "#f9f9f9",
-          // Fundo claro para destacar
-          boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-          // Efeito de profundidade
-          "& .MuiOutlinedInput-root": {
-            "& fieldset": {
-              borderColor: "#1976d2"
-              // Cor da borda inicial
-            },
-            "&:hover fieldset": {
-              borderColor: "#1565c0"
-              // Cor da borda ao passar o mouse
-            },
-            "&.Mui-focused fieldset": {
-              borderColor: "#0d47a1",
-              // Cor da borda ao focar
-              borderWidth: "2px"
-              // Aumenta a espessura ao focar
-            }
-          },
-          "& .MuiInputLabel-root": {
-            color: "#757575"
-            // Cor do label
-          },
-          "& .MuiInputLabel-root.Mui-focused": {
-            color: "#0d47a1"
-            // Cor do label ao focar
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          TextField,
+          {
+            label: "Observação",
+            InputLabelProps: { shrink: true },
+            fullWidth: true,
+            sx: style$1.observationField,
+            multiline: true,
+            type: "text",
+            value: observation,
+            onChange: handleChangeObservation,
+            onFocus: () => setIsEditing(true)
           }
-        }
-      },
-      field.dataKey
-    );
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: isEditing && /* @__PURE__ */ jsxRuntimeExports.jsx(motion.div, { ...alertAnimation, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", gap: 1, children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            Button,
+            {
+              sx: BaseButtonStyles,
+              onClick: concludeObservationEdition,
+              children: "Concluir"
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { sx: BaseButtonStyles, onClick: cancelObsEdition, children: "Cancelar" })
+        ] }) }) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          OpportunityFiles,
+          {
+            files,
+            handleDeleteFile,
+            handleChangeFiles
+          }
+        )
+      ]
+    }
+  );
+}, "OpportunityScope");
+const style = {
+  formGrid: {
+    display: "grid",
+    gridTemplateColumns: {
+      xs: "1fr",
+      md: "1fr 1fr"
+    },
+    gap: 1,
+    rowGap: 2,
+    width: "100%",
+    padding: 1
   }
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: { maxWidth: isFullWidthField ? "100%" : "300px", width: "100%" }, children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { fontFamily: "Roboto", fontSize: "small", children: field.label }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
-      TextField,
-      {
-        value: renderFieldValue(field),
-        type: field.type,
-        disabled: isFieldDisabled(field),
-        onChange: (e2) => handleChangeTextField(e2, field),
-        InputLabelProps: isDateField(field.dataKey) ? { shrink: true } : void 0,
-        variant: "outlined",
-        fullWidth: true
-      },
-      field.dataKey
-    )
-  ] });
-}, "OpportunityFields");
-OpportunityFields.displayName = "OpportunityFields";
-const theme$3 = createTheme(
+};
+const OpportunitySale = /* @__PURE__ */ __name(({ guide, guidesReference }) => {
+  const [sale, setSale] = reactExports.useState();
+  const [salerOptions, setSalerOptions] = reactExports.useState();
+  const [currentSaller, setCurrentSaller] = reactExports.useState();
+  const fetchSalerOps = reactExports.useCallback(
+    async (firstsSaleState) => {
+      const salers = await fetchSalers();
+      const options = salers.map((saler) => ({
+        label: saler.NOME,
+        id: saler.CODPESSOA,
+        object: "saler",
+        key: saler.CODPESSOA
+      }));
+      setSalerOptions(options);
+      setCurrentSaller(
+        options.find((option) => option.id === firstsSaleState.responsavel)
+      );
+    },
+    [setSalerOptions]
+  );
+  const handleChangeTextField = /* @__PURE__ */ __name((fieldReceived, e2) => {
+    if (guidesReference.current && sale) {
+      const { value } = e2.target;
+      const updatedSale = {
+        ...sale,
+        [fieldReceived.dataKey]: value
+      };
+      const { valorFatDireto, valorFatDolphin } = updatedSale;
+      const totalValue = Number(valorFatDireto) + Number(valorFatDolphin);
+      setSale({ ...updatedSale, valorTotal: totalValue });
+      const fieldIndex = guide.fields.indexOf(fieldReceived);
+      fieldReceived.data = value;
+      guide.fields[fieldIndex] = fieldReceived;
+      guide.fields[4].data = totalValue;
+      guidesReference.current[3] = guide;
+    }
+  }, "handleChangeTextField");
+  const handleChangeAutoComplete = /* @__PURE__ */ __name((value) => {
+    setCurrentSaller(value);
+    guide.fields[0].data = value.id;
+  }, "handleChangeAutoComplete");
+  reactExports.useEffect(() => {
+    const firstsSaleState = {
+      responsavel: guide.fields[0].data,
+      valorFatDolphin: guide.fields[1].data,
+      valorFatDireto: guide.fields[2].data,
+      valorComissao: guide.fields[3].data,
+      valorTotal: guide.fields[4].data
+    };
+    setSale(firstsSaleState);
+    fetchSalerOps(firstsSaleState);
+  }, [guide]);
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: style.formGrid, children: guide.fields.map((field, index2) => {
+    if (field.dataKey === "responsavel" && salerOptions) {
+      return /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Autocomplete,
+        {
+          getOptionKey: (option) => option.id,
+          options: salerOptions,
+          value: currentSaller,
+          renderInput: (params) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+            TextField,
+            {
+              ...params,
+              label: field.label,
+              InputLabelProps: { shrink: true }
+            }
+          ),
+          onChange: (_event, value, _reason, _details) => handleChangeAutoComplete(value)
+        }
+      );
+    }
+    if (sale) {
+      return /* @__PURE__ */ jsxRuntimeExports.jsx(
+        TextField,
+        {
+          type: field.type,
+          label: field.label,
+          disabled: field.dataKey === "valorTotal",
+          InputLabelProps: { shrink: true },
+          onChange: (e2) => handleChangeTextField(field, e2),
+          value: sale[field.dataKey]
+        },
+        index2
+      );
+    }
+  }) });
+}, "OpportunitySale");
+const theme$2 = createTheme(
   {
     palette: {
       primary: { main: "#1976d2" }
@@ -91682,29 +92394,32 @@ const theme$3 = createTheme(
   ptBR,
   ptBR$2
 );
-const columns$2 = [
+const columns$1 = [
   {
     field: "NOME",
     headerName: "Nome",
     type: "string",
     align: "left",
     headerAlign: "center",
-    filterable: true
+    filterable: true,
+    width: 300
   }
 ];
 const AddFollowersModal = /* @__PURE__ */ __name(({
-  opportunity,
-  setCurrentOpportunity,
-  handleSaveOpportunity
+  setFollowers,
+  followers,
+  guide,
+  guidesReference
 }) => {
   const [addingFollowrs, setAddingFollowers] = reactExports.useState(false);
   const [personList, setPersonList] = reactExports.useState([]);
-  const [previousSelectedList, setPreviousSelectedList] = reactExports.useState([]);
+  const [previousSelectedList, setPreviousSelectedList] = reactExports.useState(
+    []
+  );
+  const [filteredPersonList, setFilteredPersonList] = reactExports.useState([]);
+  const [searchTerm, setSearchTerm] = reactExports.useState("");
+  const [newFollowers, setNewFollowers] = reactExports.useState();
   const GridFooter3 = /* @__PURE__ */ __name(() => {
-    const handleConclude = /* @__PURE__ */ __name(async () => {
-      await handleSaveOpportunity();
-      setAddingFollowers(false);
-    }, "handleConclude");
     return /* @__PURE__ */ jsxRuntimeExports.jsxs(
       GridFooterContainer,
       {
@@ -91722,7 +92437,7 @@ const AddFollowersModal = /* @__PURE__ */ __name(({
           height: "30px"
         },
         children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { variant: "contained", onClick: () => handleConclude(), children: /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { fontSize: "Medium", textTransform: "capitalize", children: "Concluir" }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { sx: BaseButtonStyles, onClick: () => handleConclude(), children: /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { fontSize: "small", textTransform: "capitalize", children: "Concluir" }) }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(GridSelectedRowCount, { selectedRowCount: previousSelectedList.length }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(
             GridPagination,
@@ -91730,11 +92445,12 @@ const AddFollowersModal = /* @__PURE__ */ __name(({
               sx: {
                 padding: 0,
                 display: "flex",
-                maxWidth: "200px",
                 alignItems: "center",
                 justifyContent: "end",
                 overflowY: "hidden",
-                overflowX: "hidden",
+                "& .MuiTablePagination-displayedRows": {
+                  display: "none"
+                },
                 height: "30px"
               }
             }
@@ -91749,50 +92465,63 @@ const AddFollowersModal = /* @__PURE__ */ __name(({
       peopleList
     });
     setPersonList(peopleList || []);
+    setFilteredPersonList(peopleList || []);
   }, "fetchOptions");
-  const handleRowSelection = /* @__PURE__ */ __name((currentSelecionList, details) => {
-    console.log(details);
-    setPreviousSelectedList(currentSelecionList);
-    const currentFolowersId = opportunity.seguidores.map((seguidor) => seguidor.codpessoa);
-    const newFollowerIds = currentSelecionList.filter((codpessoa) => currentFolowersId.indexOf(Number(codpessoa)) < 0);
-    const removedFollowersIds = previousSelectedList.filter((codpessoa) => currentSelecionList.indexOf(codpessoa) < 0);
-    console.log({ newFollowerIds });
-    if (newFollowerIds.length) {
-      const newOppFollowers = [...opportunity.seguidores];
-      for (const newFollowerId of newFollowerIds) {
-        const person = personList.find((person2) => person2.CODPESSOA === newFollowerId);
-        if (person) {
-          newOppFollowers.push({
-            id_seguidor_projeto: 0,
-            id_projeto: opportunity.idProjeto || 0,
-            codpessoa: person.CODPESSOA,
-            ativo: 1,
-            nome: person.NOME
-          });
-        }
-      }
-      setCurrentOpportunity({
-        ...opportunity,
-        seguidores: newOppFollowers
-      });
-      console.log({ newOppFollowers });
-      return;
+  const handleConclude = /* @__PURE__ */ __name(async () => {
+    console.log("handleConclude ", followers);
+    if (newFollowers && guidesReference.current) {
+      const newOppFollowers = newFollowers.filter(
+        (newFollower) => !followers.find(
+          (follower) => follower.codpessoa === newFollower.codpessoa
+        )
+      );
+      guide.fields[0].data = [...followers, ...newOppFollowers];
+      guidesReference.current[4] = guide;
+      setFollowers([...followers, ...newOppFollowers]);
     }
-    if (removedFollowersIds.length > 0) {
-      const newOppFollowers = opportunity.seguidores.filter((seguidor) => removedFollowersIds.indexOf(seguidor.codpessoa) < 0);
-      setCurrentOpportunity({
-        ...opportunity,
-        seguidores: newOppFollowers
-      });
-      console.log({ newOppFollowers });
-      return;
-    }
+    setAddingFollowers(false);
+  }, "handleConclude");
+  const handleRowSelection = /* @__PURE__ */ __name((currentSelectionList, _details) => {
+    setPreviousSelectedList(currentSelectionList);
+    const selectedFollowers = currentSelectionList.map((id2) => {
+      const selectedPerson = personList.find(
+        (person) => person.CODPESSOA === id2
+      );
+      return {
+        id_seguidor_projeto: 0,
+        // ID fictício, pode ser gerado ou obtido do backend
+        id_projeto: 0,
+        // ID do projeto (deve ser passado como prop ou contexto)
+        codpessoa: (selectedPerson == null ? void 0 : selectedPerson.CODPESSOA) || 0,
+        ativo: 1,
+        // Define como ativo por padrão
+        nome: (selectedPerson == null ? void 0 : selectedPerson.NOME) || ""
+      };
+    });
+    setNewFollowers(selectedFollowers);
   }, "handleRowSelection");
   reactExports.useEffect(() => {
     fetchOptions();
-  }, [opportunity.seguidores]);
+  }, [addingFollowrs]);
+  reactExports.useEffect(() => {
+    if (searchTerm) {
+      const filtered = personList.filter(
+        (person) => person.NOME.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredPersonList(filtered);
+    } else {
+      setFilteredPersonList(personList);
+    }
+  }, [searchTerm, personList]);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: () => setAddingFollowers(!addingFollowrs), children: /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "adicionar seguidores", children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$o, {}) }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      IconButton,
+      {
+        sx: buttonStylesMobile,
+        onClick: () => setAddingFollowers(!addingFollowrs),
+        children: /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "adicionar seguidores", children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$o, {}) })
+      }
+    ),
     /* @__PURE__ */ jsxRuntimeExports.jsx(Modal$3, { open: addingFollowrs, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
       Box,
       {
@@ -91830,7 +92559,22 @@ const AddFollowersModal = /* @__PURE__ */ __name(({
             }
           ),
           " ",
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { fontWeight: "bold", className: "text-gray-600", children: "Adicionar seguidores à proposta" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { fontWeight: "bold", className: "text-gray-600", children: "Adicionar seguidores à proposta" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              TextField,
+              {
+                variant: "outlined",
+                value: searchTerm,
+                onChange: (e2) => setSearchTerm(e2.target.value),
+                margin: "normal",
+                InputProps: {
+                  sx: { borderRadius: 10, height: 40 },
+                  placeholder: "busque por nome..."
+                }
+              }
+            )
+          ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(
             Box,
             {
@@ -91838,17 +92582,19 @@ const AddFollowersModal = /* @__PURE__ */ __name(({
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                maxHeight: "90%"
+                maxHeight: "80%",
+                width: "100%"
               },
-              children: /* @__PURE__ */ jsxRuntimeExports.jsx(ThemeProvider2, { theme: theme$3, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(ThemeProvider2, { theme: theme$2, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
                 DataGrid,
                 {
-                  rows: personList,
-                  columns: columns$2,
+                  rows: filteredPersonList,
+                  columns: columns$1,
                   getRowId: (row) => row.CODPESSOA,
                   sx: {
                     "& .MuiDataGrid-columnHeaders": {
-                      backgroundColor: "#f5f5f5"
+                      backgroundColor: "blue",
+                      display: "none"
                     },
                     maxWidth: {
                       xs: "100%",
@@ -91864,18 +92610,23 @@ const AddFollowersModal = /* @__PURE__ */ __name(({
                       }
                     }
                   },
-                  autosizeOnMount: true,
                   slots: {
-                    columnMenu: (props) => /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: {
-                      "& .MuiMenuItem-root": {
-                        display: "flex",
-                        flexWrap: "wrap"
-                      },
-                      maxWidth: {
-                        xs: 260,
-                        sm: 300
+                    columnMenu: (props) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Box,
+                      {
+                        sx: {
+                          "& .MuiMenuItem-root": {
+                            display: "flex",
+                            flexWrap: "wrap"
+                          },
+                          maxWidth: {
+                            xs: 260,
+                            sm: 300
+                          }
+                        },
+                        children: /* @__PURE__ */ jsxRuntimeExports.jsx(GridColumnMenu, { ...props })
                       }
-                    }, children: /* @__PURE__ */ jsxRuntimeExports.jsx(GridColumnMenu, { ...props }) }),
+                    ),
                     footer: GridFooter3,
                     filterPanel: (props) => /* @__PURE__ */ jsxRuntimeExports.jsx(
                       GridFilterPanel,
@@ -91895,7 +92646,7 @@ const AddFollowersModal = /* @__PURE__ */ __name(({
                   },
                   rowSelection: true,
                   disableMultipleRowSelection: false,
-                  onRowSelectionModelChange: (newSelection, details) => handleRowSelection(newSelection, details),
+                  onRowSelectionModelChange: (newSelection, details) => handleRowSelection(newSelection),
                   disableColumnSelector: true,
                   checkboxSelection: true,
                   density: "compact"
@@ -91909,261 +92660,133 @@ const AddFollowersModal = /* @__PURE__ */ __name(({
   ] });
 }, "AddFollowersModal");
 AddFollowersModal.displayName = "AddFollowersModal";
-const theme$2 = createTheme(
-  {
-    palette: {
-      primary: { main: "#1976d2" }
+const OpportunityFollowers = /* @__PURE__ */ __name(({ guide, guidesReference }) => {
+  const [followers, setFollowers] = reactExports.useState([]);
+  const [searchTerm, setSearchTerm] = reactExports.useState("");
+  const [filteredFollowers, setFilteredFollowers] = reactExports.useState([]);
+  reactExports.useEffect(() => {
+    if (guide.fields[0].data) {
+      setFollowers([...guide.fields[0].data]);
+      setFilteredFollowers([...guide.fields[0].data]);
     }
-  },
-  ptBR$1,
-  ptBR,
-  ptBR$2
-);
-const columns$1 = [
-  {
-    field: "nome",
-    headerName: "Nome",
-    align: "left",
-    headerAlign: "center"
-  }
-];
-const FollowersTable = /* @__PURE__ */ __name(({
-  opportunity,
-  setCurrentOpportunity,
-  handleSaveOpportunity
-}) => {
-  const [previousSelectedList, setPreviousSelectedList] = reactExports.useState(
-    []
-  );
-  const deleteFollowers = /* @__PURE__ */ __name(() => {
-    const newFollowersList = opportunity.seguidores.filter(
-      (follower) => !previousSelectedList.includes(follower.codpessoa)
+  }, [guide]);
+  reactExports.useEffect(() => {
+    const filtered = followers.filter(
+      (follower) => follower.nome.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    setCurrentOpportunity({ ...opportunity, seguidores: newFollowersList });
-    setPreviousSelectedList([]);
-  }, "deleteFollowers");
-  const handleRowSelection = /* @__PURE__ */ __name((currentSelecionList, details) => {
-    console.log(details);
-    setPreviousSelectedList(currentSelecionList);
-  }, "handleRowSelection");
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: { height: 500, width: "100%" }, children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", gap: 1, children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        AddFollowersModal,
+    setFilteredFollowers(filtered);
+  }, [searchTerm, followers]);
+  reactExports.useEffect(() => {
+    setFilteredFollowers(followers);
+  }, [followers]);
+  const Row = /* @__PURE__ */ __name((props) => {
+    const { index: index2, style: style2, data } = props;
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      ListItem,
+      {
+        style: {
+          ...style2,
+          borderRadius: 10
+        },
+        component: "div",
+        disablePadding: true,
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(ListItemAvatar, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(Avatar, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$i, {}) }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(ListItemButton, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(ListItemText, { primary: `${data.nome}` }) })
+        ]
+      },
+      index2
+    );
+  }, "Row");
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: { width: "100%", padding: 1 }, children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      AddFollowersModal,
+      {
+        setFollowers,
+        followers,
+        guide,
+        guidesReference
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      TextField,
+      {
+        variant: "outlined",
+        value: searchTerm,
+        onChange: (e2) => setSearchTerm(e2.target.value),
+        margin: "normal",
+        InputProps: {
+          sx: { borderRadius: 10, height: 40 },
+          placeholder: "busque por nome..."
+        }
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      FixedSizeList,
+      {
+        height: 300,
+        itemCount: filteredFollowers.length,
+        itemSize: 50,
+        width: "100%",
+        children: ({ index: index2, style: style2 }) => /* @__PURE__ */ jsxRuntimeExports.jsx(Row, { index: index2, style: style2, data: filteredFollowers[index2] })
+      }
+    )
+  ] });
+}, "OpportunityFollowers");
+const OpportunityGuide = /* @__PURE__ */ __name(({
+  guidesReference,
+  guide,
+  formDataFilesRef,
+  isLoading
+}) => {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: { ...styles$4.guideContainer }, children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { sx: typographyStyles.heading2, children: guide.name }),
+    !isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+      guide.name === "Cadastro" && /* @__PURE__ */ jsxRuntimeExports.jsx(
+        OpportunityRegistration,
         {
-          opportunity,
-          setCurrentOpportunity,
-          handleSaveOpportunity
+          guidesReference,
+          guide
         }
       ),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: () => deleteFollowers(), children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$r, {}) })
-    ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(ThemeProvider2, { theme: theme$2, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-      DataGrid,
-      {
-        disableColumnSelector: true,
-        slots: {
-          filterPanel: (props) => /* @__PURE__ */ jsxRuntimeExports.jsx(
-            GridFilterPanel,
-            {
-              ...props,
-              disableAddFilterButton: true,
-              sx: {
-                "& .MuiDataGrid-filterFormColumnInput": {
-                  display: "none"
-                },
-                "& .MuiDataGrid-filterFormOperatorInput": {
-                  display: "none"
-                }
-              }
-            }
-          )
-        },
-        sx: {
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: "blue"
-          },
-          "& .MuiDataGrid-row": {
-            cursor: "pointer"
-          }
-        },
-        paginationModel: {
-          pageSize: 100,
-          page: 0
-        },
-        autosizeOnMount: true,
-        pageSizeOptions: [],
-        getRowId: (row) => row.codpessoa,
-        rows: opportunity.seguidores.map((row, index2) => ({
-          ...row,
-          id: row.codpessoa,
-          key: index2
-        })),
-        columns: columns$1,
-        checkboxSelection: true,
-        onRowSelectionModelChange: (newSelection, details) => handleRowSelection(newSelection, details),
-        disableRowSelectionOnClick: true
-      }
-    ) })
-  ] });
-}, "FollowersTable");
-FollowersTable.displayName = "FollowersTable";
-const styles$2 = {
-  guideContainer: {
-    width: "100%",
-    display: "flex !important",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 0.5
-  },
-  contentContainer: {
-    display: "flex",
-    alignItems: "flex-start",
-    flexWrap: "wrap",
-    gap: 2,
-    width: "100%",
-    minWidth: 0
-  }
-};
-const OpportunityGuide = /* @__PURE__ */ __name(({
-  guide,
-  renderAutoCompleteValue,
-  handleChangeAutoComplete,
-  renderOptions,
-  adicional,
-  currentOppIdSelected,
-  opportunity,
-  handleChangeTextField,
-  isDateField,
-  currentCommentValue,
-  handleChangeComentarios,
-  editingComment,
-  setEditingComment,
-  setCurrentOpportunity,
-  handleSaveOpportunity,
-  handleChangeFiles,
-  handleDeleteFile
-}) => {
-  var _a2;
-  const justifyStartGuide = /* @__PURE__ */ __name((guideName) => {
-    return guideName === "Escopo" || guideName === "Interação";
-  }, "justifyStartGuide");
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
-    Box,
-    {
-      sx: styles$2.guideContainer,
-      children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          Box,
-          {
-            sx: {
-              ...styles$2.contentContainer,
-              justifyContent: justifyStartGuide(guide.name) ? `start` : `center`
-            },
-            children: [
-              guide.name === "Escopo" && /* @__PURE__ */ jsxRuntimeExports.jsx(
-                OpportunityFiles,
-                {
-                  handleChangeFiles,
-                  handleDeleteFile,
-                  opportunity
-                }
-              ),
-              (_a2 = guide.fields) == null ? void 0 : _a2.map((field) => /* @__PURE__ */ jsxRuntimeExports.jsx(
-                OpportunityFields,
-                {
-                  field,
-                  renderAutoCompleteValue,
-                  handleChangeAutoComplete,
-                  renderOptions,
-                  adicional,
-                  currentOppIdSelected,
-                  opportunity,
-                  handleChangeTextField,
-                  isDateField,
-                  currentCommentValue,
-                  handleChangeComentarios,
-                  editingComment,
-                  setEditingComment
-                },
-                field.dataKey
-              ))
-            ]
-          }
-        ),
-        guide.name === "Seguidores" && /* @__PURE__ */ jsxRuntimeExports.jsx(
-          FollowersTable,
-          {
-            setCurrentOpportunity,
-            opportunity,
-            handleSaveOpportunity
-          }
-        )
-      ]
-    },
-    guide.name
-  );
-}, "OpportunityGuide");
-OpportunityGuide.displayName = "OpportunityGuide";
-const styles$1 = {
-  guideSelectorContainer: {
-    display: "flex",
-    width: "100%",
-    height: 300,
-    justifyContent: "space-around",
-    alignItems: "center",
-    overflowX: "scroll",
-    minHeight: "4rem",
-    position: "sticky",
-    top: 0,
-    padding: 1,
-    backgroundColor: "white",
-    // Cor de fundo
-    zIndex: 20,
-    "&::-webkit-scrollbar": {
-      width: "4px",
-      // Largura da barra de rolagem
-      height: "2px"
-    },
-    "&::-webkit-scrollbar-thumb": {
-      display: "none",
-      height: "2px",
-      backgroundColor: "#888",
-      // Cor da barra de rolagem
-      borderRadius: "4px"
-      // Bordas arredondadas
-    },
-    transform: `translateY(-1rem)`
-  }
-};
-const GuideSelector = /* @__PURE__ */ __name(({
-  guides,
-  currentSlideIndex,
-  handleChangeGuide
-}) => {
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(
-    Stack,
-    {
-      direction: "row",
-      gap: 1,
-      sx: styles$1.guideSelectorContainer,
-      children: guides.map((guide, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
-        Chip,
+      guide.name === "Interação" && /* @__PURE__ */ jsxRuntimeExports.jsx(
+        OpportunityInteraction,
         {
-          onClick: () => handleChangeGuide(index2),
-          sx: {
-            cursor: "pointer"
-          },
-          label: guide.name,
-          variant: currentSlideIndex === index2 ? "filled" : "outlined"
+          guide,
+          guidesReference
+        }
+      ),
+      guide.name === "Escopo" && /* @__PURE__ */ jsxRuntimeExports.jsx(
+        OpportunityScope,
+        {
+          guide,
+          guidesReference,
+          formDataFilesRef
+        }
+      ),
+      guide.name === "Venda" && /* @__PURE__ */ jsxRuntimeExports.jsx(OpportunitySale, { guide, guidesReference }),
+      guide.name === "Seguidores" && /* @__PURE__ */ jsxRuntimeExports.jsx(
+        OpportunityFollowers,
+        {
+          guide,
+          guidesReference
+        }
+      )
+    ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx(
+      Box,
+      {
+        sx: {
+          height: 200,
+          width: 200,
+          display: "flex",
+          padding: 2,
+          justifyContent: "center"
         },
-        index2
-      ))
-    }
-  );
-}, "GuideSelector");
-GuideSelector.displayName = "GuideSelector";
+        children: /* @__PURE__ */ jsxRuntimeExports.jsx(CircularProgress, {})
+      }
+    )
+  ] });
+}, "OpportunityGuide");
 const AdicionalChoice = /* @__PURE__ */ __name(({
   isAdicionalChoiceOpen,
   handleClose,
@@ -92186,17 +92809,10 @@ const AdicionalChoice = /* @__PURE__ */ __name(({
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: {
-              //responsive width
-              xs: "90%",
-              sm: "65%",
-              md: "50%",
-              lg: "40%",
-              xl: "30%"
-            },
+            width: 300,
             bgcolor: "background.paper",
             boxShadow: 24,
-            height: "20%",
+            height: 150,
             overFlow: "hidden",
             display: "flex",
             flexDirection: "column",
@@ -92247,13 +92863,133 @@ const AdicionalChoice = /* @__PURE__ */ __name(({
   );
 }, "AdicionalChoice");
 AdicionalChoice.displayName = "AdicionalChoice";
+const styles$1 = {
+  modal: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: {
+      //responsive width
+      xs: "95%",
+      md: "40%",
+      lg: "50%"
+    },
+    height: "95%",
+    bgcolor: "background.paper",
+    boxShadow: 24,
+    overFlow: "hidden",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    p: 1,
+    gap: 2
+  },
+  sliderContainer: {
+    height: { xs: 450, md: "auto" },
+    overflowY: "scroll",
+    "&::-webkit-scrollbar": {
+      width: "4px"
+      // Largura da barra de scroll
+    },
+    "&::-webkit-scrollbar-track": {
+      background: "#f1f1f1",
+      // Cor de fundo da trilha da barra de scroll
+      borderRadius: "4px"
+    },
+    "&::-webkit-scrollbar-thumb": {
+      borderRadius: "4px"
+    }
+  },
+  saveButtonContainer: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    backgroundColor: "white",
+    position: "fixed",
+    padding: 2,
+    bottom: 2,
+    zIndex: 20
+  }
+};
+const styles = {
+  guideSelectorContainer: {
+    display: "flex",
+    width: "100%",
+    gap: 1,
+    alignItems: "center",
+    overflowX: "scroll",
+    padding: 2,
+    backgroundColor: "white",
+    // Cor de fundo
+    zIndex: 20,
+    border: "1px solid lightgray",
+    borderRadius: 10,
+    height: 50,
+    "&::-webkit-scrollbar": {
+      width: "4px",
+      // Largura da barra de rolagem
+      height: "2px"
+    },
+    "&::-webkit-scrollbar-thumb": {
+      display: "none",
+      height: "2px",
+      backgroundColor: "#888",
+      // Cor da barra de rolagem
+      borderRadius: "4px"
+      // Bordas arredondadas
+    }
+  }
+};
+const GuideSelector = /* @__PURE__ */ __name(({
+  guides,
+  currentSlideIndex,
+  handleChangeGuide
+}) => {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    Stack,
+    {
+      direction: "row",
+      sx: styles.guideSelectorContainer,
+      children: guides.map((guide, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Chip,
+        {
+          onClick: () => handleChangeGuide(index2),
+          sx: {
+            cursor: "pointer"
+          },
+          label: guide.name,
+          variant: currentSlideIndex === index2 ? "filled" : "outlined"
+        },
+        index2
+      ))
+    }
+  );
+}, "GuideSelector");
 const ProjectChoiceModal = /* @__PURE__ */ __name(({
   handleSaveProjectChoiceAdicional,
   projectChoiceModalOpen,
   handleChangeAutoComplete,
-  renderOptions,
   setProjectChoiceModalOpen
 }) => {
+  const [projectOptions, setProjectOptions] = reactExports.useState([]);
+  const fetchProjectsOps = reactExports.useCallback(async () => {
+    const projects = await fetchAllProjects();
+    const options = projects && projects.map((project) => ({
+      label: project.DESCRICAO,
+      id: project.ID,
+      object: "project",
+      key: project.ID
+    })) || [];
+    setProjectOptions([...options]);
+  }, [setProjectOptions]);
+  reactExports.useEffect(() => {
+    fetchProjectsOps();
+  }, []);
+  const renderOptions = /* @__PURE__ */ __name((column2) => {
+    if (column2.dataKey === "idProjeto")
+      return projectOptions;
+  }, "renderOptions");
   return /* @__PURE__ */ jsxRuntimeExports.jsx(
     Modal$3,
     {
@@ -92268,17 +93004,21 @@ const ProjectChoiceModal = /* @__PURE__ */ __name(({
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: 400,
+            width: {
+              xs: "90%",
+              md: "40%",
+              lg: "25%"
+            },
             bgcolor: "background.paper",
             boxShadow: 24,
-            height: "20%",
+            height: 300,
             overFlow: "hidden",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
             gap: 2,
-            p: 2
+            p: 1
           },
           children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -92294,12 +93034,13 @@ const ProjectChoiceModal = /* @__PURE__ */ __name(({
               }
             ),
             " ",
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { children: "Escolha o projeto" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { sx: typographyStyles.heading2, children: "Escolha o projeto" }),
             /* @__PURE__ */ jsxRuntimeExports.jsx(
               Autocomplete,
               {
                 disablePortal: true,
                 onChange: handleChangeAutoComplete,
+                fullWidth: true,
                 options: renderOptions({
                   label: "Nº Projeto",
                   dataKey: "idProjeto",
@@ -92320,7 +93061,7 @@ const ProjectChoiceModal = /* @__PURE__ */ __name(({
                 )
               }
             ),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { variant: "outlined", onClick: handleSaveProjectChoiceAdicional, children: "Salvar" })
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { sx: BaseButtonStyles, onClick: handleSaveProjectChoiceAdicional, children: "Salvar" })
           ]
         }
       )
@@ -92328,169 +93069,27 @@ const ProjectChoiceModal = /* @__PURE__ */ __name(({
   );
 }, "ProjectChoiceModal");
 ProjectChoiceModal.displayName = "ProjectChoiceModal";
-const styles = {
-  modal: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: {
-      //responsive width
-      xs: "95%",
-      md: "40%",
-      lg: "50%"
-    },
-    height: {
-      xs: "90%",
-      xl: "85%"
-    },
-    bgcolor: "background.paper",
-    boxShadow: 24,
-    overFlow: "hidden",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    p: 1,
-    gap: 0.5
-  }
-};
-const OpportunityModal = /* @__PURE__ */ __name(() => {
-  const guides = [
-    {
-      name: "Cadastro",
-      fields: [
-        {
-          label: "Nº Projeto",
-          dataKey: "idProjeto",
-          // Alinhado com a propriedade idProjeto da interface
-          autoComplete: true,
-          type: "number"
-          // Tipo numérico
-        },
-        {
-          label: "Nº Adicional",
-          dataKey: "numeroAdicional",
-          type: "number"
-          // Tipo numérico
-        },
-        {
-          label: "Descrição da Proposta",
-          dataKey: "nome",
-          // Alinhado com a propriedade descricao da interface
-          type: "text"
-          // Tipo texto
-        },
-        {
-          label: "Status",
-          dataKey: "codStatus",
-          // Alinhado com a propriedade codStatus da interface
-          autoComplete: true,
-          type: "number"
-          // Tipo numérico
-        },
-        {
-          label: "Cliente",
-          dataKey: "fkCodCliente",
-          // Alinhado com a propriedade fkCodCliente da interface
-          autoComplete: true,
-          type: "text"
-          // Tipo texto
-        },
-        {
-          label: "Data de Solicitação",
-          dataKey: "dataSolicitacao",
-          // Alinhado com a propriedade dataSolicitacao da interface
-          type: "Date"
-          // Tipo data e hora
-        },
-        {
-          label: "Data de Início",
-          dataKey: "dataInicio",
-          type: "date"
-        },
-        {
-          label: "Data de Fechamento",
-          dataKey: "dataEntrega",
-          // Alinhado com a propriedade dataEntrega da interface
-          type: "date"
-          // Tipo data e hora
-        }
-      ]
-    },
-    {
-      name: "Interação",
-      fields: [
-        {
-          label: "Data de Interação",
-          dataKey: "dataInteracao",
-          // Alinhado com a propriedade dataInteracao da interface
-          type: "date"
-          // Tipo data e hora
-        },
-        {
-          label: "Comentários",
-          dataKey: "comentarios",
-          type: "text"
-        }
-      ]
-    },
-    {
-      name: "Escopo",
-      fields: [
-        {
-          label: "Observações",
-          dataKey: "observacoes",
-          // Alinhado com a propriedade observacoes da interface
-          type: "text"
-          // Tipo texto
-        }
-      ]
-    },
-    {
-      name: "Venda",
-      fields: [
-        {
-          label: "Vendedor",
-          dataKey: "responsavel",
-          // Alinhado com a propriedade responsavel da interface
-          autoComplete: true,
-          type: "text"
-          // Tipo texto
-        },
-        {
-          label: "Valor Faturamento Dolphin",
-          dataKey: "valorFatDolphin",
-          // Alinhado com a propriedade valorFatDolphin da interface
-          type: "number"
-          // Tipo numérico
-        },
-        {
-          label: "Valor Faturamento Direto",
-          dataKey: "valorFatDireto",
-          // Alinhado com a propriedade valorFatDireto da interface
-          type: "number"
-          // Tipo numérico
-        },
-        {
-          label: "Valor Comissão",
-          dataKey: "valorComissao",
-          // Alinhado com a propriedade valorComissao da interface
-          type: "number"
-          // Tipo numérico
-        },
-        {
-          label: "Valor Total",
-          dataKey: "valorTotal",
-          // Alinhado com a propriedade valorTotal da interface
-          type: "number"
-          // Tipo numérico
-        }
-      ]
-    },
-    {
-      name: "Seguidores"
-    }
-  ];
+const useOpportunityModal = /* @__PURE__ */ __name((initialOpportunity, context) => {
+  const {
+    creatingOpportunity,
+    currentOppIdSelected,
+    setCurrentOppIdSelected,
+    setCreatingOpportunity,
+    toggleRefreshOpportunityInfo
+  } = context;
+  const [adicional, setAdicional] = reactExports.useState(false);
+  const [opportunity, setCurrentOpportunity] = reactExports.useState(initialOpportunity);
+  const sliderRef = reactExports.useRef(null);
+  const [currentSlideIndex, setCurrentSlideIndex] = reactExports.useState(0);
+  const [isAdicionalChoiceOpen, setIsAdicionalChoiceOpen] = reactExports.useState(true);
+  const [refreshOpportunityFields, setRefreshOpportunityFields] = reactExports.useState(false);
+  const [projectChoiceModalOpen, setProjectChoiceModalOpen] = reactExports.useState(false);
+  const [renderFields, setRenderFields] = reactExports.useState(false);
+  const [saveProgressModalOpen, setSaveProgressModalOpen] = reactExports.useState(false);
+  const formDataFilesRef = reactExports.useRef(new FormData());
+  const guidesReference = reactExports.useRef();
+  const saveButtonContainerRef = reactExports.useRef(null);
+  const [isLoading, setIsLoading] = reactExports.useState(true);
   const settings = {
     swipe: true,
     arrows: false,
@@ -92500,191 +93099,71 @@ const OpportunityModal = /* @__PURE__ */ __name(() => {
     speed: 200,
     slidesToShow: 1,
     slidesToScroll: 1,
-    draggable: false,
-    beforeChange: (oldIndex, newIndex) => {
-      console.log(oldIndex, newIndex);
+    draggable: true,
+    beforeChange: (_oldIndex, _newIndex) => {
     },
     afterChange: (current) => {
       setCurrentSlideIndex(current);
-      setCurrentCommentValue("");
-      setEditingComment(void 0);
     }
   };
-  const [adicional, setAdicional] = reactExports.useState(false);
-  const [opportunity, setCurrentOpportunity] = reactExports.useState({
-    codOs: 0,
-    // Exemplo de código de OS (AUTO_INCREMENT, não precisa definir)
-    codTipoOs: 1,
-    // Valor padrão para o tipo de OS (campo com valor padrão '1')
-    codCCusto: null,
-    // Opcional
-    obra: null,
-    // Opcional
-    dataSolicitacao: null,
-    // Data atual (pode ser null se não obrigatório)
-    dataNecessidade: null,
-    // Data atual (pode ser null se não obrigatório)
-    docReferencia: null,
-    // Opcional
-    listaMateriais: null,
-    // Opcional
-    dataInicio: null,
-    // Opcional
-    dataPrevEntrega: null,
-    // Opcional
-    dataEntrega: null,
-    // Opcional
-    codStatus: 1,
-    // Valor padrão para o status (campo com valor padrão '1')
-    nome: "",
-    // Nome obrigatório
-    descricao: null,
-    // Opcional
-    atividades: null,
-    // Opcional
-    prioridade: 0,
-    // Valor padrão (campo com valor padrão '0')
-    solicitante: 1,
-    // Valor padrão para o solicitante (campo com valor padrão '1')
-    responsavel: 1,
-    // Valor padrão para o responsável (campo com valor padrão '1')
-    codDisciplina: 1,
-    // Valor padrão para o código de disciplina (campo com valor padrão '1')
-    gut: 1,
-    // Valor padrão para o GUT (campo com valor padrão '1')
-    gravidade: 1,
-    // Valor padrão para a gravidade (campo com valor padrão '1')
-    urgencia: 1,
-    // Valor padrão para urgência (campo com valor padrão '1')
-    tendencia: 1,
-    // Valor padrão para tendência (campo com valor padrão '1')
-    dataLiberacao: null,
-    // Opcional
-    relacionamento: 1,
-    // Valor padrão para relacionamento (campo com valor padrão '1')
-    fkCodCliente: "-",
-    // Valor padrão (campo com valor padrão '-')
-    fkCodColigada: 0,
-    // Valor padrão para código de coligada (campo com valor padrão '0')
-    valorFatDireto: 0,
-    // Valor padrão (campo com valor padrão '0.00')
-    valorServicoMO: 0,
-    // Valor padrão (campo com valor padrão '0.00')
-    valorServicoMatAplicado: 0,
-    // Valor padrão (campo com valor padrão '0.00')
-    valorMaterial: 0,
-    // Valor padrão (campo com valor padrão '0.00')
-    valorTotal: 0,
-    // Valor padrão (campo com valor padrão '0.00')
-    codSegmento: 1,
-    // Valor padrão para código de segmento (campo com valor padrão '1')
-    codCidade: 0,
-    // Valor padrão para código de cidade (campo com valor padrão '0')
-    valorLocacao: 0,
-    // Valor padrão (campo com valor padrão '0.00')
-    idAdicional: 0,
-    // Valor padrão (campo com valor padrão '0')
-    idProjeto: 0,
-    // Valor padrão (campo com valor padrão '0')
-    dataInteracao: "",
-    // Valor padrão (campo com valor padrão '1111-11-11')
-    valorFatDolphin: 0,
-    // Valor padrão para faturamento Dolphin (campo com valor padrão '0.00')
-    principal: true,
-    // Valor padrão (campo com valor padrão '1')
-    valorComissao: 0,
-    // Valor obrigatório
-    idMotivoPerdido: 1,
-    // Valor obrigatório (campo não pode ser nulo)
-    observacoes: "",
-    // Opcional
-    descricaoVenda: "",
-    // Opcional
-    emailVendaEnviado: false,
-    // Valor padrão (campo com valor padrão '0')
-    numeroAdicional: 0,
-    // Valor padrão com
-    comentarios: [],
-    seguidores: []
-  });
-  const sliderRef = reactExports.useRef(null);
-  const [currentSlideIndex, setCurrentSlideIndex] = reactExports.useState(0);
-  const [isAdicionalChoiceOpen, setIsAdicionalChoiceOpen] = reactExports.useState(true);
-  const [editingComment, setEditingComment] = reactExports.useState();
-  const [projectOptions, setProjectOptions] = reactExports.useState([]);
-  const [refreshOpportunityFields, setRefreshOpportunityFields] = reactExports.useState(false);
-  const [projectChoiceModalOpen, setProjectChoiceModalOpen] = reactExports.useState(false);
-  const [formDataFileArray, setFormDataFileArray] = reactExports.useState(
-    new FormData()
-  );
-  const [salerOptions, setSalerOptions] = reactExports.useState(
-    []
-  );
-  const [statusOptions, setStatusOptions] = reactExports.useState(
-    []
-  );
-  const [clientOptions, setClientOptions] = reactExports.useState(
-    []
-  );
-  const [currentCommentValue, setCurrentCommentValue] = reactExports.useState("");
-  const [saveProgressModalOpen, setSaveProgressModalOpen] = reactExports.useState(false);
-  const {
-    creatingOpportunity,
-    currentOppIdSelected,
-    setCurrentOppIdSelected,
-    setCreatingOpportunity,
-    toggleRefreshOpportunityInfo
-  } = reactExports.useContext(OpportunityInfoContext);
-  const { user } = reactExports.useContext(userContext);
   const handleClose = /* @__PURE__ */ __name(() => {
     setCreatingOpportunity(false);
     setCurrentOppIdSelected(0);
     setCurrentSlideIndex(0);
-    cleanEntries();
     setSaveProgressModalOpen(false);
   }, "handleClose");
-  const fetchClientOps = reactExports.useCallback(async () => {
-    const clients = await fetchAllClients();
-    const options = clients.map((client2) => ({
-      label: client2.NOMEFANTASIA,
-      id: client2.CODCLIENTE,
-      object: "client",
-      key: client2.CODCLIENTE
-    }));
-    setClientOptions([...options]);
-  }, [setClientOptions]);
-  const fetchProjectsOps = reactExports.useCallback(async () => {
-    const projects = await fetchAllProjects();
-    const options = projects && projects.map((project) => ({
-      label: project.DESCRICAO,
-      id: project.ID,
-      object: "project",
-      key: project.ID
-    })) || [];
-    setProjectOptions([...options]);
-  }, [setProjectOptions]);
-  const fetchStatusOps = reactExports.useCallback(async () => {
-    const statusList = await fetchStatusList();
-    const options = statusList.map((status) => ({
-      label: status.NOME,
-      id: status.CODSTATUS,
-      object: "status",
-      key: status.CODSTATUS
-    })) || [];
-    setStatusOptions(options);
-  }, [setStatusOptions]);
-  const fetchSalerOps = reactExports.useCallback(async () => {
-    const salers = await fetchSalers();
-    const options = salers.map(
-      (saler) => ({
-        label: saler.NOME,
-        id: saler.CODPESSOA,
-        object: "saler",
-        key: saler.CODPESSOA
-      })
-    );
-    setSalerOptions(options);
-  }, [setSalerOptions]);
+  const handleCloseAdicionalChoice = /* @__PURE__ */ __name(() => {
+    setAdicional(false);
+    setIsAdicionalChoiceOpen(false);
+  }, "handleCloseAdicionalChoice");
+  const setGuidesReference = /* @__PURE__ */ __name(() => {
+    guidesReference.current = [
+      {
+        name: "Cadastro",
+        fields: [
+          { label: "Nº Projeto", dataKey: "idProjeto", autoComplete: true, type: "number", data: opportunity["idProjeto"] },
+          { label: "Nº Adicional", dataKey: "numeroAdicional", type: "number", data: opportunity["numeroAdicional"] },
+          { label: "Descrição da Proposta", dataKey: "nome", type: "text", data: opportunity["nome"] },
+          { label: "Status", dataKey: "codStatus", autoComplete: true, type: "number", data: opportunity["codStatus"] },
+          { label: "Cliente", dataKey: "fkCodCliente", autoComplete: true, type: "number", data: opportunity["fkCodCliente"] },
+          { label: "Data de Solicitação", dataKey: "dataSolicitacao", type: "date", data: opportunity["dataSolicitacao"] },
+          { label: "Data de Início", dataKey: "dataInicio", type: "date", data: opportunity["dataInicio"] },
+          { label: "Data de Fechamento", dataKey: "dataEntrega", type: "date", data: opportunity["dataEntrega"] },
+          { label: "Nº OS", dataKey: "codOs", autoComplete: false, type: "number", data: opportunity["codOs"] }
+        ]
+      },
+      {
+        name: "Interação",
+        fields: [
+          { label: "Data de Interação", dataKey: "dataInteracao", type: "date", data: opportunity["dataInteracao"] },
+          { label: "Comentários", dataKey: "comentarios", type: "text", data: opportunity["comentarios"] }
+        ]
+      },
+      {
+        name: "Escopo",
+        fields: [
+          { label: "Observações", dataKey: "observacoes", type: "text", data: opportunity["observacoes"] },
+          { label: "Anexos", dataKey: "files", type: "number", data: opportunity["files"] }
+        ]
+      },
+      {
+        name: "Venda",
+        fields: [
+          { label: "Vendedor", dataKey: "responsavel", autoComplete: true, type: "text", data: opportunity["responsavel"] },
+          { label: "Valor Faturamento Dolphin", dataKey: "valorFatDolphin", type: "number", data: opportunity["valorFatDolphin"] },
+          { label: "Valor Faturamento Direto", dataKey: "valorFatDireto", type: "number", data: opportunity["valorFatDireto"] },
+          { label: "Valor Comissão", dataKey: "valorComissao", type: "number", data: opportunity["valorComissao"] },
+          { label: "Valor Total", dataKey: "valorTotal", type: "number", data: opportunity["valorTotal"] }
+        ]
+      },
+      {
+        name: "Seguidores",
+        fields: [
+          { label: "Seguidores", dataKey: "seguidores", type: "Follower[]", data: opportunity["seguidores"] }
+        ]
+      }
+    ];
+  }, "setGuidesReference");
   const fetchOppData = reactExports.useCallback(async () => {
     const data = await getOpportunityById(currentOppIdSelected);
     const formattedOpp = {
@@ -92697,9 +93176,56 @@ const OpportunityModal = /* @__PURE__ */ __name(() => {
       dataLiberacao: data.dataLiberacao ? new Date(data.dataLiberacao).toISOString().split("T")[0] : null,
       dataInteracao: data.dataInteracao ? new Date(data.dataInteracao).toISOString().split("T")[0] : null
     };
-    console.log({ formattedOpp });
+    console.log("formatedOpp: ", formattedOpp);
     setCurrentOpportunity(formattedOpp);
+    setIsLoading(false);
   }, [currentOppIdSelected, setCurrentOpportunity]);
+  const handleAdicionalChoice = /* @__PURE__ */ __name((isAdicional) => {
+    if (isAdicional) {
+      setAdicional(true);
+      setProjectChoiceModalOpen(true);
+      return;
+    }
+    setAdicional(false);
+    setIsAdicionalChoiceOpen(false);
+  }, "handleAdicionalChoice");
+  const handleChangeGuide = /* @__PURE__ */ __name((index2) => {
+    var _a2;
+    (_a2 = sliderRef.current) == null ? void 0 : _a2.slickGoTo(index2);
+    setCurrentSlideIndex(index2);
+  }, "handleChangeGuide");
+  const handleSaveProjectChoiceAdicional = /* @__PURE__ */ __name(async () => {
+    const data = await createAdicional(opportunity);
+    if (data) {
+      setCurrentOpportunity({
+        ...opportunity,
+        idAdicional: data.adicional.ID,
+        numeroAdicional: data.adicional.NUMERO,
+        codOs: data.codOs
+      });
+      setCurrentOppIdSelected(data.codOs);
+      setProjectChoiceModalOpen(false);
+      setRefreshOpportunityFields(!refreshOpportunityFields);
+      setAdicional(true);
+    }
+  }, "handleSaveProjectChoiceAdicional");
+  const getUpdatedOpportunity = /* @__PURE__ */ __name(() => {
+    var _a2;
+    let updatedOpportunity = { ...opportunity };
+    (_a2 = guidesReference.current) == null ? void 0 : _a2.forEach((guide) => {
+      guide.fields.forEach((field) => {
+        updatedOpportunity = {
+          ...updatedOpportunity,
+          [field.dataKey]: field.data
+        };
+      });
+    });
+    return updatedOpportunity;
+  }, "getUpdatedOpportunity");
+  const handlesaveProgressAction = /* @__PURE__ */ __name(async () => {
+    await handleSaveOpportunity();
+    handleClose();
+  }, "handlesaveProgressAction");
   const handleChangeAutoComplete = /* @__PURE__ */ __name((_event, value, _reason, _details) => {
     if ((value == null ? void 0 : value.object) === "project") {
       setCurrentOpportunity({ ...opportunity, idProjeto: value == null ? void 0 : value.id });
@@ -92718,381 +93244,152 @@ const OpportunityModal = /* @__PURE__ */ __name(() => {
       return;
     }
   }, "handleChangeAutoComplete");
-  const isNumeric = /* @__PURE__ */ __name((value) => {
-    if (value !== "") {
-      return !isNaN(Number(value));
+  const handleFileUpload = /* @__PURE__ */ __name(async (codOs) => {
+    if (formDataFilesRef.current) {
+      await createOpportunityFiles(codOs, formDataFilesRef.current);
     }
-    return false;
-  }, "isNumeric");
-  const handleChangeTextField = /* @__PURE__ */ __name((e2, column2) => {
-    const { value } = e2.target;
-    if (column2.dataKey === "valorFatDireto") {
-      console.log("valorFatDireto");
-      const totalValue = Number(opportunity.valorFatDolphin) + Number(value);
-      console.log({ totalValue });
-      setCurrentOpportunity({
-        ...opportunity,
-        valorFatDireto: Number(value),
-        valorTotal: totalValue
-      });
-      return;
-    }
-    if (column2.dataKey === "valorFatDolphin") {
-      console.log("valorFatDolphin");
-      const totalValue = Number(opportunity.valorFatDireto) + Number(value);
-      console.log({ totalValue });
-      setCurrentOpportunity({
-        ...opportunity,
-        valorFatDolphin: Number(value),
-        valorTotal: totalValue
-      });
-      return;
-    }
-    console.log({ value });
-    console.log({
-      ...opportunity,
-      [column2.dataKey]: isNumeric(value) ? Number(value) : value
-    });
-    setCurrentOpportunity({
-      ...opportunity,
-      [column2.dataKey]: isNumeric(value) ? Number(value) : value
-    });
-  }, "handleChangeTextField");
-  const isDateField = /* @__PURE__ */ __name((dataKey) => dataKey.startsWith("data"), "isDateField");
-  const handleAdicionalChoice = /* @__PURE__ */ __name((isAdicional) => {
-    if (isAdicional) {
-      setAdicional(true);
-      setProjectChoiceModalOpen(true);
-      return;
-    }
-    setAdicional(false);
-    setIsAdicionalChoiceOpen(false);
-  }, "handleAdicionalChoice");
-  const renderOptions = /* @__PURE__ */ __name((column2) => {
-    if (column2.dataKey === "idProjeto")
-      return projectOptions;
-    if (column2.dataKey === "responsavel")
-      return salerOptions;
-    if (column2.dataKey === "codStatus")
-      return statusOptions;
-    if (column2.dataKey === "fkCodCliente")
-      return clientOptions;
-  }, "renderOptions");
-  const cleanEntries = /* @__PURE__ */ __name(() => {
-    setAdicional(false);
-    setCurrentCommentValue("");
-    setEditingComment(void 0);
-    setCurrentOpportunity({
-      codOs: 0,
-      // Exemplo de código de OS (AUTO_INCREMENT, não precisa definir)
-      codTipoOs: 1,
-      // Valor padrão para o tipo de OS (campo com valor padrão '1')
-      codCCusto: null,
-      // Opcional
-      obra: null,
-      // Opcional
-      dataSolicitacao: null,
-      // Data atual (pode ser null se não obrigatório)
-      dataNecessidade: null,
-      // Data atual (pode ser null se não obrigatório)
-      docReferencia: null,
-      // Opcional
-      listaMateriais: null,
-      // Opcional
-      dataInicio: null,
-      // Opcional
-      dataPrevEntrega: null,
-      // Opcional
-      dataEntrega: null,
-      // Opcional
-      codStatus: 1,
-      // Valor padrão para o status (campo com valor padrão '1')
-      nome: "",
-      // Nome obrigatório
-      descricao: null,
-      // Opcional
-      atividades: null,
-      // Opcional
-      prioridade: 0,
-      // Valor padrão (campo com valor padrão '0')
-      solicitante: 1,
-      // Valor padrão para o solicitante (campo com valor padrão '1')
-      responsavel: 1,
-      // Valor padrão para o responsável (campo com valor padrão '1')
-      codDisciplina: 1,
-      // Valor padrão para o código de disciplina (campo com valor padrão '1')
-      gut: 1,
-      // Valor padrão para o GUT (campo com valor padrão '1')
-      gravidade: 1,
-      // Valor padrão para a gravidade (campo com valor padrão '1')
-      urgencia: 1,
-      // Valor padrão para urgência (campo com valor padrão '1')
-      tendencia: 1,
-      // Valor padrão para tendência (campo com valor padrão '1')
-      dataLiberacao: null,
-      // Opcional
-      relacionamento: 1,
-      // Valor padrão para relacionamento (campo com valor padrão '1')
-      fkCodCliente: "-",
-      // Valor padrão (campo com valor padrão '-')
-      fkCodColigada: 0,
-      // Valor padrão para código de coligada (campo com valor padrão '0')
-      valorFatDireto: 0,
-      // Valor padrão (campo com valor padrão '0.00')
-      valorServicoMO: 0,
-      // Valor padrão (campo com valor padrão '0.00')
-      valorServicoMatAplicado: 0,
-      // Valor padrão (campo com valor padrão '0.00')
-      valorMaterial: 0,
-      // Valor padrão (campo com valor padrão '0.00')
-      valorTotal: 0,
-      // Valor padrão (campo com valor padrão '0.00')
-      codSegmento: 1,
-      // Valor padrão para código de segmento (campo com valor padrão '1')
-      codCidade: 0,
-      // Valor padrão para código de cidade (campo com valor padrão '0')
-      valorLocacao: 0,
-      // Valor padrão (campo com valor padrão '0.00')
-      idAdicional: 0,
-      // Valor padrão (campo com valor padrão '0')
-      idProjeto: 0,
-      // Valor padrão (campo com valor padrão '0')
-      dataInteracao: null,
-      // Valor padrão (campo com valor padrão '1111-11-11')
-      valorFatDolphin: 0,
-      // Valor padrão para faturamento Dolphin (campo com valor padrão '0.00')
-      principal: true,
-      // Valor padrão (campo com valor padrão '1')
-      valorComissao: 0,
-      // Valor obrigatório
-      idMotivoPerdido: 1,
-      // Valor obrigatório (campo não pode ser nulo)
-      observacoes: "",
-      // Opcional
-      descricaoVenda: null,
-      // Opcional
-      emailVendaEnviado: false,
-      // Valor padrão (campo com valor padrão '0')
-      numeroAdicional: 0,
-      // Valor padrão com
-      comentarios: [],
-      seguidores: []
-    });
-  }, "cleanEntries");
-  const handleChangeGuide = /* @__PURE__ */ __name((index2) => {
+  }, "handleFileUpload");
+  const resetFormData = /* @__PURE__ */ __name(() => {
+    formDataFilesRef.current = new FormData();
+  }, "resetFormData");
+  const createNewOpportunity = /* @__PURE__ */ __name(async () => {
     var _a2;
-    (_a2 = sliderRef.current) == null ? void 0 : _a2.slickGoTo(index2);
-    setCurrentSlideIndex(index2);
-  }, "handleChangeGuide");
-  const handleSaveProjectChoiceAdicional = /* @__PURE__ */ __name(async () => {
-    const data = await createAdicional(opportunity);
-    if (data) {
-      setCurrentOpportunity({
-        ...opportunity,
-        idAdicional: data.adicional.ID,
-        numeroAdicional: data.adicional.NUMERO,
-        codOs: data.codOs
-      });
-      setCreatingOpportunity(false);
-      setCurrentOppIdSelected(data.codOs);
-      setProjectChoiceModalOpen(false);
-      setRefreshOpportunityFields(!refreshOpportunityFields);
-      setAdicional(true);
-    }
-  }, "handleSaveProjectChoiceAdicional");
-  const renderAutoCompleteValue = /* @__PURE__ */ __name((field) => {
-    if (field.dataKey === "idProjeto") {
-      const optionValueSelected = projectOptions.find(
-        (option) => option.id === opportunity["idProjeto"]
-      );
-      if (optionValueSelected)
-        return optionValueSelected;
-    }
-    if (field.dataKey === "codStatus") {
-      const optionValueSelected = statusOptions.find(
-        (option) => option.id === opportunity["codStatus"]
-      );
-      if (optionValueSelected)
-        return optionValueSelected;
-    }
-    if (field.dataKey === "fkCodCliente") {
-      const optionValueSelected = clientOptions.find(
-        (option) => option.id === opportunity["fkCodCliente"]
-      );
-      if (optionValueSelected)
-        return optionValueSelected;
-    }
-    if (field.dataKey === "responsavel") {
-      const optionValueSelected = salerOptions.find(
-        (option) => option.id === opportunity["responsavel"]
-      );
-      if (optionValueSelected)
-        return optionValueSelected;
-    }
-    return {
-      label: "",
-      id: 0,
-      object: "",
-      key: 0
-    };
-  }, "renderAutoCompleteValue");
-  const handleChangeComentarios = /* @__PURE__ */ __name((e2, codigoComentario) => {
-    const { value } = e2.target;
-    setCurrentCommentValue(value);
-    const newCommentIsBeingTyped = !codigoComentario || !opportunity.comentarios;
-    let newComment;
-    if (newCommentIsBeingTyped) {
-      newComment = opportunity.comentarios.find(
-        (comment2) => comment2.codigoComentario === 0
-      );
-      if (newComment) {
-        newComment.descricao = value;
-        setCurrentOpportunity({
-          ...opportunity,
-          comentarios: [...opportunity.comentarios]
-        });
-        return;
-      }
-      newComment = {
-        email: 0,
-        codOs: opportunity.codOs,
-        criadoEm: /* @__PURE__ */ new Date(),
-        criadoPor: (user == null ? void 0 : user.NOME) || "",
-        descricao: value,
-        codigoComentario: 0
-      };
-      setCurrentOpportunity({
-        ...opportunity,
-        comentarios: [...opportunity.comentarios, newComment]
-      });
+    setIsLoading(true);
+    const updatedOpportunity = getUpdatedOpportunity();
+    if (!updatedOpportunity)
       return;
-    }
-    const coments = [...opportunity.comentarios || []];
-    const index2 = coments.findIndex(
-      (c2) => c2.codigoComentario === codigoComentario
-    );
-    if (index2 >= 0) {
-      coments[index2].descricao = value;
-      setCurrentOpportunity({
-        ...opportunity,
-        comentarios: coments
-      });
-    }
-  }, "handleChangeComentarios");
-  const uploadFiles = reactExports.useCallback(
-    async (opportunityId) => {
-      const isEmpty2 = ![...formDataFileArray.getAll("files")].length;
-      if (opportunityId && !isEmpty2) {
-        await createOpportunityFiles(opportunityId, formDataFileArray);
-        setFormDataFileArray(new FormData());
+    try {
+      const createOppResponse = await createOpportunity(updatedOpportunity);
+      if ((createOppResponse == null ? void 0 : createOppResponse.status) === 200) {
+        setCurrentOpportunity(updatedOpportunity);
+        await handleFileUpload(createOppResponse.data.codOs);
+        setCurrentOppIdSelected(createOppResponse.data.codOs);
+        setCreatingOpportunity(false);
       }
-    },
-    [formDataFileArray]
-  );
+    } catch (e2) {
+      console.log(e2);
+    } finally {
+      resetFormData();
+      setRefreshOpportunityFields(!refreshOpportunityFields);
+      setIsLoading(false);
+      (_a2 = sliderRef.current) == null ? void 0 : _a2.slickGoTo(currentSlideIndex);
+    }
+  }, "createNewOpportunity");
+  const updateExistingOpportunity = /* @__PURE__ */ __name(async () => {
+    setIsLoading(true);
+    const updatedOpportunity = getUpdatedOpportunity();
+    if (!updatedOpportunity)
+      return;
+    try {
+      const response = await updateOpportunity(updatedOpportunity);
+      if ((response == null ? void 0 : response.status) === 200) {
+        setCurrentOpportunity(updatedOpportunity);
+        await handleFileUpload(opportunity.codOs || 0);
+      }
+    } catch (e2) {
+      console.log(e2);
+    } finally {
+      setIsLoading(false);
+      resetFormData();
+      setRefreshOpportunityFields(!refreshOpportunityFields);
+    }
+  }, "updateExistingOpportunity");
   const handleSaveOpportunity = reactExports.useCallback(async () => {
     if (opportunity.codOs) {
-      const response2 = await updateOpportunity(opportunity);
-      if ((response2 == null ? void 0 : response2.status) === 200) {
-        cleanEntries();
-        await uploadFiles(opportunity.codOs);
-        setRefreshOpportunityFields(!refreshOpportunityFields);
-      }
+      await updateExistingOpportunity();
       return;
     }
-    const response = await createOpportunity({
-      ...opportunity,
-      //adding the user to followers
-      seguidores: [
-        ...opportunity.seguidores,
-        {
-          id_seguidor_projeto: 0,
-          id_projeto: opportunity.idProjeto || 0,
-          codpessoa: (user == null ? void 0 : user.CODPESSOA) || 0,
-          ativo: 1,
-          nome: ""
-        }
-      ]
-    });
-    if ((response == null ? void 0 : response.status) === 200) {
-      setCreatingOpportunity(false);
-      setCurrentOppIdSelected(response.data.codOs);
-      cleanEntries();
-      await uploadFiles(response.data.codOs);
-      setRefreshOpportunityFields(!refreshOpportunityFields);
-      toggleRefreshOpportunityInfo();
-    }
-  }, [
-    opportunity,
-    refreshOpportunityFields,
-    setCreatingOpportunity,
-    setCurrentOppIdSelected,
-    uploadFiles
-  ]);
-  const handleDeleteFile = /* @__PURE__ */ __name((file) => {
-    const newOppFiles = [...opportunity.files || []].filter(
-      (oppFile) => oppFile.nome_arquivo !== file.nome_arquivo
-    ) || [];
-    setCurrentOpportunity({
-      ...opportunity,
-      files: newOppFiles
-    });
-  }, "handleDeleteFile");
-  const handleChangeFiles = /* @__PURE__ */ __name(async (e2) => {
-    if (e2.target.files) {
-      const file = e2.target.files[0];
-      const newFile = {
-        id_anexo_os: Date.now(),
-        // Gera um ID único temporário
-        arquivo: URL.createObjectURL(file),
-        // Gera a URL temporária para o preview
-        nome_arquivo: file.name,
-        codos: opportunity.codOs || 0
-      };
-      const newOppFiles = [...opportunity.files || [], newFile];
-      setCurrentOpportunity({
-        ...opportunity,
-        files: newOppFiles
-      });
-      setFormDataFileArray((prevFormDataFileArray) => {
-        const updatedFormData = new FormData();
-        prevFormDataFileArray.forEach((value, key) => {
-          updatedFormData.append(key, value);
-        });
-        updatedFormData.append("files", file);
-        return updatedFormData;
-      });
-      e2.target.value = "";
-    }
-  }, "handleChangeFiles");
-  const handlesaveProgressAction = /* @__PURE__ */ __name(async () => {
-    await handleSaveOpportunity();
-    handleClose();
-  }, "handlesaveProgressAction");
-  reactExports.useEffect(() => {
-    console.log("OpportunityModal renderizou");
-  });
-  reactExports.useEffect(() => {
-    fetchProjectsOps();
-    fetchStatusOps();
-    fetchSalerOps();
-    fetchClientOps();
     if (creatingOpportunity) {
+      await createNewOpportunity();
+      return;
+    }
+  }, [opportunity, refreshOpportunityFields, setCreatingOpportunity, setCurrentOppIdSelected, creatingOpportunity, currentSlideIndex]);
+  reactExports.useEffect(() => {
+    console.log("currentSlideIndex mudou: ", currentSlideIndex);
+  }, [currentSlideIndex]);
+  reactExports.useEffect(() => {
+    setGuidesReference();
+    setRenderFields(!renderFields);
+  }, [opportunity]);
+  reactExports.useEffect(() => {
+    if (creatingOpportunity) {
+      console.log("não rodar fetch");
       setIsAdicionalChoiceOpen(true);
+      setIsLoading(false);
+      return;
     }
     if (currentOppIdSelected > 0) {
       setIsAdicionalChoiceOpen(false);
       fetchOppData();
+      return;
     }
-  }, [
-    currentOppIdSelected,
-    refreshOpportunityFields,
+    if (!(creatingOpportunity || currentOppIdSelected)) {
+      console.log("modal fechado ");
+      toggleRefreshOpportunityInfo();
+    }
+    setCurrentOpportunity(initialOpportunity);
+  }, [currentOppIdSelected, refreshOpportunityFields, creatingOpportunity, fetchOppData]);
+  reactExports.useEffect(() => {
+    var _a2;
+    (_a2 = sliderRef.current) == null ? void 0 : _a2.slickGoTo(currentSlideIndex);
+  }, [sliderRef]);
+  return {
+    adicional,
+    opportunity,
+    currentSlideIndex,
     creatingOpportunity,
-    fetchProjectsOps,
-    fetchStatusOps,
-    fetchSalerOps,
-    fetchClientOps,
-    fetchOppData
-  ]);
+    currentOppIdSelected,
+    isAdicionalChoiceOpen,
+    projectChoiceModalOpen,
+    saveProgressModalOpen,
+    sliderRef,
+    saveButtonContainerRef,
+    handleClose,
+    handleCloseAdicionalChoice,
+    handleAdicionalChoice,
+    handleChangeGuide,
+    handleSaveProjectChoiceAdicional,
+    handlesaveProgressAction,
+    handleChangeAutoComplete,
+    handleFileUpload,
+    handleSaveOpportunity,
+    setProjectChoiceModalOpen,
+    setSaveProgressModalOpen,
+    guidesReference,
+    formDataFilesRef,
+    setCurrentSlideIndex,
+    settings,
+    isLoading,
+    setIsLoading
+  };
+}, "useOpportunityModal");
+const OpportunityModal = /* @__PURE__ */ __name(() => {
+  const context = reactExports.useContext(OpportunityInfoContext);
+  const {
+    opportunity,
+    currentSlideIndex,
+    isAdicionalChoiceOpen,
+    projectChoiceModalOpen,
+    saveProgressModalOpen,
+    sliderRef,
+    saveButtonContainerRef,
+    handleClose,
+    handleCloseAdicionalChoice,
+    handleAdicionalChoice,
+    handleChangeGuide,
+    handleSaveProjectChoiceAdicional,
+    handlesaveProgressAction,
+    handleChangeAutoComplete,
+    handleSaveOpportunity,
+    setProjectChoiceModalOpen,
+    setSaveProgressModalOpen,
+    creatingOpportunity,
+    currentOppIdSelected,
+    guidesReference,
+    formDataFilesRef,
+    settings,
+    isLoading
+  } = useOpportunityModal(opportunityDefault, context);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(
     Modal$3,
     {
@@ -93100,124 +93397,110 @@ const OpportunityModal = /* @__PURE__ */ __name(() => {
       onClose: handleClose,
       "aria-labelledby": "modal-modal-title",
       "aria-describedby": "modal-modal-description",
-      children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
-        Box,
-        {
-          sx: styles.modal,
-          children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              IconButton,
+      children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: styles$1.modal, children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          IconButton,
+          {
+            sx: {
+              position: "absolute",
+              right: 1,
+              top: 1
+            },
+            onClick: () => setSaveProgressModalOpen(true),
+            children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, {})
+          }
+        ),
+        " ",
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Stack, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { sx: typographyStyles.heading2, children: currentOppIdSelected > 0 ? `${opportunity.codOs} - ${opportunity.nome} ` : "Nova proposta" }) }),
+        guidesReference.current && /* @__PURE__ */ jsxRuntimeExports.jsx(
+          GuideSelector,
+          {
+            guides: guidesReference.current,
+            currentSlideIndex,
+            handleChangeGuide
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          Stack,
+          {
+            sx: {
+              ...styles$1.sliderContainer,
+              paddingBottom: 10
+            },
+            direction: "column",
+            width: "100%",
+            position: "relative",
+            children: /* @__PURE__ */ jsxRuntimeExports.jsx(Slider, { ref: sliderRef, ...settings, children: guidesReference.current && guidesReference.current.map((guide) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+              OpportunityGuide,
               {
-                sx: {
-                  position: "absolute",
-                  right: 1,
-                  top: 1
-                },
-                onClick: () => setSaveProgressModalOpen(true),
-                children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, {})
+                formDataFilesRef,
+                guidesReference,
+                guide,
+                isLoading
               }
-            ),
-            " ",
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { sx: typographyStyles.heading1, children: "Proposta" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { sx: typographyStyles.heading2, children: currentOppIdSelected > 0 ? `${opportunity.nome}` : "" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsxs(
-              Stack,
-              {
-                direction: "column",
-                width: "100%",
-                padding: 1,
-                overflow: "scroll",
-                position: "relative",
-                children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    GuideSelector,
-                    {
-                      guides,
-                      currentSlideIndex,
-                      handleChangeGuide
-                    }
-                  ),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(Slider, { ref: sliderRef, ...settings, children: guides.map((guide) => /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    OpportunityGuide,
-                    {
-                      guide,
-                      renderAutoCompleteValue,
-                      handleChangeAutoComplete,
-                      renderOptions,
-                      adicional,
-                      currentOppIdSelected,
-                      opportunity,
-                      handleChangeTextField,
-                      isDateField,
-                      currentCommentValue,
-                      handleChangeComentarios,
-                      editingComment,
-                      setEditingComment,
-                      setCurrentOpportunity,
-                      handleSaveOpportunity,
-                      handleChangeFiles,
-                      handleDeleteFile
+            )) })
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { ref: saveButtonContainerRef, sx: styles$1.saveButtonContainer, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { sx: BaseButtonStyles, onClick: handleSaveOpportunity, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { children: "Salvar" }) }) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          AdicionalChoice,
+          {
+            isAdicionalChoiceOpen,
+            handleClose: handleCloseAdicionalChoice,
+            handleAdicionalChoice
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          ProjectChoiceModal,
+          {
+            handleSaveProjectChoiceAdicional,
+            projectChoiceModalOpen,
+            setProjectChoiceModalOpen,
+            handleChangeAutoComplete
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          Dialog,
+          {
+            open: saveProgressModalOpen,
+            onClose: handleClose,
+            "aria-labelledby": "save-progress-title",
+            "aria-describedby": "save-progress-description",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(DialogTitle, { id: "save-progress-title", children: "Salvar progresso?" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(DialogContent, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(DialogContentText, { id: "save-progress-description", children: "Deseja salvar seu progresso antes de sair?" }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs(DialogActions, { sx: { display: "flex", justifyContent: "center" }, children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  Button,
+                  {
+                    onClick: handlesaveProgressAction,
+                    sx: {
+                      ...BaseButtonStyles,
+                      backgroundColor: "darkgreen",
+                      "&:hover": { backgroundColor: "green" }
                     },
-                    guide.name
-                  )) })
-                ]
-              }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { variant: "outlined", onClick: handleSaveOpportunity, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { fontFamily: "Roboto", fontSize: "small", children: "Salvar" }) }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              AdicionalChoice,
-              {
-                isAdicionalChoiceOpen,
-                handleClose,
-                handleAdicionalChoice
-              }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              ProjectChoiceModal,
-              {
-                handleSaveProjectChoiceAdicional,
-                projectChoiceModalOpen,
-                setProjectChoiceModalOpen,
-                handleChangeAutoComplete,
-                renderOptions
-              }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsxs(
-              Dialog,
-              {
-                open: saveProgressModalOpen,
-                onClose: handleClose,
-                "aria-labelledby": "save-progress-title",
-                "aria-describedby": "save-progress-description",
-                children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(DialogTitle, { id: "save-progress-title", children: "Salvar progresso?" }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(DialogContent, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(DialogContentText, { id: "save-progress-description", children: "Deseja salvar seu progresso antes de sair?" }) }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsxs(DialogActions, { sx: { display: "flex", justifyContent: "center" }, children: [
-                    /* @__PURE__ */ jsxRuntimeExports.jsx(
-                      Button,
-                      {
-                        onClick: handlesaveProgressAction,
-                        sx: { ...BaseButtonStyles, backgroundColor: "darkgreen", "&:hover": { backgroundColor: "green" } },
-                        autoFocus: true,
-                        children: "Sim"
-                      }
-                    ),
-                    /* @__PURE__ */ jsxRuntimeExports.jsx(
-                      Button,
-                      {
-                        sx: { ...BaseButtonStyles, backgroundColor: "darkred", "&:hover": { backgroundColor: "red" } },
-                        onClick: handleClose,
-                        color: "secondary",
-                        children: "Não"
-                      }
-                    )
-                  ] })
-                ]
-              }
-            )
-          ]
-        }
-      )
+                    autoFocus: true,
+                    children: "Sim"
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  Button,
+                  {
+                    sx: {
+                      ...BaseButtonStyles,
+                      backgroundColor: "darkred",
+                      "&:hover": { backgroundColor: "red" }
+                    },
+                    onClick: handleClose,
+                    color: "secondary",
+                    children: "Não"
+                  }
+                )
+              ] })
+            ]
+          }
+        )
+      ] })
     }
   );
 }, "OpportunityModal");

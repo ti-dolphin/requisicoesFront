@@ -54,9 +54,7 @@ const ChecklistItemsModal = () => {
   const [isIOS, setIsIOS] = useState(false);
   const sliderRef = useRef<Slider | null>(null);
   const [itemImageOpen, setItemImageOpen] = useState<ChecklistItemFile>();
-  const [isLoadingItems, setIsLoadingItems] = useState(true);
-
-
+  const [isLoadingItems, setIsLoadingItems] = useState(true)
 
   function verifyIsIOS() {
     if (navigator.userAgent.toLowerCase().includes('iphone')) {
@@ -424,7 +422,9 @@ const ChecklistItemsModal = () => {
     alert("Não há arquivo!");
   };
 
-  const shouldShowFinalizeButton = toBeDone() && isMovimentationResponsable() && (lastItem() || !isMobile);
+  const shouldShowFinalizeButton =
+    (toBeDone() && isMovimentationResponsable() && (lastItem() || !isMobile)) ||
+    isTypeResponsable();
   const shouldShowApprovalButtons = toBeAproved() && (lastItem() || !isMobile);
 
   useEffect(() => {
