@@ -23,7 +23,6 @@ const OpportunityInteraction = ({ guide, guidesReference }: props) => {
   const [comments, setComments] = useState<Comentario[]>();
   const [commentBeingEdited, setCommentBeingEdited] = useState<Comentario>();
   const [commentBeingAdded, setCommentBeingAdded] = useState<Comentario>();
-  const [isMobile, setIsMobile] = useState<boolean>();
 
 
   const handleChangeComment = (
@@ -95,10 +94,6 @@ const OpportunityInteraction = ({ guide, guidesReference }: props) => {
       handleCancelAddorEditComment();
     }
   };
-
-  useEffect(() => { 
-    setIsMobile(window.innerWidth < 768)
-  }, []);
 
   useEffect(() => {
     setInteractionDate(guide.fields[0].data);
@@ -177,9 +172,9 @@ const OpportunityInteraction = ({ guide, guidesReference }: props) => {
       })}
       {comments && (
         <ListWindow
-          height={300}
+          height={400}
           itemCount={comments?.length}
-          itemSize={isMobile ? 150 : 90}
+          itemSize={ 100}
           width="100%"
         >
           {({ index, style }) => (
