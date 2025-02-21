@@ -63414,7 +63414,7 @@ axios.getAdapter = adapters.getAdapter;
 axios.HttpStatusCode = HttpStatusCode;
 axios.default = axios;
 const api = axios.create({
-  baseURL: "http://localhost:3001",
+  baseURL: "https://apicontrole.dse.com.br",
   headers: {
     "Content-Type": "application/json",
     Authorization: window.localStorage.getItem("token")
@@ -91803,6 +91803,7 @@ const style$2 = {
 const CommentRow = /* @__PURE__ */ __name(({ index: index2, comment: comment2, style: style2, setCommentBeingEdit }) => {
   const { user } = reactExports.useContext(userContext);
   const [alert2, setAlert] = reactExports.useState();
+  const [isModalOpen, setIsModalOpen] = reactExports.useState(false);
   const commentBelongsToUser = /* @__PURE__ */ __name((comment22) => {
     return (user == null ? void 0 : user.NOME) === comment22.criadoPor;
   }, "commentBelongsToUser");
@@ -91820,35 +91821,79 @@ const CommentRow = /* @__PURE__ */ __name(({ index: index2, comment: comment2, s
     }
     displayAlert("warning", "Você não tem permissão para editar o comentário");
   }, "handleStartEdition");
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
-    ListItem,
-    {
-      alignItems: "flex-start",
-      style: { ...style2 },
-      children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx(ListItemAvatar, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(Avatar, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$i, {}) }) }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
-          ListItemText,
+  const renderCommentPreview = /* @__PURE__ */ __name((commentValue) => {
+    var _a2;
+    if (commentValue.length > 50) {
+      return ((_a2 = comment2.descricao) == null ? void 0 : _a2.substring(0, 40)) + "...";
+    }
+    return comment2.descricao;
+  }, "renderCommentPreview");
+  const handleCloseModal = /* @__PURE__ */ __name(() => {
+    setIsModalOpen(false);
+  }, "handleCloseModal");
+  const handleOpenModal = /* @__PURE__ */ __name(() => {
+    setIsModalOpen(true);
+  }, "handleOpenModal");
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(ListItem, { alignItems: "flex-start", style: { ...style2 }, children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(ListItemAvatar, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(Avatar, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$i, {}) }) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        ListItemText,
+        {
+          primary: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { onClick: handleOpenModal, style: { cursor: "pointer" }, children: renderCommentPreview(comment2.descricao) || "Comentário vazio" }),
+          secondary: comment2.criadoPor ? `Por: ${comment2.criadoPor} | ${formatDateWithNoTime(
+            comment2.criadoEm || ""
+          )}` : "Autor desconhecido"
+        }
+      ),
+      (user == null ? void 0 : user.CODPESSOA) === 2 && /* @__PURE__ */ jsxRuntimeExports.jsx(
+        IconButton,
+        {
+          sx: { ...buttonStylesMobile, marginX: 2 },
+          onClick: () => handleStartEdition(),
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$7, {})
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: alert2 && /* @__PURE__ */ jsxRuntimeExports.jsx(motion.div, { ...alertAnimation, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Alert, { severity: alert2 == null ? void 0 : alert2.severity, children: alert2 == null ? void 0 : alert2.message }) }) })
+    ] }, index2),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      Modal$3,
+      {
+        open: isModalOpen,
+        onClose: handleCloseModal,
+        "aria-labelledby": "modal-title",
+        "aria-describedby": "modal-description",
+        children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          Box,
           {
-            primary: comment2.descricao || "Comentário vazio",
-            secondary: comment2.criadoPor ? `Por: ${comment2.criadoPor} | ${formatDateWithNoTime(
-              comment2.criadoEm || ""
-            )}` : "Autor desconhecido"
+            sx: {
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "80%",
+              maxWidth: "600px",
+              bgcolor: "background.paper",
+              boxShadow: 24,
+              p: 4,
+              borderRadius: 2
+            },
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                IconButton,
+                {
+                  onClick: handleCloseModal,
+                  sx: { position: "absolute", right: 0, top: 0 },
+                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, { sx: { color: "red" } })
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { sx: { ...typographyStyles.bodyText, textAlign: "left" }, children: comment2.descricao })
+            ]
           }
-        ),
-        (user == null ? void 0 : user.CODPESSOA) === 2 && /* @__PURE__ */ jsxRuntimeExports.jsx(
-          IconButton,
-          {
-            sx: { ...buttonStylesMobile, marginX: 2 },
-            onClick: () => handleStartEdition(),
-            children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$7, {})
-          }
-        ),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: alert2 && /* @__PURE__ */ jsxRuntimeExports.jsx(motion.div, { ...alertAnimation, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Alert, { severity: alert2 == null ? void 0 : alert2.severity, children: alert2 == null ? void 0 : alert2.message }) }) })
-      ]
-    },
-    index2
-  );
+        )
+      }
+    )
+  ] });
 }, "CommentRow");
 const OpportunityInteraction = /* @__PURE__ */ __name(({ guide, guidesReference }) => {
   const { user } = reactExports.useContext(userContext);
@@ -91856,7 +91901,6 @@ const OpportunityInteraction = /* @__PURE__ */ __name(({ guide, guidesReference 
   const [comments, setComments] = reactExports.useState();
   const [commentBeingEdited, setCommentBeingEdited] = reactExports.useState();
   const [commentBeingAdded, setCommentBeingAdded] = reactExports.useState();
-  const [isMobile, setIsMobile] = reactExports.useState();
   const handleChangeComment = /* @__PURE__ */ __name((e2, commentId) => {
     const { value } = e2.target;
     if (comments) {
@@ -91914,9 +91958,6 @@ const OpportunityInteraction = /* @__PURE__ */ __name(({ guide, guidesReference 
       handleCancelAddorEditComment();
     }
   }, "handleConclude");
-  reactExports.useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
-  }, []);
   reactExports.useEffect(() => {
     setInteractionDate(guide.fields[0].data);
     setComments(guide.fields[1].data);
@@ -91983,9 +92024,9 @@ const OpportunityInteraction = /* @__PURE__ */ __name(({ guide, guidesReference 
         comments && /* @__PURE__ */ jsxRuntimeExports.jsx(
           FixedSizeList,
           {
-            height: 300,
+            height: 400,
             itemCount: comments == null ? void 0 : comments.length,
-            itemSize: isMobile ? 150 : 90,
+            itemSize: 100,
             width: "100%",
             children: ({ index: index2, style: style2 }) => /* @__PURE__ */ jsxRuntimeExports.jsx(
               CommentRow,
@@ -93253,7 +93294,6 @@ const useOpportunityModal = /* @__PURE__ */ __name((initialOpportunity, context)
     formDataFilesRef.current = new FormData();
   }, "resetFormData");
   const createNewOpportunity = /* @__PURE__ */ __name(async () => {
-    var _a2;
     setIsLoading(true);
     const updatedOpportunity = getUpdatedOpportunity();
     if (!updatedOpportunity)
@@ -93272,7 +93312,7 @@ const useOpportunityModal = /* @__PURE__ */ __name((initialOpportunity, context)
       resetFormData();
       setRefreshOpportunityFields(!refreshOpportunityFields);
       setIsLoading(false);
-      (_a2 = sliderRef.current) == null ? void 0 : _a2.slickGoTo(currentSlideIndex);
+      toggleRefreshOpportunityInfo();
     }
   }, "createNewOpportunity");
   const updateExistingOpportunity = /* @__PURE__ */ __name(async () => {
@@ -93292,6 +93332,7 @@ const useOpportunityModal = /* @__PURE__ */ __name((initialOpportunity, context)
       setIsLoading(false);
       resetFormData();
       setRefreshOpportunityFields(!refreshOpportunityFields);
+      toggleRefreshOpportunityInfo();
     }
   }, "updateExistingOpportunity");
   const handleSaveOpportunity = reactExports.useCallback(async () => {
@@ -93322,10 +93363,6 @@ const useOpportunityModal = /* @__PURE__ */ __name((initialOpportunity, context)
       setIsAdicionalChoiceOpen(false);
       fetchOppData();
       return;
-    }
-    if (!(creatingOpportunity || currentOppIdSelected)) {
-      console.log("modal fechado ");
-      toggleRefreshOpportunityInfo();
     }
     setCurrentOpportunity(initialOpportunity);
   }, [currentOppIdSelected, refreshOpportunityFields, creatingOpportunity, fetchOppData]);

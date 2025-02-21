@@ -241,8 +241,7 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
             resetFormData();
             setRefreshOpportunityFields(!refreshOpportunityFields);
             setIsLoading(false);
-            sliderRef.current?.slickGoTo(currentSlideIndex);
-
+            toggleRefreshOpportunityInfo();            
         }
     };
 
@@ -261,7 +260,8 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
         } finally {
             setIsLoading(false);
             resetFormData();
-            setRefreshOpportunityFields(!refreshOpportunityFields);           
+            setRefreshOpportunityFields(!refreshOpportunityFields);  
+            toggleRefreshOpportunityInfo();
         }
     };
 
@@ -297,16 +297,14 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
             fetchOppData();
             return;
         }
-        if(!(creatingOpportunity || currentOppIdSelected)){ 
-            console.log('modal fechado ')
-            toggleRefreshOpportunityInfo();
-        }
+     
         setCurrentOpportunity(initialOpportunity);
     }, [currentOppIdSelected, refreshOpportunityFields, creatingOpportunity, fetchOppData]);
 
     useEffect(() => { 
         sliderRef.current?.slickGoTo(currentSlideIndex);
     }, [sliderRef]);
+
     return {
         adicional,
         opportunity,
