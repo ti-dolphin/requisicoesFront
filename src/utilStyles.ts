@@ -53,7 +53,7 @@ export const buttonStylesMobile = {
   padding: 0,
   minWidth: 40,
   height: 40,
-  boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", // Sombra para elegância
+  boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.1)", // Sombra para elegância
   "&:hover": {
     backgroundColor: "#ff9800",
   },

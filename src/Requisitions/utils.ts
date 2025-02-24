@@ -259,17 +259,20 @@ const fetchItems = async (id: number) => {
   }
 };
 
-const deleteRequisitionItem = async (
-  productId: number,
+const deleteRequisitionItems = async (
+  ids: number[],
   requisitionId: number
 ) => {
-  console.log("payload: ", { productId, requisitionId });
+  console.log("payload: ", { ids, requisitionId });
   try {
-    await api.delete(
-      `requisition/requisitionItems/${requisitionId}/${productId}`
+    const response = await api.delete(`requisition/requisitionItems/${requisitionId}`,
+      {
+        params: { ids },
+      }
     );
-  } catch (e) {
-    console.log(e);
+    return response;
+  } catch (e: any) {
+    throw new Error(e);
   }
 };
 
@@ -327,7 +330,7 @@ export {
   fetchRequsitionById,
   fetchPersonById,
   fetchItems,
-  deleteRequisitionItem,
+  deleteRequisitionItems,
   updateRequisitionItems,
   updateRequisition,
   deleteRequisition,

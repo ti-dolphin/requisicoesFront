@@ -3,6 +3,7 @@ const styles = {
         display : 'flex',
         justifyContent: 'center',
         gap: 2
-    }
+    },
+    container: { display: "flex", flexDirection: "column", gap: 1 }
 }
 export default styles

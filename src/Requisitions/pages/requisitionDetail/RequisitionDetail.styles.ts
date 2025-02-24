@@ -32,7 +32,7 @@ const styles = {
     },
   },
   requisitionStepper: {
-    padding: "0.5rem",
+    padding: "0",
   },
   requisitionChilds: {
     border: "1px solid #e3e3e3",

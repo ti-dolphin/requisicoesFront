@@ -36,11 +36,13 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
       const personData = await fetchPersonById(data.ID_RESPONSAVEL);
       console.log("personData: ", personData);
       if (personData) {
+        console.log({ ...data, ["RESPONSAVEL"]: personData?.NOME });
         setRequisitionData({ ...data, ["RESPONSAVEL"]: personData?.NOME });
       }
     }
   };
   useEffect(() => {
+    console.log('useEffect ProductsTableModal')
     fetchRequisitionData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

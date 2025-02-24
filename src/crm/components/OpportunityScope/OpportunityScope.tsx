@@ -19,7 +19,7 @@ const OpportunityScope = ({
 }: props) => {
   const [files, setFiles] = useState<OpportunityFile[]>([]);
   const [oppId, setOppId] = useState<number>();
-  const [isEditing, setIsEditing] = useState<boolean>(false); 
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [observation, setObservation] = useState<string>();
 
   // Função para deletar um arquivo
@@ -56,21 +56,22 @@ const OpportunityScope = ({
   };
 
   const cancelObsEdition = () => {
+    setObservation("");
     setIsEditing(false);
   };
   const handleChangeObservation = (
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
-    const {value} = e.target;
+    const { value } = e.target;
     setObservation(value);
   };
-  const concludeObservationEdition = ( ) =>  {
-     if(guidesReference.current){ 
+  const concludeObservationEdition = () => {
+    if (guidesReference.current) {
       guide.fields[0].data = observation;
       guidesReference.current[2] = guide;
-     }
-     setIsEditing(false);
-  }
+    }
+    setIsEditing(false);
+  };
 
   useEffect(() => {
     if (guidesReference.current) {
@@ -89,8 +90,8 @@ const OpportunityScope = ({
         flexDirection: "column",
         justifyContent: "center",
         gap: 2,
-        padding: 1
-        }}
+        padding: 1,
+      }}
     >
       <TextField
         label={"Observação"}
@@ -122,13 +123,13 @@ const OpportunityScope = ({
           )}
         </AnimatePresence>
       }
-      {  (
+      {
         <OpportunityFiles
           files={files}
           handleDeleteFile={handleDeleteFile}
           handleChangeFiles={handleChangeFiles}
         />
-      )}
+      }
     </Box>
   );
 };
