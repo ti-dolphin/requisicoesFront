@@ -1,10 +1,12 @@
-import React, { MutableRefObject, useCallback, useEffect, useState } from 'react'
+import React, { MutableRefObject, useCallback, useContext, useEffect, useState } from 'react'
 import { Client, Field, Guide, OpportunityOptionField, Status } from '../../types'
 import { Autocomplete, AutocompleteChangeDetails, AutocompleteChangeReason, Box, TextField } from '@mui/material'
 import { Project } from '../../../Requisitions/types'
-import { fetchAllProjects } from '../../../Requisitions/utils'
+import { fetchProjectOptionsByUser } from '../../../Requisitions/utils'
 import { fetchAllClients, fetchStatusList } from '../../utils'
 import { styles } from './OpportunityRegistration.styles'
+import { userContext } from '../../../Requisitions/context/userContext'
+import { OpportunityInfoContext } from '../../context/OpportunityInfoContext'
 
 interface props {
     guide: Guide
@@ -16,13 +18,17 @@ interface OpportunityRegistrationFields {
     numeroAdicional: number;
     nome: string;
     codStatus: number;
-    fkCodCliente: string;
+    fkCodCliente: number;
     dataSolicitacao: Date;
     dataInicio: Date;
     dataEntrega: Date;
 }
 
 const OpportunityRegistration = ({ guide, guidesReference }: props) => {
+    const {currentOppIdSelected } = useContext(OpportunityInfoContext)
+
+    const {user } = useContext(userContext);
+
     const [statusOptions, setStatusOptions] = useState<OpportunityOptionField[]>(
         []
     );
@@ -33,6 +39,7 @@ const OpportunityRegistration = ({ guide, guidesReference }: props) => {
         OpportunityOptionField[]
     >([]);
     const [isEditing, setIseEditing] = useState<boolean>(false);
+
     const [opportunityRegistration, setOpportunityRegistration] = useState<OpportunityRegistrationFields>({
             idProjeto: guide.fields[0].data,
             numeroAdicional: guide.fields[1].data,
@@ -43,6 +50,7 @@ const OpportunityRegistration = ({ guide, guidesReference }: props) => {
             dataInicio: guide.fields[6].data,
             dataEntrega: guide.fields[7].data,
         });
+
     const renderOptions = (column: {
         label: string;
         dataKey: string;
@@ -108,19 +116,47 @@ const OpportunityRegistration = ({ guide, guidesReference }: props) => {
         return  field.dataKey !== 'numeroAdicional'
     }
 
-    const fetchClientOps = useCallback(async () => {
-        const clients = await fetchAllClients();
-        const options = clients.map((client: Client) => ({
+    const setDefaultClient = async (projectId: number, codCliente: number | string ) =>  { 
+      if(projectId && codCliente === '-') {
+          const clients = await fetchAllClients(
+            projectId
+          );
+          const options = clients.map((client: Client) => ({
             label: client.NOMEFANTASIA,
             id: client.CODCLIENTE,
             object: "client",
             key: client.CODCLIENTE,
-        }));
+          }));
+          console.log({options});
+            const olyOptionAvailable = options.find(
+              (option: any) => option.label !== "-"
+            );
+            console.log({ olyOptionAvailable });
+
+            guide.fields[4].data = olyOptionAvailable.id;
+            setOpportunityRegistration({
+              ...opportunityRegistration,
+              fkCodCliente: olyOptionAvailable.id
+            });
+          
+          return;
+      }
+      return;
+    }
+
+    const fetchClientOps = useCallback(async () => {
+        const clients = await fetchAllClients(0);
+         const options = clients.map((client: Client) => ({
+           label: client.NOMEFANTASIA,
+           id: client.CODCLIENTE,
+           object: "client",
+           key: client.CODCLIENTE,
+         }));
         setClientOptions([...options]);
     }, [setClientOptions]);
 
     const fetchProjectsOps = useCallback(async () => {
-        const projects = await fetchAllProjects();
+        const projects = await fetchProjectOptionsByUser(user?.CODPESSOA || 0);
         const options =
             (projects &&
                 projects.map((project: Project) => ({
@@ -174,10 +210,10 @@ const OpportunityRegistration = ({ guide, guidesReference }: props) => {
         };
     };
     
-    useEffect(()=> { 
-        fetchClientOps();
-        fetchProjectsOps();
-        fetchStatusOps();
+    useEffect(() => {
+      fetchClientOps();
+      fetchProjectsOps();
+      fetchStatusOps();
     }, []);
     
     useEffect(() => {
@@ -193,6 +229,9 @@ const OpportunityRegistration = ({ guide, guidesReference }: props) => {
           dataInicio: guide.fields[6].data,
           dataEntrega: guide.fields[7].data,
         });
+        const projectId = guide.fields[0].data;
+        const fkCodCliente = guide.fields[4].data;
+        setDefaultClient(projectId, fkCodCliente);
     }
     }, [guide]); // Executa quando `guide` é alterado
 

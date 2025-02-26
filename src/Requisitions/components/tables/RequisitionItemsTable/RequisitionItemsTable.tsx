@@ -33,6 +33,8 @@ import ItemsToolBar from "../ItemsToolBar/ItemsToolBar";
 
 interface RequisitionItemsTableProps {
   requisitionId: number;
+  addedItems?: Item[];
+  isInsertingQuantity? : boolean;
 }
 
 const columns: GridColDef[] = [
@@ -50,7 +52,7 @@ const columns: GridColDef[] = [
   {
     field: "codigo",
     headerName: "Código",
-    flex: 1,
+    width: 150, // Defina a largura desejada
     editable: false,
     renderCell: (params) => (
       <Typography sx={{ ...typographyStyles.bodyText }}>
@@ -61,7 +63,7 @@ const columns: GridColDef[] = [
   {
     field: "OC",
     headerName: "OC",
-    flex: 1,
+    width: 100, // Defina a largura desejada
     type: "number",
     editable: true,
     renderCell: (params) => (
@@ -73,7 +75,7 @@ const columns: GridColDef[] = [
   {
     field: "QUANTIDADE",
     headerName: "Quantidade",
-    flex: 1,
+    width: 120, // Defina a largura desejada
     type: "number",
     editable: true,
     renderCell: (params) => (
@@ -85,7 +87,7 @@ const columns: GridColDef[] = [
   {
     field: "UNIDADE",
     headerName: "Unidade",
-    flex: 1,
+    width: 100, // Defina a largura desejada
     editable: false,
     renderCell: (params) => (
       <Typography sx={{ ...typographyStyles.bodyText }}>
@@ -96,7 +98,7 @@ const columns: GridColDef[] = [
   {
     field: "OBSERVACAO",
     headerName: "Observação",
-    flex: 1,
+    width: 200, // Defina a largura desejada
     editable: true,
     renderCell: (params) => (
       <Typography sx={{ ...typographyStyles.bodyText }}>
@@ -107,7 +109,7 @@ const columns: GridColDef[] = [
   {
     field: "ATIVO",
     headerName: "Ativo",
-    flex: 1,
+    width: 100, // Defina a largura desejada
     type: "number",
     editable: false,
     renderCell: (params) => (
@@ -124,7 +126,7 @@ const columns: GridColDef[] = [
   {
     field: "ID",
     headerName: "ID",
-    flex: 1,
+    width: 100, // Defina a largura desejada
     type: "number",
     editable: false,
     renderCell: (params) => (
@@ -136,7 +138,7 @@ const columns: GridColDef[] = [
   {
     field: "ID_PRODUTO",
     headerName: "ID Produto",
-    flex: 1,
+    width: 120, // Defina a largura desejada
     type: "number",
     editable: false,
     renderCell: (params) => (
@@ -149,6 +151,8 @@ const columns: GridColDef[] = [
 
 const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
   requisitionId,
+  addedItems,
+  isInsertingQuantity
 }) => {
   const {
     visibleItems,
@@ -166,7 +170,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     handleActivateItems,
     handleCopyContent,
     selectedRows,
-  } = useRequisitionItems(requisitionId);
+  } = useRequisitionItems(requisitionId, addedItems, isInsertingQuantity);
 
   const ReqItemsFooter = (props: GridFooterContainerProps) => {
     return (
@@ -199,21 +203,33 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     );
   };
 
+ 
+
+  const insertingQuantityColumns = columns.filter(
+    (column) =>
+      column.field === "QUANTIDADE" ||
+      column.field === "nome_fantasia" ||
+      column.field === "UNIDADE"
+  );
+
   return (
     <Box sx={{ ...styles.container }}>
-       <ItemsToolBar 
+      {!isInsertingQuantity && (
+        <ItemsToolBar
           handleCancelItems={handleCancelItems}
           handleActivateItems={handleActivateItems}
           handleCopyContent={handleCopyContent}
           handleDelete={handleDelete}
           selectedRows={selectedRows}
-       />
+
+        />
+      )}
 
       <DataGrid
-        density="compact"
+        density={isInsertingQuantity ? 'comfortable' : 'compact'}
         rows={visibleItems}
         getRowId={(item: Item) => item.ID}
-        columns={columns}
+        columns={isInsertingQuantity ? insertingQuantityColumns : columns}
         initialState={{
           pagination: {
             paginationModel: {
@@ -224,18 +240,23 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
         apiRef={gridApiRef}
         editMode="row"
         pageSizeOptions={[100]}
-        checkboxSelection
+        checkboxSelection={!isInsertingQuantity}
+        
         disableRowSelectionOnClick
         onRowSelectionModelChange={handleChangeSelection}
         onRowEditStart={() => setIsEditing(true)}
         processRowUpdate={(newRow: GridRowModel, oldRow: GridRowModel) =>
           processRowUpdate(newRow, oldRow)
         }
+        
         sx={{
           "& .MuiDataGrid-cell": {
             display: "flex",
             alignItems: "center",
           },
+          "& .MuiDataGrid-menuIconButton": { 
+            display: 'none'
+          }
         }}
         slots={{
           footer: ReqItemsFooter,

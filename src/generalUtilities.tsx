@@ -1,7 +1,9 @@
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import dayjs from "dayjs";
-import { Box, CircularProgress } from "@mui/material";
+import { Box, CircularProgress, IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -22,6 +24,19 @@ export const formatDateWithNoTime = (value: Date | string) => {
     const formattedDate = brazilianDateTime.format("DD/MM/YYYY");
     return `${formattedDate}`;
   }
+};
+interface ClsoeModalButtonProps{ 
+  handleClose: () => void;
+}
+export const CloseModalButton = ({ handleClose }: ClsoeModalButtonProps) => {
+  return (
+    <IconButton
+      onClick={() => handleClose()}
+      sx={{ position: "absolute", top: 0, right: 0 }}
+    >
+      <CloseIcon sx={{ color: "red" }} />
+    </IconButton>
+  );
 };
 
  export const isPDF = (url: string) => {

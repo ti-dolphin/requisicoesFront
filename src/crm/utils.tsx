@@ -56,9 +56,13 @@ export const fetchStatusList = async () => {
   }
 };
 
-export const fetchSalers = async () => {
+export const fetchSalers = async (projectId: number) => {
   try {
-    const response = await api.get("/opportunity/saler");
+    const response = await api.get("/opportunity/saler",  {
+      params:  {
+        projectId
+      }
+    });
     return response.data;
   } catch (e) {
     console.log(e);
@@ -75,12 +79,16 @@ export const getOpportunityById = async (oppId: number) => {
   }
 };
 
-export const fetchAllClients = async () => {
+export const fetchAllClients = async (projectId: number) => {
   try {
-    const respoonse = await api.get("/opportunity/client");
+    const respoonse = await api.get("/opportunity/client", {
+      params: {
+        projectId
+      },
+    });
     return respoonse.data;
   } catch (e) {
-    console.log('fetchAllClients: ', e);
+    console.log("fetchAllClients: ", e);
   }
 };
 

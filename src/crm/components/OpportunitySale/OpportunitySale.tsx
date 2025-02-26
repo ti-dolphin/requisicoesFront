@@ -2,6 +2,7 @@ import React, {
   MutableRefObject,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { Field, Guide } from "../../types";
@@ -32,9 +33,11 @@ const OpportunitySale = ({ guide, guidesReference }: props) => {
   const [sale, setSale] = useState<OpportunitySaleFields>();
   const [salerOptions, setSalerOptions] = useState<any>();
   const [currentSaller, setCurrentSaller] = useState<any>();
+  const projectId = useRef<number>();
+
   const fetchSalerOps = useCallback(
     async (firstsSaleState: OpportunitySaleFields) => {
-      const salers = await fetchSalers();
+      const salers = await fetchSalers(projectId.current || 0);
       const options = salers.map((saler: any) => ({
         label: saler.NOME,
         id: saler.CODPESSOA,
@@ -42,6 +45,13 @@ const OpportunitySale = ({ guide, guidesReference }: props) => {
         key: saler.CODPESSOA,
       }));
       setSalerOptions(options);
+      const oneOption = options.length <= 2;
+   
+      if(oneOption) {
+        const onlyOptionAvailable = options.find((option : any) => option.label !== '-');
+        setCurrentSaller(onlyOptionAvailable);
+        return;
+      }
       setCurrentSaller(
         options.find((option: any) => option.id === firstsSaleState.responsavel)
       );
@@ -76,6 +86,9 @@ const OpportunitySale = ({ guide, guidesReference }: props) => {
   };
 
   useEffect(() => {
+        if (guidesReference.current) {
+          projectId.current = guidesReference.current[0].fields[0].data;
+        } 
     const firstsSaleState = {
       responsavel: guide.fields[0].data,
       valorFatDolphin: guide.fields[1].data,
@@ -85,6 +98,7 @@ const OpportunitySale = ({ guide, guidesReference }: props) => {
     };
     setSale(firstsSaleState);
     fetchSalerOps(firstsSaleState);
+
   }, [guide]);
 
   return (

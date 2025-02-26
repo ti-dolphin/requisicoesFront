@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, SetStateAction, useState } from "react";
 import { Item } from "../types";
 
 interface ItemsContextType {
@@ -20,9 +20,12 @@ interface ItemsContextType {
   setEditingObservation: (value: [boolean, Item?]) => void;
   toggleRefreshItems: () => void;
   changeSelection: (items?: Item[]) => void;
+  productIdList: number[];
+  setProductIdList: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
 export const ItemsContext = createContext<ItemsContextType>({
+  productIdList: [],
   refreshItems: false,
   editing: [false],
   adding: false,
@@ -39,6 +42,7 @@ export const ItemsContext = createContext<ItemsContextType>({
   setEditingObservation: () => {},
   toggleRefreshItems: () => {},
   changeSelection: () => {},
+  setProductIdList: () =>{}
 });
 interface ItemsContextProviderProps {
   children: React.ReactNode;
@@ -55,6 +59,7 @@ export const ItemsContextProvider = ({
     [boolean, Item?]
   >([false]);
   const [refreshItems, setRefresh] = useState<boolean>(false);
+  const [productIdList, setProductIdList] = useState<number[]>([]);
 
   const changeSelection = (items?: Item[]) => {
     if (items) {
@@ -111,6 +116,8 @@ export const ItemsContextProvider = ({
         setEditingObservation,
         toggleRefreshItems,
         changeSelection,
+        productIdList,
+        setProductIdList
       }}
     >
       {children}

@@ -14,7 +14,7 @@ import DeleteRequisitionItemModal from "../../modals/warnings/DeleteRequisitionF
 import { useItemActions } from "./hooks";
 import { useEffect } from "react";
 import { ItemsContext } from "../../../context/ItemsContext";
-import { ProductsTableModal } from "../../modals/ProductsTableModal";
+import { ProductsTableModal } from "../../modals/ProductsTableModal/ProductsTableModal";
 import { useParams } from "react-router-dom";
 
 

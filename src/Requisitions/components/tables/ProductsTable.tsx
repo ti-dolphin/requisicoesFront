@@ -3,7 +3,7 @@ import {
   Item,
   Product,
   fetchItems,
-  postRequistionItem,
+  postRequistionItems,
   searchProducts,
   updateRequisitionItems,
 } from "../../utils";
@@ -172,9 +172,9 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ ID_REQUISICAO, TIPO }) =>
       ID_REQUISICAO: ID_REQUISICAO,
     });
     const reqIDParam = ID_REQUISICAO;
-    const response = await postRequistionItem(
+    const response = await postRequistionItems(
       requestBody,
-      `/requisition/requisitionItems/${reqIDParam}`
+      reqIDParam
     );
     if (response) {
       setOpenQuantityInput(false);

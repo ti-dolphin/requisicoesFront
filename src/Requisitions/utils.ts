@@ -142,16 +142,16 @@ const getRequisitionFiles = async (requisitionID: number) => {
   }
 };
 
-const postRequistionItem = async (
+const postRequistionItems = async (
   requisitionItems: RequisitionItemPost[],
-  url: string
+  requisitionId: number
 ) => {
   try {
-    const response = await api.post(url, requisitionItems);
-    return response;
-  } catch (e) {
-    console.log(e);
-  }
+    const response = await api.post(`requisition/requisitionItems/${requisitionId}`, requisitionItems);
+    return response.data;
+  } catch (e : any) {
+      throw new Error(e);
+  } 
 };
 
 const postRequisition = async (requistions: RequisitionPost[]) => {
@@ -180,6 +180,16 @@ const fetchAllProjects = async () => {
     console.log(e);
   }
 };
+const fetchProjectOptionsByUser = async (userID: number) => {
+  try {
+    const response = await api.get<Project[]>("/project", { 
+      params: {userID}
+    });
+    return response.data;
+  } catch (e) {
+    console.log(e);
+  }
+};
 
 const deleteRequisition = async (id: number) => {
   try {
@@ -202,7 +212,6 @@ const fetchTenThousandProducts = async () => {
     });
     if (chunk.data) data = [...data, ...chunk.data];
   }
-
   return data;
 };
 
@@ -214,9 +223,10 @@ const searchProducts = async (name: string, type : number) => {
         typeId : type
       },
     });
-    return response;
-  } catch (e) {
-    console.log(e);
+    return response.data;
+  } catch (e: any) {
+    throw new Error(e);
+
   }
 };
 
@@ -243,8 +253,8 @@ const fetchRequsitionById = async (id: number) => {
   try {
     const response = await api.get<Requisition>(`requisition/${id}`);
     return response.data;
-  } catch (e) {
-    console.log(e);
+  } catch (e : any) {
+    throw new Error(e);
   }
 };
 
@@ -326,7 +336,7 @@ export {
   fetchPersons,
   fetchAllProjects,
   postRequisition,
-  postRequistionItem,
+  postRequistionItems,
   fetchRequsitionById,
   fetchPersonById,
   fetchItems,
@@ -346,6 +356,7 @@ export {
   postRequisitionLinkFile,
   fetchAllTypes,
   logIn,
+  fetchProjectOptionsByUser
 };
 export type {
   Requisition,

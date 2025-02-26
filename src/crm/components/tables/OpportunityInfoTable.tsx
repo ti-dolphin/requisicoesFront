@@ -132,7 +132,6 @@ const OpportunityInfoTable: React.FC = () => {
   );
 
   const calculateIsMobile = () => {
-    console.log({ isMobile: window.innerWidth < 768 })
     setIsMobile(window.innerWidth < 768);
   }
 
@@ -153,7 +152,6 @@ const OpportunityInfoTable: React.FC = () => {
         setAllRows(opps);
         setRows(opps);
         calculateLayoutProps(opps.length);
-        console.log({opps})
       }
     }
     setIsLoading(false);
@@ -172,7 +170,6 @@ const OpportunityInfoTable: React.FC = () => {
   const calculateGridHeight = () => {
     if (GridOuterContainerRef.current) {
       const height = GridOuterContainerRef.current.clientHeight;
-      console.log({ calculatedHeight: height })
       setgridOuterContainerHeight(height);
       return height;
     }
@@ -224,12 +221,7 @@ const OpportunityInfoTable: React.FC = () => {
         gridColumnsCount
       );
       const gridHeight = calculateGridHeight();
-      console.log({
-        cardWidth,
-        gridColumnsCount,
-        gridRowCount,
-        gridHeight,
-      })
+ 
       calculateInitialCardViewActive();
       //  calculateIsMobile();
     },
@@ -333,9 +325,7 @@ const OpportunityInfoTable: React.FC = () => {
     );
   };
 
-  useEffect(() => {
-    console.log("OpportunityInfoTable renderizou");
-  })
+
 
   useEffect(() => {
     calculateIsMobile()
@@ -408,7 +398,6 @@ const OpportunityInfoTable: React.FC = () => {
             width={gridColumnsCount * cardWidth + 20} // Width of the grid
           >
             {({ columnIndex, rowIndex, style }) => {
-              console.log(columnIndex)
               return ( 
                 (
                   <OpportunityCard

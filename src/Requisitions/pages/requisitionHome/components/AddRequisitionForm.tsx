@@ -11,7 +11,7 @@ import {
   TextField,
 } from "@mui/material";
 import React from "react";
-import { ProductsTableModal } from "../../../components/modals/ProductsTableModal";
+import { ProductsTableModal } from "../../../components/modals/ProductsTableModal/ProductsTableModal";
 import { useContext } from "react";
 import { ItemsContext } from "../../../context/ItemsContext";
 import { userContext } from "../../../context/userContext";

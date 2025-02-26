@@ -1,9 +1,11 @@
 import { GridRowModesModel, useGridApiRef, GridRowModel, GridRowSelectionModel } from "@mui/x-data-grid";
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useCallback, useEffect, useContext } from "react";
 import { AlertInterface, Item } from "../../../types";
 import { deleteRequisitionItems, fetchItems, updateRequisitionItems } from "../../../utils";
+import { ItemsContext } from "../../../context/ItemsContext";
 
-const useRequisitionItems = (requisitionId: number) => {
+const useRequisitionItems = (requisitionId: number, addedItems?: Item[],
+    isInsertingQuantity?: boolean) => {
     const [items, setItems] = useState<Item[]>([]);
     const [visibleItems, setVisibleItems] = useState<Item[]>([]);
     const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -16,8 +18,7 @@ const useRequisitionItems = (requisitionId: number) => {
     const [refresh, setRefresh] = useState(false);
     const shouldExecuteSaveItems = useRef(false);
     const shouldExecuteResetItems = useRef(false);
-
-    
+    const { adding, setProductIdList } = useContext(ItemsContext);
 
     const displayAlert = async (severity: string, message: string) => {
         setTimeout(() => {
@@ -137,11 +138,22 @@ const useRequisitionItems = (requisitionId: number) => {
 
     const fetchReqItems = useCallback(async () => {
         const items = await fetchItems(requisitionId);
+        console.log({ 
+            isInsertingQuantity,
+            addedItems
+        })
         if (items) {
+            if(isInsertingQuantity && addedItems?.length){ 
+                const itemsToBeSet = items.filter((item) => addedItems.find((addedItem) => addedItem.ID === item.ID))
+                setItems(itemsToBeSet);
+                setVisibleItems(itemsToBeSet);
+                return;
+            }
+            setProductIdList(items.map(item => item.ID_PRODUTO));
             setItems(items);
             setVisibleItems(items);
         }
-    }, [refresh]);
+    }, [refresh, isInsertingQuantity, addedItems, adding]);
 
     const saveItems = useCallback(async () => {
         try {
@@ -184,8 +196,9 @@ const useRequisitionItems = (requisitionId: number) => {
     }, [isEditing]);
 
     useEffect(() => {
+        console.log('useEffect itemsTable')
         fetchReqItems();
-    }, [refresh]);
+    }, [refresh, isInsertingQuantity, adding]);
 
     useEffect(() => {
         if (shouldExecuteResetItems.current) {

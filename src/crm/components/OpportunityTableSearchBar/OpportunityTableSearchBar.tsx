@@ -45,8 +45,6 @@ const OpportunityTableSearchBar = memo(
     isCardViewActive,
     setIsCardViewActive,
   }: OpportunityTableSearchBarProps) => {
-    // console.log("OpportunityTableSearchBar()");
-
     const navigate = useNavigate();
     const {
       setFinishedOppsEnabled,
@@ -141,9 +139,8 @@ const OpportunityTableSearchBar = memo(
     };
 
     const handleSearchWithDateParams = (
-      e: React.MouseEvent<HTMLButtonElement>
+      _e: React.MouseEvent<HTMLButtonElement>
     ) => {
-      console.log(e);
       toggleRefreshOpportunityInfo();
     };
 
@@ -156,10 +153,8 @@ const OpportunityTableSearchBar = memo(
       }
     ) => {
       const { value } = e.target;
-      console.log("value: ", value);
 
       let changedDateFitlers = [];
-      console.log("isFromParam: ", dateFilterReceived.isFromParam);
       if (dateFilterReceived.isFromParam) {
         changedDateFitlers = dateFilters.map((currentDateFilter) =>
           currentDateFilter.dateFilterKey === dateFilterReceived.dataKey
@@ -173,7 +168,7 @@ const OpportunityTableSearchBar = memo(
             : currentDateFilter
         );
       }
-      console.log("changedDateFitlers: ", changedDateFitlers);
+   
       setDateFilters(changedDateFitlers);
     };
 
@@ -196,9 +191,7 @@ const OpportunityTableSearchBar = memo(
       setRowsMemo(newFilteredRows);
     };
 
-    useEffect(() => {
-      console.log("OpportunityTableSearchBar renderizou!");
-    });
+   
 
     return (
       <AppBar
@@ -435,19 +428,14 @@ const OpportunityTableSearchBar = memo(
       let hasChanges = false;
       // Verifica se as chaves dos props são iguais
       if (prevPropsKeys.length !== nextPropsKeys.length) {
-        console.log("As chaves dos props mudaram.");
         hasChanges = true;
       }
       prevPropsKeys.forEach((key) => {
         if (prevProps[key] !== nextProps[key]) {
-          console.log(`Prop "${key}" mudou:`, {
-            prev: prevProps[key],
-            next: nextProps[key],
-          });
+    
           hasChanges = true;
         }
       });
-      console.log({ hasChanges });
       // Se não houver mudanças, o componente não será renderizado novamente
       return !hasChanges;
     };

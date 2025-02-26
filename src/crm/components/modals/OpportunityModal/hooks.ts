@@ -28,7 +28,7 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
         creatingOpportunity,
         currentOppIdSelected,
         setCurrentOppIdSelected,
-        setCreatingOpportunity,
+        setCreatingOpportunity, 
         toggleRefreshOpportunityInfo
     } = context;
 
@@ -135,7 +135,6 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
             dataLiberacao: data.dataLiberacao ? new Date(data.dataLiberacao).toISOString().split("T")[0] : null,
             dataInteracao: data.dataInteracao ? new Date(data.dataInteracao).toISOString().split("T")[0] : null,
         };
-        console.log('formatedOpp: ', formattedOpp)
         setCurrentOpportunity(formattedOpp);
         setIsLoading(false);
     }, [currentOppIdSelected, setCurrentOpportunity]);
@@ -168,6 +167,7 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
             setProjectChoiceModalOpen(false);
             setRefreshOpportunityFields(!refreshOpportunityFields);
             setAdicional(true);
+            setCreatingOpportunity(false);
         }
     };
 
@@ -277,17 +277,16 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
     }, [opportunity, refreshOpportunityFields, setCreatingOpportunity, setCurrentOppIdSelected, creatingOpportunity, currentSlideIndex]);
 
     useEffect(( )=> { 
-        console.log('currentSlideIndex mudou: ', currentSlideIndex)
-    }, [currentSlideIndex])
+    }, [currentSlideIndex]);
 
     useEffect(() => {
         setGuidesReference();
         setRenderFields(!renderFields);
-    }, [opportunity]);
+    }, [opportunity, refreshOpportunityFields]);
 
     useEffect(() => {
+     
         if (creatingOpportunity) {
-            console.log('não rodar fetch')
             setIsAdicionalChoiceOpen(true);
             setIsLoading(false)
             return;

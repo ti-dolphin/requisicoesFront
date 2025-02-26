@@ -1,10 +1,11 @@
 import { Modal, Box, Typography, Autocomplete, TextField, Button, AutocompleteChangeDetails, AutocompleteChangeReason, IconButton } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { OpportunityOptionField } from '../../../types';
 import CloseIcon from "@mui/icons-material/Close";
-import { fetchAllProjects, Project } from '../../../../Requisitions/utils';
+import {  fetchProjectOptionsByUser, Project } from '../../../../Requisitions/utils';
 import typographyStyles from '../../../../Requisitions/utilStyles';
 import { BaseButtonStyles } from '../../../../utilStyles';
+import { userContext } from '../../../../Requisitions/context/userContext';
 
 interface ProjectChoiceModalProps {
   handleSaveProjectChoiceAdicional: () => Promise<void>;
@@ -20,7 +21,7 @@ interface ProjectChoiceModalProps {
         object: string;
       }>
       | undefined
-  ) => void;
+  ) => void; 
   setProjectChoiceModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 const ProjectChoiceModal = ({
@@ -33,9 +34,10 @@ const ProjectChoiceModal = ({
     const [projectOptions, setProjectOptions] = useState<
       OpportunityOptionField[]
     >([]);
+    const { user} = useContext(userContext);
 
    const fetchProjectsOps = useCallback(async () => {
-     const projects = await fetchAllProjects();
+     const projects = await fetchProjectOptionsByUser(user?.CODPESSOA || 0);
      const options =
        (projects &&
          projects.map((project: Project) => ({

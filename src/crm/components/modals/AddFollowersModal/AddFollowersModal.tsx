@@ -124,14 +124,10 @@ const AddFollowersModal = ({
 
   const fetchOptions = async () => {
     const peopleList = await fetchPersonList();
-    console.log({
-      peopleList,
-    });
     setPersonList(peopleList || []);
     setFilteredPersonList(peopleList || []);
   };
   const handleConclude = async () => {
-    console.log("handleConclude ", followers);
     if (newFollowers && guidesReference.current) {
       const newOppFollowers = newFollowers.filter(
         (newFollower) =>
