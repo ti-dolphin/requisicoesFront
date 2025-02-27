@@ -1,4 +1,4 @@
-import React, { createContext, SetStateAction, useState } from "react";
+import React, { createContext, useState } from "react";
 import { Item } from "../types";
 
 interface ItemsContextType {

@@ -221,7 +221,7 @@ const OpportunityInfoTable: React.FC = () => {
         gridColumnsCount
       );
       const gridHeight = calculateGridHeight();
- 
+      console.log(gridRowCount, gridHeight);
       calculateInitialCardViewActive();
       //  calculateIsMobile();
     },
@@ -325,8 +325,6 @@ const OpportunityInfoTable: React.FC = () => {
     );
   };
 
-
-
   useEffect(() => {
     calculateIsMobile()
     fetchOpportunities();
@@ -398,6 +396,7 @@ const OpportunityInfoTable: React.FC = () => {
             width={gridColumnsCount * cardWidth + 20} // Width of the grid
           >
             {({ columnIndex, rowIndex, style }) => {
+              console.log(columnIndex);
               return ( 
                 (
                   <OpportunityCard

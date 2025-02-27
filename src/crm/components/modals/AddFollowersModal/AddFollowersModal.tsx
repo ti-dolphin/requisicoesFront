@@ -70,7 +70,7 @@ const AddFollowersModal = ({
   followers,
   guide,
   guidesReference,
-}: AddFollowersModalProps) => {
+}: AddFollowersModalProps) => {  
   const [addingFollowrs, setAddingFollowers] = useState<boolean>(false);
   const [personList, setPersonList] = useState<Person[]>([]);
   const [previousSelectedList, setPreviousSelectedList] = useState<number[]>(
@@ -127,6 +127,7 @@ const AddFollowersModal = ({
     setPersonList(peopleList || []);
     setFilteredPersonList(peopleList || []);
   };
+
   const handleConclude = async () => {
     if (newFollowers && guidesReference.current) {
       const newOppFollowers = newFollowers.filter(

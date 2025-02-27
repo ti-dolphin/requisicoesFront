@@ -175,6 +175,7 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
         let updatedOpportunity = { ...opportunity };
         guidesReference.current?.forEach((guide) => {
             guide.fields.forEach((field) => {
+                console.log({dataKey: field.dataKey, data: field.data})
                 updatedOpportunity = {
                     ...updatedOpportunity,
                     [field.dataKey]: field.data,

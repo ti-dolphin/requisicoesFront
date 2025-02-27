@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from "axios";
 import api from "../api";
-import { DateFilter, Opportunity, OpportunityColumn } from "./types";
+import { Client, DateFilter, Opportunity, OpportunityColumn } from "./types";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import dayjs from "dayjs";
@@ -200,6 +200,35 @@ export const fetchOpportunityFilesById = async (oppId : number) => {
   }
 };
 
+export const fetchClientFromFirstProjectOption = async (projectId: number ) =>  {
+        const clients: any = await fetchAllClients(projectId);
+        
+        const options = clients.map((client: Client) => ({
+          label: client.NOMEFANTASIA,
+          id: client.CODCLIENTE,
+          object: "client",
+          key: client.CODCLIENTE,
+        }));
+        const olyOptionAvailable = options.find(
+          (option: any) => option.label !== "-"
+        );
+        return olyOptionAvailable;
+};
+
+export const fetchResponsableForFirstProjectOption = async ( projectId: number) => { 
+   const salers = await fetchSalers(Number(projectId));
+   const options = salers.map((saler: any) => ({
+     label: saler.NOME,
+     id: saler.CODPESSOA,
+     object: "saler",
+     key: saler.CODPESSOA,
+   }));
+   const onlyOptionAvailable = options.find(
+     (option: any) => option.label !== "-"
+   );
+   return onlyOptionAvailable;
+}
+
 export const opportunityInputFields: OpportunityColumn[] = [
   {
     label: "Nº Projeto",
@@ -354,7 +383,7 @@ export const opportunityDefault = {
   tendencia: 1, // Valor padrão para tendência (campo com valor padrão '1')
   dataLiberacao: null, // Opcional
   relacionamento: 1, // Valor padrão para relacionamento (campo com valor padrão '1')
-  fkCodCliente: "-", // Valor padrão (campo com valor padrão '-')
+  fkCodCliente: '-', // Valor padrão (campo com valor padrão '-')
   fkCodColigada: 0, // Valor padrão para código de coligada (campo com valor padrão '0')
   valorFatDireto: 0.0, // Valor padrão (campo com valor padrão '0.00')
   valorServicoMO: 0.0, // Valor padrão (campo com valor padrão '0.00')

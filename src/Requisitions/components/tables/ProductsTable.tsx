@@ -157,7 +157,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ ID_REQUISICAO, TIPO }) =>
       if(TIPO)  {
         const searchResults = await searchProducts(value.toUpperCase(), TIPO);
         console.log("searchResults: ", searchResults);
-        if (searchResults) setFilteredRows([...searchResults.data]);
+        if (searchResults) setFilteredRows([...searchResults]);
       }
 
 

@@ -27,7 +27,7 @@ export const useProductsTableModal = (requisitionID: number) => {
         _details: GridCallbackDetails) => {
         if (rowSelectionModel.length > 0) {
             setIsSelecting(true);
-            const localSelectedProducts = products.filter((product, index) => rowSelectionModel.find((id) => product.ID === id));
+            const localSelectedProducts = products.filter((product, _index) => rowSelectionModel.find((id) => product.ID === id));
             setSelectedProducts(localSelectedProducts);
             return;
         }

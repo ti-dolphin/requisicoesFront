@@ -1,10 +1,11 @@
-import { MutableRefObject, useEffect, useState } from 'react'
+import { MutableRefObject, useContext, useEffect, useState } from 'react'
 import { Follower, Guide } from '../../types';
 import { Avatar, Box, ListItem, ListItemAvatar, ListItemButton, ListItemText, TextField } from '@mui/material';
 import { ListChildComponentProps } from 'react-window';
 import { FixedSizeList } from "react-window";
 import AddFollowersModal from '../modals/AddFollowersModal/AddFollowersModal';
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { userContext } from '../../../Requisitions/context/userContext';
 
 
 interface props {
@@ -15,11 +16,24 @@ const OpportunityFollowers = ({guide, guidesReference} : props) => {
      const [followers, setFollowers] = useState<Follower[]>([]);
      const [searchTerm, setSearchTerm] = useState<string>("");
      const [filteredFollowers, setFilteredFollowers] = useState<Follower[]>([]);
-
+    const { user } = useContext(userContext);
+    
      useEffect(() => {
-       if (guide.fields[0].data) {
-         setFollowers([...guide.fields[0].data]);
+       if (guide.fields[0].data && guidesReference.current && user) {
+         const userInFollowersList = [...guide.fields[0].data].find((follower: Follower) => follower.codpessoa === user.CODPESSOA);
+         if (!userInFollowersList){ 
+               const userFollower = {
+                 id_seguidor_projeto: 0,
+                 id_projeto: guidesReference.current[0].fields[0].data,
+                 codpessoa: user.CODPESSOA,
+                 ativo: 1,
+                 nome: user.NOME,
+               };
+               guide.fields[0].data = [...guide.fields[0].data, userFollower];
+               guidesReference.current[4] = guide;
+         } setFollowers([...guide.fields[0].data]);
          setFilteredFollowers([...guide.fields[0].data]);
+         console.log("followers: ", guide.fields[0].data);
        }
      }, [guide]);
 

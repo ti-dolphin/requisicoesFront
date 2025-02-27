@@ -1,21 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import * as React from "react";
 import { Dropdown } from "@mui/base/Dropdown";
-import { Menu, MenuListboxSlotProps } from "@mui/base/Menu";
-import { MenuButton as BaseMenuButton } from "@mui/base/MenuButton";
-import { MenuItem as BaseMenuItem, menuItemClasses } from "@mui/base/MenuItem";
-import { Box, styled } from "@mui/system";
-import { CssTransition } from "@mui/base/Transitions";
-import { PopupContext } from "@mui/base/Unstable_Popup";
+import { Menu } from "@mui/base/Menu";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { Item } from "../../../types";
-import { buttonStylesMobile } from "../../../../utilStyles";
 import DeleteRequisitionItemModal from "../../modals/warnings/DeleteRequisitionFileModal";
 import { useItemActions } from "./hooks";
-import { useEffect } from "react";
-import { ItemsContext } from "../../../context/ItemsContext";
-import { ProductsTableModal } from "../../modals/ProductsTableModal/ProductsTableModal";
-import { useParams } from "react-router-dom";
 
 
 interface ItemActionsProps {

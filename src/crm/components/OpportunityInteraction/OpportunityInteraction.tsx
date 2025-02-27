@@ -104,10 +104,11 @@ const OpportunityInteraction = ({ guide, guidesReference }: props) => {
     <Box
       sx={style.container}
     >
-      {guide.fields.map((field) => {
+      {guide.fields.map((field, _index) => {
         if (field.dataKey === "dataInteracao") {
           return (
             <TextField
+             key={field.dataKey}
               label={field.label}
               type={field.type}
               onChange={(e) => handleChangeInteractonDate(e, field.dataKey)}
@@ -118,7 +119,7 @@ const OpportunityInteraction = ({ guide, guidesReference }: props) => {
         }
         if (field.dataKey === "comentarios") {
           return (
-            <Stack sx={{ width: "100%", gap: 2 }}>
+            <Stack sx={{ width: "100%", gap: 2 }} key={field.dataKey}>
               <TextField
                 key={field.dataKey}
                 onChange={(e) =>

@@ -1,9 +1,9 @@
 import { Alert, AlertColor, Box, Button, Modal, Stack, styled, TextField, Typography } from "@mui/material";
 import {
-  AlertInterface,
+
   Product,
   ProductsTableModalProps,
-  Requisition,
+
 } from "../../../types";
 import ProductsTable from "../../tables/ProductsTable";
 import { DataGrid, GridCallbackDetails, GridColDef, GridRowSelectionModel, useGridApiRef } from "@mui/x-data-grid";
@@ -53,7 +53,6 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
      handleSearch,
      adding,
      handleClose,
-     searchTerm,
      isSelecting,
      setIsSelecting,
      selectedProducts,
@@ -89,20 +88,21 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
      }
     }).filter(item => item !== undefined);
    }
-   const filterRepeatedProducts = ( ) =>  {
-       return selectedProducts.filter((product) => productIdList.includes(product.ID));
-
-   };
 
    const handleSaveAddItems = async () => {
      const newProductItems = filterNonRepeatedProducts();
-     try {
-       const data = await postRequistionItems(newProductItems, requisitionID);
-       setAddedItems(data.insertedItems);
-       setIsInsertingQuantity(true);
-     } catch (e: any) {
-       displayAlert("error", e.message);
-     }
+    if(newProductItems) {
+        try {
+          const data = await postRequistionItems(
+            newProductItems,
+            requisitionID
+          );
+          setAddedItems(data.insertedItems);
+          setIsInsertingQuantity(true);
+        } catch (e: any) {
+          displayAlert("error", e.message);
+        }
+    }
    }
 
   return (

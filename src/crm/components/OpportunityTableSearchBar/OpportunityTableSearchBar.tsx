@@ -18,7 +18,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { ArrowLeftIcon } from "@mui/x-date-pickers/icons";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { OpportunityInfoContext } from "../../context/OpportunityInfoContext";
-import React, { Dispatch, memo, SetStateAction, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import React, { Dispatch, memo, SetStateAction, useCallback, useContext, useMemo, useState } from "react";
 import { defaultDateFilters } from "../../context/OpportunityInfoContext";
 import AddIcon from "@mui/icons-material/Add";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";

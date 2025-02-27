@@ -2,6 +2,8 @@ import { Modal, Box, IconButton, Typography, Stack, Button } from '@mui/material
 import { useContext } from 'react'
 import { OpportunityInfoContext } from '../../../context/OpportunityInfoContext';
 import CloseIcon from "@mui/icons-material/Close";
+import { BaseButtonStyles } from '../../../../utilStyles';
+import { green, red } from '@mui/material/colors';
 
 interface AdicionalChoiceProps {
   isAdicionalChoiceOpen: boolean;
@@ -60,15 +62,21 @@ const AdicionalChoice = ({
         <Stack direction="row" gap={1}>
           <Button
             onClick={() => handleAdicionalChoice(true)}
-            variant="contained"
-            color="primary"
+            sx={{
+              ...BaseButtonStyles,
+              backgroundColor: green[500],
+              "&:hover": { backgroundColor: green[800] },
+            }}
           >
             Sim
           </Button>
           <Button
             onClick={() => handleAdicionalChoice(false)}
-            variant="contained"
-            color="primary"
+            sx={{
+              ...BaseButtonStyles,
+              backgroundColor: red[500],
+              "&:hover": { backgroundColor: red[800] },
+            }}
           >
             Não
           </Button>

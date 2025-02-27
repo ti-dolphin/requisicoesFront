@@ -146,7 +146,7 @@ export const useItemActions = (
   `
   );
 
-  const MenuButton = styled(BaseMenuButton)(({ theme }) => {
+  const MenuButton = styled(BaseMenuButton)(() => {
     return { ...buttonStylesMobile, height: 35, width: 30 };
   });
 

@@ -3,9 +3,8 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { Stack } from '@mui/material';
-import { anexoRequisicao, ItemFile } from '../../../types';
 import typographyStyles from '../../../utilStyles';
-import { BaseButtonStyles, buttonStylesMobile } from '../../../../utilStyles';
+import { BaseButtonStyles } from '../../../../utilStyles';
 import { green, red } from "@mui/material/colors";
 
 interface props {

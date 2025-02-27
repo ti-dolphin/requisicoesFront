@@ -3,10 +3,9 @@ import { Client, Field, Guide, OpportunityOptionField, Status } from '../../type
 import { Autocomplete, AutocompleteChangeDetails, AutocompleteChangeReason, Box, TextField } from '@mui/material'
 import { Project } from '../../../Requisitions/types'
 import { fetchProjectOptionsByUser } from '../../../Requisitions/utils'
-import { fetchAllClients, fetchStatusList } from '../../utils'
+import { fetchAllClients, fetchClientFromFirstProjectOption, fetchStatusList } from '../../utils'
 import { styles } from './OpportunityRegistration.styles'
 import { userContext } from '../../../Requisitions/context/userContext'
-import { OpportunityInfoContext } from '../../context/OpportunityInfoContext'
 
 interface props {
     guide: Guide
@@ -25,8 +24,6 @@ interface OpportunityRegistrationFields {
 }
 
 const OpportunityRegistration = ({ guide, guidesReference }: props) => {
-    const {currentOppIdSelected } = useContext(OpportunityInfoContext)
-
     const {user } = useContext(userContext);
 
     const [statusOptions, setStatusOptions] = useState<OpportunityOptionField[]>(
@@ -116,34 +113,25 @@ const OpportunityRegistration = ({ guide, guidesReference }: props) => {
         return  field.dataKey !== 'numeroAdicional'
     }
 
-    const setDefaultClient = async (projectId: number, codCliente: number | string ) =>  { 
-      if(projectId && codCliente === '-') {
-          const clients = await fetchAllClients(
-            projectId
-          );
-          const options = clients.map((client: Client) => ({
-            label: client.NOMEFANTASIA,
-            id: client.CODCLIENTE,
-            object: "client",
-            key: client.CODCLIENTE,
-          }));
-          console.log({options});
-            const olyOptionAvailable = options.find(
-              (option: any) => option.label !== "-"
-            );
-            console.log({ olyOptionAvailable });
+    const setDefaultClientWhenNotDefined = async () =>  {
+    const clientNotDefined =  !(opportunityRegistration.fkCodCliente as any !== '-')
+   
+      if (clientNotDefined && opportunityRegistration.idProjeto) {
+        const clientFromFirstProject = await fetchClientFromFirstProjectOption(
+          opportunityRegistration.idProjeto
+        );
+        setOpportunityRegistration({
+          ...opportunityRegistration,
+          fkCodCliente: clientFromFirstProject.id,
+        });
+        if (guidesReference.current) {
+          guide.fields[4].data = clientFromFirstProject.id;
+          guidesReference.current[0] = guide;
+        }
 
-            guide.fields[4].data = olyOptionAvailable.id;
-            setOpportunityRegistration({
-              ...opportunityRegistration,
-              fkCodCliente: olyOptionAvailable.id
-            });
-          
-          return;
+        return;
       }
-      return;
     }
-
     const fetchClientOps = useCallback(async () => {
         const clients = await fetchAllClients(0);
          const options = clients.map((client: Client) => ({
@@ -152,7 +140,7 @@ const OpportunityRegistration = ({ guide, guidesReference }: props) => {
            object: "client",
            key: client.CODCLIENTE,
          }));
-        setClientOptions([...options]);
+        setClientOptions(options);
     }, [setClientOptions]);
 
     const fetchProjectsOps = useCallback(async () => {
@@ -198,8 +186,9 @@ const OpportunityRegistration = ({ guide, guidesReference }: props) => {
         }
         if (field.dataKey === "fkCodCliente") {
             const optionValueSelected = clientOptions.find(
-                (option) => option.id === field.data
+                (option) => option.id === opportunityRegistration.fkCodCliente
             );
+          
             if (optionValueSelected) return optionValueSelected;
         }
         return {
@@ -215,9 +204,8 @@ const OpportunityRegistration = ({ guide, guidesReference }: props) => {
       fetchProjectsOps();
       fetchStatusOps();
     }, []);
-    
+
     useEffect(() => {
-        //isso não precisa ocorrer quando estiver sendo editado
     if(!isEditing){ 
         setOpportunityRegistration({
           idProjeto: guide.fields[0].data,
@@ -229,11 +217,15 @@ const OpportunityRegistration = ({ guide, guidesReference }: props) => {
           dataInicio: guide.fields[6].data,
           dataEntrega: guide.fields[7].data,
         });
-        const projectId = guide.fields[0].data;
-        const fkCodCliente = guide.fields[4].data;
-        setDefaultClient(projectId, fkCodCliente);
     }
-    }, [guide]); // Executa quando `guide` é alterado
+    }, [guide]); 
+
+    useEffect(( )=> { 
+        if(clientOptions && opportunityRegistration){ 
+            setDefaultClientWhenNotDefined();
+        }
+    }, [clientOptions, guide])
+
 
     return (
         <Box sx={styles.container}>
@@ -245,6 +237,7 @@ const OpportunityRegistration = ({ guide, guidesReference }: props) => {
                                 return (
                                     <TextField
                                         key={index}
+                                        sx={{gridColumn: field.dataKey === 'nome' ?  'span 2': null}}
                                         type={field.type}
                                         label={field.label}
                                         onChange={(e) => handleChangeTextField(e, field)}
@@ -260,6 +253,7 @@ const OpportunityRegistration = ({ guide, guidesReference }: props) => {
                             if (editableField(field) && field.autoComplete) {
                                 return (
                                     <Autocomplete
+                                         sx={{gridColumn: 'span 2'}}
                                         value={renderAutoCompleteValue(field)}
                                         key={field.dataKey}
                                         disablePortal

@@ -22,7 +22,7 @@ const ItemsToolBar = ({
   handleDelete,
   selectedRows,
 }: props) => {
-  const { adding, toggleAdding } = useContext(ItemsContext);
+  const {  toggleAdding } = useContext(ItemsContext);
   const { id } = useParams();
   return (
     <Stack direction="row" sx={{ height: 30, alignItems: "center", gap: 2 }}>
