@@ -3,6 +3,7 @@ import {
 
   Product,
   ProductsTableModalProps,
+  RequisitionItemPost,
 
 } from "../../../types";
 import ProductsTable from "../../tables/ProductsTable";
@@ -73,6 +74,7 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
       setSelectedProducts([]);
       gridApiRef.current.setRowSelectionModel([]);
    };
+   
    const filterNonRepeatedProducts = ( ) => { 
     return selectedProducts.map((product) => {
      if(!productIdList.includes(product.ID)){ 
@@ -86,16 +88,18 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
               OC: null,
             };
      }
-    }).filter(item => item !== undefined);
+    }).filter((item) => item !== undefined) as RequisitionItemPost[];
    }
 
    const handleSaveAddItems = async () => {
-     const newProductItems = filterNonRepeatedProducts();
-    if(newProductItems) {
+     const newProductItems: RequisitionItemPost[] = filterNonRepeatedProducts();
+     console.log({newProductItems})
+    if(newProductItems.length) {
         try {
           const data = await postRequistionItems(
-            newProductItems,
-            requisitionID
+            requisitionID,
+            newProductItems
+      
           );
           setAddedItems(data.insertedItems);
           setIsInsertingQuantity(true);

@@ -143,8 +143,9 @@ const getRequisitionFiles = async (requisitionID: number) => {
 };
 
 const postRequistionItems = async (
-  requisitionItems: RequisitionItemPost[],
-  requisitionId: number
+
+  requisitionId: number,
+  requisitionItems?: RequisitionItemPost[],
 ) => {
   try {
     const response = await api.post(`requisition/requisitionItems/${requisitionId}`, requisitionItems);

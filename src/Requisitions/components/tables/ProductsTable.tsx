@@ -173,8 +173,8 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ ID_REQUISICAO, TIPO }) =>
     });
     const reqIDParam = ID_REQUISICAO;
     const response = await postRequistionItems(
-      requestBody,
-      reqIDParam
+      reqIDParam,
+      requestBody
     );
     if (response) {
       setOpenQuantityInput(false);
