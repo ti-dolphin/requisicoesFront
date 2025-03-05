@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import {
   DataGrid,
+  GridCellParams,
   GridColDef,
   GridFooter,
   GridFooterContainer,
@@ -77,7 +78,7 @@ const columns: GridColDef[] = [
     type: "number",
     editable: true,
     renderCell: (params) => (
-      <Typography sx={{ ...typographyStyles.bodyText }}>
+      <Typography sx={{ ...typographyStyles.bodyText, pointerEvents: 'none' }}>
         {params.value}
       </Typography>
     ),
@@ -186,7 +187,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
           )}
         </AnimatePresence>
 
-        <GridFooter></GridFooter>
+        <GridFooter />
         {isEditing && (
           <Button onClick={handleSave} sx={BaseButtonStyles}>
             Salvar
@@ -201,14 +202,21 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     );
   };
 
- 
-
   const insertingQuantityColumns = columns.filter(
     (column) =>
       column.field === "QUANTIDADE" ||
       column.field === "nome_fantasia" ||
       column.field === "UNIDADE"
   );
+
+  const handleCellClick = (params: GridCellParams) => {
+    console.log("handleCellClick");
+      gridApiRef.current.startRowEditMode({id: params.row.ID, fieldToFocus: params.colDef.field});
+      if(!isEditing){ 
+        setIsEditing(true)
+        return;
+      }
+  };
 
   return (
     <Box sx={{ ...styles.container }}>
@@ -219,12 +227,11 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
           handleCopyContent={handleCopyContent}
           handleDelete={handleDelete}
           selectedRows={selectedRows}
-
         />
       )}
 
       <DataGrid
-        density={isInsertingQuantity ? 'comfortable' : 'compact'}
+        density={isInsertingQuantity ? "comfortable" : "compact"}
         rows={visibleItems}
         getRowId={(item: Item) => item.ID}
         columns={isInsertingQuantity ? insertingQuantityColumns : columns}
@@ -239,22 +246,22 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
         editMode="row"
         pageSizeOptions={[100]}
         checkboxSelection={!isInsertingQuantity}
-        
+        onCellClick={handleCellClick}
         disableRowSelectionOnClick
         onRowSelectionModelChange={handleChangeSelection}
         onRowEditStart={() => setIsEditing(true)}
         processRowUpdate={(newRow: GridRowModel, oldRow: GridRowModel) =>
           processRowUpdate(newRow, oldRow)
         }
-        
         sx={{
           "& .MuiDataGrid-cell": {
             display: "flex",
             alignItems: "center",
+             
           },
-          "& .MuiDataGrid-menuIconButton": { 
-            display: 'none'
-          }
+          "& .MuiDataGrid-menuIconButton": {
+            display: "none",
+          },
         }}
         slots={{
           footer: ReqItemsFooter,

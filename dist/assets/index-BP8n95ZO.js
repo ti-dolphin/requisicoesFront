@@ -63415,7 +63415,7 @@ axios.getAdapter = adapters.getAdapter;
 axios.HttpStatusCode = HttpStatusCode;
 axios.default = axios;
 const api = axios.create({
-  baseURL: "https://apicontrole.dse.com.br",
+  baseURL: "https://apicontrolehomologacao.dse.com.br",
   headers: {
     "Content-Type": "application/json",
     Authorization: window.localStorage.getItem("token")
@@ -73332,7 +73332,7 @@ const columns$4 = [
     // Defina a largura desejada
     type: "number",
     editable: true,
-    renderCell: (params) => /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { sx: { ...typographyStyles.bodyText }, children: params.value })
+    renderCell: (params) => /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { sx: { ...typographyStyles.bodyText, pointerEvents: "none" }, children: params.value })
   },
   {
     field: "UNIDADE",
@@ -73427,6 +73427,14 @@ const RequisitionItemsTable = /* @__PURE__ */ __name(({
   const insertingQuantityColumns = columns$4.filter(
     (column2) => column2.field === "QUANTIDADE" || column2.field === "nome_fantasia" || column2.field === "UNIDADE"
   );
+  const handleCellClick = /* @__PURE__ */ __name((params) => {
+    console.log("handleCellClick");
+    gridApiRef.current.startRowEditMode({ id: params.row.ID, fieldToFocus: params.colDef.field });
+    if (!isEditing) {
+      setIsEditing(true);
+      return;
+    }
+  }, "handleCellClick");
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: { ...styles$8.container }, children: [
     !isInsertingQuantity && /* @__PURE__ */ jsxRuntimeExports.jsx(
       ItemsToolBar,
@@ -73456,6 +73464,7 @@ const RequisitionItemsTable = /* @__PURE__ */ __name(({
         editMode: "row",
         pageSizeOptions: [100],
         checkboxSelection: !isInsertingQuantity,
+        onCellClick: handleCellClick,
         disableRowSelectionOnClick: true,
         onRowSelectionModelChange: handleChangeSelection,
         onRowEditStart: () => setIsEditing(true),
