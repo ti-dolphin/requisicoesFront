@@ -78,6 +78,7 @@ const OpportunityScope = ({
       const oppId = guidesReference.current[0].fields[0].data.codOs || 0;
       setOppId(oppId);
       setFiles(guide.fields[1].data);
+      setObservation(guide.fields[0].data);
     }
   }, [guide]);
 

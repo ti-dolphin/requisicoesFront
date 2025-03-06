@@ -108,7 +108,8 @@ const OpportunityInteraction = ({ guide, guidesReference }: props) => {
         if (field.dataKey === "dataInteracao") {
           return (
             <TextField
-             key={field.dataKey}
+              key={field.dataKey}
+              fullWidth
               label={field.label}
               type={field.type}
               onChange={(e) => handleChangeInteractonDate(e, field.dataKey)}

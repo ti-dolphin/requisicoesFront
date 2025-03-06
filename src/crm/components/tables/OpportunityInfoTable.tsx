@@ -140,8 +140,7 @@ const OpportunityInfoTable: React.FC = () => {
   };
 
   const fetchOpportunities = useCallback(async () => {
-    setIsLoading(true); // Ativa o loading
-
+    setIsLoading(true); 
     if (user) {
       const opps = await getOpportunities(
         finishedOppsEnabled,
@@ -155,7 +154,6 @@ const OpportunityInfoTable: React.FC = () => {
       }
     }
     setIsLoading(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshOpportunityInfo, finishedOppsEnabled]);
 
   const shouldShowGrid = () => {

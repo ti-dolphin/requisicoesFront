@@ -135,6 +135,7 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
             dataLiberacao: data.dataLiberacao ? new Date(data.dataLiberacao).toISOString().split("T")[0] : null,
             dataInteracao: data.dataInteracao ? new Date(data.dataInteracao).toISOString().split("T")[0] : null,
         };
+        console.log({formattedOpp})
         setCurrentOpportunity(formattedOpp);
         setIsLoading(false);
     }, [currentOppIdSelected, setCurrentOpportunity]);
@@ -249,6 +250,7 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
     const updateExistingOpportunity = async () => {
         setIsLoading(true);
         const updatedOpportunity = getUpdatedOpportunity();
+        console.log({updatedOpportunity})
         if (!updatedOpportunity) return;
         try {
             const response = await updateOpportunity(updatedOpportunity);

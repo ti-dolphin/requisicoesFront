@@ -237,7 +237,7 @@ const OpportunityRegistration = ({ guide, guidesReference }: props) => {
                                 return (
                                     <TextField
                                         key={index}
-                                        sx={{gridColumn: field.dataKey === 'nome' ?  'span 2': null}}
+                                        sx={{gridColumn: field.dataKey === 'nome' || field.type === 'date' ?  'span 2': null}}
                                         type={field.type}
                                         label={field.label}
                                         onChange={(e) => handleChangeTextField(e, field)}
