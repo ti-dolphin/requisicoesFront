@@ -5,6 +5,7 @@ import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import dayjs from "dayjs";
 import { Person } from "../Requisitions/types";
+import { User } from "../Requisitions/context/userContext";
 
 
 
@@ -21,9 +22,11 @@ export const fetchPersonList = async () => {
     console.log(e);
   }
 }
-export const updateOpportunity = async (opportunity : Opportunity ) =>  { 
+export const updateOpportunity = async (opportunity : Opportunity, user?: User ) =>  { 
   try {
-    const response = await api.put("opportunity/update",  opportunity );
+    const response = await api.put("opportunity/update",  opportunity, { 
+      params: {user}
+    } );
     return response;
   } catch (error) {
     console.error(error);

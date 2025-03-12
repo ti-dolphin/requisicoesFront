@@ -16953,7 +16953,7 @@ var interopRequireDefault = { exports: {} };
 var interopRequireDefaultExports = interopRequireDefault.exports;
 const require$$1$1 = /* @__PURE__ */ getAugmentedNamespace(formatMuiErrorMessage);
 const require$$2 = /* @__PURE__ */ getAugmentedNamespace(clamp$4);
-var _interopRequireDefault$A = interopRequireDefaultExports;
+var _interopRequireDefault$B = interopRequireDefaultExports;
 Object.defineProperty(colorManipulator, "__esModule", {
   value: true
 });
@@ -16975,8 +16975,8 @@ colorManipulator.private_safeEmphasize = private_safeEmphasize;
 colorManipulator.private_safeLighten = private_safeLighten;
 colorManipulator.recomposeColor = recomposeColor;
 colorManipulator.rgbToHex = rgbToHex;
-var _formatMuiErrorMessage2 = _interopRequireDefault$A(require$$1$1);
-var _clamp = _interopRequireDefault$A(require$$2);
+var _formatMuiErrorMessage2 = _interopRequireDefault$B(require$$1$1);
+var _clamp = _interopRequireDefault$B(require$$2);
 function clampWrapper(value, min2 = 0, max2 = 1) {
   return (0, _clamp.default)(value, min2, max2);
 }
@@ -17853,21 +17853,21 @@ const require$$5 = /* @__PURE__ */ getAugmentedNamespace(capitalize);
 const require$$6 = /* @__PURE__ */ getAugmentedNamespace(getDisplayName);
 const require$$7 = /* @__PURE__ */ getAugmentedNamespace(createTheme$1);
 const require$$8$1 = /* @__PURE__ */ getAugmentedNamespace(styleFunctionSx);
-var _interopRequireDefault$z = interopRequireDefaultExports;
+var _interopRequireDefault$A = interopRequireDefaultExports;
 Object.defineProperty(createStyled$1, "__esModule", {
   value: true
 });
 var _default = createStyled$1.default = createStyled2;
 createStyled$1.shouldForwardProp = shouldForwardProp;
 createStyled$1.systemDefaultTheme = void 0;
-var _extends2 = _interopRequireDefault$z(require_extends());
-var _objectWithoutPropertiesLoose2 = _interopRequireDefault$z(requireObjectWithoutPropertiesLoose());
+var _extends2 = _interopRequireDefault$A(require_extends());
+var _objectWithoutPropertiesLoose2 = _interopRequireDefault$A(requireObjectWithoutPropertiesLoose());
 var _styledEngine$1 = _interopRequireWildcard$1(require$$1);
 var _deepmerge = require$$4;
-_interopRequireDefault$z(require$$5);
-_interopRequireDefault$z(require$$6);
-var _createTheme = _interopRequireDefault$z(require$$7);
-var _styleFunctionSx = _interopRequireDefault$z(require$$8$1);
+_interopRequireDefault$A(require$$5);
+_interopRequireDefault$A(require$$6);
+var _createTheme = _interopRequireDefault$A(require$$7);
+var _styleFunctionSx = _interopRequireDefault$A(require$$8$1);
 const _excluded$2j = ["ownerState"], _excluded2$h = ["variants"], _excluded3$4 = ["name", "slot", "skipVariantsResolver", "skipSx", "overridesResolver"];
 function _getRequireWildcardCache$1(e2) {
   if ("function" != typeof WeakMap)
@@ -18500,7 +18500,7 @@ function getStyleValue(value) {
   return parseInt(value, 10) || 0;
 }
 __name(getStyleValue, "getStyleValue");
-const styles$c = {
+const styles$e = {
   shadow: {
     // Visibility needed to hide the extra text area on iPads
     visibility: "hidden",
@@ -18631,7 +18631,7 @@ const TextareaAutosize = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */
       readOnly: true,
       ref: shadowRef,
       tabIndex: -1,
-      style: _extends$4({}, styles$c.shadow, style2, {
+      style: _extends$4({}, styles$e.shadow, style2, {
         paddingTop: 0,
         paddingBottom: 0
       })
@@ -21049,7 +21049,7 @@ function getScale$1(value) {
   return `scale(${value}, ${value ** 2})`;
 }
 __name(getScale$1, "getScale$1");
-const styles$b = {
+const styles$d = {
   entering: {
     opacity: 1,
     transform: getScale$1(1)
@@ -21189,7 +21189,7 @@ const Grow = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(func
           opacity: 0,
           transform: getScale$1(0.75),
           visibility: state === "exited" && !inProp ? "hidden" : void 0
-        }, styles$b[state], style2, children.props.style),
+        }, styles$d[state], style2, children.props.style),
         ref: handleRef
       }, childProps));
     }
@@ -21643,7 +21643,7 @@ const Portal$1 = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(
   });
 }, "Portal2"));
 const _excluded$20 = ["addEndListener", "appear", "children", "easing", "in", "onEnter", "onEntered", "onEntering", "onExit", "onExited", "onExiting", "style", "timeout", "TransitionComponent"];
-const styles$a = {
+const styles$c = {
   entering: {
     opacity: 1
   },
@@ -21742,7 +21742,7 @@ const Fade = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(func
         style: _extends$4({
           opacity: 0,
           visibility: state === "exited" && !inProp ? "hidden" : void 0
-        }, styles$a[state], style2, children.props.style),
+        }, styles$c[state], style2, children.props.style),
         ref: handleRef
       }, childProps));
     }
@@ -24893,7 +24893,7 @@ var useThemeWithoutDefault = {};
 Object.defineProperty(useThemeWithoutDefault, "__esModule", {
   value: true
 });
-var default_1$u = useThemeWithoutDefault.default = void 0;
+var default_1$v = useThemeWithoutDefault.default = void 0;
 var React = _interopRequireWildcard(reactExports);
 var _styledEngine = require$$1;
 function _getRequireWildcardCache(e2) {
@@ -24931,7 +24931,7 @@ function useTheme(defaultTheme2 = null) {
   return !contextTheme || isObjectEmpty(contextTheme) ? defaultTheme2 : contextTheme;
 }
 __name(useTheme, "useTheme");
-default_1$u = useThemeWithoutDefault.default = useTheme;
+default_1$v = useThemeWithoutDefault.default = useTheme;
 var top = "top";
 var bottom = "bottom";
 var right = "right";
@@ -26581,7 +26581,7 @@ const PopperRoot = styled(Popper$1, {
 })({});
 const Popper = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(function Popper22(inProps, ref) {
   var _slots$root;
-  const theme2 = default_1$u();
+  const theme2 = default_1$v();
   const props = useDefaultProps({
     props: inProps,
     name: "MuiPopper"
@@ -27865,14 +27865,14 @@ function requireCreateSvgIcon() {
   return createSvgIcon;
 }
 __name(requireCreateSvgIcon, "requireCreateSvgIcon");
-var _interopRequireDefault$y = interopRequireDefaultExports;
+var _interopRequireDefault$z = interopRequireDefaultExports;
 Object.defineProperty(FilterList, "__esModule", {
   value: true
 });
-var default_1$t = FilterList.default = void 0;
-var _createSvgIcon$t = _interopRequireDefault$y(requireCreateSvgIcon());
-var _jsxRuntime$t = jsxRuntimeExports;
-default_1$t = FilterList.default = (0, _createSvgIcon$t.default)(/* @__PURE__ */ (0, _jsxRuntime$t.jsx)("path", {
+var default_1$u = FilterList.default = void 0;
+var _createSvgIcon$u = _interopRequireDefault$z(requireCreateSvgIcon());
+var _jsxRuntime$u = jsxRuntimeExports;
+default_1$u = FilterList.default = (0, _createSvgIcon$u.default)(/* @__PURE__ */ (0, _jsxRuntime$u.jsx)("path", {
   d: "M10 18h4v-2h-4zM3 6v2h18V6zm3 7h12v-2H6z"
 }), "FilterList");
 const _excluded$1B = ["className", "elementType", "ownerState", "externalForwardedProps", "getSlotOwnerState", "internalForwardedProps"], _excluded2$c = ["component", "slots", "slotProps"], _excluded3$2 = ["component"];
@@ -31784,7 +31784,7 @@ const body = /* @__PURE__ */ __name((theme2) => _extends$4({
     backgroundColor: (theme2.vars || theme2).palette.common.white
   }
 }), "body");
-const styles$9 = /* @__PURE__ */ __name((theme2, enableColorScheme = false) => {
+const styles$b = /* @__PURE__ */ __name((theme2, enableColorScheme = false) => {
   var _theme$components;
   const colorSchemeStyles = {};
   if (enableColorScheme && theme2.colorSchemes) {
@@ -31818,7 +31818,7 @@ const styles$9 = /* @__PURE__ */ __name((theme2, enableColorScheme = false) => {
     defaultStyles = [defaultStyles, themeOverrides];
   }
   return defaultStyles;
-}, "styles$9");
+}, "styles$b");
 function CssBaseline(inProps) {
   const props = useDefaultProps({
     props: inProps,
@@ -31830,7 +31830,7 @@ function CssBaseline(inProps) {
   } = props;
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(reactExports.Fragment, {
     children: [/* @__PURE__ */ jsxRuntimeExports.jsx(GlobalStyles, {
-      styles: (theme2) => styles$9(theme2, enableColorScheme)
+      styles: (theme2) => styles$b(theme2, enableColorScheme)
     }), children]
   });
 }
@@ -34368,25 +34368,25 @@ const TextField = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name
   }));
 }, "TextField2"));
 var Delete = {};
-var _interopRequireDefault$x = interopRequireDefaultExports;
+var _interopRequireDefault$y = interopRequireDefaultExports;
 Object.defineProperty(Delete, "__esModule", {
   value: true
 });
-var default_1$s = Delete.default = void 0;
-var _createSvgIcon$s = _interopRequireDefault$x(requireCreateSvgIcon());
-var _jsxRuntime$s = jsxRuntimeExports;
-default_1$s = Delete.default = (0, _createSvgIcon$s.default)(/* @__PURE__ */ (0, _jsxRuntime$s.jsx)("path", {
+var default_1$t = Delete.default = void 0;
+var _createSvgIcon$t = _interopRequireDefault$y(requireCreateSvgIcon());
+var _jsxRuntime$t = jsxRuntimeExports;
+default_1$t = Delete.default = (0, _createSvgIcon$t.default)(/* @__PURE__ */ (0, _jsxRuntime$t.jsx)("path", {
   d: "M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z"
 }), "Delete");
 var Search$2 = {};
-var _interopRequireDefault$w = interopRequireDefaultExports;
+var _interopRequireDefault$x = interopRequireDefaultExports;
 Object.defineProperty(Search$2, "__esModule", {
   value: true
 });
-var default_1$r = Search$2.default = void 0;
-var _createSvgIcon$r = _interopRequireDefault$w(requireCreateSvgIcon());
-var _jsxRuntime$r = jsxRuntimeExports;
-default_1$r = Search$2.default = (0, _createSvgIcon$r.default)(/* @__PURE__ */ (0, _jsxRuntime$r.jsx)("path", {
+var default_1$s = Search$2.default = void 0;
+var _createSvgIcon$s = _interopRequireDefault$x(requireCreateSvgIcon());
+var _jsxRuntime$s = jsxRuntimeExports;
+default_1$s = Search$2.default = (0, _createSvgIcon$s.default)(/* @__PURE__ */ (0, _jsxRuntime$s.jsx)("path", {
   d: "M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"
 }), "Search");
 const motionItemsVariants = {
@@ -53647,7 +53647,7 @@ DataGridRaw.propTypes = {
    */
   unstable_rowSpanning: PropTypes.bool
 };
-const styles$8 = {
+const styles$a = {
   gridFooterContainer: {
     display: "flex",
     justifyContent: "center",
@@ -53676,6 +53676,7 @@ const OpportunityGridStyles = {
   fontFamily: "Arial, sans-serif",
   fontSize: "12px",
   fontWeight: "500",
+  padding: 0,
   borderRadius: 0,
   color: "#233142",
   "& .MuiDataGrid-columnHeaders": {
@@ -53693,6 +53694,10 @@ const OpportunityGridStyles = {
     fontWeight: "bold",
     fontSize: 12
   },
+  "& .description-cell": {
+    color: "blue"
+  },
+  "& .status-cell": {},
   "& .MuiDataGrid-row": {
     cursor: "pointer",
     ":nth-child(even)": {
@@ -53701,6 +53706,9 @@ const OpportunityGridStyles = {
   },
   "& .MuiDataGrid-cell": {
     paddingLeft: 1.2
+  },
+  "& .MuiDataGrid-menuIconButton": {
+    display: "none"
   }
 };
 const buttonStylesMobile = {
@@ -61026,7 +61034,7 @@ const typographyStyles = {
     lineHeight: 1.6
   },
   smallText: {
-    fontSize: "0.875rem",
+    fontSize: "0.8rem",
     fontWeight: 400,
     color: "text.secondary",
     lineHeight: 1.4
@@ -63415,7 +63423,7 @@ axios.getAdapter = adapters.getAdapter;
 axios.HttpStatusCode = HttpStatusCode;
 axios.default = axios;
 const api = axios.create({
-  baseURL: "https://apicontrolehomologacao.dse.com.br",
+  baseURL: "http://localhost:3001",
   headers: {
     "Content-Type": "application/json",
     Authorization: window.localStorage.getItem("token")
@@ -64027,7 +64035,7 @@ const ItemsContextProvider = /* @__PURE__ */ __name(({
     }
   );
 }, "ItemsContextProvider");
-const useRequisitionItems = /* @__PURE__ */ __name((requisitionId, addedItems, isInsertingQuantity) => {
+const useRequisitionItems = /* @__PURE__ */ __name((requisitionId, isInsertingQuantity, addedItems) => {
   const [items, setItems] = reactExports.useState([]);
   const [visibleItems, setVisibleItems] = reactExports.useState([]);
   const [isEditing, setIsEditing] = reactExports.useState(false);
@@ -64163,7 +64171,7 @@ const useRequisitionItems = /* @__PURE__ */ __name((requisitionId, addedItems, i
       setItems(items2);
       setVisibleItems(items2);
     }
-  }, [refresh, isInsertingQuantity, addedItems, adding]);
+  }, [isInsertingQuantity, addedItems]);
   const saveItems = reactExports.useCallback(async () => {
     try {
       const response = await updateRequisitionItems(visibleItems, requisitionId);
@@ -64200,9 +64208,8 @@ const useRequisitionItems = /* @__PURE__ */ __name((requisitionId, addedItems, i
     };
   }, [isEditing]);
   reactExports.useEffect(() => {
-    console.log("useEffect itemsTable");
     fetchReqItems();
-  }, [refresh, isInsertingQuantity, adding]);
+  }, [refresh, adding]);
   reactExports.useEffect(() => {
     if (shouldExecuteResetItems.current) {
       setVisibleItems(items);
@@ -67373,14 +67380,14 @@ const Menu = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(func
   }));
 }, "Menu2"));
 var ArrowDropDown = {};
-var _interopRequireDefault$v = interopRequireDefaultExports;
+var _interopRequireDefault$w = interopRequireDefaultExports;
 Object.defineProperty(ArrowDropDown, "__esModule", {
   value: true
 });
-var default_1$q = ArrowDropDown.default = void 0;
-var _createSvgIcon$q = _interopRequireDefault$v(requireCreateSvgIcon());
-var _jsxRuntime$q = jsxRuntimeExports;
-default_1$q = ArrowDropDown.default = (0, _createSvgIcon$q.default)(/* @__PURE__ */ (0, _jsxRuntime$q.jsx)("path", {
+var default_1$r = ArrowDropDown.default = void 0;
+var _createSvgIcon$r = _interopRequireDefault$w(requireCreateSvgIcon());
+var _jsxRuntime$r = jsxRuntimeExports;
+default_1$r = ArrowDropDown.default = (0, _createSvgIcon$r.default)(/* @__PURE__ */ (0, _jsxRuntime$r.jsx)("path", {
   d: "m7 10 5 5 5-5z"
 }), "ArrowDropDown");
 const DeleteRequisitionItemModal = /* @__PURE__ */ __name(({
@@ -68204,7 +68211,7 @@ const ItemActions = /* @__PURE__ */ __name(({
         open: open2,
         onOpenChange: (_event, open22) => handleOpenChange(open22),
         children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(MenuButton3, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$q, {}) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(MenuButton3, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$r, {}) }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(Menu, { slots: { listbox: AnimatedListbox }, children: open2 && menuActions.map((action, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(MenuItem4, { onClick: action.onClick, children: action.label }, index2)) })
         ]
       }
@@ -72396,25 +72403,25 @@ const Scroller = /* @__PURE__ */ buildScroller({ usePublisher, useEmitterValue, 
 const WindowScroller = /* @__PURE__ */ buildWindowScroller({ usePublisher, useEmitterValue, useEmitter });
 const TableVirtuoso = Table;
 var Close = {};
-var _interopRequireDefault$u = interopRequireDefaultExports;
+var _interopRequireDefault$v = interopRequireDefaultExports;
 Object.defineProperty(Close, "__esModule", {
   value: true
 });
-var default_1$p = Close.default = void 0;
-var _createSvgIcon$p = _interopRequireDefault$u(requireCreateSvgIcon());
-var _jsxRuntime$p = jsxRuntimeExports;
-default_1$p = Close.default = (0, _createSvgIcon$p.default)(/* @__PURE__ */ (0, _jsxRuntime$p.jsx)("path", {
+var default_1$q = Close.default = void 0;
+var _createSvgIcon$q = _interopRequireDefault$v(requireCreateSvgIcon());
+var _jsxRuntime$q = jsxRuntimeExports;
+default_1$q = Close.default = (0, _createSvgIcon$q.default)(/* @__PURE__ */ (0, _jsxRuntime$q.jsx)("path", {
   d: "M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
 }), "Close");
 var Add = {};
-var _interopRequireDefault$t = interopRequireDefaultExports;
+var _interopRequireDefault$u = interopRequireDefaultExports;
 Object.defineProperty(Add, "__esModule", {
   value: true
 });
-var default_1$o = Add.default = void 0;
-var _createSvgIcon$o = _interopRequireDefault$t(requireCreateSvgIcon());
-var _jsxRuntime$o = jsxRuntimeExports;
-default_1$o = Add.default = (0, _createSvgIcon$o.default)(/* @__PURE__ */ (0, _jsxRuntime$o.jsx)("path", {
+var default_1$p = Add.default = void 0;
+var _createSvgIcon$p = _interopRequireDefault$u(requireCreateSvgIcon());
+var _jsxRuntime$p = jsxRuntimeExports;
+default_1$p = Add.default = (0, _createSvgIcon$p.default)(/* @__PURE__ */ (0, _jsxRuntime$p.jsx)("path", {
   d: "M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"
 }), "Add");
 var utc$1 = { exports: {} };
@@ -72886,7 +72893,7 @@ const CloseModalButton = /* @__PURE__ */ __name(({ handleClose }) => {
     {
       onClick: () => handleClose(),
       sx: { position: "absolute", top: 0, right: 0 },
-      children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, { sx: { color: "red" } })
+      children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$q, { sx: { color: "red" } })
     }
   );
 }, "CloseModalButton");
@@ -73408,12 +73415,12 @@ const RequisitionItemsTable = /* @__PURE__ */ __name(({
     handleActivateItems,
     handleCopyContent,
     selectedRows
-  } = useRequisitionItems(requisitionId, addedItems, isInsertingQuantity);
+  } = useRequisitionItems(requisitionId, isInsertingQuantity, addedItems);
   const ReqItemsFooter = /* @__PURE__ */ __name((props) => {
     return /* @__PURE__ */ jsxRuntimeExports.jsxs(
       GridFooterContainer,
       {
-        sx: { ...props.style, ...styles$8.gridFooterContainer },
+        sx: { ...props.style, ...styles$a.gridFooterContainer },
         ...props,
         children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: alert2 && /* @__PURE__ */ jsxRuntimeExports.jsx(motion.div, { ...alertAnimation, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Alert, { severity: alert2.severity, children: alert2.message }) }) }),
@@ -73435,7 +73442,7 @@ const RequisitionItemsTable = /* @__PURE__ */ __name(({
       return;
     }
   }, "handleCellClick");
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: { ...styles$8.container }, children: [
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: { ...styles$a.container }, children: [
     !isInsertingQuantity && /* @__PURE__ */ jsxRuntimeExports.jsx(
       ItemsToolBar,
       {
@@ -73527,7 +73534,7 @@ const AddedItemsModal = /* @__PURE__ */ __name(({ addedItems }) => {
               alignItems: "center",
               children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Items Adicionados" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: handleClose, sx: { color: "red" }, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, {}) })
+                /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: handleClose, sx: { color: "red" }, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$q, {}) })
               ]
             }
           ) }),
@@ -73843,7 +73850,7 @@ const NestedModal = /* @__PURE__ */ __name(() => {
           "&:hover": { backgroundColor: "#f1b963" }
         },
         onClick: handleOpen,
-        children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$o, { sx: { color: "#2B3990" } })
+        children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, { sx: { color: "#2B3990" } })
       }
     ),
     /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -73875,7 +73882,7 @@ const NestedModal = /* @__PURE__ */ __name(() => {
                 {
                   onClick: handleClose,
                   sx: { position: "absolute", top: "10px", right: "0" },
-                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, {})
+                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$q, {})
                 }
               ),
               /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { variant: "h6", id: "parent-modal-title", children: "Nova Requisição" }),
@@ -73888,14 +73895,14 @@ const NestedModal = /* @__PURE__ */ __name(() => {
   ] });
 }, "NestedModal");
 var FilterAlt = {};
-var _interopRequireDefault$s = interopRequireDefaultExports;
+var _interopRequireDefault$t = interopRequireDefaultExports;
 Object.defineProperty(FilterAlt, "__esModule", {
   value: true
 });
-var default_1$n = FilterAlt.default = void 0;
-var _createSvgIcon$n = _interopRequireDefault$s(requireCreateSvgIcon());
-var _jsxRuntime$n = jsxRuntimeExports;
-default_1$n = FilterAlt.default = (0, _createSvgIcon$n.default)(/* @__PURE__ */ (0, _jsxRuntime$n.jsx)("path", {
+var default_1$o = FilterAlt.default = void 0;
+var _createSvgIcon$o = _interopRequireDefault$t(requireCreateSvgIcon());
+var _jsxRuntime$o = jsxRuntimeExports;
+default_1$o = FilterAlt.default = (0, _createSvgIcon$o.default)(/* @__PURE__ */ (0, _jsxRuntime$o.jsx)("path", {
   d: "M4.25 5.61C6.27 8.2 10 13 10 13v6c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-6s3.72-4.8 5.74-7.39c.51-.66.04-1.61-.79-1.61H5.04c-.83 0-1.3.95-.79 1.61"
 }), "FilterAlt");
 const SearchAppBar$1 = /* @__PURE__ */ __name(({
@@ -73973,7 +73980,7 @@ const SearchAppBar$1 = /* @__PURE__ */ __name(({
           className: "space-y-2",
           children: [
             /* @__PURE__ */ jsxRuntimeExports.jsxs(Search$1, { children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(SearchIconWrapper$1, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$r, {}) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(SearchIconWrapper$1, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$s, {}) }),
               /* @__PURE__ */ jsxRuntimeExports.jsx(
                 StyledInputBase$1,
                 {
@@ -74045,7 +74052,7 @@ const SearchAppBar$1 = /* @__PURE__ */ __name(({
                       },
                       children: [
                         /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { textTransform: "capitalize", children: "Filtros" }),
-                        /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$n, { sx: { color: "white" } })
+                        /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$o, { sx: { color: "white" } })
                       ]
                     }
                   ),
@@ -74314,9 +74321,9 @@ function EnhancedTableToolbar(props) {
                 " selected"
               ]
             }
-          ) : /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$r, {})
+          ) : /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$s, {})
         ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(Stack, { direction: "row", spacing: 4, children: numSelected > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "Delete", children: /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$s, {}) }) }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "Filter list", children: /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$t, {}) }) }) })
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Stack, { direction: "row", spacing: 4, children: numSelected > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "Delete", children: /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$t, {}) }) }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "Filter list", children: /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$u, {}) }) }) })
       ]
     }
   );
@@ -74606,7 +74613,7 @@ function EnhancedTable() {
                           id: String(row.ID_REQUISICAO),
                           onClick: () => handleOpenDeleteModal(Number(row.ID_REQUISICAO)),
                           className: "hover:bg-red-100 p-[2px]",
-                          children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$s, { sx: { color: "#F7941E" } })
+                          children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$t, { sx: { color: "#F7941E" } })
                         }
                       ) }) })
                     ]
@@ -74906,17 +74913,17 @@ const HorizontalLinearStepper = /* @__PURE__ */ __name(({
   ] });
 }, "HorizontalLinearStepper");
 var ArrowCircleLeft = {};
-var _interopRequireDefault$r = interopRequireDefaultExports;
+var _interopRequireDefault$s = interopRequireDefaultExports;
 Object.defineProperty(ArrowCircleLeft, "__esModule", {
   value: true
 });
-var default_1$m = ArrowCircleLeft.default = void 0;
-var _createSvgIcon$m = _interopRequireDefault$r(requireCreateSvgIcon());
-var _jsxRuntime$m = jsxRuntimeExports;
-default_1$m = ArrowCircleLeft.default = (0, _createSvgIcon$m.default)(/* @__PURE__ */ (0, _jsxRuntime$m.jsx)("path", {
+var default_1$n = ArrowCircleLeft.default = void 0;
+var _createSvgIcon$n = _interopRequireDefault$s(requireCreateSvgIcon());
+var _jsxRuntime$n = jsxRuntimeExports;
+default_1$n = ArrowCircleLeft.default = (0, _createSvgIcon$n.default)(/* @__PURE__ */ (0, _jsxRuntime$n.jsx)("path", {
   d: "M2 12c0 5.52 4.48 10 10 10s10-4.48 10-10S17.52 2 12 2 2 6.48 2 12m10-1h4v2h-4v3l-4-4 4-4z"
 }), "ArrowCircleLeft");
-const styles$7 = {
+const styles$9 = {
   fieldsGridContainer: {
     display: "flex",
     flexDirection: "column",
@@ -74947,25 +74954,25 @@ const styles$7 = {
   }
 };
 var _Error = {};
-var _interopRequireDefault$q = interopRequireDefaultExports;
+var _interopRequireDefault$r = interopRequireDefaultExports;
 Object.defineProperty(_Error, "__esModule", {
   value: true
 });
-var default_1$l = _Error.default = void 0;
-var _createSvgIcon$l = _interopRequireDefault$q(requireCreateSvgIcon());
-var _jsxRuntime$l = jsxRuntimeExports;
-default_1$l = _Error.default = (0, _createSvgIcon$l.default)(/* @__PURE__ */ (0, _jsxRuntime$l.jsx)("path", {
+var default_1$m = _Error.default = void 0;
+var _createSvgIcon$m = _interopRequireDefault$r(requireCreateSvgIcon());
+var _jsxRuntime$m = jsxRuntimeExports;
+default_1$m = _Error.default = (0, _createSvgIcon$m.default)(/* @__PURE__ */ (0, _jsxRuntime$m.jsx)("path", {
   d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m1 15h-2v-2h2zm0-4h-2V7h2z"
 }), "Error");
 var CheckCircle = {};
-var _interopRequireDefault$p = interopRequireDefaultExports;
+var _interopRequireDefault$q = interopRequireDefaultExports;
 Object.defineProperty(CheckCircle, "__esModule", {
   value: true
 });
-var default_1$k = CheckCircle.default = void 0;
-var _createSvgIcon$k = _interopRequireDefault$p(requireCreateSvgIcon());
-var _jsxRuntime$k = jsxRuntimeExports;
-default_1$k = CheckCircle.default = (0, _createSvgIcon$k.default)(/* @__PURE__ */ (0, _jsxRuntime$k.jsx)("path", {
+var default_1$l = CheckCircle.default = void 0;
+var _createSvgIcon$l = _interopRequireDefault$q(requireCreateSvgIcon());
+var _jsxRuntime$l = jsxRuntimeExports;
+default_1$l = CheckCircle.default = (0, _createSvgIcon$l.default)(/* @__PURE__ */ (0, _jsxRuntime$l.jsx)("path", {
   d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8z"
 }), "CheckCircle");
 dayjs.extend(utc);
@@ -74989,7 +74996,7 @@ const isLate = /* @__PURE__ */ __name((row) => {
 const renderValue = /* @__PURE__ */ __name((column2, row, user) => {
   if (column2.dataKey === "aprovado") {
     return /* @__PURE__ */ jsxRuntimeExports.jsx(
-      default_1$l,
+      default_1$m,
       {
         sx: {
           color: toBeAproved(row) && isTypeResponsable(row, user) ? "#ff9a3c" : "gray"
@@ -74999,14 +75006,14 @@ const renderValue = /* @__PURE__ */ __name((column2, row, user) => {
   }
   if (column2.dataKey === "realizado") {
     return toBeDone(row) ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-      default_1$l,
+      default_1$m,
       {
         sx: {
           color: isLate(row) ? "red" : "#ff9a3c"
         }
       }
     ) : /* @__PURE__ */ jsxRuntimeExports.jsx(
-      default_1$k,
+      default_1$l,
       {
         sx: {
           color: "green"
@@ -75565,7 +75572,7 @@ const RequisitionFields = /* @__PURE__ */ __name(() => {
     handleCancelEditing,
     renderValue: renderValue2
   } = useRequisitionFields();
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: styles$7.fieldsGridContainer, children: [
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: styles$9.fieldsGridContainer, children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", gap: 2, alignItems: "center", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { sx: typographyStyles.heading1, children: "Detalhes da requisição" }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs(Typography, { sx: typographyStyles.heading2, children: [
@@ -75578,7 +75585,7 @@ const RequisitionFields = /* @__PURE__ */ __name(() => {
         dateTimeRenderer(requisitionData == null ? void 0 : requisitionData.CREATED_ON)
       ] })
     ] }),
-    requisitionData && optionsState && /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: styles$7.fieldsGrid, children: fields.map((field) => {
+    requisitionData && optionsState && /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: styles$9.fieldsGrid, children: fields.map((field) => {
       if (field.autoComplete) {
         return /* @__PURE__ */ jsxRuntimeExports.jsx(
           Autocomplete,
@@ -75587,7 +75594,7 @@ const RequisitionFields = /* @__PURE__ */ __name(() => {
             getOptionKey: (option) => option.id,
             onChange: (event, value) => handleChangeAutoComplete(event, value, field),
             disablePortal: true,
-            sx: styles$7.autoComplete,
+            sx: styles$9.autoComplete,
             options: renderOptions(field),
             value: renderAutoCompleteValue(field),
             renderInput: (params) => /* @__PURE__ */ jsxRuntimeExports.jsx(TextField, { ...params, label: field.label })
@@ -75607,14 +75614,14 @@ const RequisitionFields = /* @__PURE__ */ __name(() => {
         field.key
       );
     }) }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: isEditing && /* @__PURE__ */ jsxRuntimeExports.jsx(motion.div, { ...alertAnimation, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", sx: styles$7.actionsStack, children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: isEditing && /* @__PURE__ */ jsxRuntimeExports.jsx(motion.div, { ...alertAnimation, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", sx: styles$9.actionsStack, children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { onClick: handleSave, sx: BaseButtonStyles, className: "shadow-md", children: "Salvar Alterações" }),
       /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { onClick: handleCancelEditing, sx: BaseButtonStyles, className: "shadow-md", children: "Cancelar edição" })
     ] }) }) }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: alert2 && /* @__PURE__ */ jsxRuntimeExports.jsx(motion.div, { ...alertAnimation, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Alert, { severity: alert2.severity, children: alert2.message }) }) })
   ] });
 }, "RequisitionFields");
-const styles$6 = {
+const styles$8 = {
   requisitionPageContainer: {
     width: "100%",
     border: "1px solid #d3d6db",
@@ -75764,10 +75771,10 @@ const RequisitionDetail = /* @__PURE__ */ __name(() => {
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     Box,
     {
-      sx: styles$6.requisitionPageContainer,
+      sx: styles$8.requisitionPageContainer,
       children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { className: "req-page-header", sx: styles$6.requisitionPageHeader, children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: () => handleNavigateHome(), children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$m, {}) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { className: "req-page-header", sx: styles$8.requisitionPageHeader, children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: () => handleNavigateHome(), children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$n, {}) }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs(
             Typography,
             {
@@ -75788,7 +75795,7 @@ const RequisitionDetail = /* @__PURE__ */ __name(() => {
             }
           )
         ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { className: "stepper-container", sx: styles$6.requisitionStepper, children: requisitionData && /* @__PURE__ */ jsxRuntimeExports.jsx(
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { className: "stepper-container", sx: styles$8.requisitionStepper, children: requisitionData && /* @__PURE__ */ jsxRuntimeExports.jsx(
           HorizontalLinearStepper,
           {
             items: requisitionItems,
@@ -75813,7 +75820,7 @@ const RequisitionDetail = /* @__PURE__ */ __name(() => {
                 Box,
                 {
                   className: "req-items-table-container",
-                  sx: styles$6.requisitionItemsTableContainer,
+                  sx: styles$8.requisitionItemsTableContainer,
                   children: /* @__PURE__ */ jsxRuntimeExports.jsx(RequisitionItemsTable, { requisitionId: Number(id2) })
                 }
               )
@@ -75825,14 +75832,14 @@ const RequisitionDetail = /* @__PURE__ */ __name(() => {
   );
 }, "RequisitionDetail");
 var LockOutlined = {};
-var _interopRequireDefault$o = interopRequireDefaultExports;
+var _interopRequireDefault$p = interopRequireDefaultExports;
 Object.defineProperty(LockOutlined, "__esModule", {
   value: true
 });
-var default_1$j = LockOutlined.default = void 0;
-var _createSvgIcon$j = _interopRequireDefault$o(requireCreateSvgIcon());
-var _jsxRuntime$j = jsxRuntimeExports;
-default_1$j = LockOutlined.default = (0, _createSvgIcon$j.default)(/* @__PURE__ */ (0, _jsxRuntime$j.jsx)("path", {
+var default_1$k = LockOutlined.default = void 0;
+var _createSvgIcon$k = _interopRequireDefault$p(requireCreateSvgIcon());
+var _jsxRuntime$k = jsxRuntimeExports;
+default_1$k = LockOutlined.default = (0, _createSvgIcon$k.default)(/* @__PURE__ */ (0, _jsxRuntime$k.jsx)("path", {
   d: "M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2M9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9zm9 14H6V10h12zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2"
 }), "LockOutlined");
 function Copyright() {
@@ -75896,7 +75903,7 @@ const SignIn = /* @__PURE__ */ __name(() => {
           alignItems: "center"
         },
         children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Avatar, { sx: { m: 1, bgcolor: "secondary.main" }, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$j, {}) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Avatar, { sx: { m: 1, bgcolor: "secondary.main" }, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$k, {}) }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { component: "h1", variant: "h5", children: "Faça seu Login" }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs(
             Box,
@@ -75952,14 +75959,14 @@ const SignIn = /* @__PURE__ */ __name(() => {
   ] }) });
 }, "SignIn");
 var AccountCircle = {};
-var _interopRequireDefault$n = interopRequireDefaultExports;
+var _interopRequireDefault$o = interopRequireDefaultExports;
 Object.defineProperty(AccountCircle, "__esModule", {
   value: true
 });
-var default_1$i = AccountCircle.default = void 0;
-var _createSvgIcon$i = _interopRequireDefault$n(requireCreateSvgIcon());
-var _jsxRuntime$i = jsxRuntimeExports;
-default_1$i = AccountCircle.default = (0, _createSvgIcon$i.default)(/* @__PURE__ */ (0, _jsxRuntime$i.jsx)("path", {
+var default_1$j = AccountCircle.default = void 0;
+var _createSvgIcon$j = _interopRequireDefault$o(requireCreateSvgIcon());
+var _jsxRuntime$j = jsxRuntimeExports;
+default_1$j = AccountCircle.default = (0, _createSvgIcon$j.default)(/* @__PURE__ */ (0, _jsxRuntime$j.jsx)("path", {
   d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m0 4c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6m0 14c-2.03 0-4.43-.82-6.14-2.88C7.55 15.8 9.68 15 12 15s4.45.8 6.14 2.12C16.43 19.18 14.03 20 12 20"
 }), "AccountCircle");
 const modules = [
@@ -76030,7 +76037,7 @@ const Home = /* @__PURE__ */ __name(() => {
             children: /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { sx: { position: "absolute", right: "1rem" }, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Dropdown, { children: [
               /* @__PURE__ */ jsxRuntimeExports.jsxs(MenuButton, { children: [
                 " ",
-                /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$i, { sx: { color: "#F7941E" } })
+                /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$j, { sx: { color: "#F7941E" } })
               ] }),
               /* @__PURE__ */ jsxRuntimeExports.jsx(Menu, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { sx: { marginTop: "0.5rem" }, onClick: () => handleLogOut(), children: /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { fontSize: "small", textTransform: "lowercase", color: "blue", children: "Sair" }) }) })
             ] }) })
@@ -81068,25 +81075,25 @@ function DemoContainer(props) {
 }
 __name(DemoContainer, "DemoContainer");
 var ArrowCircleRight = {};
-var _interopRequireDefault$m = interopRequireDefaultExports;
+var _interopRequireDefault$n = interopRequireDefaultExports;
 Object.defineProperty(ArrowCircleRight, "__esModule", {
   value: true
 });
-var default_1$h = ArrowCircleRight.default = void 0;
-var _createSvgIcon$h = _interopRequireDefault$m(requireCreateSvgIcon());
-var _jsxRuntime$h = jsxRuntimeExports;
-default_1$h = ArrowCircleRight.default = (0, _createSvgIcon$h.default)(/* @__PURE__ */ (0, _jsxRuntime$h.jsx)("path", {
+var default_1$i = ArrowCircleRight.default = void 0;
+var _createSvgIcon$i = _interopRequireDefault$n(requireCreateSvgIcon());
+var _jsxRuntime$i = jsxRuntimeExports;
+default_1$i = ArrowCircleRight.default = (0, _createSvgIcon$i.default)(/* @__PURE__ */ (0, _jsxRuntime$i.jsx)("path", {
   d: "M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12s4.48 10 10 10 10-4.48 10-10m-10 1H8v-2h4V8l4 4-4 4z"
 }), "ArrowCircleRight");
 var AddCircle = {};
-var _interopRequireDefault$l = interopRequireDefaultExports;
+var _interopRequireDefault$m = interopRequireDefaultExports;
 Object.defineProperty(AddCircle, "__esModule", {
   value: true
 });
-var default_1$g = AddCircle.default = void 0;
-var _createSvgIcon$g = _interopRequireDefault$l(requireCreateSvgIcon());
-var _jsxRuntime$g = jsxRuntimeExports;
-default_1$g = AddCircle.default = (0, _createSvgIcon$g.default)(/* @__PURE__ */ (0, _jsxRuntime$g.jsx)("path", {
+var default_1$h = AddCircle.default = void 0;
+var _createSvgIcon$h = _interopRequireDefault$m(requireCreateSvgIcon());
+var _jsxRuntime$h = jsxRuntimeExports;
+default_1$h = AddCircle.default = (0, _createSvgIcon$h.default)(/* @__PURE__ */ (0, _jsxRuntime$h.jsx)("path", {
   d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m5 11h-4v4h-2v-4H7v-2h4V7h2v4h4z"
 }), "AddCircle");
 var ptBr = { exports: {} };
@@ -81105,14 +81112,14 @@ var ptBr = { exports: {} };
   });
 })(ptBr);
 var Save = {};
-var _interopRequireDefault$k = interopRequireDefaultExports;
+var _interopRequireDefault$l = interopRequireDefaultExports;
 Object.defineProperty(Save, "__esModule", {
   value: true
 });
-var default_1$f = Save.default = void 0;
-var _createSvgIcon$f = _interopRequireDefault$k(requireCreateSvgIcon());
-var _jsxRuntime$f = jsxRuntimeExports;
-default_1$f = Save.default = (0, _createSvgIcon$f.default)(/* @__PURE__ */ (0, _jsxRuntime$f.jsx)("path", {
+var default_1$g = Save.default = void 0;
+var _createSvgIcon$g = _interopRequireDefault$l(requireCreateSvgIcon());
+var _jsxRuntime$g = jsxRuntimeExports;
+default_1$g = Save.default = (0, _createSvgIcon$g.default)(/* @__PURE__ */ (0, _jsxRuntime$g.jsx)("path", {
   d: "M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3m3-10H5V5h10z"
 }), "Save");
 const MovimentationContext = reactExports.createContext({
@@ -81335,7 +81342,7 @@ function CreateMovementation({
       {
         sx: { display: creatingPatrimonyInfo[0] ? "none" : "block" },
         onClick: handleOpen,
-        children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$g, { sx: { color: "#F7941E" } })
+        children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$h, { sx: { color: "#F7941E" } })
       }
     ),
     /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -81384,7 +81391,7 @@ function CreateMovementation({
                       top: "10px",
                       right: "10px"
                     },
-                    children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, {})
+                    children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$q, {})
                   }
                 )
               ] }),
@@ -81426,7 +81433,7 @@ function CreateMovementation({
                     }
                   )
                 ),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { onClick: handleSaveMovementation, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$f, {}) })
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { onClick: handleSaveMovementation, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$g, {}) })
               ] })
             ]
           }
@@ -81631,7 +81638,7 @@ function CreatePatrimonyInfoModal() {
                     top: "10px",
                     right: "10px"
                   },
-                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, {})
+                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$q, {})
                 }
               )
             ] }),
@@ -81680,7 +81687,7 @@ function CreatePatrimonyInfoModal() {
                 {
                   type: "submit",
                   sx: { width: "1rem", marginX: "1rem", marginTop: "1rem" },
-                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$h, {})
+                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$i, {})
                 }
               )
             ] })
@@ -81692,48 +81699,48 @@ function CreatePatrimonyInfoModal() {
 }
 __name(CreatePatrimonyInfoModal, "CreatePatrimonyInfoModal");
 var ArrowDropDownCircle = {};
-var _interopRequireDefault$j = interopRequireDefaultExports;
+var _interopRequireDefault$k = interopRequireDefaultExports;
 Object.defineProperty(ArrowDropDownCircle, "__esModule", {
   value: true
 });
-var default_1$e = ArrowDropDownCircle.default = void 0;
-var _createSvgIcon$e = _interopRequireDefault$j(requireCreateSvgIcon());
-var _jsxRuntime$e = jsxRuntimeExports;
-default_1$e = ArrowDropDownCircle.default = (0, _createSvgIcon$e.default)(/* @__PURE__ */ (0, _jsxRuntime$e.jsx)("path", {
+var default_1$f = ArrowDropDownCircle.default = void 0;
+var _createSvgIcon$f = _interopRequireDefault$k(requireCreateSvgIcon());
+var _jsxRuntime$f = jsxRuntimeExports;
+default_1$f = ArrowDropDownCircle.default = (0, _createSvgIcon$f.default)(/* @__PURE__ */ (0, _jsxRuntime$f.jsx)("path", {
   d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m0 12-4-4h8z"
 }), "ArrowDropDownCircle");
 var Notifications = {};
-var _interopRequireDefault$i = interopRequireDefaultExports;
+var _interopRequireDefault$j = interopRequireDefaultExports;
 Object.defineProperty(Notifications, "__esModule", {
   value: true
 });
-var default_1$d = Notifications.default = void 0;
-var _createSvgIcon$d = _interopRequireDefault$i(requireCreateSvgIcon());
-var _jsxRuntime$d = jsxRuntimeExports;
-default_1$d = Notifications.default = (0, _createSvgIcon$d.default)(/* @__PURE__ */ (0, _jsxRuntime$d.jsx)("path", {
+var default_1$e = Notifications.default = void 0;
+var _createSvgIcon$e = _interopRequireDefault$j(requireCreateSvgIcon());
+var _jsxRuntime$e = jsxRuntimeExports;
+default_1$e = Notifications.default = (0, _createSvgIcon$e.default)(/* @__PURE__ */ (0, _jsxRuntime$e.jsx)("path", {
   d: "M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2m6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1z"
 }), "Notifications");
 var GridView = {};
-var _interopRequireDefault$h = interopRequireDefaultExports;
+var _interopRequireDefault$i = interopRequireDefaultExports;
 Object.defineProperty(GridView, "__esModule", {
   value: true
 });
-var default_1$c = GridView.default = void 0;
-var _createSvgIcon$c = _interopRequireDefault$h(requireCreateSvgIcon());
-var _jsxRuntime$c = jsxRuntimeExports;
-default_1$c = GridView.default = (0, _createSvgIcon$c.default)(/* @__PURE__ */ (0, _jsxRuntime$c.jsx)("path", {
+var default_1$d = GridView.default = void 0;
+var _createSvgIcon$d = _interopRequireDefault$i(requireCreateSvgIcon());
+var _jsxRuntime$d = jsxRuntimeExports;
+default_1$d = GridView.default = (0, _createSvgIcon$d.default)(/* @__PURE__ */ (0, _jsxRuntime$d.jsx)("path", {
   fillRule: "evenodd",
   d: "M3 3v8h8V3zm6 6H5V5h4zm-6 4v8h8v-8zm6 6H5v-4h4zm4-16v8h8V3zm6 6h-4V5h4zm-6 4v8h8v-8zm6 6h-4v-4h4z"
 }), "GridView");
 var TableRows = {};
-var _interopRequireDefault$g = interopRequireDefaultExports;
+var _interopRequireDefault$h = interopRequireDefaultExports;
 Object.defineProperty(TableRows, "__esModule", {
   value: true
 });
-var default_1$b = TableRows.default = void 0;
-var _createSvgIcon$b = _interopRequireDefault$g(requireCreateSvgIcon());
-var _jsxRuntime$b = jsxRuntimeExports;
-default_1$b = TableRows.default = (0, _createSvgIcon$b.default)(/* @__PURE__ */ (0, _jsxRuntime$b.jsx)("path", {
+var default_1$c = TableRows.default = void 0;
+var _createSvgIcon$c = _interopRequireDefault$h(requireCreateSvgIcon());
+var _jsxRuntime$c = jsxRuntimeExports;
+default_1$c = TableRows.default = (0, _createSvgIcon$c.default)(/* @__PURE__ */ (0, _jsxRuntime$c.jsx)("path", {
   d: "M21 8H3V4h18zm0 2H3v4h18zm0 6H3v4h18z"
 }), "TableRows");
 const TableViewToggleButton = /* @__PURE__ */ __name(({
@@ -81755,7 +81762,7 @@ const TableViewToggleButton = /* @__PURE__ */ __name(({
           sx: {
             ...buttonStylesMobile
           },
-          children: isCardViewActive ? /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$c, {}) : /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$b, {})
+          children: isCardViewActive ? /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$d, {}) : /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$c, {})
         }
       )
     }
@@ -81797,7 +81804,7 @@ const PatrimonySearchAppBarButtons = React$1.memo(
               sx: isMobile ? { ...buttonStylesMobile } : { ...BaseButtonStyles },
               children: [
                 !isMobile && /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { textTransform: "capitalize", children: "Ações" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$e, {})
+                /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$f, {})
               ]
             },
             index2
@@ -81836,7 +81843,7 @@ const PatrimonySearchAppBarButtons = React$1.memo(
               sx: isMobile ? { ...buttonStylesMobile } : { ...BaseButtonStyles },
               children: [
                 !isMobile && /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { textTransform: "capitalize", children: "Filtros" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$n, {})
+                /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$o, {})
               ]
             },
             index2
@@ -81876,7 +81883,7 @@ const PatrimonySearchAppBarButtons = React$1.memo(
             sx: isMobile ? { ...buttonStylesMobile } : { ...BaseButtonStyles },
             children: [
               !isMobile && /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { textTransform: "capitalize", children: "Checklists" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(Badge, { badgeContent: notifications == null ? void 0 : notifications.length, color: "primary", children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$d, {}) })
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Badge, { badgeContent: notifications == null ? void 0 : notifications.length, color: "primary", children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$e, {}) })
             ]
           },
           index2
@@ -82098,7 +82105,7 @@ const SearchAppBar = React$1.memo(
             gap: 1,
             children: [
               /* @__PURE__ */ jsxRuntimeExports.jsxs(Search, { children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(SearchIconWrapper, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$r, {}) }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(SearchIconWrapper, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$s, {}) }),
                 /* @__PURE__ */ jsxRuntimeExports.jsx(
                   StyledInputBase,
                   {
@@ -82139,7 +82146,7 @@ const SearchAppBar = React$1.memo(
                     color: "white",
                     "&:hover": { backgroundColor: "#f1b963" }
                   },
-                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$o, { sx: { color: "#2B3990" } })
+                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, { sx: { color: "#2B3990" } })
                 }
               ) }) }),
               /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -82307,14 +82314,14 @@ const style$a = {
   p: 4
 };
 var Checklist = {};
-var _interopRequireDefault$f = interopRequireDefaultExports;
+var _interopRequireDefault$g = interopRequireDefaultExports;
 Object.defineProperty(Checklist, "__esModule", {
   value: true
 });
-var default_1$a = Checklist.default = void 0;
-var _createSvgIcon$a = _interopRequireDefault$f(requireCreateSvgIcon());
-var _jsxRuntime$a = jsxRuntimeExports;
-default_1$a = Checklist.default = (0, _createSvgIcon$a.default)(/* @__PURE__ */ (0, _jsxRuntime$a.jsx)("path", {
+var default_1$b = Checklist.default = void 0;
+var _createSvgIcon$b = _interopRequireDefault$g(requireCreateSvgIcon());
+var _jsxRuntime$b = jsxRuntimeExports;
+default_1$b = Checklist.default = (0, _createSvgIcon$b.default)(/* @__PURE__ */ (0, _jsxRuntime$b.jsx)("path", {
   d: "M22 7h-9v2h9zm0 8h-9v2h9zM5.54 11 2 7.46l1.41-1.41 2.12 2.12 4.24-4.24 1.41 1.41zm0 8L2 15.46l1.41-1.41 2.12 2.12 4.24-4.24 1.41 1.41z"
 }), "Checklist");
 var safeIsNaN = Number.isNaN || /* @__PURE__ */ __name(function ponyfill(value) {
@@ -83312,9 +83319,11 @@ const fetchPersonList = /* @__PURE__ */ __name(async () => {
     console.log(e2);
   }
 }, "fetchPersonList");
-const updateOpportunity = /* @__PURE__ */ __name(async (opportunity) => {
+const updateOpportunity = /* @__PURE__ */ __name(async (opportunity, user) => {
   try {
-    const response = await api.put("opportunity/update", opportunity);
+    const response = await api.put("opportunity/update", opportunity, {
+      params: { user }
+    });
     return response;
   } catch (error) {
     console.error(error);
@@ -83866,7 +83875,7 @@ function PatrimonyInfoTable() {
           align: "center",
           children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", children: [
             "",
-            /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: () => handleOpenChecklists(row), children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$a, {}) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: () => handleOpenChecklists(row), children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$b, {}) }),
             /* @__PURE__ */ jsxRuntimeExports.jsx(
               Checkbox,
               {
@@ -84758,25 +84767,25 @@ const Modal$2 = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(f
   });
 }, "Modal2"));
 var AttachFile = {};
-var _interopRequireDefault$e = interopRequireDefaultExports;
+var _interopRequireDefault$f = interopRequireDefaultExports;
 Object.defineProperty(AttachFile, "__esModule", {
   value: true
 });
-var default_1$9 = AttachFile.default = void 0;
-var _createSvgIcon$9 = _interopRequireDefault$e(requireCreateSvgIcon());
-var _jsxRuntime$9 = jsxRuntimeExports;
-default_1$9 = AttachFile.default = (0, _createSvgIcon$9.default)(/* @__PURE__ */ (0, _jsxRuntime$9.jsx)("path", {
+var default_1$a = AttachFile.default = void 0;
+var _createSvgIcon$a = _interopRequireDefault$f(requireCreateSvgIcon());
+var _jsxRuntime$a = jsxRuntimeExports;
+default_1$a = AttachFile.default = (0, _createSvgIcon$a.default)(/* @__PURE__ */ (0, _jsxRuntime$a.jsx)("path", {
   d: "M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6z"
 }), "AttachFile");
 var CloudUpload = {};
-var _interopRequireDefault$d = interopRequireDefaultExports;
+var _interopRequireDefault$e = interopRequireDefaultExports;
 Object.defineProperty(CloudUpload, "__esModule", {
   value: true
 });
-var default_1$8 = CloudUpload.default = void 0;
-var _createSvgIcon$8 = _interopRequireDefault$d(requireCreateSvgIcon());
-var _jsxRuntime$8 = jsxRuntimeExports;
-default_1$8 = CloudUpload.default = (0, _createSvgIcon$8.default)(/* @__PURE__ */ (0, _jsxRuntime$8.jsx)("path", {
+var default_1$9 = CloudUpload.default = void 0;
+var _createSvgIcon$9 = _interopRequireDefault$e(requireCreateSvgIcon());
+var _jsxRuntime$9 = jsxRuntimeExports;
+default_1$9 = CloudUpload.default = (0, _createSvgIcon$9.default)(/* @__PURE__ */ (0, _jsxRuntime$9.jsx)("path", {
   d: "M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96M14 13v4h-4v-4H7l5-5 5 5z"
 }), "CloudUpload");
 const MovementationFileContext = reactExports.createContext({
@@ -84991,7 +85000,7 @@ const MovimentationFileModal = reactExports.memo(
       fetchFileData();
     }, [fetchFileData, refreshMovementationFile]);
     return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "Anexos da movimentação", children: /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { "aria-label": "cart", onClick: handleOpen, children: /* @__PURE__ */ jsxRuntimeExports.jsx(StyledBadge, { badgeContent: fileData == null ? void 0 : fileData.length, color: "secondary", children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$9, { sx: { color: "#F7941E" } }) }) }) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "Anexos da movimentação", children: /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { "aria-label": "cart", onClick: handleOpen, children: /* @__PURE__ */ jsxRuntimeExports.jsx(StyledBadge, { badgeContent: fileData == null ? void 0 : fileData.length, color: "secondary", children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$a, { sx: { color: "#F7941E" } }) }) }) }),
       /* @__PURE__ */ jsxRuntimeExports.jsx(
         Modal$1,
         {
@@ -85034,7 +85043,7 @@ const MovimentationFileModal = reactExports.memo(
                         right: "1rem",
                         top: "1rem"
                       },
-                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, {})
+                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$q, {})
                     }
                   )
                 ] }),
@@ -85045,7 +85054,7 @@ const MovimentationFileModal = reactExports.memo(
                     role: void 0,
                     variant: "contained",
                     tabIndex: -1,
-                    startIcon: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$8, {}),
+                    startIcon: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$9, {}),
                     sx: BaseButtonStyles,
                     children: [
                       "Anexar",
@@ -85156,7 +85165,7 @@ const MovimentationFileModal = reactExports.memo(
                                       textTransform: "underline",
                                       marginLeft: 1
                                     },
-                                    children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$s, { sx: { color: "#F7941E" } })
+                                    children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$t, { sx: { color: "#F7941E" } })
                                   }
                                 )
                               ]
@@ -85253,14 +85262,14 @@ const ModalContent = styled$1("div")(
   `
 );
 var Edit = {};
-var _interopRequireDefault$c = interopRequireDefaultExports;
+var _interopRequireDefault$d = interopRequireDefaultExports;
 Object.defineProperty(Edit, "__esModule", {
   value: true
 });
-var default_1$7 = Edit.default = void 0;
-var _createSvgIcon$7 = _interopRequireDefault$c(requireCreateSvgIcon());
-var _jsxRuntime$7 = jsxRuntimeExports;
-default_1$7 = Edit.default = (0, _createSvgIcon$7.default)(/* @__PURE__ */ (0, _jsxRuntime$7.jsx)("path", {
+var default_1$8 = Edit.default = void 0;
+var _createSvgIcon$8 = _interopRequireDefault$d(requireCreateSvgIcon());
+var _jsxRuntime$8 = jsxRuntimeExports;
+default_1$8 = Edit.default = (0, _createSvgIcon$8.default)(/* @__PURE__ */ (0, _jsxRuntime$8.jsx)("path", {
   d: "M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75z"
 }), "Edit");
 const style$7 = {
@@ -85345,14 +85354,14 @@ function DeleteMovementationModal() {
 }
 __name(DeleteMovementationModal, "DeleteMovementationModal");
 var Cancel = {};
-var _interopRequireDefault$b = interopRequireDefaultExports;
+var _interopRequireDefault$c = interopRequireDefaultExports;
 Object.defineProperty(Cancel, "__esModule", {
   value: true
 });
-var default_1$6 = Cancel.default = void 0;
-var _createSvgIcon$6 = _interopRequireDefault$b(requireCreateSvgIcon());
-var _jsxRuntime$6 = jsxRuntimeExports;
-default_1$6 = Cancel.default = (0, _createSvgIcon$6.default)(/* @__PURE__ */ (0, _jsxRuntime$6.jsx)("path", {
+var default_1$7 = Cancel.default = void 0;
+var _createSvgIcon$7 = _interopRequireDefault$c(requireCreateSvgIcon());
+var _jsxRuntime$7 = jsxRuntimeExports;
+default_1$7 = Cancel.default = (0, _createSvgIcon$7.default)(/* @__PURE__ */ (0, _jsxRuntime$7.jsx)("path", {
   d: "M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2m5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12z"
 }), "Cancel");
 const style$6 = {
@@ -85431,7 +85440,7 @@ function EditMovimentationObservationModal() {
               variant: "outlined",
               onClick: handleSave,
               sx: { width: "1rem", marginX: "1rem" },
-              children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$f, {})
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$g, {})
             }
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -85444,7 +85453,7 @@ function EditMovimentationObservationModal() {
                 marginX: "1rem",
                 color: "red"
               },
-              children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$6, {})
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$7, {})
             }
           )
         ] })
@@ -85569,14 +85578,14 @@ const RowContent = reactExports.memo(
                 IconButton,
                 {
                   onClick: () => togglEditingMovementationObservation(true, row),
-                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$7, { sx: { color: "#F7941E" } })
+                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$8, { sx: { color: "#F7941E" } })
                 }
               ) }),
               column2.dataKey === "id_movimentacao" && /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "Excluir Movimentação", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
                 IconButton,
                 {
                   onClick: () => handleClickDeleteMovimentation(row),
-                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$s, { sx: { color: "#F7941E" } })
+                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$t, { sx: { color: "#F7941E" } })
                 }
               ) })
             ]
@@ -85802,7 +85811,7 @@ function DeletePatrimonyFileModal() {
   ) });
 }
 __name(DeletePatrimonyFileModal, "DeletePatrimonyFileModal");
-const styles$5 = {
+const styles$7 = {
   badge: {
     // Estilos para o Badge (se necessário)
   },
@@ -85995,7 +86004,7 @@ const FileViewer = /* @__PURE__ */ __name(({
                   }
                 },
                 onClick: handleCloseFileViewer,
-                children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, { sx: { color: "red" } })
+                children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$q, { sx: { color: "red" } })
               }
             )
           ]
@@ -86048,7 +86057,7 @@ const PatrimonyFileCard = /* @__PURE__ */ __name(({
               data: isPDF2(file.arquivo) ? file.arquivo : void 0,
               src: isPDF2(file.arquivo) ? void 0 : file.arquivo,
               type: isPDF2(file.arquivo) ? "application/pdf" : void 0,
-              sx: styles$5.cardMedia(file)
+              sx: styles$7.cardMedia(file)
             }
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -86075,7 +86084,7 @@ const PatrimonyFileCard = /* @__PURE__ */ __name(({
             {
               onClick: () => handleOpenLink(file.arquivo),
               fontSize: "small",
-              sx: styles$5.fileName,
+              sx: styles$7.fileName,
               children: truncateText(file.nome_arquivo, 20)
             }
           ),
@@ -86083,8 +86092,8 @@ const PatrimonyFileCard = /* @__PURE__ */ __name(({
             IconButton,
             {
               onClick: () => toggleDeletingPatrimonyFile(true, file),
-              sx: styles$5.deleteIconButton,
-              children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$s, {})
+              sx: styles$7.deleteIconButton,
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$t, {})
             }
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -86165,7 +86174,7 @@ function PatrimonyFileModal() {
     fetchPatrimonyFiles();
   }, [refreshPatrimonyFile]);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(Badge, { badgeContent: (fileData == null ? void 0 : fileData.length) || 0, color: "primary", sx: styles$5.badge, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "Anexos do patrimônio", children: /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: handleOpen, sx: styles$5.iconButton, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$9, {}) }) }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Badge, { badgeContent: (fileData == null ? void 0 : fileData.length) || 0, color: "primary", sx: styles$7.badge, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "Anexos do patrimônio", children: /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: handleOpen, sx: styles$7.iconButton, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$a, {}) }) }) }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       Modal,
       {
@@ -86175,10 +86184,10 @@ function PatrimonyFileModal() {
         onClose: handleClose,
         closeAfterTransition: true,
         slots: { backdrop: StyledBackdrop },
-        children: /* @__PURE__ */ jsxRuntimeExports.jsx(Fade, { in: open2, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: styles$5.modalContent, children: [
+        children: /* @__PURE__ */ jsxRuntimeExports.jsx(Fade, { in: open2, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: styles$7.modalContent, children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(DeletePatrimonyFileModal, {}),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { sx: styles$5.modalHeader, ref: modaleHeaderRef, children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: handleClose, sx: styles$5.closeIconButton, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, {}) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { sx: styles$7.modalHeader, ref: modaleHeaderRef, children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: handleClose, sx: styles$7.closeIconButton, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$q, {}) }),
             /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { sx: typographyStyles.heading2, children: "Anexos do patrimônio" }),
             allowedToAttachFile() && /* @__PURE__ */ jsxRuntimeExports.jsxs(
               Button,
@@ -86187,7 +86196,7 @@ function PatrimonyFileModal() {
                 role: void 0,
                 variant: "contained",
                 tabIndex: -1,
-                startIcon: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$8, {}),
+                startIcon: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$9, {}),
                 sx: { ...BaseButtonStyles, width: 100 },
                 children: [
                   "Anexar",
@@ -86205,8 +86214,8 @@ function PatrimonyFileModal() {
               }
             )
           ] }),
-          isLoading && /* @__PURE__ */ jsxRuntimeExports.jsx(Stack, { sx: styles$5.loadingStack, children: /* @__PURE__ */ jsxRuntimeExports.jsx(CircularProgress, {}) }),
-          modaleHeaderRef && /* @__PURE__ */ jsxRuntimeExports.jsx(Stack, { sx: { ...styles$5.fileListStack }, children: fileData == null ? void 0 : fileData.map((file) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+          isLoading && /* @__PURE__ */ jsxRuntimeExports.jsx(Stack, { sx: styles$7.loadingStack, children: /* @__PURE__ */ jsxRuntimeExports.jsx(CircularProgress, {}) }),
+          modaleHeaderRef && /* @__PURE__ */ jsxRuntimeExports.jsx(Stack, { sx: { ...styles$7.fileListStack }, children: fileData == null ? void 0 : fileData.map((file) => /* @__PURE__ */ jsxRuntimeExports.jsx(
             PatrimonyFileCard,
             {
               file
@@ -86240,14 +86249,14 @@ const StyledBackdrop = styled$1(Backdrop)`
   -webkit-tap-highlight-color: transparent;
 `;
 var HomeRepairService = {};
-var _interopRequireDefault$a = interopRequireDefaultExports;
+var _interopRequireDefault$b = interopRequireDefaultExports;
 Object.defineProperty(HomeRepairService, "__esModule", {
   value: true
 });
-var default_1$5 = HomeRepairService.default = void 0;
-var _createSvgIcon$5 = _interopRequireDefault$a(requireCreateSvgIcon());
-var _jsxRuntime$5 = jsxRuntimeExports;
-default_1$5 = HomeRepairService.default = (0, _createSvgIcon$5.default)(/* @__PURE__ */ (0, _jsxRuntime$5.jsx)("path", {
+var default_1$6 = HomeRepairService.default = void 0;
+var _createSvgIcon$6 = _interopRequireDefault$b(requireCreateSvgIcon());
+var _jsxRuntime$6 = jsxRuntimeExports;
+default_1$6 = HomeRepairService.default = (0, _createSvgIcon$6.default)(/* @__PURE__ */ (0, _jsxRuntime$6.jsx)("path", {
   d: "M18 16h-2v-1H8v1H6v-1H2v5h20v-5h-4zm2-8h-3V6c0-1.1-.9-2-2-2H9c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v4h4v-2h2v2h8v-2h2v2h4v-4c0-1.1-.9-2-2-2m-5 0H9V6h6z"
 }), "HomeRepairService");
 const style$4 = {
@@ -86301,7 +86310,7 @@ function CreatePatrimonyAccessoryModal() {
     }
   }, "handleSave");
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(Badge, { children: !open && /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: toggleCreatingPatrimonyAccessory, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$5, { sx: { color: "#F7941E" } }) }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Badge, { children: !open && /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: toggleCreatingPatrimonyAccessory, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$6, { sx: { color: "#F7941E" } }) }) }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       Modal$3,
       {
@@ -86317,7 +86326,7 @@ function CreatePatrimonyAccessoryModal() {
               {
                 onClick: toggleCreatingPatrimonyAccessory,
                 sx: { color: "red" },
-                children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, {})
+                children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$q, {})
               }
             )
           ] }),
@@ -86346,7 +86355,7 @@ function CreatePatrimonyAccessoryModal() {
             {
               onClick: handleSave,
               sx: { width: "1rem", marginX: "1rem", marginTop: "1rem" },
-              children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$f, {})
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$g, {})
             }
           )
         ] })
@@ -86480,7 +86489,7 @@ function PatrimonyAccessoryModal() {
     }
   }, "handleUploadFile");
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(Badge, { badgeContent: accessories.length, color: "primary", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "Acessórios", children: /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: handleOpen, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$5, { sx: { color: "#F7941E" } }) }) }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Badge, { badgeContent: accessories.length, color: "primary", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "Acessórios", children: /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: handleOpen, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$6, { sx: { color: "#F7941E" } }) }) }) }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(Modal$3, { open: open2, onClose: handleClose, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: modalStyle(theme2), children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", justifyContent: "space-between", spacing: 2, children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { variant: isMobile ? "subtitle1" : "h6", component: "h2", children: "Acessórios do Patrimônio" }),
@@ -86490,10 +86499,10 @@ function PatrimonyAccessoryModal() {
             {
               sx: { color: "#F7941E" },
               onClick: handleOpenCreatePatrimonyAccessory,
-              children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$g, {})
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$h, {})
             }
           ),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { sx: { color: "red" }, onClick: handleClose, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, {}) })
+          /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { sx: { color: "red" }, onClick: handleClose, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$q, {}) })
         ] })
       ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsx(Stack, { direction: "column", gap: "1rem", alignItems: "center", children: accessories && accessories.map((accessory, index2) => /* @__PURE__ */ jsxRuntimeExports.jsxs(Card, { sx: { borderRadius: "10px", width: 300 }, children: [
@@ -86530,7 +86539,7 @@ function PatrimonyAccessoryModal() {
                       true,
                       accessories[index2]
                     ),
-                    children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$s, { sx: { color: "#F7941E" } })
+                    children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$t, { sx: { color: "#F7941E" } })
                   }
                 )
               ]
@@ -86541,7 +86550,7 @@ function PatrimonyAccessoryModal() {
             {
               component: "label",
               variant: "contained",
-              startIcon: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$8, {}),
+              startIcon: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$9, {}),
               sx: {
                 mt: 2,
                 width: isMobile ? "100%" : "auto"
@@ -86829,7 +86838,7 @@ const PatrimonyDetails = /* @__PURE__ */ __name(() => {
                     {
                       onClick: () => window.open(`/patrimony/checklist/${id_patrimonio}`),
                       title: "Checklists do patrimônio",
-                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$a, { sx: { color: "#F7941E" } }) })
+                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$b, { sx: { color: "#F7941E" } }) })
                     }
                   )
                 ] }),
@@ -86881,7 +86890,7 @@ const PatrimonyDetails = /* @__PURE__ */ __name(() => {
                         variant: "outlined",
                         onClick: () => handleSave(),
                         sx: { width: "1rem", marginX: "1rem" },
-                        children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$f, {})
+                        children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$g, {})
                       }
                     ),
                     /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -86894,7 +86903,7 @@ const PatrimonyDetails = /* @__PURE__ */ __name(() => {
                           marginX: "1rem",
                           color: "red"
                         },
-                        children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$6, {})
+                        children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$7, {})
                       }
                     )
                   ] })
@@ -87272,12 +87281,12 @@ innerSliderUtils.clamp = clamp;
 innerSliderUtils.extractObject = void 0;
 innerSliderUtils.filterSettings = filterSettings;
 innerSliderUtils.validSettings = innerSliderUtils.swipeStart = innerSliderUtils.swipeMove = innerSliderUtils.swipeEnd = innerSliderUtils.slidesOnRight = innerSliderUtils.slidesOnLeft = innerSliderUtils.slideHandler = innerSliderUtils.siblingDirection = innerSliderUtils.safePreventDefault = innerSliderUtils.lazyStartIndex = innerSliderUtils.lazySlidesOnRight = innerSliderUtils.lazySlidesOnLeft = innerSliderUtils.lazyEndIndex = innerSliderUtils.keyHandler = innerSliderUtils.initializedState = innerSliderUtils.getWidth = innerSliderUtils.getTrackLeft = innerSliderUtils.getTrackCSS = innerSliderUtils.getTrackAnimateCSS = innerSliderUtils.getTotalSlides = innerSliderUtils.getSwipeDirection = innerSliderUtils.getSlideCount = innerSliderUtils.getRequiredLazySlides = innerSliderUtils.getPreClones = innerSliderUtils.getPostClones = innerSliderUtils.getOnDemandLazySlides = innerSliderUtils.getNavigableIndexes = innerSliderUtils.getHeight = void 0;
-var _react$4 = _interopRequireDefault$9(reactExports);
-var _defaultProps = _interopRequireDefault$9(defaultProps);
-function _interopRequireDefault$9(obj) {
+var _react$4 = _interopRequireDefault$a(reactExports);
+var _defaultProps = _interopRequireDefault$a(defaultProps);
+function _interopRequireDefault$a(obj) {
   return obj && obj.__esModule ? obj : { "default": obj };
 }
-__name(_interopRequireDefault$9, "_interopRequireDefault$9");
+__name(_interopRequireDefault$a, "_interopRequireDefault$a");
 function _typeof$4(o) {
   "@babel/helpers - typeof";
   return _typeof$4 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(o2) {
@@ -88025,13 +88034,13 @@ Object.defineProperty(track, "__esModule", {
   value: true
 });
 track.Track = void 0;
-var _react$3 = _interopRequireDefault$8(reactExports);
-var _classnames$3 = _interopRequireDefault$8(classnamesExports);
+var _react$3 = _interopRequireDefault$9(reactExports);
+var _classnames$3 = _interopRequireDefault$9(classnamesExports);
 var _innerSliderUtils$3 = innerSliderUtils;
-function _interopRequireDefault$8(obj) {
+function _interopRequireDefault$9(obj) {
   return obj && obj.__esModule ? obj : { "default": obj };
 }
-__name(_interopRequireDefault$8, "_interopRequireDefault$8");
+__name(_interopRequireDefault$9, "_interopRequireDefault$9");
 function _typeof$3(o) {
   "@babel/helpers - typeof";
   return _typeof$3 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(o2) {
@@ -88404,13 +88413,13 @@ Object.defineProperty(dots, "__esModule", {
   value: true
 });
 dots.Dots = void 0;
-var _react$2 = _interopRequireDefault$7(reactExports);
-var _classnames$2 = _interopRequireDefault$7(classnamesExports);
+var _react$2 = _interopRequireDefault$8(reactExports);
+var _classnames$2 = _interopRequireDefault$8(classnamesExports);
 var _innerSliderUtils$2 = innerSliderUtils;
-function _interopRequireDefault$7(obj) {
+function _interopRequireDefault$8(obj) {
   return obj && obj.__esModule ? obj : { "default": obj };
 }
-__name(_interopRequireDefault$7, "_interopRequireDefault$7");
+__name(_interopRequireDefault$8, "_interopRequireDefault$8");
 function ownKeys$2(e2, r2) {
   var t2 = Object.keys(e2);
   if (Object.getOwnPropertySymbols) {
@@ -88634,13 +88643,13 @@ Object.defineProperty(arrows, "__esModule", {
   value: true
 });
 arrows.PrevArrow = arrows.NextArrow = void 0;
-var _react$1 = _interopRequireDefault$6(reactExports);
-var _classnames$1 = _interopRequireDefault$6(classnamesExports);
+var _react$1 = _interopRequireDefault$7(reactExports);
+var _classnames$1 = _interopRequireDefault$7(classnamesExports);
 var _innerSliderUtils$1 = innerSliderUtils;
-function _interopRequireDefault$6(obj) {
+function _interopRequireDefault$7(obj) {
   return obj && obj.__esModule ? obj : { "default": obj };
 }
-__name(_interopRequireDefault$6, "_interopRequireDefault$6");
+__name(_interopRequireDefault$7, "_interopRequireDefault$7");
 function _extends$1() {
   _extends$1 = Object.assign ? Object.assign.bind() : function(target) {
     for (var i = 1; i < arguments.length; i++) {
@@ -89432,19 +89441,19 @@ Object.defineProperty(innerSlider, "__esModule", {
   value: true
 });
 innerSlider.InnerSlider = void 0;
-var _react = _interopRequireDefault$5(reactExports);
-var _initialState = _interopRequireDefault$5(initialState);
-var _lodash = _interopRequireDefault$5(lodash_debounce);
-var _classnames = _interopRequireDefault$5(classnamesExports);
+var _react = _interopRequireDefault$6(reactExports);
+var _initialState = _interopRequireDefault$6(initialState);
+var _lodash = _interopRequireDefault$6(lodash_debounce);
+var _classnames = _interopRequireDefault$6(classnamesExports);
 var _innerSliderUtils = innerSliderUtils;
 var _track = track;
 var _dots = dots;
 var _arrows = arrows;
-var _resizeObserverPolyfill = _interopRequireDefault$5(require$$8);
-function _interopRequireDefault$5(obj) {
+var _resizeObserverPolyfill = _interopRequireDefault$6(require$$8);
+function _interopRequireDefault$6(obj) {
   return obj && obj.__esModule ? obj : { "default": obj };
 }
-__name(_interopRequireDefault$5, "_interopRequireDefault$5");
+__name(_interopRequireDefault$6, "_interopRequireDefault$6");
 function _typeof(o) {
   "@babel/helpers - typeof";
   return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(o2) {
@@ -91046,7 +91055,7 @@ const CardChecklistItem = /* @__PURE__ */ __name(({
               sx: { width: "fit-content" },
               children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", alignItems: "center", gap: 1, children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  default_1$l,
+                  default_1$m,
                   {
                     sx: {
                       color: renderErrorColor(checklistItem)
@@ -91075,7 +91084,7 @@ const CardChecklistItem = /* @__PURE__ */ __name(({
               sx: { width: "fit-content" },
               children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", alignItems: "center", gap: 1, children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  default_1$k,
+                  default_1$l,
                   {
                     sx: {
                       color: renderOkayColor(checklistItem)
@@ -91121,7 +91130,7 @@ const CardChecklistItem = /* @__PURE__ */ __name(({
                 },
                 children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", alignItems: "center", gap: 0.5, children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { fontSize: "small", children: "Novo Arquivo" }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$8, { sx: { fontSize: "16px" } })
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$9, { sx: { fontSize: "16px" } })
                 ] })
               }
             )
@@ -91150,36 +91159,36 @@ const CardChecklistItem = /* @__PURE__ */ __name(({
   );
 }, "CardChecklistItem");
 var NavigateBefore = {};
-var _interopRequireDefault$4 = interopRequireDefaultExports;
+var _interopRequireDefault$5 = interopRequireDefaultExports;
 Object.defineProperty(NavigateBefore, "__esModule", {
   value: true
 });
-var default_1$4 = NavigateBefore.default = void 0;
-var _createSvgIcon$4 = _interopRequireDefault$4(requireCreateSvgIcon());
-var _jsxRuntime$4 = jsxRuntimeExports;
-default_1$4 = NavigateBefore.default = (0, _createSvgIcon$4.default)(/* @__PURE__ */ (0, _jsxRuntime$4.jsx)("path", {
+var default_1$5 = NavigateBefore.default = void 0;
+var _createSvgIcon$5 = _interopRequireDefault$5(requireCreateSvgIcon());
+var _jsxRuntime$5 = jsxRuntimeExports;
+default_1$5 = NavigateBefore.default = (0, _createSvgIcon$5.default)(/* @__PURE__ */ (0, _jsxRuntime$5.jsx)("path", {
   d: "M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"
 }), "NavigateBefore");
 var NavigateNext = {};
-var _interopRequireDefault$3 = interopRequireDefaultExports;
+var _interopRequireDefault$4 = interopRequireDefaultExports;
 Object.defineProperty(NavigateNext, "__esModule", {
   value: true
 });
-var default_1$3 = NavigateNext.default = void 0;
-var _createSvgIcon$3 = _interopRequireDefault$3(requireCreateSvgIcon());
-var _jsxRuntime$3 = jsxRuntimeExports;
-default_1$3 = NavigateNext.default = (0, _createSvgIcon$3.default)(/* @__PURE__ */ (0, _jsxRuntime$3.jsx)("path", {
+var default_1$4 = NavigateNext.default = void 0;
+var _createSvgIcon$4 = _interopRequireDefault$4(requireCreateSvgIcon());
+var _jsxRuntime$4 = jsxRuntimeExports;
+default_1$4 = NavigateNext.default = (0, _createSvgIcon$4.default)(/* @__PURE__ */ (0, _jsxRuntime$4.jsx)("path", {
   d: "M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"
 }), "NavigateNext");
 var Circle = {};
-var _interopRequireDefault$2 = interopRequireDefaultExports;
+var _interopRequireDefault$3 = interopRequireDefaultExports;
 Object.defineProperty(Circle, "__esModule", {
   value: true
 });
-var default_1$2 = Circle.default = void 0;
-var _createSvgIcon$2 = _interopRequireDefault$2(requireCreateSvgIcon());
-var _jsxRuntime$2 = jsxRuntimeExports;
-default_1$2 = Circle.default = (0, _createSvgIcon$2.default)(/* @__PURE__ */ (0, _jsxRuntime$2.jsx)("path", {
+var default_1$3 = Circle.default = void 0;
+var _createSvgIcon$3 = _interopRequireDefault$3(requireCreateSvgIcon());
+var _jsxRuntime$3 = jsxRuntimeExports;
+default_1$3 = Circle.default = (0, _createSvgIcon$3.default)(/* @__PURE__ */ (0, _jsxRuntime$3.jsx)("path", {
   d: "M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2"
 }), "Circle");
 const SliderPagination = /* @__PURE__ */ __name(({
@@ -91190,11 +91199,11 @@ const SliderPagination = /* @__PURE__ */ __name(({
 }) => {
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { className: "space-y-8", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", justifyContent: "space-between", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: previous, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$4, { sx: { color: "blue" } }) }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: next2, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$3, { sx: { color: "blue" } }) })
+      /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: previous, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$5, { sx: { color: "blue" } }) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: next2, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$4, { sx: { color: "blue" } }) })
     ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(Stack, { direction: "row", justifyContent: "center", flexWrap: "wrap", gap: 1, children: ChecklistItems == null ? void 0 : ChecklistItems.map((_checklistItem, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
-      default_1$2,
+      default_1$3,
       {
         sx: {
           width: "12px",
@@ -91590,7 +91599,7 @@ const ChecklistItemsModal = /* @__PURE__ */ __name(() => {
               top: 8,
               right: 8
             },
-            children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, { sx: { color: "red" } })
+            children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$q, { sx: { color: "red" } })
           }
         ),
         /* @__PURE__ */ jsxRuntimeExports.jsxs(
@@ -92335,6 +92344,9 @@ const PatrimonyChecklist = /* @__PURE__ */ __name(() => {
     }
   );
 }, "PatrimonyChecklist");
+const CustomOpportunityRow = React$1.memo((props) => {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(MemoizedGridRow, { ...props }) });
+});
 const defaultColumnFilters = [
   { dataKey: "numero_projeto", filterValue: "" },
   { dataKey: "numero_adicional", filterValue: "" },
@@ -92436,10 +92448,7 @@ const OpportunityInfoProvider = /* @__PURE__ */ __name(({
     }
   );
 }, "OpportunityInfoProvider");
-const CustomOpportunityRow = React$1.memo((props) => {
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(MemoizedGridRow, { ...props }) });
-});
-const styles$4 = {
+const styles$6 = {
   guideContainer: {
     width: "100%",
     display: "flex !important",
@@ -92459,7 +92468,7 @@ const styles$4 = {
     minWidth: 0
   }
 };
-const styles$3 = {
+const styles$5 = {
   container: {
     display: "flex",
     alignItems: "center",
@@ -92493,10 +92502,11 @@ const OpportunityRegistration = /* @__PURE__ */ __name(({ guide, guidesReference
     numeroAdicional: guide.fields[1].data,
     nome: guide.fields[2].data,
     codStatus: guide.fields[3].data,
-    fkCodCliente: guide.fields[4].data,
-    dataSolicitacao: guide.fields[5].data,
-    dataInicio: guide.fields[6].data,
-    dataEntrega: guide.fields[7].data
+    descricaoVenda: guide.fields[4].data,
+    fkCodCliente: guide.fields[5].data,
+    dataSolicitacao: guide.fields[6].data,
+    dataInicio: guide.fields[7].data,
+    dataEntrega: guide.fields[8].data
   });
   const renderOptions = /* @__PURE__ */ __name((column2) => {
     if (column2.dataKey === "idProjeto")
@@ -92545,11 +92555,14 @@ const OpportunityRegistration = /* @__PURE__ */ __name(({ guide, guidesReference
     return field.dataKey !== "numeroAdicional";
   }, "editableField");
   const setDefaultClientWhenNotDefined = /* @__PURE__ */ __name(async () => {
+    console.log("setDefaultClientWhenNotDefined");
     const clientNotDefined = !(opportunityRegistration.fkCodCliente !== "-");
+    console.log("codcliente: ", opportunityRegistration.fkCodCliente);
     if (clientNotDefined && opportunityRegistration.idProjeto) {
       const clientFromFirstProject = await fetchClientFromFirstProjectOption(
         opportunityRegistration.idProjeto
       );
+      console.log({ clientFromFirstProject });
       setOpportunityRegistration({
         ...opportunityRegistration,
         fkCodCliente: clientFromFirstProject.id
@@ -92632,10 +92645,11 @@ const OpportunityRegistration = /* @__PURE__ */ __name(({ guide, guidesReference
         numeroAdicional: guide.fields[1].data,
         nome: guide.fields[2].data,
         codStatus: guide.fields[3].data,
-        fkCodCliente: guide.fields[4].data,
-        dataSolicitacao: guide.fields[5].data,
-        dataInicio: guide.fields[6].data,
-        dataEntrega: guide.fields[7].data
+        descricaoVenda: guide.fields[4].data,
+        fkCodCliente: guide.fields[5].data,
+        dataSolicitacao: guide.fields[6].data,
+        dataInicio: guide.fields[7].data,
+        dataEntrega: guide.fields[8].data
       });
     }
   }, [guide]);
@@ -92644,16 +92658,17 @@ const OpportunityRegistration = /* @__PURE__ */ __name(({ guide, guidesReference
       setDefaultClientWhenNotDefined();
     }
   }, [clientOptions, guide]);
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: styles$3.container, children: opportunityRegistration && /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: styles$3.formGrid, children: guide.fields.map((field, index2) => {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: styles$5.container, children: opportunityRegistration && /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: styles$5.formGrid, children: guide.fields.map((field, index2) => {
     if (editableField(field) && !field.autoComplete && field.dataKey !== "codOs") {
       return /* @__PURE__ */ jsxRuntimeExports.jsx(
         TextField,
         {
-          sx: { gridColumn: field.dataKey === "nome" ? "span 2" : null },
+          sx: { gridColumn: "span 2" },
           type: field.type,
           label: field.label,
           onChange: (e2) => handleChangeTextField(e2, field),
           value: opportunityRegistration[field.dataKey],
+          required: opportunityRegistration.codStatus === 11,
           InputLabelProps: {
             shrink: true
           },
@@ -92765,7 +92780,7 @@ const CommentRow = /* @__PURE__ */ __name(({ index: index2, comment: comment2, s
   }, "handleOpenModal");
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs(ListItem, { alignItems: "flex-start", style: { ...style2 }, children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx(ListItemAvatar, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(Avatar, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$i, {}) }) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(ListItemAvatar, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(Avatar, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$j, {}) }) }),
       /* @__PURE__ */ jsxRuntimeExports.jsx(
         ListItemText,
         {
@@ -92780,7 +92795,7 @@ const CommentRow = /* @__PURE__ */ __name(({ index: index2, comment: comment2, s
         {
           sx: { ...buttonStylesMobile, marginX: 2 },
           onClick: () => handleStartEdition(),
-          children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$7, {})
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$8, {})
         }
       ),
       /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: alert2 && /* @__PURE__ */ jsxRuntimeExports.jsx(motion.div, { ...alertAnimation, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Alert, { severity: alert2 == null ? void 0 : alert2.severity, children: alert2 == null ? void 0 : alert2.message }) }) })
@@ -92813,7 +92828,7 @@ const CommentRow = /* @__PURE__ */ __name(({ index: index2, comment: comment2, s
                 {
                   onClick: handleCloseModal,
                   sx: { position: "absolute", right: 0, top: 0 },
-                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, { sx: { color: "red" } })
+                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$q, { sx: { color: "red" } })
                 }
               ),
               /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { sx: { ...typographyStyles.bodyText, textAlign: "left" }, children: comment2.descricao })
@@ -92901,6 +92916,7 @@ const OpportunityInteraction = /* @__PURE__ */ __name(({ guide, guidesReference 
             return /* @__PURE__ */ jsxRuntimeExports.jsx(
               TextField,
               {
+                fullWidth: true,
                 label: field.label,
                 type: field.type,
                 onChange: (e2) => handleChangeInteractonDate(e2, field.dataKey),
@@ -92974,7 +92990,7 @@ const OpportunityInteraction = /* @__PURE__ */ __name(({ guide, guidesReference 
     }
   );
 }, "OpportunityInteraction");
-const styles$2 = {
+const styles$4 = {
   container: {
     width: "100%",
     overflowY: "scroll",
@@ -93044,8 +93060,8 @@ const OpportunityFiles = /* @__PURE__ */ __name(({
     }
     setSelectedFile(file);
   }, "handleFileClick");
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: styles$2.container, children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { component: "span", sx: styles$2.uploadButton, children: /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { children: [
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: styles$4.container, children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { component: "span", sx: styles$4.uploadButton, children: /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(
         "input",
         {
@@ -93058,29 +93074,29 @@ const OpportunityFiles = /* @__PURE__ */ __name(({
       ),
       /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", alignItems: "center", gap: 0.5, children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { fontSize: "small", children: "Enviar Arquivo" }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$8, { sx: { fontSize: "16px" } })
+        /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$9, { sx: { fontSize: "16px" } })
       ] })
     ] }) }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: styles$2.gallery, children: files && files.map((file, index2) => /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: styles$2.fileContainer, children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: styles$4.gallery, children: files && files.map((file, index2) => /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: styles$4.fileContainer, children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(
         IconButton,
         {
-          sx: styles$2.deleteButton,
+          sx: styles$4.deleteButton,
           onClick: () => handleDeleteFile(file),
-          children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$s, { sx: { color: "#2B3990" } })
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$t, { sx: { color: "#2B3990" } })
         }
       ),
       isPDF$1(file.nome_arquivo) ? /* @__PURE__ */ jsxRuntimeExports.jsx(
         Box,
         {
           onClick: () => setSelectedFile(file),
-          sx: styles$2.pdfPreview,
+          sx: styles$4.pdfPreview,
           children: /* @__PURE__ */ jsxRuntimeExports.jsx(
             Box,
             {
               component: "iframe",
               src: file.arquivo,
-              sx: styles$2.iframe
+              sx: styles$4.iframe
             }
           )
         }
@@ -93091,7 +93107,7 @@ const OpportunityFiles = /* @__PURE__ */ __name(({
           src: file.arquivo,
           alt: file.nome_arquivo,
           style: {
-            ...styles$2.imagePreview,
+            ...styles$4.imagePreview,
             objectFit: "cover"
           }
         }
@@ -93203,6 +93219,7 @@ const OpportunityScope = /* @__PURE__ */ __name(({
       const oppId2 = guidesReference.current[0].fields[0].data.codOs || 0;
       setOppId(oppId2);
       setFiles(guide.fields[1].data);
+      setObservation(guide.fields[0].data);
     }
   }, [guide]);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
@@ -93529,7 +93546,7 @@ const AddFollowersModal = /* @__PURE__ */ __name(({
       {
         sx: buttonStylesMobile,
         onClick: () => setAddingFollowers(!addingFollowrs),
-        children: /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "adicionar seguidores", children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$o, {}) })
+        children: /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "adicionar seguidores", children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, {}) })
       }
     ),
     /* @__PURE__ */ jsxRuntimeExports.jsx(Modal$3, { open: addingFollowrs, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
@@ -93565,7 +93582,7 @@ const AddFollowersModal = /* @__PURE__ */ __name(({
                 top: 1
               },
               onClick: () => setAddingFollowers(false),
-              children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, {})
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$q, {})
             }
           ),
           " ",
@@ -93715,7 +93732,7 @@ const OpportunityFollowers = /* @__PURE__ */ __name(({ guide, guidesReference })
         component: "div",
         disablePadding: true,
         children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(ListItemAvatar, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(Avatar, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$i, {}) }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(ListItemAvatar, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(Avatar, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$j, {}) }) }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(ListItemButton, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(ListItemText, { primary: `${data.nome}` }) })
         ]
       },
@@ -93763,7 +93780,7 @@ const OpportunityGuide = /* @__PURE__ */ __name(({
   formDataFilesRef,
   isLoading
 }) => {
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: { ...styles$4.guideContainer }, children: [
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: { ...styles$6.guideContainer }, children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { sx: typographyStyles.heading2, children: guide.name }),
     !isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
       guide.name === "Cadastro" && /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -93855,7 +93872,7 @@ const AdicionalChoice = /* @__PURE__ */ __name(({
                   top: 1
                 },
                 onClick: handleClose,
-                children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, {})
+                children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$q, {})
               }
             ),
             " ",
@@ -93893,7 +93910,7 @@ const AdicionalChoice = /* @__PURE__ */ __name(({
   );
 }, "AdicionalChoice");
 AdicionalChoice.displayName = "AdicionalChoice";
-const styles$1 = {
+const styles$3 = {
   modal: {
     position: "absolute",
     top: "50%",
@@ -93942,7 +93959,7 @@ const styles$1 = {
     zIndex: 20
   }
 };
-const styles = {
+const styles$2 = {
   guideSelectorContainer: {
     display: "flex",
     width: "100%",
@@ -93980,7 +93997,7 @@ const GuideSelector = /* @__PURE__ */ __name(({
     Stack,
     {
       direction: "row",
-      sx: styles.guideSelectorContainer,
+      sx: styles$2.guideSelectorContainer,
       children: guides.map((guide, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
         Chip,
         {
@@ -94061,7 +94078,7 @@ const ProjectChoiceModal = /* @__PURE__ */ __name(({
                   top: 1
                 },
                 onClick: () => setProjectChoiceModalOpen(false),
-                children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, {})
+                children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$q, {})
               }
             ),
             " ",
@@ -94121,6 +94138,7 @@ const useOpportunityModal = /* @__PURE__ */ __name((initialOpportunity, context)
   const guidesReference = reactExports.useRef();
   const saveButtonContainerRef = reactExports.useRef(null);
   const [isLoading, setIsLoading] = reactExports.useState(true);
+  const { user } = reactExports.useContext(userContext);
   const settings = {
     swipe: true,
     arrows: false,
@@ -94156,6 +94174,7 @@ const useOpportunityModal = /* @__PURE__ */ __name((initialOpportunity, context)
           { label: "Nº Adicional", dataKey: "numeroAdicional", type: "number", data: opportunity["numeroAdicional"] },
           { label: "Descrição da Proposta", dataKey: "nome", type: "text", data: opportunity["nome"] },
           { label: "Status", dataKey: "codStatus", autoComplete: true, type: "number", data: opportunity["codStatus"] },
+          { label: "Descrição da Venda", dataKey: "descricaoVenda", autoComplete: false, type: "text", data: opportunity["descricaoVenda"] },
           { label: "Cliente", dataKey: "fkCodCliente", autoComplete: true, type: "number", data: opportunity["fkCodCliente"] },
           { label: "Data de Solicitação", dataKey: "dataSolicitacao", type: "date", data: opportunity["dataSolicitacao"] },
           { label: "Data de Início", dataKey: "dataInicio", type: "date", data: opportunity["dataInicio"] },
@@ -94207,6 +94226,7 @@ const useOpportunityModal = /* @__PURE__ */ __name((initialOpportunity, context)
       dataLiberacao: data.dataLiberacao ? new Date(data.dataLiberacao).toISOString().split("T")[0] : null,
       dataInteracao: data.dataInteracao ? new Date(data.dataInteracao).toISOString().split("T")[0] : null
     };
+    console.log({ formattedOpp });
     setCurrentOpportunity(formattedOpp);
     setIsLoading(false);
   }, [currentOppIdSelected, setCurrentOpportunity]);
@@ -94312,7 +94332,7 @@ const useOpportunityModal = /* @__PURE__ */ __name((initialOpportunity, context)
     if (!updatedOpportunity)
       return;
     try {
-      const response = await updateOpportunity(updatedOpportunity);
+      const response = await updateOpportunity(updatedOpportunity, user);
       if ((response == null ? void 0 : response.status) === 200) {
         setCurrentOpportunity(updatedOpportunity);
         await handleFileUpload(opportunity.codOs || 0);
@@ -94423,7 +94443,7 @@ const OpportunityModal = /* @__PURE__ */ __name(() => {
       onClose: handleClose,
       "aria-labelledby": "modal-modal-title",
       "aria-describedby": "modal-modal-description",
-      children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: styles$1.modal, children: [
+      children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: styles$3.modal, children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(
           IconButton,
           {
@@ -94433,7 +94453,7 @@ const OpportunityModal = /* @__PURE__ */ __name(() => {
               top: 1
             },
             onClick: () => setSaveProgressModalOpen(true),
-            children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, {})
+            children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$q, {})
           }
         ),
         " ",
@@ -94450,7 +94470,7 @@ const OpportunityModal = /* @__PURE__ */ __name(() => {
           Stack,
           {
             sx: {
-              ...styles$1.sliderContainer,
+              ...styles$3.sliderContainer,
               paddingBottom: 10
             },
             direction: "column",
@@ -94467,7 +94487,7 @@ const OpportunityModal = /* @__PURE__ */ __name(() => {
             )) })
           }
         ),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { ref: saveButtonContainerRef, sx: styles$1.saveButtonContainer, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { sx: BaseButtonStyles, onClick: handleSaveOpportunity, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { children: "Salvar" }) }) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { ref: saveButtonContainerRef, sx: styles$3.saveButtonContainer, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { sx: BaseButtonStyles, onClick: handleSaveOpportunity, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { children: "Salvar" }) }) }),
         /* @__PURE__ */ jsxRuntimeExports.jsx(
           AdicionalChoice,
           {
@@ -94592,16 +94612,392 @@ const OpportunityCard = reactExports.memo(
 );
 OpportunityCard.displayName = "OpportunityCard";
 var CheckBox = {};
-var _interopRequireDefault$1 = interopRequireDefaultExports;
+var _interopRequireDefault$2 = interopRequireDefaultExports;
 Object.defineProperty(CheckBox, "__esModule", {
   value: true
 });
-var default_1$1 = CheckBox.default = void 0;
-var _createSvgIcon$1 = _interopRequireDefault$1(requireCreateSvgIcon());
-var _jsxRuntime$1 = jsxRuntimeExports;
-default_1$1 = CheckBox.default = (0, _createSvgIcon$1.default)(/* @__PURE__ */ (0, _jsxRuntime$1.jsx)("path", {
+var default_1$2 = CheckBox.default = void 0;
+var _createSvgIcon$2 = _interopRequireDefault$2(requireCreateSvgIcon());
+var _jsxRuntime$2 = jsxRuntimeExports;
+default_1$2 = CheckBox.default = (0, _createSvgIcon$2.default)(/* @__PURE__ */ (0, _jsxRuntime$2.jsx)("path", {
   d: "M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2m-9 14-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8z"
 }), "CheckBox");
+var DateRange = {};
+var _interopRequireDefault$1 = interopRequireDefaultExports;
+Object.defineProperty(DateRange, "__esModule", {
+  value: true
+});
+var default_1$1 = DateRange.default = void 0;
+var _createSvgIcon$1 = _interopRequireDefault$1(requireCreateSvgIcon());
+var _jsxRuntime$1 = jsxRuntimeExports;
+default_1$1 = DateRange.default = (0, _createSvgIcon$1.default)(/* @__PURE__ */ (0, _jsxRuntime$1.jsx)("path", {
+  d: "M9 11H7v2h2zm4 0h-2v2h2zm4 0h-2v2h2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2m0 16H5V9h14z"
+}), "DateRange");
+const styles$1 = {
+  appBar: {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "noWrap",
+    position: "static",
+    backgroundColor: "#2B3990",
+    alignItems: "start",
+    justifyContent: "start",
+    zIndex: 10,
+    minHeight: "180px",
+    gap: 0.4,
+    padding: 1,
+    boxShadow: "none"
+  },
+  stack: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 0
+  },
+  toolbar: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    height: "fit-content",
+    justifyContent: "start",
+    flexWrap: "wrap",
+    width: "fit-content",
+    gap: {
+      xs: 4,
+      sm: 3,
+      md: 2,
+      lg: 1
+    },
+    overflowX: "auto",
+    "&::-webkit-scrollbar": {
+      padding: "10px",
+      width: "4px",
+      height: "2px"
+    },
+    "&::-webkit-scrollbar-thumb": {
+      height: "2px",
+      backgroundColor: "white",
+      borderRadius: "4px"
+    },
+    overflowY: "hidden",
+    padding: 1
+  },
+  search: {
+    maxWidth: {
+      xs: 200,
+      sm: 200,
+      md: 250
+    },
+    padding: 0.1,
+    border: "0.5px solid #e3e3e3"
+  },
+  stackButtons: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 1,
+    alignItems: "center"
+  },
+  textField: {
+    borderRadius: 1,
+    height: 30,
+    backgroundColor: "white",
+    color: "black",
+    "& .MuiOutlinedInput-notchedOutline": {
+      border: "none",
+      borderColor: "white"
+    },
+    "&:hover .MuiOutlinedInput-notchedOutline": {
+      border: "2px solid",
+      borderColor: "#8dc6ff"
+    },
+    maxWidth: 150
+  },
+  checkbox: {
+    color: "white",
+    "& .Mui-checked": {
+      color: "white"
+    }
+  }
+};
+const styles = {
+  container: {
+    height: "100%",
+    flexGrow: 1,
+    flexShrink: 1,
+    backgroundColor: "white",
+    display: {
+      xs: "none",
+      md: "grid"
+    },
+    padding: 1,
+    borderRadius: "5px",
+    gridTemplateRows: "repeat(3, 1fr)",
+    // 3 linhas com tamanho igual
+    gridTemplateColumns: "repeat(5, 1fr)",
+    // 5 colunas com tamanho igual
+    gap: 1.2,
+    alignItems: "center"
+  },
+  input: {
+    height: 36,
+    borderRadius: 0,
+    lineHeight: "normal",
+    padding: 0
+  },
+  formControl: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 1.5,
+    borderRadius: 0.5,
+    zIndex: 20
+  }
+};
+const createFilters = /* @__PURE__ */ __name((columns2) => {
+  return columns2.reduce((acc, column2) => {
+    acc[column2.field] = {
+      label: column2.headerName,
+      dataKey: column2.field,
+      values: []
+      // Inicialmente vazio
+    };
+    return acc;
+  }, {});
+}, "createFilters");
+const OpportunityFilters = /* @__PURE__ */ __name(({
+  columns: columns2,
+  allRows,
+  setRows,
+  dateFiltersActive,
+  handleChangeDateFilters,
+  dateParams,
+  dateFilters,
+  setDateFiltersActive
+}) => {
+  const filteredColumns = columns2.filter((column2) => {
+    if (column2.field !== "dataSolicitacao" && column2.field !== "dataFechamento" && column2.field !== "dataInteracao" && column2.field !== "dataInicio") {
+      return true;
+    }
+    return false;
+  });
+  const [filters, setFilters] = React$1.useState(
+    createFilters(filteredColumns)
+  );
+  const [clientOptions, setClientOptions] = reactExports.useState(
+    []
+  );
+  const [responsableOptions, setResponsableOptions] = reactExports.useState();
+  const fetchSalerOps = reactExports.useCallback(async () => {
+    const salers = await fetchSalers(0);
+    const options = salers.map((saler) => ({
+      label: saler.NOME,
+      id: saler.CODPESSOA,
+      object: "saler",
+      key: saler.CODPESSOA
+    }));
+    setResponsableOptions(options);
+  }, []);
+  const fetchClientOps = reactExports.useCallback(async () => {
+    const clients = await fetchAllClients(0);
+    const options = clients.map((client2) => ({
+      label: client2.NOMEFANTASIA,
+      id: client2.CODCLIENTE,
+      object: "client",
+      key: client2.CODCLIENTE
+    }));
+    console.log({ clientOptions: options });
+    setClientOptions(options);
+  }, [setClientOptions]);
+  const [statusOptions, setStatusOptions] = reactExports.useState(
+    []
+  );
+  const fetchStatusOps = reactExports.useCallback(async () => {
+    const statusList = await fetchStatusList();
+    const options = statusList.map((status) => ({
+      label: status.NOME,
+      id: status.CODSTATUS,
+      object: "status",
+      key: status.CODSTATUS
+    })) || [];
+    setStatusOptions(options);
+  }, [setStatusOptions]);
+  const updateFilterValues = /* @__PURE__ */ __name((dataKey, values2) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [dataKey]: {
+        ...prevFilters[dataKey],
+        values: values2
+      }
+    }));
+    console.log({
+      ...filters,
+      [dataKey]: {
+        ...filters[dataKey],
+        values: values2
+      }
+    });
+    filterRows({
+      ...filters,
+      [dataKey]: {
+        ...filters[dataKey],
+        values: values2
+      }
+    });
+  }, "updateFilterValues");
+  const filterRows = /* @__PURE__ */ __name((currentFilters) => {
+    console.log({ currentFilters });
+    const filteredRows = [];
+    const filterKeys = Object.keys(currentFilters);
+    allRows.forEach((opportunity) => {
+      let shouldInclude = true;
+      for (let dataKey of filterKeys) {
+        const filterValues = currentFilters[dataKey].values;
+        if (filterValues.length > 0) {
+          const oppIncludesValue = filterValues.some((filterValue) => {
+            var _a2;
+            const searchTerm = String(filterValue).toUpperCase();
+            return (_a2 = opportunity[dataKey]) == null ? void 0 : _a2.toString().toUpperCase().includes(searchTerm);
+          });
+          if (!oppIncludesValue) {
+            shouldInclude = false;
+            break;
+          }
+        }
+      }
+      if (shouldInclude) {
+        filteredRows.push(opportunity);
+      }
+    });
+    console.log({ filteredRows });
+    setRows(filteredRows);
+  }, "filterRows");
+  const renderFilterField = /* @__PURE__ */ __name((filter3) => {
+    const { dataKey, label } = filter3;
+    if (dataKey === "nomeCliente" || dataKey === "nomeVendedor" || dataKey === "nomeStatus") {
+      const options = dataKey === "nomeCliente" ? clientOptions : dataKey === "nomeVendedor" ? responsableOptions : statusOptions;
+      return /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Autocomplete,
+        {
+          multiple: true,
+          options,
+          disableCloseOnSelect: true,
+          getOptionKey: (option) => option.id,
+          getOptionLabel: (option) => option.label,
+          renderTags: (optionArray, getTagProps) => optionArray.map((option, index2) => {
+            const { key, ...tagProps } = getTagProps({ index: index2 });
+            return /* @__PURE__ */ jsxRuntimeExports.jsx(
+              Chip,
+              {
+                variant: "outlined",
+                label: option.label,
+                ...tagProps,
+                sx: { display: "none" }
+              },
+              key
+            );
+          }),
+          renderOption: (props, option, { selected }) => /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { children: /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { ...props, children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Checkbox, { style: { marginRight: 8 }, checked: selected }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { sx: typographyStyles.smallText, children: option.label })
+          ] }) }),
+          value: options.filter(
+            (option) => filters[dataKey].values.includes(option.label)
+          ),
+          onChange: (_2, newValue) => {
+            updateFilterValues(
+              dataKey,
+              newValue.map((option) => option.label)
+            );
+          },
+          renderInput: (params) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+            TextField,
+            {
+              ...params,
+              InputLabelProps: { shrink: true, sx: { color: "black" } },
+              sx: {
+                "& .MuiOutlinedInput-root": {
+                  padding: 0.5
+                }
+              },
+              InputProps: {
+                ...params.InputProps,
+                sx: styles.input
+              },
+              label
+            }
+          )
+        },
+        dataKey
+      );
+    }
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      TextField,
+      {
+        label,
+        value: filters[dataKey].values.join(", "),
+        onChange: (e2) => updateFilterValues(dataKey, e2.target.value.split(", ")),
+        fullWidth: true,
+        InputLabelProps: {
+          shrink: true,
+          sx: {
+            color: "black"
+          }
+        },
+        InputProps: { sx: styles.input }
+      },
+      dataKey
+    );
+  }, "renderFilterField");
+  reactExports.useEffect(() => {
+    fetchStatusOps();
+    fetchClientOps();
+    fetchSalerOps();
+    filterRows(filters);
+  }, [allRows]);
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: { display: "flex", flexDirection: "column", gap: 1, backgroundColor: "white", padding: 0.5 }, children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: styles.container, children: statusOptions && responsableOptions && clientOptions && Object.values(filters).map((filter3) => /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { children: renderFilterField(filter3) }, filter3.dataKey)) }),
+    dateFiltersActive && /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+      motion.div,
+      {
+        initial: { opacity: 0, y: 0 },
+        animate: { opacity: 1, y: 0 },
+        exit: { opacity: 0, y: -20 },
+        transition: { duration: 0.3 },
+        children: /* @__PURE__ */ jsxRuntimeExports.jsxs(FormControl, { sx: styles.formControl, children: [
+          dateParams.map((dateFilter, index2) => {
+            var _a2, _b2;
+            return /* @__PURE__ */ jsxRuntimeExports.jsx(Stack, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              TextField,
+              {
+                type: "date",
+                size: "small",
+                onChange: (e2) => handleChangeDateFilters(e2, dateFilter),
+                InputProps: { sx: typographyStyles.smallText },
+                label: dateFilter.label,
+                InputLabelProps: {
+                  shrink: true
+                },
+                value: dateFilter.isFromParam ? (_a2 = dateFilters.find(
+                  (filter3) => filter3.dateFilterKey === dateFilter.dataKey
+                )) == null ? void 0 : _a2.from : (_b2 = dateFilters.find(
+                  (filter3) => filter3.dateFilterKey === dateFilter.dataKey
+                )) == null ? void 0 : _b2.to
+              },
+              index2
+            ) }, index2);
+          }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "Fechar filtros", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+            IconButton,
+            {
+              onClick: () => setDateFiltersActive(!dateFiltersActive),
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$q, { sx: { color: "red" } })
+            }
+          ) })
+        ] })
+      },
+      "filters"
+    ) })
+  ] });
+}, "OpportunityFilters");
 const OpportunityTableSearchBar = reactExports.memo(
   ({
     columns: columns2,
@@ -94619,7 +95015,6 @@ const OpportunityTableSearchBar = reactExports.memo(
       toggleCreatingOpportunity
     } = reactExports.useContext(OpportunityInfoContext);
     const [dateFiltersActive, setDateFiltersActive] = reactExports.useState(false);
-    const [searchValue, setSearchValue] = reactExports.useState("");
     const setRowsMemo = reactExports.useCallback(
       (newRows) => setRows(newRows),
       [setRows]
@@ -94715,9 +95110,8 @@ const OpportunityTableSearchBar = reactExports.memo(
       setDateFilters(defaultDateFilters);
       toggleRefreshOpportunityInfo();
     }, "handleCleanDateFilters");
-    const handleGeneralSerarch = /* @__PURE__ */ __name((e2) => {
+    const handleGeneralSearch = /* @__PURE__ */ __name((e2) => {
       const value = e2.target.value.toLowerCase();
-      setSearchValue(value);
       const newFilteredRows = allRowsMemo.filter(
         (row) => columnsMemo.some((column2) => {
           const cellValue = row[column2.field];
@@ -94725,300 +95119,122 @@ const OpportunityTableSearchBar = reactExports.memo(
         })
       );
       setRowsMemo(newFilteredRows);
-    }, "handleGeneralSerarch");
-    return /* @__PURE__ */ jsxRuntimeExports.jsxs(
-      AppBar,
-      {
-        sx: {
-          display: "flex",
-          flexDirection: "column",
-          position: "static",
-          backgroundColor: "#2B3990",
-          alignItems: "start",
-          justifyContent: "center",
-          zIndex: 10,
-          height: "fit-content",
-          gap: 0.4,
-          padding: 1,
-          boxShadow: "none"
-        },
-        children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", alignItems: "center", padding: 0, children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: () => navigate("/home"), children: /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowLeftIcon, { sx: { color: "white" } }) }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { color: "white", fontSize: "medium", fontFamily: "Roboto", children: "Controle de Propostas e Oportunidades" })
+    }, "handleGeneralSearch");
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs(AppBar, { sx: styles$1.appBar, children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { sx: styles$1.stack, children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: () => navigate("/home"), children: /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowLeftIcon, { sx: { color: "white" } }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { color: "white", fontSize: "medium", fontFamily: "Roboto", children: "Controle de Propostas e Oportunidades" })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(Toolbar, { sx: styles$1.toolbar, children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(Search2, { sx: styles$1.search, children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(SearchIconWrapper2, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$s, {}) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              StyledInputBase2,
+              {
+                onChange: handleGeneralSearch,
+                placeholder: "Buscar...",
+                inputProps: {
+                  "aria-label": "search",
+                  height: 20,
+                  width: 100
+                }
+              }
+            )
           ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs(
-            Toolbar,
-            {
-              sx: {
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                height: "fit-content",
-                justifyContent: "start",
-                flexWrap: "wrap",
-                // Permite que o conteúdo quebre para uma nova linha
-                width: "100%",
-                gap: {
-                  xs: 4,
-                  sm: 3,
-                  md: 2,
-                  lg: 1
-                },
-                overflowX: "auto",
-                // Scroll horizontal automático
-                "&::-webkit-scrollbar": {
-                  padding: "10px",
-                  width: "4px",
-                  // Largura da barra de rolagem
-                  height: "2px"
-                },
-                "&::-webkit-scrollbar-thumb": {
-                  height: "2px",
-                  backgroundColor: "white",
-                  // Cor da barra de rolagem
-                  borderRadius: "4px"
-                  // Bordas arredondadas
-                },
-                overflowY: "hidden",
-                // Remove o scroll vertical
-                padding: 1
-                // Remove possíveis espaçamentos extras
-              },
-              children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsxs(
-                  Search2,
-                  {
-                    sx: {
-                      maxWidth: {
-                        xs: 200,
-                        sm: 200,
-                        md: 250
-                      },
-                      padding: 0.1,
-                      border: "0.5px solid #e3e3e3"
-                    },
-                    children: [
-                      /* @__PURE__ */ jsxRuntimeExports.jsx(SearchIconWrapper2, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$r, {}) }),
-                      /* @__PURE__ */ jsxRuntimeExports.jsx(
-                        StyledInputBase2,
-                        {
-                          onChange: (e2) => handleGeneralSerarch(e2),
-                          autoFocus: true,
-                          placeholder: "Buscar...",
-                          value: searchValue,
-                          inputProps: { "aria-label": "search", height: 20, width: 100 }
-                        }
-                      )
-                    ]
-                  }
-                ),
-                /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", flexWrap: "wrap", gap: 1, alignItems: "center", children: [
-                  dateFiltersActive && /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-                    /* @__PURE__ */ jsxRuntimeExports.jsx(
-                      Button,
-                      {
-                        onClick: (e2) => handleSearchWithDateParams(),
-                        sx: BaseButtonStyles,
-                        children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                          Typography,
-                          {
-                            fontSize: "small",
-                            fontFamily: "Roboto",
-                            fontWeight: "semibold",
-                            children: "Pesquisar"
-                          }
-                        )
-                      }
-                    ),
-                    /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { onClick: handleCleanDateFilters, sx: BaseButtonStyles, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                      Typography,
-                      {
-                        fontSize: "small",
-                        fontFamily: "Roboto",
-                        fontWeight: "semibold",
-                        children: "Limpar Filtros"
-                      }
-                    ) })
-                  ] }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    IconButton,
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { sx: styles$1.stackButtons, children: [
+            dateFiltersActive && /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Button,
+                {
+                  onClick: handleSearchWithDateParams,
+                  sx: BaseButtonStyles,
+                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Typography,
                     {
-                      onClick: toggleCreatingOpportunity,
-                      sx: buttonStylesMobile,
-                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$o, { sx: { color: "#2B3990" } })
-                    }
-                  ),
-                  !dateFiltersActive && /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "Mostrar filtros", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    IconButton,
-                    {
-                      sx: buttonStylesMobile,
-                      onClick: () => setDateFiltersActive(!dateFiltersActive),
-                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$n, { sx: { color: "white" } })
-                    }
-                  ) }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    TableViewToggleButton,
-                    {
-                      isCardViewActive,
-                      setIsCardViewActive
-                    }
-                  ),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    FormControlLabel,
-                    {
-                      control: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                        Checkbox,
-                        {
-                          onChange: handleChangeShowFinishedOpps,
-                          checkedIcon: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$1, { sx: { color: "white" } }),
-                          sx: {
-                            color: "white",
-                            "& .Mui-checked": {
-                              color: "white"
-                            }
-                          }
-                        }
-                      ),
-                      label: "Listar Finalizados"
+                      fontSize: "small",
+                      fontFamily: "Roboto",
+                      fontWeight: "semibold",
+                      children: "Pesquisar"
                     }
                   )
-                ] }),
-                dateFiltersActive && /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  motion.div,
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Button,
+                {
+                  onClick: handleCleanDateFilters,
+                  sx: BaseButtonStyles,
+                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Typography,
+                    {
+                      fontSize: "small",
+                      fontFamily: "Roboto",
+                      fontWeight: "semibold",
+                      children: "Limpar Filtros"
+                    }
+                  )
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              IconButton,
+              {
+                onClick: toggleCreatingOpportunity,
+                sx: buttonStylesMobile,
+                children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, { sx: { color: "#2B3990" } })
+              }
+            ),
+            !dateFiltersActive && /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "Mostrar filtros", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              IconButton,
+              {
+                sx: buttonStylesMobile,
+                onClick: () => setDateFiltersActive(!dateFiltersActive),
+                children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$1, { sx: { color: "white" } })
+              }
+            ) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              TableViewToggleButton,
+              {
+                isCardViewActive,
+                setIsCardViewActive
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              FormControlLabel,
+              {
+                control: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  Checkbox,
                   {
-                    initial: { opacity: 0, y: 0 },
-                    animate: { opacity: 1, y: 0 },
-                    exit: { opacity: 0, y: -20 },
-                    transition: { duration: 0.3 },
-                    children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
-                      FormControl,
-                      {
-                        sx: {
-                          display: "flex",
-                          flexDirection: "row",
-                          alignItems: "center",
-                          gap: 1.5,
-                          borderRadius: 0.5,
-                          zIndex: 20
-                        },
-                        children: [
-                          dateParams.map((dateFilter, index2) => {
-                            var _a2, _b2;
-                            return /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { children: [
-                              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                                Typography,
-                                {
-                                  fontSize: "small",
-                                  fontFamily: "Roboto",
-                                  fontWeight: "semibold",
-                                  children: dateFilter.label
-                                }
-                              ),
-                              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                                TextField,
-                                {
-                                  type: "date",
-                                  size: "small",
-                                  onChange: (e2) => handleChangeDateFilters(e2, dateFilter),
-                                  InputProps: {
-                                    sx: {
-                                      borderRadius: 1,
-                                      height: 30,
-                                      backgroundColor: "white",
-                                      color: "black",
-                                      "& .MuiOutlinedInput-notchedOutline": {
-                                        border: "none",
-                                        borderColor: "white"
-                                      },
-                                      "&:hover .MuiOutlinedInput-notchedOutline": {
-                                        border: "2px solid",
-                                        borderColor: "#8dc6ff"
-                                      },
-                                      maxWidth: 150
-                                    }
-                                  },
-                                  value: dateFilter.isFromParam ? (_a2 = dateFilters.find(
-                                    (filter3) => filter3.dateFilterKey === dateFilter.dataKey
-                                  )) == null ? void 0 : _a2.from : (_b2 = dateFilters.find(
-                                    (filter3) => filter3.dateFilterKey === dateFilter.dataKey
-                                  )) == null ? void 0 : _b2.to
-                                },
-                                index2
-                              )
-                            ] }, index2);
-                          }),
-                          /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "Fechar filtros", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                            IconButton,
-                            {
-                              onClick: () => setDateFiltersActive(!dateFiltersActive),
-                              children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$p, { sx: { color: "white" } })
-                            }
-                          ) })
-                        ]
-                      }
-                    )
-                  },
-                  "filters"
-                ) })
-              ]
-            }
-          )
-        ]
-      }
-    );
-  },
-  (prevProps, nextProps) => {
-    const arePropsEqual = /* @__PURE__ */ __name((prevProps2, nextProps2) => {
-      const prevPropsKeys = Object.keys(
-        prevProps2
-      );
-      const nextPropsKeys = Object.keys(
-        nextProps2
-      );
-      let hasChanges = false;
-      if (prevPropsKeys.length !== nextPropsKeys.length) {
-        hasChanges = true;
-      }
-      prevPropsKeys.forEach((key) => {
-        if (prevProps2[key] !== nextProps2[key]) {
-          hasChanges = true;
+                    onChange: handleChangeShowFinishedOpps,
+                    checkedIcon: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$2, { sx: { color: "white" } }),
+                    sx: styles$1.checkbox
+                  }
+                ),
+                label: "Listar Finalizados"
+              }
+            )
+          ] })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        OpportunityFilters,
+        {
+          columns: columns2,
+          allRows,
+          setRows,
+          dateFiltersActive,
+          dateFilters,
+          handleChangeDateFilters,
+          dateParams,
+          setDateFiltersActive
         }
-      });
-      return !hasChanges;
-    }, "arePropsEqual");
-    return arePropsEqual(prevProps, nextProps);
+      )
+    ] });
   }
 );
 OpportunityTableSearchBar.displayName = "OpportunityTableSearchBar";
-const theme$1 = createTheme(
-  {
-    palette: {
-      primary: { main: "#1976d2" }
-    }
-  },
-  ptBR$1,
-  ptBR,
-  ptBR$2
-);
-const gridCardColumns = [
-  {
-    field: "numeroOs",
-    headerName: "Nº OS"
-  },
-  { field: "numeroProjeto", headerName: "Nº Projeto" },
-  { field: "numeroAdicional", headerName: "Nº Adicional" },
-  // os.ID_ADICIONAL
-  { field: "nomeDescricaoProposta", headerName: "Descrição" },
-  { field: "nomeCliente", headerName: "Cliente" },
-  {
-    field: "valorTotal",
-    headerName: "Valor Total"
-  },
-  { field: "nomeStatus", headerName: "Status" }
-  // s.NOME
-];
-const OpportunityInfoTable = /* @__PURE__ */ __name(() => {
+const UseOpportunityInfoTable = /* @__PURE__ */ __name(() => {
   const windowWith = window.innerWidth;
   const { user } = reactExports.useContext(userContext);
   const [rows, setRows] = reactExports.useState([]);
@@ -95048,9 +95264,9 @@ const OpportunityInfoTable = /* @__PURE__ */ __name(() => {
       {
         field: "nomeDescricaoProposta",
         headerName: "Descrição",
-        editable: false
+        editable: false,
+        cellClassName: "description-cell"
       },
-      // os.NOME
       { field: "nomeCliente", headerName: "Cliente" },
       // c.NOME
       { field: "nomeVendedor", headerName: "Vendedor" },
@@ -95061,17 +95277,14 @@ const OpportunityInfoTable = /* @__PURE__ */ __name(() => {
         field: "valorFaturamentoDolphin",
         headerName: "Faturamento Dolphin"
       },
-      // CONCAT('R$ ', FORMAT(os.VALORFATDOLPHIN, 2, 'de_DE'))
       {
         field: "valorFaturamentoDireto",
         headerName: "Faturamento Direto"
       },
-      // CONCAT('R$ ', FORMAT(os.VALORFATDIRETO, 2, 'de_DE'))
       {
         field: "valorTotal",
         headerName: "Valor Total"
       },
-      // CONCAT('R$ ', FORMAT(os.VALORTOTAL, 2, 'de_DE'))
       {
         field: "dataSolicitacao",
         headerName: "Solicitação",
@@ -95081,7 +95294,6 @@ const OpportunityInfoTable = /* @__PURE__ */ __name(() => {
           return "-";
         }
       },
-      // os.DATASOLICITACAO
       {
         field: "dataFechamento",
         headerName: "Fechamento",
@@ -95091,7 +95303,6 @@ const OpportunityInfoTable = /* @__PURE__ */ __name(() => {
           return "-";
         }
       },
-      // os.DATAENTREGA
       {
         field: "dataInteracao",
         headerName: "Data de Interação",
@@ -95101,7 +95312,6 @@ const OpportunityInfoTable = /* @__PURE__ */ __name(() => {
           return "-";
         }
       },
-      // os.DATAINTERACAO
       {
         field: "dataInicio",
         headerName: "Data de Início",
@@ -95111,12 +95321,10 @@ const OpportunityInfoTable = /* @__PURE__ */ __name(() => {
           return "-";
         }
       },
-      // os.DATAINICIO
       {
         field: "numeroOs",
         headerName: "Nº OS"
       }
-      // os.CODOS
     ],
     []
   );
@@ -95242,12 +95450,20 @@ const OpportunityInfoTable = /* @__PURE__ */ __name(() => {
               },
               children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsxs(Typography, { fontSize: "small", color: "white", children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-semibold tracking-wide", children: "Nº de Registros" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "font-semibold tracking-wide", children: [
+                    " ",
+                    "Nº de Registros",
+                    " "
+                  ] }),
                   " ",
                   rows.length
                 ] }),
                 /* @__PURE__ */ jsxRuntimeExports.jsxs(Typography, { fontSize: "small", color: "white", children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-semibold tracking-wide", children: "Faturamento Dolphin:" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "font-semibold tracking-wide", children: [
+                    " ",
+                    "Faturamento Dolphin:",
+                    " "
+                  ] }),
                   " ",
                   new Intl.NumberFormat("pt-BR", {
                     style: "currency",
@@ -95260,7 +95476,11 @@ const OpportunityInfoTable = /* @__PURE__ */ __name(() => {
                   )
                 ] }),
                 /* @__PURE__ */ jsxRuntimeExports.jsxs(Typography, { fontSize: "small", color: "white", children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-semibold tracking-wide", children: "Valor Total:" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "font-semibold tracking-wide", children: [
+                    " ",
+                    "Valor Total:",
+                    " "
+                  ] }),
                   " ",
                   new Intl.NumberFormat("pt-BR", {
                     style: "currency",
@@ -95305,14 +95525,79 @@ const OpportunityInfoTable = /* @__PURE__ */ __name(() => {
     calculateIsMobile();
     fetchOpportunities();
   }, [fetchOpportunities, refreshOpportunityInfo]);
+  return {
+    // State Variables
+    rows,
+    allRows,
+    isCardViewActive,
+    gridOuterContainerHeight,
+    gridColumnsCount,
+    cardWidth,
+    gridRowCount,
+    isLoading,
+    // Refs
+    GridOuterContainerRef,
+    // Functions
+    setRows,
+    setIsCardViewActive,
+    shouldShowGrid,
+    selectOpportunity,
+    // Components
+    columns: columns2,
+    GridFooter: GridFooter3
+  };
+}, "UseOpportunityInfoTable");
+const theme$1 = createTheme(
+  {
+    palette: {
+      primary: { main: "#1976d2" }
+    }
+  },
+  ptBR$1,
+  ptBR,
+  ptBR$2
+);
+const gridCardColumns = [
+  {
+    field: "numeroOs",
+    headerName: "Nº OS"
+  },
+  { field: "numeroProjeto", headerName: "Nº Projeto" },
+  { field: "numeroAdicional", headerName: "Nº Adicional" },
+  // os.ID_ADICIONAL
+  { field: "nomeDescricaoProposta", headerName: "Descrição" },
+  { field: "nomeCliente", headerName: "Cliente" },
+  {
+    field: "valorTotal",
+    headerName: "Valor Total"
+  },
+  { field: "nomeStatus", headerName: "Status" }
+  // s.NOME
+];
+const OpportunityInfoTable = /* @__PURE__ */ __name(() => {
+  const {
+    rows,
+    allRows,
+    isCardViewActive,
+    gridOuterContainerHeight,
+    gridColumnsCount,
+    cardWidth,
+    gridRowCount,
+    isLoading,
+    GridOuterContainerRef,
+    setRows,
+    setIsCardViewActive,
+    shouldShowGrid,
+    selectOpportunity,
+    columns: columns2,
+    GridFooter: GridFooter3
+  } = UseOpportunityInfoTable();
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     Box,
     {
       sx: {
         width: "100%",
         height: "100%",
-        paddingX: 0,
-        paddingY: 0,
         backgroundColor: "#fff",
         display: "flex",
         boxSizing: "border-box",
@@ -95350,7 +95635,8 @@ const OpportunityInfoTable = /* @__PURE__ */ __name(() => {
                   rows,
                   columns: columns2,
                   getRowId: (row) => row.numeroOs,
-                  rowHeight: 40,
+                  rowHeight: 36,
+                  density: "compact",
                   columnHeaderHeight: 40,
                   autosizeOnMount: true,
                   autosizeOptions: {
@@ -95431,7 +95717,7 @@ function ChecklistFiltersMobileMenu({ filterByStatus }) {
         "aria-expanded": open2 ? "true" : void 0,
         onClick: handleClick,
         sx: { ...buttonStylesMobile },
-        children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$n, { sx: { color: "white" } })
+        children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$o, { sx: { color: "white" } })
       }
     ),
     /* @__PURE__ */ jsxRuntimeExports.jsxs(
@@ -95513,7 +95799,7 @@ const ChecklistAppBar = /* @__PURE__ */ __name(({
               }
             ),
             /* @__PURE__ */ jsxRuntimeExports.jsxs(Search, { children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(SearchIconWrapper, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$r, {}) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(SearchIconWrapper, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$s, {}) }),
               /* @__PURE__ */ jsxRuntimeExports.jsx(
                 StyledInputBase,
                 {

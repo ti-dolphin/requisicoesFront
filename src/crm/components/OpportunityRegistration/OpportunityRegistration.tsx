@@ -17,6 +17,7 @@ interface OpportunityRegistrationFields {
     numeroAdicional: number;
     nome: string;
     codStatus: number;
+    descricaoVenda: string;
     fkCodCliente: number;
     dataSolicitacao: Date;
     dataInicio: Date;
@@ -42,10 +43,11 @@ const OpportunityRegistration = ({ guide, guidesReference }: props) => {
             numeroAdicional: guide.fields[1].data,
             nome: guide.fields[2].data,
             codStatus: guide.fields[3].data,
-            fkCodCliente: guide.fields[4].data,
-            dataSolicitacao: guide.fields[5].data,
-            dataInicio: guide.fields[6].data,
-            dataEntrega: guide.fields[7].data,
+            descricaoVenda : guide.fields[4].data,
+            fkCodCliente: guide.fields[5].data,
+            dataSolicitacao: guide.fields[6].data,
+            dataInicio: guide.fields[7].data,
+            dataEntrega: guide.fields[8].data,
         });
 
     const renderOptions = (column: {
@@ -114,12 +116,14 @@ const OpportunityRegistration = ({ guide, guidesReference }: props) => {
     }
 
     const setDefaultClientWhenNotDefined = async () =>  {
+        console.log("setDefaultClientWhenNotDefined");
     const clientNotDefined =  !(opportunityRegistration.fkCodCliente as any !== '-')
-   
+        console.log("codcliente: ", opportunityRegistration.fkCodCliente);
       if (clientNotDefined && opportunityRegistration.idProjeto) {
         const clientFromFirstProject = await fetchClientFromFirstProjectOption(
           opportunityRegistration.idProjeto
         );
+        console.log({clientFromFirstProject})
         setOpportunityRegistration({
           ...opportunityRegistration,
           fkCodCliente: clientFromFirstProject.id,
@@ -212,10 +216,11 @@ const OpportunityRegistration = ({ guide, guidesReference }: props) => {
           numeroAdicional: guide.fields[1].data,
           nome: guide.fields[2].data,
           codStatus: guide.fields[3].data,
-          fkCodCliente: guide.fields[4].data,
-          dataSolicitacao: guide.fields[5].data,
-          dataInicio: guide.fields[6].data,
-          dataEntrega: guide.fields[7].data,
+          descricaoVenda : guide.fields[4].data,
+          fkCodCliente: guide.fields[5].data,
+          dataSolicitacao: guide.fields[6].data,
+          dataInicio: guide.fields[7].data,
+          dataEntrega: guide.fields[8].data,
         });
     }
     }, [guide]); 
@@ -235,20 +240,26 @@ const OpportunityRegistration = ({ guide, guidesReference }: props) => {
                         guide.fields.map((field, index) => {
                             if (editableField(field) && !field.autoComplete && field.dataKey !== 'codOs') {
                                 return (
-                                    <TextField
-                                        key={index}
-                                        sx={{gridColumn: field.dataKey === 'nome' || field.type === 'date' ?  'span 2': null}}
-                                        type={field.type}
-                                        label={field.label}
-                                        onChange={(e) => handleChangeTextField(e, field)}
-                                        value={opportunityRegistration[field.dataKey as keyof OpportunityRegistrationFields]}
-                                        InputLabelProps={{
-                                            shrink: true
-                                        }}
-                                        onFocus={() => setIseEditing(true)}
-                                    >
-                                    </TextField>
-                                )
+                                  <TextField
+                                    key={index}
+                                    sx={{ gridColumn: "span 2" }}
+                                    type={field.type}
+                                    label={field.label}
+                                    onChange={(e) =>
+                                      handleChangeTextField(e, field)
+                                    }
+                                    value={
+                                      opportunityRegistration[
+                                        field.dataKey as keyof OpportunityRegistrationFields
+                                      ]
+                                    }
+                                    required={opportunityRegistration.codStatus === 11}
+                                    InputLabelProps={{
+                                      shrink: true,
+                                    }}
+                                    onFocus={() => setIseEditing(true)}
+                                  ></TextField>
+                                );
                             }
                             if (editableField(field) && field.autoComplete) {
                                 return (

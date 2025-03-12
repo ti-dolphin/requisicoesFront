@@ -4,8 +4,7 @@ import { AlertInterface, Item } from "../../../types";
 import { deleteRequisitionItems, fetchItems, updateRequisitionItems } from "../../../utils";
 import { ItemsContext } from "../../../context/ItemsContext";
 
-const useRequisitionItems = (requisitionId: number, addedItems?: Item[],
-    isInsertingQuantity?: boolean) => {
+const useRequisitionItems = (requisitionId: number, isInsertingQuantity?: boolean, addedItems? : Item[], ) => {
     const [items, setItems] = useState<Item[]>([]);
     const [visibleItems, setVisibleItems] = useState<Item[]>([]);
     const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -19,6 +18,7 @@ const useRequisitionItems = (requisitionId: number, addedItems?: Item[],
     const shouldExecuteSaveItems = useRef(false);
     const shouldExecuteResetItems = useRef(false);
     const { adding, setProductIdList } = useContext(ItemsContext);
+
 
     const displayAlert = async (severity: string, message: string) => {
         setTimeout(() => {
@@ -138,12 +138,12 @@ const useRequisitionItems = (requisitionId: number, addedItems?: Item[],
 
     const fetchReqItems = useCallback(async () => {
         const items = await fetchItems(requisitionId);
-        console.log({ 
+        console.log({
             isInsertingQuantity,
             addedItems
         })
         if (items) {
-            if(isInsertingQuantity && addedItems?.length){ 
+            if (isInsertingQuantity && addedItems?.length) {
                 const itemsToBeSet = items.filter((item) => addedItems.find((addedItem) => addedItem.ID === item.ID))
                 setItems(itemsToBeSet);
                 setVisibleItems(itemsToBeSet);
@@ -153,7 +153,7 @@ const useRequisitionItems = (requisitionId: number, addedItems?: Item[],
             setItems(items);
             setVisibleItems(items);
         }
-    }, [refresh, isInsertingQuantity, addedItems, adding]);
+    }, [ isInsertingQuantity, addedItems]);
 
     const saveItems = useCallback(async () => {
         try {
@@ -196,9 +196,8 @@ const useRequisitionItems = (requisitionId: number, addedItems?: Item[],
     }, [isEditing]);
 
     useEffect(() => {
-        console.log('useEffect itemsTable')
         fetchReqItems();
-    }, [refresh, isInsertingQuantity, adding]);
+    }, [refresh, adding]);
 
     useEffect(() => {
         if (shouldExecuteResetItems.current) {

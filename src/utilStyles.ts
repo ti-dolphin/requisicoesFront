@@ -18,6 +18,7 @@ export const OpportunityGridStyles = {
                  fontFamily: "Arial, sans-serif",
                  fontSize: "12px",
                  fontWeight: "500",
+                 padding: 0,
                  borderRadius: 0,
                  color: "#233142",
                  "& .MuiDataGrid-columnHeaders": {
@@ -35,6 +36,12 @@ export const OpportunityGridStyles = {
                    fontWeight: "bold",
                    fontSize: 12,
                  },
+                 "& .description-cell": { 
+                    color: 'blue'
+                 },
+                 "& .status-cell": { 
+                    
+                 },
                  "& .MuiDataGrid-row": {
                    cursor: "pointer",
                    ":nth-child(even)": {
@@ -44,6 +51,9 @@ export const OpportunityGridStyles = {
                  "& .MuiDataGrid-cell": {
                    paddingLeft: 1.2,
                  },
+                 "& .MuiDataGrid-menuIconButton":{ 
+                  display: 'none'
+                 }
                
 }
 export const buttonStylesMobile = {

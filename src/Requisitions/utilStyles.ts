@@ -33,7 +33,7 @@ const typographyStyles: { [key: string]: SxProps<Theme> } = {
     lineHeight: 1.6,
   },
   smallText: {
-    fontSize: "0.875rem",
+    fontSize: "0.8rem",
     fontWeight: 400,
     color: "text.secondary",
     lineHeight: 1.4,

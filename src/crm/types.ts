@@ -200,6 +200,7 @@ export interface Pessoa {
   NOME: string;
 }
 
+
  export interface Follower {   
   id_seguidor_projeto : number;
   id_projeto : number;

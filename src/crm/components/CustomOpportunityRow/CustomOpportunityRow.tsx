@@ -8,7 +8,6 @@ const CustomOpportunityRow = React.memo((props: GridRowProps) => {
     return (
         <>
             <GridRow {...props} />
-
         </>
 
     );

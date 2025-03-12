@@ -169,7 +169,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     handleActivateItems,
     handleCopyContent,
     selectedRows,
-  } = useRequisitionItems(requisitionId, addedItems, isInsertingQuantity);
+  } = useRequisitionItems(requisitionId, isInsertingQuantity, addedItems);
 
   const ReqItemsFooter = (props: GridFooterContainerProps) => {
     return (

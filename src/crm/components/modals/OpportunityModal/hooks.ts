@@ -1,5 +1,6 @@
 import React, {
     useCallback,
+    useContext,
     useEffect,
     useRef,
     useState,
@@ -21,6 +22,7 @@ import {
     OpportunityOptionField,
 } from "../../../types";
 import Slider from "react-slick";
+import { userContext } from "../../../../Requisitions/context/userContext";
 
 
 const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
@@ -45,7 +47,7 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
     const guidesReference = useRef<Guide[]>();
     const saveButtonContainerRef = useRef<HTMLDivElement>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-
+    const {user} = useContext(userContext);
     const settings = {
         swipe: true,
         arrows: false,
@@ -83,6 +85,7 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
                     { label: "Nº Adicional", dataKey: "numeroAdicional", type: "number", data: opportunity["numeroAdicional"] },
                     { label: "Descrição da Proposta", dataKey: "nome", type: "text", data: opportunity["nome"] },
                     { label: "Status", dataKey: "codStatus", autoComplete: true, type: "number", data: opportunity["codStatus"] },
+                    { label: 'Descrição da Venda', dataKey: 'descricaoVenda', autoComplete: false, type: 'text', data: opportunity['descricaoVenda']},
                     { label: "Cliente", dataKey: "fkCodCliente", autoComplete: true, type: "number", data: opportunity["fkCodCliente"] },
                     { label: "Data de Solicitação", dataKey: "dataSolicitacao", type: "date", data: opportunity["dataSolicitacao"] },
                     { label: "Data de Início", dataKey: "dataInicio", type: "date", data: opportunity["dataInicio"] },
@@ -250,10 +253,9 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
     const updateExistingOpportunity = async () => {
         setIsLoading(true);
         const updatedOpportunity = getUpdatedOpportunity();
-        console.log({updatedOpportunity})
         if (!updatedOpportunity) return;
         try {
-            const response = await updateOpportunity(updatedOpportunity);
+            const response = await updateOpportunity(updatedOpportunity, user);
             if (response?.status === 200) {
                 setCurrentOpportunity(updatedOpportunity);
                 await handleFileUpload(opportunity.codOs || 0);
