@@ -9,7 +9,7 @@ import {
 import { Autocomplete, Box, Checkbox, Chip, FormControl, IconButton, Stack, TextField, Tooltip, Typography } from "@mui/material";
 import styles from "./OpportunityFilters.styles";
 import { GridColDef } from "@mui/x-data-grid";
-import { fetchAllClients, fetchSalers, fetchStatusList } from "../../../utils";
+import { fetchAllClients, fetchManagers, fetchSalers, fetchStatusList } from "../../../utils";
 import typographyStyles from "../../../../Requisitions/utilStyles";
 import { AnimatePresence, motion } from "framer-motion";
 import CloseIcon from "@mui/icons-material/Close";
@@ -63,7 +63,10 @@ const OpportunityFilters = ({
       column.field !== "dataSolicitacao" &&
       column.field !== "dataFechamento" &&
       column.field !== "dataInteracao" &&
-      column.field !== "dataInicio"
+      column.field !== "dataInicio" &&
+      column.field !== "valorFaturamentoDolphin" &&
+      column.field !== "valorFaturamentoDireto" &&
+      column.field !== "valorTotal"
     ) {
       return true;
     }
@@ -79,6 +82,22 @@ const OpportunityFilters = ({
   );
   const [responsableOptions, setResponsableOptions] = useState<any>();
 
+  const [managerOptions, setManagerOptions] = useState<any>();
+
+
+  const fetchManagerOptions = async ( ) => { 
+      const managers = await fetchManagers();
+      if (managers) {
+        const options = managers.map((manager: any) => ({
+          label: manager.NOME,
+          id: manager.CODPESSOA,
+          object: "manager",
+          key: manager.CODPESSOA,
+        }));
+        setManagerOptions(options);
+      }
+  }
+
   const fetchSalerOps = useCallback(async () => {
     const salers = await fetchSalers(0);
     const options = salers.map((saler: any) => ({
@@ -89,6 +108,7 @@ const OpportunityFilters = ({
     }));
     setResponsableOptions(options);
   }, []);
+
   const fetchClientOps = useCallback(async () => {
     const clients = await fetchAllClients(0);
     const options = clients.map((client: Client) => ({
@@ -101,6 +121,7 @@ const OpportunityFilters = ({
 
     setClientOptions(options);
   }, [setClientOptions]);
+
   const [statusOptions, setStatusOptions] = useState<OpportunityOptionField[]>(
     []
   );
@@ -181,14 +202,17 @@ const OpportunityFilters = ({
     if (
       dataKey === "nomeCliente" ||
       dataKey === "nomeVendedor" ||
-      dataKey === "nomeStatus"
+      dataKey === "nomeStatus" ||
+      dataKey === 'nomeGerente'
     ) {
       const options =
         dataKey === "nomeCliente"
           ? clientOptions
           : dataKey === "nomeVendedor"
           ? responsableOptions
-          : statusOptions;
+          : dataKey === 'nomeStatus' ? statusOptions 
+          : managerOptions
+          console.log({managerOptions});
 
       return (
         <Autocomplete
@@ -274,11 +298,12 @@ const OpportunityFilters = ({
     fetchStatusOps();
     fetchClientOps();
     fetchSalerOps();
+    fetchManagerOptions();
     filterRows(filters);
   }, [allRows]);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 1, backgroundColor: 'white', padding: 0.5 }}>
+    <Box sx={styles.mainContainer}>
       <Box sx={styles.container}>
         {statusOptions &&
           responsableOptions &&

@@ -22,6 +22,15 @@ export const fetchPersonList = async () => {
     console.log(e);
   }
 }
+
+export const fetchManagers = async( ) => { 
+  try {
+    const response = await api.get<Person[]>("/opportunity/manager");
+    return response.data;
+  } catch (e) {
+    console.log(e);
+  }
+};
 export const updateOpportunity = async (opportunity : Opportunity, user?: User ) =>  { 
   try {
     const response = await api.put("opportunity/update",  opportunity, { 

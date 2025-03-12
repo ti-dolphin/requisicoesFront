@@ -1,15 +1,28 @@
 import { SxProps, Theme } from "@mui/material";
 
 const styles = {
+
+    mainContainer: {
+        display: { 
+            xs: 'none',
+            md: 'flex',
+        },
+        backgroundColor: 'white',
+        flexDirection: "column",
+        borderRadius: '5px',
+        height: 'fit-content',
+        gap: 1, 
+        padding: 0.5,
+        
+    },
     container: {
-        height: '100%',
         flexGrow: 1,
         flexShrink: 1,
-        backgroundColor: 'white',
-        display: { 
+        display: {
             xs: 'none',
             md: 'grid'
         },
+        height: 'fit-content',
         padding: 1,
         borderRadius: '5px',
         gridTemplateRows: "repeat(3, 1fr)", // 3 linhas com tamanho igual
@@ -17,7 +30,7 @@ const styles = {
         gap: 1.2,
         alignItems: 'center'
     },
-     input : { 
+    input: { 
         height: 36,
         borderRadius: 0,
         lineHeight: "normal",

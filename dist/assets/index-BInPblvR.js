@@ -63423,7 +63423,7 @@ axios.getAdapter = adapters.getAdapter;
 axios.HttpStatusCode = HttpStatusCode;
 axios.default = axios;
 const api = axios.create({
-  baseURL: "http://localhost:3001",
+  baseURL: "https://apicontrolehomologacao.dse.com.br",
   headers: {
     "Content-Type": "application/json",
     Authorization: window.localStorage.getItem("token")
@@ -83319,6 +83319,14 @@ const fetchPersonList = /* @__PURE__ */ __name(async () => {
     console.log(e2);
   }
 }, "fetchPersonList");
+const fetchManagers = /* @__PURE__ */ __name(async () => {
+  try {
+    const response = await api.get("/opportunity/manager");
+    return response.data;
+  } catch (e2) {
+    console.log(e2);
+  }
+}, "fetchManagers");
 const updateOpportunity = /* @__PURE__ */ __name(async (opportunity, user) => {
   try {
     const response = await api.put("opportunity/update", opportunity, {
@@ -94719,15 +94727,26 @@ const styles$1 = {
   }
 };
 const styles = {
+  mainContainer: {
+    display: {
+      xs: "none",
+      md: "flex"
+    },
+    backgroundColor: "white",
+    flexDirection: "column",
+    borderRadius: "5px",
+    height: "fit-content",
+    gap: 1,
+    padding: 0.5
+  },
   container: {
-    height: "100%",
     flexGrow: 1,
     flexShrink: 1,
-    backgroundColor: "white",
     display: {
       xs: "none",
       md: "grid"
     },
+    height: "fit-content",
     padding: 1,
     borderRadius: "5px",
     gridTemplateRows: "repeat(3, 1fr)",
@@ -94774,7 +94793,7 @@ const OpportunityFilters = /* @__PURE__ */ __name(({
   setDateFiltersActive
 }) => {
   const filteredColumns = columns2.filter((column2) => {
-    if (column2.field !== "dataSolicitacao" && column2.field !== "dataFechamento" && column2.field !== "dataInteracao" && column2.field !== "dataInicio") {
+    if (column2.field !== "dataSolicitacao" && column2.field !== "dataFechamento" && column2.field !== "dataInteracao" && column2.field !== "dataInicio" && column2.field !== "valorFaturamentoDolphin" && column2.field !== "valorFaturamentoDireto" && column2.field !== "valorTotal") {
       return true;
     }
     return false;
@@ -94786,6 +94805,19 @@ const OpportunityFilters = /* @__PURE__ */ __name(({
     []
   );
   const [responsableOptions, setResponsableOptions] = reactExports.useState();
+  const [managerOptions, setManagerOptions] = reactExports.useState();
+  const fetchManagerOptions = /* @__PURE__ */ __name(async () => {
+    const managers = await fetchManagers();
+    if (managers) {
+      const options = managers.map((manager) => ({
+        label: manager.NOME,
+        id: manager.CODPESSOA,
+        object: "manager",
+        key: manager.CODPESSOA
+      }));
+      setManagerOptions(options);
+    }
+  }, "fetchManagerOptions");
   const fetchSalerOps = reactExports.useCallback(async () => {
     const salers = await fetchSalers(0);
     const options = salers.map((saler) => ({
@@ -94872,8 +94904,9 @@ const OpportunityFilters = /* @__PURE__ */ __name(({
   }, "filterRows");
   const renderFilterField = /* @__PURE__ */ __name((filter3) => {
     const { dataKey, label } = filter3;
-    if (dataKey === "nomeCliente" || dataKey === "nomeVendedor" || dataKey === "nomeStatus") {
-      const options = dataKey === "nomeCliente" ? clientOptions : dataKey === "nomeVendedor" ? responsableOptions : statusOptions;
+    if (dataKey === "nomeCliente" || dataKey === "nomeVendedor" || dataKey === "nomeStatus" || dataKey === "nomeGerente") {
+      const options = dataKey === "nomeCliente" ? clientOptions : dataKey === "nomeVendedor" ? responsableOptions : dataKey === "nomeStatus" ? statusOptions : managerOptions;
+      console.log({ managerOptions });
       return /* @__PURE__ */ jsxRuntimeExports.jsx(
         Autocomplete,
         {
@@ -94951,9 +94984,10 @@ const OpportunityFilters = /* @__PURE__ */ __name(({
     fetchStatusOps();
     fetchClientOps();
     fetchSalerOps();
+    fetchManagerOptions();
     filterRows(filters);
   }, [allRows]);
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: { display: "flex", flexDirection: "column", gap: 1, backgroundColor: "white", padding: 0.5 }, children: [
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: styles.mainContainer, children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: styles.container, children: statusOptions && responsableOptions && clientOptions && Object.values(filters).map((filter3) => /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { children: renderFilterField(filter3) }, filter3.dataKey)) }),
     dateFiltersActive && /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
       motion.div,
