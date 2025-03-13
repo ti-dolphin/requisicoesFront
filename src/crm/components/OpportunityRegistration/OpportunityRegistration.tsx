@@ -116,9 +116,12 @@ const OpportunityRegistration = ({ guide, guidesReference }: props) => {
     }
 
     const setDefaultClientWhenNotDefined = async () =>  {
-        console.log("setDefaultClientWhenNotDefined");
-    const clientNotDefined =  !(opportunityRegistration.fkCodCliente as any !== '-')
-        console.log("codcliente: ", opportunityRegistration.fkCodCliente);
+  
+    const clientNotDefined =  opportunityRegistration.fkCodCliente as any == '-'
+    console.log({
+      clientNotDefined,
+      idProjeto: opportunityRegistration.idProjeto,
+    });
       if (clientNotDefined && opportunityRegistration.idProjeto) {
         const clientFromFirstProject = await fetchClientFromFirstProjectOption(
           opportunityRegistration.idProjeto
@@ -129,7 +132,7 @@ const OpportunityRegistration = ({ guide, guidesReference }: props) => {
           fkCodCliente: clientFromFirstProject.id,
         });
         if (guidesReference.current) {
-          guide.fields[4].data = clientFromFirstProject.id;
+          guide.fields[5].data = clientFromFirstProject.id;
           guidesReference.current[0] = guide;
         }
 
@@ -211,6 +214,18 @@ const OpportunityRegistration = ({ guide, guidesReference }: props) => {
 
     useEffect(() => {
     if(!isEditing){ 
+        console.log('REGISTRATION')
+        console.log({
+          idProjeto: guide.fields[0].data,
+          numeroAdicional: guide.fields[1].data,
+          nome: guide.fields[2].data,
+          codStatus: guide.fields[3].data,
+          descricaoVenda: guide.fields[4].data,
+          fkCodCliente: guide.fields[5].data,
+          dataSolicitacao: guide.fields[6].data,
+          dataInicio: guide.fields[7].data,
+          dataEntrega: guide.fields[8].data,
+        });
         setOpportunityRegistration({
           idProjeto: guide.fields[0].data,
           numeroAdicional: guide.fields[1].data,
@@ -225,11 +240,11 @@ const OpportunityRegistration = ({ guide, guidesReference }: props) => {
     }
     }, [guide]); 
 
-    useEffect(( )=> { 
-        if(clientOptions && opportunityRegistration){ 
-            setDefaultClientWhenNotDefined();
-        }
-    }, [clientOptions, guide])
+    useEffect(() => {
+      if (clientOptions && opportunityRegistration) {
+        setDefaultClientWhenNotDefined();
+      }
+    }, [opportunityRegistration]);
 
 
     return (

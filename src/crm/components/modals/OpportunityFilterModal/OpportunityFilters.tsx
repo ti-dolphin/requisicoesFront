@@ -213,66 +213,68 @@ const OpportunityFilters = ({
           : dataKey === 'nomeStatus' ? statusOptions 
           : managerOptions
           console.log({managerOptions});
-
-      return (
-        <Autocomplete
-          key={dataKey}
-          multiple
-          options={options}
-          disableCloseOnSelect
-          getOptionKey={(option: any) => option.id}
-          getOptionLabel={(option) => option.label}
-          renderTags={(optionArray: any, getTagProps) =>
-            optionArray.map((option: any, index: number) => {
-              const { key, ...tagProps } = getTagProps({ index });
-              return (
-                <Chip
-                  variant="outlined"
-                  label={option.label}
-                  key={key}
-                  {...tagProps}
-                  sx={{  display: "none" }}
-                />
-              );
-            })
-          }
-          renderOption={(props, option, { selected }) => (
-            <Box>
-              <li {...props}>
-                <Checkbox style={{ marginRight: 8 }} checked={selected} />
-                <Typography sx={typographyStyles.smallText}>
-                  {option.label}
-                </Typography>
-              </li>
-            </Box>
-          )}
-          value={options.filter((option: any) =>
-            filters[dataKey].values.includes(option.label)
-          )}
-          onChange={(_, newValue) => {
-            updateFilterValues(
-              dataKey,
-              newValue.map((option) => option.label)
-            );
-          }}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              InputLabelProps={{ shrink: true, sx: { color: "black" } }}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  padding: 0.5,
-                },
-              }}
-              InputProps={{
-                ...params.InputProps,
-                sx: styles.input,
-              }}
-              label={label}
-            />
-          )}
-        />
-      );
+      if(options){ 
+ return (
+   <Autocomplete
+     key={dataKey}
+     multiple
+     options={options}
+     disableCloseOnSelect
+     getOptionKey={(option: any) => option.id}
+     getOptionLabel={(option) => option.label}
+     renderTags={(optionArray: any, getTagProps) =>
+       optionArray.map((option: any, index: number) => {
+         const { key, ...tagProps } = getTagProps({ index });
+         return (
+           <Chip
+             variant="outlined"
+             label={option.label}
+             key={key}
+             {...tagProps}
+             sx={{ display: "none" }}
+           />
+         );
+       })
+     }
+     renderOption={(props, option, { selected }) => (
+       <Box>
+         <li {...props}>
+           <Checkbox style={{ marginRight: 8 }} checked={selected} />
+           <Typography sx={typographyStyles.smallText}>
+             {option.label}
+           </Typography>
+         </li>
+       </Box>
+     )}
+     value={options.filter((option: any) =>
+       filters[dataKey].values.includes(option.label)
+     )}
+     onChange={(_, newValue) => {
+       updateFilterValues(
+         dataKey,
+         newValue.map((option) => option.label)
+       );
+     }}
+     renderInput={(params) => (
+       <TextField
+         {...params}
+         InputLabelProps={{ shrink: true, sx: { color: "black" } }}
+         sx={{
+           "& .MuiOutlinedInput-root": {
+             padding: 0.5,
+           },
+         }}
+         InputProps={{
+           ...params.InputProps,
+           sx: styles.input,
+         }}
+         label={label}
+       />
+     )}
+   />
+ );
+      }
+     
     }
     return (
       <TextField

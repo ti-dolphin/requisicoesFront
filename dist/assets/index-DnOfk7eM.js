@@ -92563,9 +92563,11 @@ const OpportunityRegistration = /* @__PURE__ */ __name(({ guide, guidesReference
     return field.dataKey !== "numeroAdicional";
   }, "editableField");
   const setDefaultClientWhenNotDefined = /* @__PURE__ */ __name(async () => {
-    console.log("setDefaultClientWhenNotDefined");
-    const clientNotDefined = !(opportunityRegistration.fkCodCliente !== "-");
-    console.log("codcliente: ", opportunityRegistration.fkCodCliente);
+    const clientNotDefined = opportunityRegistration.fkCodCliente == "-";
+    console.log({
+      clientNotDefined,
+      idProjeto: opportunityRegistration.idProjeto
+    });
     if (clientNotDefined && opportunityRegistration.idProjeto) {
       const clientFromFirstProject = await fetchClientFromFirstProjectOption(
         opportunityRegistration.idProjeto
@@ -92576,7 +92578,7 @@ const OpportunityRegistration = /* @__PURE__ */ __name(({ guide, guidesReference
         fkCodCliente: clientFromFirstProject.id
       });
       if (guidesReference.current) {
-        guide.fields[4].data = clientFromFirstProject.id;
+        guide.fields[5].data = clientFromFirstProject.id;
         guidesReference.current[0] = guide;
       }
       return;
@@ -92648,6 +92650,18 @@ const OpportunityRegistration = /* @__PURE__ */ __name(({ guide, guidesReference
   }, []);
   reactExports.useEffect(() => {
     if (!isEditing) {
+      console.log("REGISTRATION");
+      console.log({
+        idProjeto: guide.fields[0].data,
+        numeroAdicional: guide.fields[1].data,
+        nome: guide.fields[2].data,
+        codStatus: guide.fields[3].data,
+        descricaoVenda: guide.fields[4].data,
+        fkCodCliente: guide.fields[5].data,
+        dataSolicitacao: guide.fields[6].data,
+        dataInicio: guide.fields[7].data,
+        dataEntrega: guide.fields[8].data
+      });
       setOpportunityRegistration({
         idProjeto: guide.fields[0].data,
         numeroAdicional: guide.fields[1].data,
@@ -92665,7 +92679,7 @@ const OpportunityRegistration = /* @__PURE__ */ __name(({ guide, guidesReference
     if (clientOptions && opportunityRegistration) {
       setDefaultClientWhenNotDefined();
     }
-  }, [clientOptions, guide]);
+  }, [opportunityRegistration]);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: styles$5.container, children: opportunityRegistration && /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: styles$5.formGrid, children: guide.fields.map((field, index2) => {
     if (editableField(field) && !field.autoComplete && field.dataKey !== "codOs") {
       return /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -93300,10 +93314,17 @@ const OpportunitySale = /* @__PURE__ */ __name(({ guide, guidesReference }) => {
   const projectId = reactExports.useRef();
   const oppId = reactExports.useRef();
   const setDefaultResponsableWhenNotDefined = /* @__PURE__ */ __name(async () => {
+    console.log("setDefaultResponsableWhen -- NotDefined");
+    console.log(
+      "condition: ",
+      oppId.current
+    );
     if (guidesReference.current && oppId.current && sale && responsableOptions && projectId.current) {
-      const noResponsableDefined = !(sale.responsavel !== 1);
+      const noResponsableDefined = sale.responsavel == 1;
+      console.log({ noResponsableDefined });
       if (noResponsableDefined && projectId.current) {
         const responsableForFirstProject = await fetchResponsableForFirstProjectOption(projectId.current);
+        console.log({ responsableForFirstProject });
         setCurrentResponsable(
           responsableOptions.find(
             (respOption) => respOption.id === responsableForFirstProject.id
@@ -93317,10 +93338,12 @@ const OpportunitySale = /* @__PURE__ */ __name(({ guide, guidesReference }) => {
     }
   }, "setDefaultResponsableWhenNotDefined");
   const setCurrentResponsableWhenDefined = /* @__PURE__ */ __name(() => {
+    console.log("setCurrentResponsableWhen -- Defined");
     if ((sale == null ? void 0 : sale.responsavel) && responsableOptions) {
       const responsable = responsableOptions.find(
         (option) => option.id === sale.responsavel
       );
+      console.log("defined responsable found: ", responsable);
       if (responsable) {
         setCurrentResponsable(
           responsableOptions.find(
@@ -93368,7 +93391,7 @@ const OpportunitySale = /* @__PURE__ */ __name(({ guide, guidesReference }) => {
   reactExports.useEffect(() => {
     if (guidesReference.current) {
       projectId.current = guidesReference.current[0].fields[0].data;
-      oppId.current = guidesReference.current[0].fields[8].data;
+      oppId.current = guidesReference.current[0].fields[9].data;
     }
     const firstsSaleState = {
       responsavel: guide.fields[0].data,
@@ -94907,60 +94930,62 @@ const OpportunityFilters = /* @__PURE__ */ __name(({
     if (dataKey === "nomeCliente" || dataKey === "nomeVendedor" || dataKey === "nomeStatus" || dataKey === "nomeGerente") {
       const options = dataKey === "nomeCliente" ? clientOptions : dataKey === "nomeVendedor" ? responsableOptions : dataKey === "nomeStatus" ? statusOptions : managerOptions;
       console.log({ managerOptions });
-      return /* @__PURE__ */ jsxRuntimeExports.jsx(
-        Autocomplete,
-        {
-          multiple: true,
-          options,
-          disableCloseOnSelect: true,
-          getOptionKey: (option) => option.id,
-          getOptionLabel: (option) => option.label,
-          renderTags: (optionArray, getTagProps) => optionArray.map((option, index2) => {
-            const { key, ...tagProps } = getTagProps({ index: index2 });
-            return /* @__PURE__ */ jsxRuntimeExports.jsx(
-              Chip,
+      if (options) {
+        return /* @__PURE__ */ jsxRuntimeExports.jsx(
+          Autocomplete,
+          {
+            multiple: true,
+            options,
+            disableCloseOnSelect: true,
+            getOptionKey: (option) => option.id,
+            getOptionLabel: (option) => option.label,
+            renderTags: (optionArray, getTagProps) => optionArray.map((option, index2) => {
+              const { key, ...tagProps } = getTagProps({ index: index2 });
+              return /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Chip,
+                {
+                  variant: "outlined",
+                  label: option.label,
+                  ...tagProps,
+                  sx: { display: "none" }
+                },
+                key
+              );
+            }),
+            renderOption: (props, option, { selected }) => /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { children: /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { ...props, children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Checkbox, { style: { marginRight: 8 }, checked: selected }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { sx: typographyStyles.smallText, children: option.label })
+            ] }) }),
+            value: options.filter(
+              (option) => filters[dataKey].values.includes(option.label)
+            ),
+            onChange: (_2, newValue) => {
+              updateFilterValues(
+                dataKey,
+                newValue.map((option) => option.label)
+              );
+            },
+            renderInput: (params) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+              TextField,
               {
-                variant: "outlined",
-                label: option.label,
-                ...tagProps,
-                sx: { display: "none" }
-              },
-              key
-            );
-          }),
-          renderOption: (props, option, { selected }) => /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { children: /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { ...props, children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Checkbox, { style: { marginRight: 8 }, checked: selected }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { sx: typographyStyles.smallText, children: option.label })
-          ] }) }),
-          value: options.filter(
-            (option) => filters[dataKey].values.includes(option.label)
-          ),
-          onChange: (_2, newValue) => {
-            updateFilterValues(
-              dataKey,
-              newValue.map((option) => option.label)
-            );
+                ...params,
+                InputLabelProps: { shrink: true, sx: { color: "black" } },
+                sx: {
+                  "& .MuiOutlinedInput-root": {
+                    padding: 0.5
+                  }
+                },
+                InputProps: {
+                  ...params.InputProps,
+                  sx: styles.input
+                },
+                label
+              }
+            )
           },
-          renderInput: (params) => /* @__PURE__ */ jsxRuntimeExports.jsx(
-            TextField,
-            {
-              ...params,
-              InputLabelProps: { shrink: true, sx: { color: "black" } },
-              sx: {
-                "& .MuiOutlinedInput-root": {
-                  padding: 0.5
-                }
-              },
-              InputProps: {
-                ...params.InputProps,
-                sx: styles.input
-              },
-              label
-            }
-          )
-        },
-        dataKey
-      );
+          dataKey
+        );
+      }
     }
     return /* @__PURE__ */ jsxRuntimeExports.jsx(
       TextField,

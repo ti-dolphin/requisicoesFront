@@ -38,6 +38,12 @@ const OpportunitySale = ({ guide, guidesReference }: props) => {
 
   const setDefaultResponsableWhenNotDefined = async (
   ) => {
+    console.log("setDefaultResponsableWhen -- NotDefined");
+      console.log(
+        "condition: ",
+        oppId.current,
+      );
+    
     if (
       guidesReference.current &&
       oppId.current &&
@@ -45,11 +51,13 @@ const OpportunitySale = ({ guide, guidesReference }: props) => {
       responsableOptions &&
       projectId.current
     ) {
+      const noResponsableDefined = sale.responsavel == 1;
+      console.log({noResponsableDefined})
 
-      const noResponsableDefined = !(sale.responsavel !== 1);
       if (noResponsableDefined && projectId.current) {
 
         const responsableForFirstProject = await fetchResponsableForFirstProjectOption(projectId.current);
+        console.log({responsableForFirstProject})
         setCurrentResponsable(
           responsableOptions.find(
             (respOption: any) => respOption.id === responsableForFirstProject.id
@@ -64,10 +72,12 @@ const OpportunitySale = ({ guide, guidesReference }: props) => {
   };
 
   const setCurrentResponsableWhenDefined = () =>  { 
+    console.log("setCurrentResponsableWhen -- Defined");
        if (sale?.responsavel && responsableOptions) {
          const responsable = responsableOptions.find(
            (option: any) => option.id === sale.responsavel
          );
+         console.log('defined responsable found: ', responsable);
          if (responsable) {
            setCurrentResponsable(
              responsableOptions.find(
@@ -125,7 +135,7 @@ const OpportunitySale = ({ guide, guidesReference }: props) => {
   useEffect(() => {
     if (guidesReference.current) {
       projectId.current = guidesReference.current[0].fields[0].data;
-      oppId.current = guidesReference.current[0].fields[8].data;
+      oppId.current = guidesReference.current[0].fields[9].data;
     }
     const firstsSaleState = {
       responsavel: guide.fields[0].data,
