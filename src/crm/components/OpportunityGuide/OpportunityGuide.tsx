@@ -13,58 +13,63 @@ const OpportunityGuide = ({
   guide,
   formDataFilesRef,
   isLoading,
+  setChangeWasMade
 }: OpportunityGuideProps) => {
   return (
     <Box sx={{ ...styles.guideContainer }}>
       <Typography sx={typographyStyles.heading2}>{guide.name}</Typography>
-     { 
-       !isLoading ? (
-      <>
-        {guide.name === "Cadastro" && (
-          <OpportunityRegistration
-            guidesReference={guidesReference}
-            guide={guide}
-          />
-        )}
-        {guide.name === "Interação" && (
-          <OpportunityInteraction
-            guide={guide}
-            guidesReference={guidesReference}
-          />
-        )}
-        {guide.name === "Escopo" && (
-          <OpportunityScope
-            guide={guide}
-            guidesReference={guidesReference}
-            formDataFilesRef={formDataFilesRef}
-          />
-        )}
-        {guide.name === "Venda" && (
-          <OpportunitySale guide={guide} guidesReference={guidesReference} />
-        )}
-        {guide.name === "Seguidores" && (
-          <OpportunityFollowers
-            guide={guide}
-            guidesReference={guidesReference}
-          />
-        )}
-      </>
+      {!isLoading ? (
+        <>
+          {guide.name === "Cadastro" && (
+            <OpportunityRegistration
+              guidesReference={guidesReference}
+              guide={guide}
+              setChangeWasMade={setChangeWasMade}
+            />
+          )}
+          {guide.name === "Interação" && (
+            <OpportunityInteraction
+              guide={guide}
+              guidesReference={guidesReference}
+              setChangeWasMade={setChangeWasMade}
+            />
+          )}
+          {guide.name === "Escopo" && (
+            <OpportunityScope
+              guide={guide}
+              guidesReference={guidesReference}
+              formDataFilesRef={formDataFilesRef}
+              setChangeWasMade={setChangeWasMade}
+            />
+          )}
+          {guide.name === "Venda" && (
+            <OpportunitySale
+              guide={guide}
+              guidesReference={guidesReference}
+              setChangeWasMade={setChangeWasMade}
+            />
+          )}
+          {guide.name === "Seguidores" && (
+            <OpportunityFollowers
+              guide={guide}
+              guidesReference={guidesReference}
+              setChangeWasMade={setChangeWasMade}
+            />
+          )}
+        </>
       ) : (
-      <Box
-        sx={{
-          height: 200,
-          width: 200,
-          display: "flex",
-          padding: 2,
-          justifyContent: "center",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-      )
-     }
-
-
+        <Box
+          sx={{
+            height: 200,
+            width: 200,
+            display: "flex",
+            padding: 2,
+            justifyContent: "center",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      )}
 
       {/* !isLoading ? (
       {guide.name === "Cadastro" && (

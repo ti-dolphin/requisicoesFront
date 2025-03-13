@@ -1,6 +1,8 @@
 import { Box, Button, Stack, TextField } from "@mui/material";
 import React, {
+  Dispatch,
   MutableRefObject,
+  SetStateAction,
   useContext,
   useEffect,
   useState,
@@ -16,14 +18,18 @@ import { userContext } from "../../../Requisitions/context/userContext";
 interface props {
   guide: Guide;
   guidesReference: MutableRefObject<Guide[] | undefined>;
+  setChangeWasMade: Dispatch<SetStateAction<boolean>>;
 }
-const OpportunityInteraction = ({ guide, guidesReference }: props) => {
+const OpportunityInteraction = ({
+  guide,
+  guidesReference,
+  setChangeWasMade,
+}: props) => {
   const { user } = useContext(userContext);
   const [interactionDate, setInteractionDate] = useState<string>();
   const [comments, setComments] = useState<Comentario[]>();
   const [commentBeingEdited, setCommentBeingEdited] = useState<Comentario>();
   const [commentBeingAdded, setCommentBeingAdded] = useState<Comentario>();
-
 
   const handleChangeComment = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -43,6 +49,7 @@ const OpportunityInteraction = ({ guide, guidesReference }: props) => {
         ...commentBeingEdited,
         descricao: value,
       });
+
       return;
     }
     if (commentBeingAdded) {
@@ -50,6 +57,7 @@ const OpportunityInteraction = ({ guide, guidesReference }: props) => {
         ...commentBeingAdded,
         descricao: value,
       });
+
       return;
     }
   };
@@ -62,6 +70,7 @@ const OpportunityInteraction = ({ guide, guidesReference }: props) => {
       setInteractionDate(value);
       guide.fields[0].data = value;
       guidesReference.current[1] = guide;
+      setChangeWasMade(true);
     }
   };
 
@@ -91,6 +100,7 @@ const OpportunityInteraction = ({ guide, guidesReference }: props) => {
     if (guidesReference.current && comments) {
       guide.fields[1].data = [...comments];
       guidesReference.current[1] = guide;
+      setChangeWasMade(true);
       handleCancelAddorEditComment();
     }
   };
@@ -101,9 +111,7 @@ const OpportunityInteraction = ({ guide, guidesReference }: props) => {
   }, [guide]);
 
   return (
-    <Box
-      sx={style.container}
-    >
+    <Box sx={style.container}>
       {guide.fields.map((field, _index) => {
         if (field.dataKey === "dataInteracao") {
           return (
@@ -176,7 +184,7 @@ const OpportunityInteraction = ({ guide, guidesReference }: props) => {
         <ListWindow
           height={400}
           itemCount={comments?.length}
-          itemSize={ 100}
+          itemSize={100}
           width="100%"
         >
           {({ index, style }) => (

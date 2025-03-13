@@ -92505,7 +92505,11 @@ const styles$5 = {
     padding: 1
   }
 };
-const OpportunityRegistration = /* @__PURE__ */ __name(({ guide, guidesReference }) => {
+const OpportunityRegistration = /* @__PURE__ */ __name(({
+  guide,
+  guidesReference,
+  setChangeWasMade
+}) => {
   const { user } = reactExports.useContext(userContext);
   const [statusOptions, setStatusOptions] = reactExports.useState(
     []
@@ -92537,7 +92541,9 @@ const OpportunityRegistration = /* @__PURE__ */ __name(({ guide, guidesReference
   const changeReference = /* @__PURE__ */ __name((field) => {
     if (guidesReference.current) {
       const guideIndex = guidesReference.current.indexOf(guide);
-      const fieldIndex = guidesReference.current[guideIndex].fields.findIndex((referenceField) => referenceField.dataKey === field.dataKey);
+      const fieldIndex = guidesReference.current[guideIndex].fields.findIndex(
+        (referenceField) => referenceField.dataKey === field.dataKey
+      );
       guidesReference.current[guideIndex].fields[fieldIndex] = field;
     }
   }, "changeReference");
@@ -92550,6 +92556,7 @@ const OpportunityRegistration = /* @__PURE__ */ __name(({ guide, guidesReference
         [receivedField.dataKey]: value
       });
       changeReference(receivedField);
+      setChangeWasMade(true);
     }
     if (receivedField.type === "date") {
       receivedField.data = value;
@@ -92558,6 +92565,7 @@ const OpportunityRegistration = /* @__PURE__ */ __name(({ guide, guidesReference
         [receivedField.dataKey]: value
       });
       changeReference(receivedField);
+      setChangeWasMade(true);
     }
     return;
   }, "handleChangeTextField");
@@ -92568,6 +92576,7 @@ const OpportunityRegistration = /* @__PURE__ */ __name(({ guide, guidesReference
     });
     field.data = value == null ? void 0 : value.id;
     changeReference(field);
+    setChangeWasMade(true);
   }, "handleChangeAutoComplete");
   const editableField = /* @__PURE__ */ __name((field) => {
     return field.dataKey !== "numeroAdicional";
@@ -92718,7 +92727,11 @@ const OpportunityRegistration = /* @__PURE__ */ __name(({ guide, guidesReference
           disablePortal: true,
           getOptionKey: (option) => option.key,
           disabled: field.dataKey === "idProjeto",
-          onChange: (_event, value, _reason, _details) => handleChangeAutoComplete(field, _event, value),
+          onChange: (_event, value, _reason, _details) => handleChangeAutoComplete(
+            field,
+            _event,
+            value
+          ),
           options: renderOptions(field) || [],
           renderInput: (params) => /* @__PURE__ */ jsxRuntimeExports.jsx(
             TextField,
@@ -92871,7 +92884,11 @@ const CommentRow = /* @__PURE__ */ __name(({ index: index2, comment: comment2, s
     )
   ] });
 }, "CommentRow");
-const OpportunityInteraction = /* @__PURE__ */ __name(({ guide, guidesReference }) => {
+const OpportunityInteraction = /* @__PURE__ */ __name(({
+  guide,
+  guidesReference,
+  setChangeWasMade
+}) => {
   const { user } = reactExports.useContext(userContext);
   const [interactionDate, setInteractionDate] = reactExports.useState();
   const [comments, setComments] = reactExports.useState();
@@ -92906,6 +92923,7 @@ const OpportunityInteraction = /* @__PURE__ */ __name(({ guide, guidesReference 
       setInteractionDate(value);
       guide.fields[0].data = value;
       guidesReference.current[1] = guide;
+      setChangeWasMade(true);
     }
   }, "handleChangeInteractonDate");
   const handleCancelAddorEditComment = /* @__PURE__ */ __name(() => {
@@ -92931,6 +92949,7 @@ const OpportunityInteraction = /* @__PURE__ */ __name(({ guide, guidesReference 
     if (guidesReference.current && comments) {
       guide.fields[1].data = [...comments];
       guidesReference.current[1] = guide;
+      setChangeWasMade(true);
       handleCancelAddorEditComment();
     }
   }, "handleConclude");
@@ -92938,89 +92957,83 @@ const OpportunityInteraction = /* @__PURE__ */ __name(({ guide, guidesReference 
     setInteractionDate(guide.fields[0].data);
     setComments(guide.fields[1].data);
   }, [guide]);
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
-    Box,
-    {
-      sx: style$2.container,
-      children: [
-        guide.fields.map((field, _index) => {
-          if (field.dataKey === "dataInteracao") {
-            return /* @__PURE__ */ jsxRuntimeExports.jsx(
-              TextField,
-              {
-                fullWidth: true,
-                label: field.label,
-                type: field.type,
-                onChange: (e2) => handleChangeInteractonDate(e2, field.dataKey),
-                InputLabelProps: { shrink: true },
-                value: interactionDate
-              },
-              field.dataKey
-            );
-          }
-          if (field.dataKey === "comentarios") {
-            return /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { sx: { width: "100%", gap: 2 }, children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                TextField,
-                {
-                  onChange: (e2) => handleChangeComment(
-                    e2,
-                    (commentBeingEdited == null ? void 0 : commentBeingEdited.codigoComentario) || (commentBeingAdded == null ? void 0 : commentBeingAdded.codigoComentario) || 0
-                  ),
-                  label: "Comentário",
-                  InputLabelProps: { shrink: commentBeingEdited && true },
-                  placeholder: "Digite seu comentário aqui...",
-                  type: "text",
-                  multiline: true,
-                  rows: 3,
-                  onFocus: handleFocus,
-                  onKeyDown: (e2) => {
-                    e2.key === "Enter" && handleConclude();
-                  },
-                  value: (commentBeingEdited == null ? void 0 : commentBeingEdited.descricao) || (commentBeingAdded == null ? void 0 : commentBeingAdded.descricao) || "",
-                  onBlur: handleCancelAddorEditComment,
-                  variant: "outlined",
-                  fullWidth: true,
-                  sx: style$2.commentField
-                },
-                field.dataKey
-              ),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: (commentBeingEdited || commentBeingAdded) && /* @__PURE__ */ jsxRuntimeExports.jsx(motion.div, { ...alertAnimation, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", gap: 1, children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  Button,
-                  {
-                    sx: BaseButtonStyles,
-                    onClick: handleCancelAddorEditComment,
-                    children: "Cancelar"
-                  }
-                ),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { onClick: handleConclude, sx: BaseButtonStyles, children: "Concluir" })
-              ] }) }) })
-            ] }, field.dataKey);
-          }
-        }),
-        comments && /* @__PURE__ */ jsxRuntimeExports.jsx(
-          FixedSizeList,
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: style$2.container, children: [
+    guide.fields.map((field, _index) => {
+      if (field.dataKey === "dataInteracao") {
+        return /* @__PURE__ */ jsxRuntimeExports.jsx(
+          TextField,
           {
-            height: 400,
-            itemCount: comments == null ? void 0 : comments.length,
-            itemSize: 100,
-            width: "100%",
-            children: ({ index: index2, style: style2 }) => /* @__PURE__ */ jsxRuntimeExports.jsx(
-              CommentRow,
-              {
-                setCommentBeingEdit: setCommentBeingEdited,
-                style: style2,
-                index: index2,
-                comment: comments[index2]
+            fullWidth: true,
+            label: field.label,
+            type: field.type,
+            onChange: (e2) => handleChangeInteractonDate(e2, field.dataKey),
+            InputLabelProps: { shrink: true },
+            value: interactionDate
+          },
+          field.dataKey
+        );
+      }
+      if (field.dataKey === "comentarios") {
+        return /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { sx: { width: "100%", gap: 2 }, children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            TextField,
+            {
+              onChange: (e2) => handleChangeComment(
+                e2,
+                (commentBeingEdited == null ? void 0 : commentBeingEdited.codigoComentario) || (commentBeingAdded == null ? void 0 : commentBeingAdded.codigoComentario) || 0
+              ),
+              label: "Comentário",
+              InputLabelProps: { shrink: commentBeingEdited && true },
+              placeholder: "Digite seu comentário aqui...",
+              type: "text",
+              multiline: true,
+              rows: 3,
+              onFocus: handleFocus,
+              onKeyDown: (e2) => {
+                e2.key === "Enter" && handleConclude();
               },
-              index2
-            )
-          }
+              value: (commentBeingEdited == null ? void 0 : commentBeingEdited.descricao) || (commentBeingAdded == null ? void 0 : commentBeingAdded.descricao) || "",
+              onBlur: handleCancelAddorEditComment,
+              variant: "outlined",
+              fullWidth: true,
+              sx: style$2.commentField
+            },
+            field.dataKey
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: (commentBeingEdited || commentBeingAdded) && /* @__PURE__ */ jsxRuntimeExports.jsx(motion.div, { ...alertAnimation, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", gap: 1, children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              Button,
+              {
+                sx: BaseButtonStyles,
+                onClick: handleCancelAddorEditComment,
+                children: "Cancelar"
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { onClick: handleConclude, sx: BaseButtonStyles, children: "Concluir" })
+          ] }) }) })
+        ] }, field.dataKey);
+      }
+    }),
+    comments && /* @__PURE__ */ jsxRuntimeExports.jsx(
+      FixedSizeList,
+      {
+        height: 400,
+        itemCount: comments == null ? void 0 : comments.length,
+        itemSize: 100,
+        width: "100%",
+        children: ({ index: index2, style: style2 }) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+          CommentRow,
+          {
+            setCommentBeingEdit: setCommentBeingEdited,
+            style: style2,
+            index: index2,
+            comment: comments[index2]
+          },
+          index2
         )
-      ]
-    }
-  );
+      }
+    )
+  ] });
 }, "OpportunityInteraction");
 const styles$4 = {
   container: {
@@ -93195,7 +93208,8 @@ const style$1 = {
 const OpportunityScope = /* @__PURE__ */ __name(({
   guide,
   guidesReference,
-  formDataFilesRef
+  formDataFilesRef,
+  setChangeWasMade
 }) => {
   const [files, setFiles] = reactExports.useState([]);
   const [oppId, setOppId] = reactExports.useState();
@@ -93209,6 +93223,7 @@ const OpportunityScope = /* @__PURE__ */ __name(({
       setFiles(newFiles);
       guide.fields[1].data = newFiles;
       guidesReference.current[2] = guide;
+      setChangeWasMade(true);
     }
   }, "handleDeleteFile");
   const handleChangeFiles = /* @__PURE__ */ __name(async (e2) => {
@@ -93229,6 +93244,7 @@ const OpportunityScope = /* @__PURE__ */ __name(({
       newFormData.append("files", file);
       formDataFilesRef.current = newFormData;
       e2.target.value = "";
+      setChangeWasMade(true);
     }
   }, "handleChangeFiles");
   const cancelObsEdition = /* @__PURE__ */ __name(() => {
@@ -93243,6 +93259,7 @@ const OpportunityScope = /* @__PURE__ */ __name(({
     if (guidesReference.current) {
       guide.fields[0].data = observation;
       guidesReference.current[2] = guide;
+      setChangeWasMade(true);
     }
     setIsEditing(false);
   }, "concludeObservationEdition");
@@ -93317,10 +93334,16 @@ const style = {
     padding: 1
   }
 };
-const OpportunitySale = /* @__PURE__ */ __name(({ guide, guidesReference }) => {
+const OpportunitySale = /* @__PURE__ */ __name(({
+  guide,
+  guidesReference,
+  setChangeWasMade
+}) => {
   const [sale, setSale] = reactExports.useState();
   const [responsableOptions, setResponsableOptions] = reactExports.useState();
   const [currentResponsable, setCurrentResponsable] = reactExports.useState();
+  const [alert2, setAlert] = reactExports.useState();
+  const [isLoading, setIsLoading] = reactExports.useState(false);
   const { user } = reactExports.useContext(userContext);
   const projectId = reactExports.useRef();
   const oppId = reactExports.useRef();
@@ -93361,6 +93384,13 @@ const OpportunitySale = /* @__PURE__ */ __name(({ guide, guidesReference }) => {
       }
     }
   }, "setCurrentResponsableWhenDefined");
+  const displayAlert = /* @__PURE__ */ __name(async (severity, message) => {
+    setTimeout(() => {
+      setAlert(void 0);
+    }, 3e3);
+    setAlert({ severity, message });
+    return;
+  }, "displayAlert");
   const fetchSalerOps = reactExports.useCallback(async () => {
     const salers = await fetchSalers(0);
     const options = salers.map((saler) => ({
@@ -93387,6 +93417,7 @@ const OpportunitySale = /* @__PURE__ */ __name(({ guide, guidesReference }) => {
       guide.fields[fieldIndex] = fieldReceived;
       guide.fields[4].data = totalValue;
       guidesReference.current[3] = guide;
+      setChangeWasMade(true);
     }
   }, "handleChangeTextField");
   const handleChangeAutoComplete = /* @__PURE__ */ __name((value) => {
@@ -93423,6 +93454,7 @@ const OpportunitySale = /* @__PURE__ */ __name(({ guide, guidesReference }) => {
   }, "shouldShowSendSaleEmailButton");
   const handleSendSaleEmail = /* @__PURE__ */ __name(async () => {
     if (guidesReference.current && user) {
+      setIsLoading(true);
       const codOsGuide = guidesReference.current.find(
         (guide2) => guide2.name = "Cadastro"
       );
@@ -93432,11 +93464,15 @@ const OpportunitySale = /* @__PURE__ */ __name(({ guide, guidesReference }) => {
       const codOs = codOsField == null ? void 0 : codOsField.data;
       console.log({ codOs, user });
       try {
-        await sendSaleEmailByOppId(codOs, user);
+        const response = await sendSaleEmailByOppId(codOs, user);
+        if (response.status === 200) {
+          displayAlert("success", "Email Enviado com sucesso!");
+        }
       } catch (e2) {
-        alert(e2);
+        displayAlert("error", "Houve algum erro no envio do email");
       }
     }
+    setIsLoading(false);
   }, "handleSendSaleEmail");
   reactExports.useEffect(() => {
     if (responsableOptions) {
@@ -93498,7 +93534,9 @@ const OpportunitySale = /* @__PURE__ */ __name(({ guide, guidesReference }) => {
             sx: { ...BaseButtonStyles, width: 200 },
             children: "Enviar email de venda"
           }
-        )
+        ),
+        isLoading && /* @__PURE__ */ jsxRuntimeExports.jsx(CircularProgress, {}),
+        alert2 && /* @__PURE__ */ jsxRuntimeExports.jsx(Alert, { sx: { width: "100%" }, severity: alert2.severity, children: alert2.message })
       ]
     }
   );
@@ -93528,7 +93566,8 @@ const AddFollowersModal = /* @__PURE__ */ __name(({
   setFollowers,
   followers,
   guide,
-  guidesReference
+  guidesReference,
+  setChangeWasMade
 }) => {
   const [addingFollowrs, setAddingFollowers] = reactExports.useState(false);
   const [personList, setPersonList] = reactExports.useState([]);
@@ -93594,6 +93633,7 @@ const AddFollowersModal = /* @__PURE__ */ __name(({
       guidesReference.current[4] = guide;
       setFollowers([...followers, ...newOppFollowers]);
     }
+    setChangeWasMade(true);
     setAddingFollowers(false);
   }, "handleConclude");
   const handleRowSelection = /* @__PURE__ */ __name((currentSelectionList, _details) => {
@@ -93775,14 +93815,20 @@ const AddFollowersModal = /* @__PURE__ */ __name(({
   ] });
 }, "AddFollowersModal");
 AddFollowersModal.displayName = "AddFollowersModal";
-const OpportunityFollowers = /* @__PURE__ */ __name(({ guide, guidesReference }) => {
+const OpportunityFollowers = /* @__PURE__ */ __name(({
+  guide,
+  guidesReference,
+  setChangeWasMade
+}) => {
   const [followers, setFollowers] = reactExports.useState([]);
   const [searchTerm, setSearchTerm] = reactExports.useState("");
   const [filteredFollowers, setFilteredFollowers] = reactExports.useState([]);
   const { user } = reactExports.useContext(userContext);
   reactExports.useEffect(() => {
     if (guide.fields[0].data && guidesReference.current && user) {
-      const userInFollowersList = [...guide.fields[0].data].find((follower) => follower.codpessoa === user.CODPESSOA);
+      const userInFollowersList = [...guide.fields[0].data].find(
+        (follower) => follower.codpessoa === user.CODPESSOA
+      );
       if (!userInFollowersList) {
         const userFollower = {
           id_seguidor_projeto: 0,
@@ -93834,7 +93880,8 @@ const OpportunityFollowers = /* @__PURE__ */ __name(({ guide, guidesReference })
         setFollowers,
         followers,
         guide,
-        guidesReference
+        guidesReference,
+        setChangeWasMade
       }
     ),
     /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -93866,7 +93913,8 @@ const OpportunityGuide = /* @__PURE__ */ __name(({
   guidesReference,
   guide,
   formDataFilesRef,
-  isLoading
+  isLoading,
+  setChangeWasMade
 }) => {
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: { ...styles$6.guideContainer }, children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { sx: typographyStyles.heading2, children: guide.name }),
@@ -93875,14 +93923,16 @@ const OpportunityGuide = /* @__PURE__ */ __name(({
         OpportunityRegistration,
         {
           guidesReference,
-          guide
+          guide,
+          setChangeWasMade
         }
       ),
       guide.name === "Interação" && /* @__PURE__ */ jsxRuntimeExports.jsx(
         OpportunityInteraction,
         {
           guide,
-          guidesReference
+          guidesReference,
+          setChangeWasMade
         }
       ),
       guide.name === "Escopo" && /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -93890,15 +93940,24 @@ const OpportunityGuide = /* @__PURE__ */ __name(({
         {
           guide,
           guidesReference,
-          formDataFilesRef
+          formDataFilesRef,
+          setChangeWasMade
         }
       ),
-      guide.name === "Venda" && /* @__PURE__ */ jsxRuntimeExports.jsx(OpportunitySale, { guide, guidesReference }),
+      guide.name === "Venda" && /* @__PURE__ */ jsxRuntimeExports.jsx(
+        OpportunitySale,
+        {
+          guide,
+          guidesReference,
+          setChangeWasMade
+        }
+      ),
       guide.name === "Seguidores" && /* @__PURE__ */ jsxRuntimeExports.jsx(
         OpportunityFollowers,
         {
           guide,
-          guidesReference
+          guidesReference,
+          setChangeWasMade
         }
       )
     ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -94224,6 +94283,7 @@ const useOpportunityModal = /* @__PURE__ */ __name((initialOpportunity, context)
   const [saveProgressModalOpen, setSaveProgressModalOpen] = reactExports.useState(false);
   const formDataFilesRef = reactExports.useRef(new FormData());
   const guidesReference = reactExports.useRef();
+  const [changeWasMade, setChangeWasMade] = reactExports.useState(false);
   const saveButtonContainerRef = reactExports.useRef(null);
   const [isLoading, setIsLoading] = reactExports.useState(true);
   const { user } = reactExports.useContext(userContext);
@@ -94244,10 +94304,12 @@ const useOpportunityModal = /* @__PURE__ */ __name((initialOpportunity, context)
     }
   };
   const handleClose = /* @__PURE__ */ __name(() => {
+    console.log("handleClose");
     setCreatingOpportunity(false);
     setCurrentOppIdSelected(0);
     setCurrentSlideIndex(0);
     setSaveProgressModalOpen(false);
+    setChangeWasMade(false);
   }, "handleClose");
   const handleCloseAdicionalChoice = /* @__PURE__ */ __name(() => {
     setAdicional(false);
@@ -94445,12 +94507,12 @@ const useOpportunityModal = /* @__PURE__ */ __name((initialOpportunity, context)
     }
   }, [opportunity, refreshOpportunityFields, setCreatingOpportunity, setCurrentOppIdSelected, creatingOpportunity, currentSlideIndex]);
   reactExports.useEffect(() => {
-  }, [currentSlideIndex]);
-  reactExports.useEffect(() => {
+    console.log("useEffect setGuidesReference");
     setGuidesReference();
     setRenderFields(!renderFields);
   }, [opportunity, refreshOpportunityFields]);
   reactExports.useEffect(() => {
+    console.log("useEffect fetch data");
     if (creatingOpportunity) {
       setIsAdicionalChoiceOpen(true);
       setIsLoading(false);
@@ -94494,7 +94556,9 @@ const useOpportunityModal = /* @__PURE__ */ __name((initialOpportunity, context)
     setCurrentSlideIndex,
     settings,
     isLoading,
-    setIsLoading
+    setIsLoading,
+    changeWasMade,
+    setChangeWasMade
   };
 }, "useOpportunityModal");
 const OpportunityModal = /* @__PURE__ */ __name(() => {
@@ -94522,8 +94586,18 @@ const OpportunityModal = /* @__PURE__ */ __name(() => {
     guidesReference,
     formDataFilesRef,
     settings,
-    isLoading
+    isLoading,
+    changeWasMade,
+    setChangeWasMade
   } = useOpportunityModal(opportunityDefault, context);
+  const verifyChangeWasMade = /* @__PURE__ */ __name(() => {
+    console.log({ changeWasMade });
+    if (changeWasMade) {
+      setSaveProgressModalOpen(true);
+      return;
+    }
+    handleClose();
+  }, "verifyChangeWasMade");
   return /* @__PURE__ */ jsxRuntimeExports.jsx(
     Modal$3,
     {
@@ -94540,7 +94614,7 @@ const OpportunityModal = /* @__PURE__ */ __name(() => {
               right: 1,
               top: 1
             },
-            onClick: () => setSaveProgressModalOpen(true),
+            onClick: verifyChangeWasMade,
             children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$q, {})
           }
         ),
@@ -94570,7 +94644,8 @@ const OpportunityModal = /* @__PURE__ */ __name(() => {
                 formDataFilesRef,
                 guidesReference,
                 guide,
-                isLoading
+                isLoading,
+                setChangeWasMade
               }
             )) })
           }

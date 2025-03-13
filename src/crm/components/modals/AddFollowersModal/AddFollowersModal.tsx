@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { MutableRefObject, useEffect, useState } from "react";
+import React, { Dispatch, MutableRefObject, SetStateAction, useEffect, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import {
   Box,
@@ -64,13 +64,16 @@ interface AddFollowersModalProps {
   followers: Follower[];
   guide: Guide;
   guidesReference: MutableRefObject<Guide[] | undefined>;
+  setChangeWasMade: Dispatch<SetStateAction<boolean>>;
+  
 }
 const AddFollowersModal = ({
   setFollowers,
   followers,
   guide,
   guidesReference,
-}: AddFollowersModalProps) => {  
+  setChangeWasMade,
+}: AddFollowersModalProps) => {
   const [addingFollowrs, setAddingFollowers] = useState<boolean>(false);
   const [personList, setPersonList] = useState<Person[]>([]);
   const [previousSelectedList, setPreviousSelectedList] = useState<number[]>(
@@ -140,7 +143,7 @@ const AddFollowersModal = ({
       guidesReference.current[4] = guide;
       setFollowers([...followers, ...newOppFollowers]);
     }
-
+    setChangeWasMade(true);
     setAddingFollowers(false);
   };
 

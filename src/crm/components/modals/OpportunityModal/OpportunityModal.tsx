@@ -55,8 +55,19 @@ export const OpportunityModal = () => {
     guidesReference,
     formDataFilesRef,
     settings,
-    isLoading
+    isLoading,
+    changeWasMade,
+    setChangeWasMade,
   } = useOpportunityModal(opportunityDefault, context);
+
+  const verifyChangeWasMade = ( ) => { 
+    console.log({changeWasMade})
+    if(changeWasMade){ 
+      setSaveProgressModalOpen(true);
+      return;
+    }
+    handleClose();
+  }
   return (
     <Modal
       open={creatingOpportunity || currentOppIdSelected > 0}
@@ -71,7 +82,7 @@ export const OpportunityModal = () => {
             right: 1,
             top: 1,
           }}
-          onClick={() => setSaveProgressModalOpen(true)}
+          onClick={verifyChangeWasMade}
         >
           <CloseIcon />
         </IconButton>{" "}
@@ -107,6 +118,7 @@ export const OpportunityModal = () => {
                     guidesReference={guidesReference}
                     guide={guide}
                     isLoading={isLoading}
+                    setChangeWasMade={setChangeWasMade}
                   />
                 ))}
             </Slider>

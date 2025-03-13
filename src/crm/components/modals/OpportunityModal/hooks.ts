@@ -45,6 +45,7 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
     const [saveProgressModalOpen, setSaveProgressModalOpen] = useState(false);
     const formDataFilesRef = useRef<FormData>(new FormData());
     const guidesReference = useRef<Guide[]>();
+    const [changeWasMade, setChangeWasMade] = useState<boolean>(false);
     const saveButtonContainerRef = useRef<HTMLDivElement>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const {user} = useContext(userContext);
@@ -65,10 +66,12 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
     };
 
     const handleClose = () => {
+        console.log('handleClose')
         setCreatingOpportunity(false);
         setCurrentOppIdSelected(0);
         setCurrentSlideIndex(0);
         setSaveProgressModalOpen(false);
+        setChangeWasMade(false);
     };
 
     const handleCloseAdicionalChoice = () => {
@@ -281,16 +284,16 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
         }
     }, [opportunity, refreshOpportunityFields, setCreatingOpportunity, setCurrentOppIdSelected, creatingOpportunity, currentSlideIndex]);
 
-    useEffect(( )=> { 
-    }, [currentSlideIndex]);
+
 
     useEffect(() => {
+        console.log('useEffect setGuidesReference')
         setGuidesReference();
         setRenderFields(!renderFields);
     }, [opportunity, refreshOpportunityFields]);
 
     useEffect(() => {
-     
+        console.log('useEffect fetch data')
         if (creatingOpportunity) {
             setIsAdicionalChoiceOpen(true);
             setIsLoading(false)
@@ -336,7 +339,9 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
         setCurrentSlideIndex,
         settings,
         isLoading,
-        setIsLoading
+        setIsLoading,
+        changeWasMade,
+        setChangeWasMade
     };
 };
 

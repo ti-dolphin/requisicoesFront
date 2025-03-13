@@ -1,5 +1,7 @@
 import React, {
+  Dispatch,
   MutableRefObject,
+  SetStateAction,
   useCallback,
   useContext,
   useEffect,
@@ -8,12 +10,15 @@ import React, {
 } from "react";
 import { Field, Guide } from "../../types";
 import {
+  Alert,
+  AlertColor,
   Autocomplete,
   AutocompleteChangeDetails,
   AutocompleteChangeReason,
   AutocompleteRenderInputParams,
   Box,
   Button,
+  CircularProgress,
   TextField,
 } from "@mui/material";
 import style from "./Opportunity.styles";
@@ -24,10 +29,12 @@ import {
 } from "../../utils";
 import { BaseButtonStyles } from "../../../utilStyles";
 import { userContext } from "../../../Requisitions/context/userContext";
+import { AlertInterface } from "../../../Requisitions/types";
 
 interface props {
   guide: Guide;
   guidesReference: MutableRefObject<Guide[] | undefined>;
+  setChangeWasMade: Dispatch<SetStateAction<boolean>>;
 }
 interface OpportunitySaleFields {
   responsavel: number;
@@ -37,11 +44,17 @@ interface OpportunitySaleFields {
   valorTotal: number;
 }
 
-const OpportunitySale = ({ guide, guidesReference }: props) => {
+const OpportunitySale = ({
+  guide,
+  guidesReference,
+  setChangeWasMade,
+}: props) => {
   const [sale, setSale] = useState<OpportunitySaleFields>();
   const [responsableOptions, setResponsableOptions] = useState<any>();
   const [currentResponsable, setCurrentResponsable] = useState<any>();
-  const {user} = useContext(userContext);
+  const [alert, setAlert] = useState<AlertInterface>();
+  const [isLoading, setIsLoading] = useState(false);
+  const { user } = useContext(userContext);
   const projectId = useRef<number>();
   const oppId = useRef<number>();
 
@@ -93,6 +106,14 @@ const OpportunitySale = ({ guide, guidesReference }: props) => {
     }
   };
 
+  const displayAlert = async (severity: string, message: string) => {
+    setTimeout(() => {
+      setAlert(undefined);
+    }, 3000);
+    setAlert({ severity, message });
+    return;
+  };
+
   const fetchSalerOps = useCallback(async () => {
     const salers = await fetchSalers(0);
     const options = salers.map((saler: any) => ({
@@ -126,6 +147,7 @@ const OpportunitySale = ({ guide, guidesReference }: props) => {
       guide.fields[fieldIndex] = fieldReceived;
       guide.fields[4].data = totalValue;
       guidesReference.current[3] = guide;
+      setChangeWasMade(true);
     }
   };
 
@@ -165,20 +187,25 @@ const OpportunitySale = ({ guide, guidesReference }: props) => {
 
   const handleSendSaleEmail = async () => {
     if (guidesReference.current && user) {
-      const codOsGuide = guidesReference.current.find(
-        (guide) => (guide.name = "Cadastro")
-      );
-      const codOsField = codOsGuide?.fields.find(
-        (field) => field.dataKey === "codOs"
-      );
-      const codOs = codOsField?.data;
-      console.log({codOs, user});
-      try {
-        await sendSaleEmailByOppId(codOs, user);
-      } catch (e) {
-        alert(e);
-      }
+       setIsLoading(true);
+         const codOsGuide = guidesReference.current.find(
+           (guide) => (guide.name = "Cadastro")
+         );
+         const codOsField = codOsGuide?.fields.find(
+           (field) => field.dataKey === "codOs"
+         );
+         const codOs = codOsField?.data;
+         console.log({ codOs, user });
+         try {
+           const response = await sendSaleEmailByOppId(codOs, user);
+           if(response.status === 200){ 
+            displayAlert('success', 'Email Enviado com sucesso!');
+           }
+         } catch (e) {
+            displayAlert("error", "Houve algum erro no envio do email");
+         }
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -248,6 +275,8 @@ const OpportunitySale = ({ guide, guidesReference }: props) => {
           Enviar email de venda
         </Button>
       )}
+      {isLoading && <CircularProgress />}
+      {alert && <Alert sx={{width: '100%'}} severity={alert.severity as AlertColor}>{alert.message}</Alert> }
     </Box>
   );
 };

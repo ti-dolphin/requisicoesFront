@@ -1,4 +1,4 @@
-import React, { MutableRefObject, useEffect, useState } from "react";
+import React, { Dispatch, MutableRefObject, SetStateAction, useEffect, useState } from "react";
 import { Guide, OpportunityFile } from "../../types";
 import { Box, Button, Stack, TextField } from "@mui/material";
 import OpportunityFiles from "../OpportunityFiles/OpportunityFiles";
@@ -10,12 +10,14 @@ interface props {
   guide: Guide;
   guidesReference: MutableRefObject<Guide[] | undefined>;
   formDataFilesRef: MutableRefObject<FormData | undefined>;
+  setChangeWasMade: Dispatch<SetStateAction<boolean>>;
 }
 
 const OpportunityScope = ({
   guide,
   guidesReference,
   formDataFilesRef,
+  setChangeWasMade
 }: props) => {
   const [files, setFiles] = useState<OpportunityFile[]>([]);
   const [oppId, setOppId] = useState<number>();
@@ -31,6 +33,8 @@ const OpportunityScope = ({
       setFiles(newFiles);
       guide.fields[1].data = newFiles;
       guidesReference.current[2] = guide;
+      setChangeWasMade(true);
+
     }
   };
 
@@ -44,7 +48,6 @@ const OpportunityScope = ({
         codos: oppId || 0,
       };
       setFiles([...(files || []), newFile]);
-
       const newFormData = new FormData();
       formDataFilesRef.current?.forEach((value, key) => {
         newFormData.append(key, value);
@@ -52,6 +55,7 @@ const OpportunityScope = ({
       newFormData.append("files", file);
       formDataFilesRef.current = newFormData;
       e.target.value = "";
+      setChangeWasMade(true);
     }
   };
 
@@ -64,11 +68,13 @@ const OpportunityScope = ({
   ) => {
     const { value } = e.target;
     setObservation(value);
+
   };
   const concludeObservationEdition = () => {
     if (guidesReference.current) {
       guide.fields[0].data = observation;
       guidesReference.current[2] = guide;
+      setChangeWasMade(true);
     }
     setIsEditing(false);
   };

@@ -1,5 +1,5 @@
 import { ChecklistItemFile, MovementationChecklist } from "../Patrimony/types";
-import { MutableRefObject } from "react";
+import { Dispatch, MutableRefObject, SetStateAction } from "react";
 
 export interface OpportunityInfo {
   numeroProjeto: number; // ID_PROJETO
@@ -98,6 +98,7 @@ export interface OpportunityGuideProps {
   guidesReference: MutableRefObject<Guide[] | undefined>;
   formDataFilesRef: MutableRefObject<FormData | undefined>
   isLoading: boolean
+  setChangeWasMade: Dispatch<SetStateAction<boolean>>
   // renderAutoCompleteValue: (field: OpportunityColumn) => OpportunityOptionField;
   // handleChangeAutoComplete: (
   //   _event: React.SyntheticEvent<Element, Event>,
