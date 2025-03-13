@@ -83311,6 +83311,16 @@ var FixedSizeList = /* @__PURE__ */ createListComponent({
 });
 dayjs.extend(utc);
 dayjs.extend(timezone);
+const sendSaleEmailByOppId = /* @__PURE__ */ __name(async (codOs, user) => {
+  try {
+    const response = await api.get("/opportunity/send-sale-email", {
+      params: { codOs, user }
+    });
+    return response;
+  } catch (e2) {
+    throw new Error(e2);
+  }
+}, "sendSaleEmailByOppId");
 const fetchPersonList = /* @__PURE__ */ __name(async () => {
   try {
     const response = await api.get("/pessoa");
@@ -93311,14 +93321,12 @@ const OpportunitySale = /* @__PURE__ */ __name(({ guide, guidesReference }) => {
   const [sale, setSale] = reactExports.useState();
   const [responsableOptions, setResponsableOptions] = reactExports.useState();
   const [currentResponsable, setCurrentResponsable] = reactExports.useState();
+  const { user } = reactExports.useContext(userContext);
   const projectId = reactExports.useRef();
   const oppId = reactExports.useRef();
   const setDefaultResponsableWhenNotDefined = /* @__PURE__ */ __name(async () => {
     console.log("setDefaultResponsableWhen -- NotDefined");
-    console.log(
-      "condition: ",
-      oppId.current
-    );
+    console.log("condition: ", oppId.current);
     if (guidesReference.current && oppId.current && sale && responsableOptions && projectId.current) {
       const noResponsableDefined = sale.responsavel == 1;
       console.log({ noResponsableDefined });
@@ -93353,20 +93361,17 @@ const OpportunitySale = /* @__PURE__ */ __name(({ guide, guidesReference }) => {
       }
     }
   }, "setCurrentResponsableWhenDefined");
-  const fetchSalerOps = reactExports.useCallback(
-    async () => {
-      const salers = await fetchSalers(0);
-      const options = salers.map((saler) => ({
-        label: saler.NOME,
-        id: saler.CODPESSOA,
-        object: "saler",
-        key: saler.CODPESSOA
-      }));
-      setResponsableOptions(options);
-      setCurrentResponsable(options[0]);
-    },
-    [setResponsableOptions]
-  );
+  const fetchSalerOps = reactExports.useCallback(async () => {
+    const salers = await fetchSalers(0);
+    const options = salers.map((saler) => ({
+      label: saler.NOME,
+      id: saler.CODPESSOA,
+      object: "saler",
+      key: saler.CODPESSOA
+    }));
+    setResponsableOptions(options);
+    setCurrentResponsable(options[0]);
+  }, [setResponsableOptions]);
   const handleChangeTextField = /* @__PURE__ */ __name((fieldReceived, e2) => {
     if (guidesReference.current && sale) {
       const { value } = e2.target;
@@ -93403,48 +93408,100 @@ const OpportunitySale = /* @__PURE__ */ __name(({ guide, guidesReference }) => {
     setSale(firstsSaleState);
     fetchSalerOps();
   }, [guide]);
+  const shouldShowSendSaleEmailButton = /* @__PURE__ */ __name(() => {
+    var _a2;
+    const statusGuide = (_a2 = guidesReference.current) == null ? void 0 : _a2.find(
+      (guide2) => guide2.name === "Cadastro"
+    );
+    const codStatusField = statusGuide == null ? void 0 : statusGuide.fields.find(
+      (field) => field.dataKey === "codStatus"
+    );
+    if ((codStatusField == null ? void 0 : codStatusField.data) === 11) {
+      return true;
+    }
+    return false;
+  }, "shouldShowSendSaleEmailButton");
+  const handleSendSaleEmail = /* @__PURE__ */ __name(async () => {
+    if (guidesReference.current && user) {
+      const codOsGuide = guidesReference.current.find(
+        (guide2) => guide2.name = "Cadastro"
+      );
+      const codOsField = codOsGuide == null ? void 0 : codOsGuide.fields.find(
+        (field) => field.dataKey === "codOs"
+      );
+      const codOs = codOsField == null ? void 0 : codOsField.data;
+      console.log({ codOs, user });
+      try {
+        await sendSaleEmailByOppId(codOs, user);
+      } catch (e2) {
+        alert(e2);
+      }
+    }
+  }, "handleSendSaleEmail");
   reactExports.useEffect(() => {
     if (responsableOptions) {
       setDefaultResponsableWhenNotDefined();
       setCurrentResponsableWhenDefined();
     }
   }, [responsableOptions]);
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: style.formGrid, children: guide.fields.map((field, _index) => {
-    if (field.dataKey === "responsavel" && responsableOptions) {
-      return /* @__PURE__ */ jsxRuntimeExports.jsx(
-        Autocomplete,
-        {
-          getOptionKey: (option) => option.id,
-          options: responsableOptions,
-          value: currentResponsable,
-          renderInput: (params) => /* @__PURE__ */ jsxRuntimeExports.jsx(
-            TextField,
-            {
-              ...params,
-              label: field.label,
-              InputLabelProps: { shrink: true }
-            }
-          ),
-          onChange: (_event, value, _reason, _details) => handleChangeAutoComplete(value)
-        },
-        field.dataKey
-      );
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    Box,
+    {
+      sx: {
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 2
+      },
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: style.formGrid, children: guide.fields.map((field, _index) => {
+          if (field.dataKey === "responsavel" && responsableOptions) {
+            return /* @__PURE__ */ jsxRuntimeExports.jsx(
+              Autocomplete,
+              {
+                getOptionKey: (option) => option.id,
+                options: responsableOptions,
+                value: currentResponsable,
+                renderInput: (params) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  TextField,
+                  {
+                    ...params,
+                    label: field.label,
+                    InputLabelProps: { shrink: true }
+                  }
+                ),
+                onChange: (_event, value, _reason, _details) => handleChangeAutoComplete(value)
+              },
+              field.dataKey
+            );
+          }
+          if (sale) {
+            return /* @__PURE__ */ jsxRuntimeExports.jsx(
+              TextField,
+              {
+                type: field.type,
+                label: field.label,
+                disabled: field.dataKey === "valorTotal",
+                InputLabelProps: { shrink: true },
+                onChange: (e2) => handleChangeTextField(field, e2),
+                value: sale[field.dataKey]
+              },
+              field.dataKey
+            );
+          }
+        }) }),
+        shouldShowSendSaleEmailButton() && /* @__PURE__ */ jsxRuntimeExports.jsx(
+          Button,
+          {
+            onClick: handleSendSaleEmail,
+            sx: { ...BaseButtonStyles, width: 200 },
+            children: "Enviar email de venda"
+          }
+        )
+      ]
     }
-    if (sale) {
-      return /* @__PURE__ */ jsxRuntimeExports.jsx(
-        TextField,
-        {
-          type: field.type,
-          label: field.label,
-          disabled: field.dataKey === "valorTotal",
-          InputLabelProps: { shrink: true },
-          onChange: (e2) => handleChangeTextField(field, e2),
-          value: sale[field.dataKey]
-        },
-        field.dataKey
-      );
-    }
-  }) });
+  );
 }, "OpportunitySale");
 const theme$2 = createTheme(
   {

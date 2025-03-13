@@ -13,6 +13,16 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 
+export const sendSaleEmailByOppId = async (codOs : number, user : User ) => { 
+  try{ 
+    const response = await api.get('/opportunity/send-sale-email', { 
+      params: {codOs, user}
+    });
+    return response;
+  }catch(e : any){ 
+    throw new Error(e);
+  }
+};
 
 export const fetchPersonList = async () => {
   try {

@@ -1,6 +1,7 @@
 import React, {
   MutableRefObject,
   useCallback,
+  useContext,
   useEffect,
   useRef,
   useState,
@@ -12,10 +13,17 @@ import {
   AutocompleteChangeReason,
   AutocompleteRenderInputParams,
   Box,
+  Button,
   TextField,
 } from "@mui/material";
 import style from "./Opportunity.styles";
-import { fetchResponsableForFirstProjectOption, fetchSalers } from "../../utils";
+import {
+  fetchResponsableForFirstProjectOption,
+  fetchSalers,
+  sendSaleEmailByOppId,
+} from "../../utils";
+import { BaseButtonStyles } from "../../../utilStyles";
+import { userContext } from "../../../Requisitions/context/userContext";
 
 interface props {
   guide: Guide;
@@ -33,17 +41,14 @@ const OpportunitySale = ({ guide, guidesReference }: props) => {
   const [sale, setSale] = useState<OpportunitySaleFields>();
   const [responsableOptions, setResponsableOptions] = useState<any>();
   const [currentResponsable, setCurrentResponsable] = useState<any>();
+  const {user} = useContext(userContext);
   const projectId = useRef<number>();
   const oppId = useRef<number>();
 
-  const setDefaultResponsableWhenNotDefined = async (
-  ) => {
+  const setDefaultResponsableWhenNotDefined = async () => {
     console.log("setDefaultResponsableWhen -- NotDefined");
-      console.log(
-        "condition: ",
-        oppId.current,
-      );
-    
+    console.log("condition: ", oppId.current);
+
     if (
       guidesReference.current &&
       oppId.current &&
@@ -52,12 +57,12 @@ const OpportunitySale = ({ guide, guidesReference }: props) => {
       projectId.current
     ) {
       const noResponsableDefined = sale.responsavel == 1;
-      console.log({noResponsableDefined})
+      console.log({ noResponsableDefined });
 
       if (noResponsableDefined && projectId.current) {
-
-        const responsableForFirstProject = await fetchResponsableForFirstProjectOption(projectId.current);
-        console.log({responsableForFirstProject})
+        const responsableForFirstProject =
+          await fetchResponsableForFirstProjectOption(projectId.current);
+        console.log({ responsableForFirstProject });
         setCurrentResponsable(
           responsableOptions.find(
             (respOption: any) => respOption.id === responsableForFirstProject.id
@@ -71,40 +76,37 @@ const OpportunitySale = ({ guide, guidesReference }: props) => {
     }
   };
 
-  const setCurrentResponsableWhenDefined = () =>  { 
+  const setCurrentResponsableWhenDefined = () => {
     console.log("setCurrentResponsableWhen -- Defined");
-       if (sale?.responsavel && responsableOptions) {
-         const responsable = responsableOptions.find(
-           (option: any) => option.id === sale.responsavel
-         );
-         console.log('defined responsable found: ', responsable);
-         if (responsable) {
-           setCurrentResponsable(
-             responsableOptions.find(
-               (option: any) => option.id === sale.responsavel
-             )
-           );
-         }
-       }
+    if (sale?.responsavel && responsableOptions) {
+      const responsable = responsableOptions.find(
+        (option: any) => option.id === sale.responsavel
+      );
+      console.log("defined responsable found: ", responsable);
+      if (responsable) {
+        setCurrentResponsable(
+          responsableOptions.find(
+            (option: any) => option.id === sale.responsavel
+          )
+        );
+      }
+    }
   };
 
-  const fetchSalerOps = useCallback(
-    async () => {
-      const salers = await fetchSalers(0);
-      const options = salers.map((saler: any) => ({
-        label: saler.NOME,
-        id: saler.CODPESSOA,
-        object: "saler",
-        key: saler.CODPESSOA,
-      }));
-      setResponsableOptions(options);
-      setCurrentResponsable(options[0])
+  const fetchSalerOps = useCallback(async () => {
+    const salers = await fetchSalers(0);
+    const options = salers.map((saler: any) => ({
+      label: saler.NOME,
+      id: saler.CODPESSOA,
+      object: "saler",
+      key: saler.CODPESSOA,
+    }));
+    setResponsableOptions(options);
+    setCurrentResponsable(options[0]);
 
-      // setDefaultResponsableWhenNotDefined(firstsSaleState);
-      // setCurrentResponsableWhenDefined(firstsSaleState, options);
-    },
-    [setResponsableOptions]
-  );
+    // setDefaultResponsableWhenNotDefined(firstsSaleState);
+    // setCurrentResponsableWhenDefined(firstsSaleState, options);
+  }, [setResponsableOptions]);
 
   const handleChangeTextField = (
     fieldReceived: Field,
@@ -148,58 +150,104 @@ const OpportunitySale = ({ guide, guidesReference }: props) => {
     fetchSalerOps();
   }, [guide]);
 
-  useEffect(( )=> {
-   if (responsableOptions){ 
+  const shouldShowSendSaleEmailButton = () => {
+    const statusGuide = guidesReference.current?.find(
+      (guide) => guide.name === "Cadastro"
+    );
+    const codStatusField = statusGuide?.fields.find(
+      (field) => field.dataKey === "codStatus"
+    );
+    if (codStatusField?.data === 11) {
+      return true;
+    }
+    return false;
+  };
+
+  const handleSendSaleEmail = async () => {
+    if (guidesReference.current && user) {
+      const codOsGuide = guidesReference.current.find(
+        (guide) => (guide.name = "Cadastro")
+      );
+      const codOsField = codOsGuide?.fields.find(
+        (field) => field.dataKey === "codOs"
+      );
+      const codOs = codOsField?.data;
+      console.log({codOs, user});
+      try {
+        await sendSaleEmailByOppId(codOs, user);
+      } catch (e) {
+        alert(e);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (responsableOptions) {
       setDefaultResponsableWhenNotDefined();
       setCurrentResponsableWhenDefined();
-   } 
-  }, [responsableOptions])
-
-
+    }
+  }, [responsableOptions]);
 
   return (
-    <Box sx={style.formGrid}>
-      {guide.fields.map((field, _index) => {
-        if (field.dataKey === "responsavel" && responsableOptions) {
-          return (
-            <Autocomplete
-              key={field.dataKey}
-              getOptionKey={(option: any) => option.id}
-              options={responsableOptions}
-              value={currentResponsable} // Adicione esta linha
-              renderInput={(
-                params: AutocompleteRenderInputParams
-              ): React.ReactNode => (
-                <TextField
-                  {...params}
-                  label={field.label}
-                  InputLabelProps={{ shrink: true }}
-                />
-              )}
-              
-              onChange={(
-                _event: React.SyntheticEvent,
-                value: any,
-                _reason: AutocompleteChangeReason,
-                _details?: AutocompleteChangeDetails<any> | undefined
-              ) => handleChangeAutoComplete(value)}
-            />
-          );
-        }
-        if (sale) {
-          return (
-            <TextField
-              key={field.dataKey}
-              type={field.type}
-              label={field.label}
-              disabled={field.dataKey === "valorTotal"}
-              InputLabelProps={{ shrink: true }}
-              onChange={(e) => handleChangeTextField(field, e)}
-              value={sale[field.dataKey as keyof OpportunitySaleFields]}
-            ></TextField>
-          );
-        }
-      })}
+    <Box
+      sx={{
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 2,
+      }}
+    >
+      <Box sx={style.formGrid}>
+        {guide.fields.map((field, _index) => {
+          if (field.dataKey === "responsavel" && responsableOptions) {
+            return (
+              <Autocomplete
+                key={field.dataKey}
+                getOptionKey={(option: any) => option.id}
+                options={responsableOptions}
+                value={currentResponsable} // Adicione esta linha
+                renderInput={(
+                  params: AutocompleteRenderInputParams
+                ): React.ReactNode => (
+                  <TextField
+                    {...params}
+                    label={field.label}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                )}
+                onChange={(
+                  _event: React.SyntheticEvent,
+                  value: any,
+                  _reason: AutocompleteChangeReason,
+                  _details?: AutocompleteChangeDetails<any> | undefined
+                ) => handleChangeAutoComplete(value)}
+              />
+            );
+          }
+          if (sale) {
+            return (
+              <TextField
+                key={field.dataKey}
+                type={field.type}
+                label={field.label}
+                disabled={field.dataKey === "valorTotal"}
+                InputLabelProps={{ shrink: true }}
+                onChange={(e) => handleChangeTextField(field, e)}
+                value={sale[field.dataKey as keyof OpportunitySaleFields]}
+              ></TextField>
+            );
+          }
+        })}
+      </Box>
+      {shouldShowSendSaleEmailButton() && (
+        <Button
+          onClick={handleSendSaleEmail}
+          sx={{ ...BaseButtonStyles, width: 200 }}
+        >
+          Enviar email de venda
+        </Button>
+      )}
     </Box>
   );
 };
