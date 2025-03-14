@@ -20,6 +20,29 @@ import { Link } from "react-router-dom";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
+export const finishChecklistByPatrimonyid = async (patrimonyId: number) => {
+  try {
+    const response =  await api.get("/checklist/finish", {
+      params: { patrimonyId },
+    });
+    return response;
+  } catch (e: any) {
+    throw new Error(e);
+  }
+};
+
+export const getNonRealizedChecklistByPatrimonyId = async (patrimonyId : Number ) => { 
+  try{ 
+      const response = await api.get("/checklist/notRealized", {
+        params: { patrimonyId },
+      });
+      return response.data;
+  }catch(e  :any){ 
+    throw new Error(e);
+  }
+}
+
 export const toBeAproved = (row: MovementationChecklist) => {
   return row.realizado && !row.aprovado;
 };
@@ -49,7 +72,9 @@ export const renderValue = (
       <ErrorIcon
         sx={{
           color:
-            toBeAproved(row) && isTypeResponsable(row, user) ? "#ff9a3c" : "gray",
+            toBeAproved(row) && isTypeResponsable(row, user)
+              ? "#ff9a3c"
+              : "gray",
         }}
       ></ErrorIcon>
     );

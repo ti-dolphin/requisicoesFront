@@ -63423,7 +63423,7 @@ axios.getAdapter = adapters.getAdapter;
 axios.HttpStatusCode = HttpStatusCode;
 axios.default = axios;
 const api = axios.create({
-  baseURL: "https://apicontrolehomologacao.dse.com.br",
+  baseURL: "http://localhost:3001",
   headers: {
     "Content-Type": "application/json",
     Authorization: window.localStorage.getItem("token")
@@ -74977,6 +74977,26 @@ default_1$l = CheckCircle.default = (0, _createSvgIcon$l.default)(/* @__PURE__ *
 }), "CheckCircle");
 dayjs.extend(utc);
 dayjs.extend(timezone);
+const finishChecklistByPatrimonyid = /* @__PURE__ */ __name(async (patrimonyId) => {
+  try {
+    const response = await api.get("/checklist/finish", {
+      params: { patrimonyId }
+    });
+    return response;
+  } catch (e2) {
+    throw new Error(e2);
+  }
+}, "finishChecklistByPatrimonyid");
+const getNonRealizedChecklistByPatrimonyId = /* @__PURE__ */ __name(async (patrimonyId) => {
+  try {
+    const response = await api.get("/checklist/notRealized", {
+      params: { patrimonyId }
+    });
+    return response.data;
+  } catch (e2) {
+    throw new Error(e2);
+  }
+}, "getNonRealizedChecklistByPatrimonyId");
 const toBeAproved = /* @__PURE__ */ __name((row) => {
   return row.realizado && !row.aprovado;
 }, "toBeAproved");
@@ -81111,17 +81131,6 @@ var ptBr = { exports: {} };
     return a.default.locale(s, null, true), s;
   });
 })(ptBr);
-var Save = {};
-var _interopRequireDefault$l = interopRequireDefaultExports;
-Object.defineProperty(Save, "__esModule", {
-  value: true
-});
-var default_1$g = Save.default = void 0;
-var _createSvgIcon$g = _interopRequireDefault$l(requireCreateSvgIcon());
-var _jsxRuntime$g = jsxRuntimeExports;
-default_1$g = Save.default = (0, _createSvgIcon$g.default)(/* @__PURE__ */ (0, _jsxRuntime$g.jsx)("path", {
-  d: "M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3m3-10H5V5h10z"
-}), "Save");
 const MovimentationContext = reactExports.createContext({
   refreshMovimentation: false,
   editingMovementationObservation: [false],
@@ -81220,6 +81229,8 @@ function CreateMovementation({
     observacao: "",
     aceito: 0
   });
+  const [alert2, setAlert] = reactExports.useState();
+  const [shouldShowFinishChecklistButton, setShouldFinishChecklistButton] = reactExports.useState(false);
   const handleSaveMovementation = /* @__PURE__ */ __name(async () => {
     if (creatingPatrimonyInfo[0] && handleSave) {
       const insertIdPatrimony = await handleSave();
@@ -81248,8 +81259,15 @@ function CreateMovementation({
       return;
     }
     console.log("response: ", response);
-    alert("Houve um erro ao criar a movimentação: \n" + (response == null ? void 0 : response.data.message));
+    window.alert("Houve um erro ao criar a movimentação: \n" + (response == null ? void 0 : response.data.message));
   }, "handleSaveMovementation");
+  const displayAlert = /* @__PURE__ */ __name(async (severity, message) => {
+    setTimeout(() => {
+      setAlert(void 0);
+    }, 3e3);
+    setAlert({ message, severity });
+    return;
+  }, "displayAlert");
   const handleOpen = /* @__PURE__ */ __name(() => {
     if (notAllowedToCreateMovementation()) {
       window.alert("Somente o resopnsável pode movimentar!");
@@ -81322,6 +81340,31 @@ function CreateMovementation({
       { label: "Observação", dataKey: "observacao" }
     ];
   }, "getMovementationKeys");
+  const verifyNonRealizedChecklists = /* @__PURE__ */ __name(async () => {
+    const nonRealizedChecklist = await getNonRealizedChecklistByPatrimonyId(
+      Number(id_patrimonio)
+    );
+    console.log({ nonRealizedChecklist });
+    if (nonRealizedChecklist.id && (user == null ? void 0 : user.PERM_ADMINISTRADOR)) {
+      setShouldFinishChecklistButton(true);
+      return;
+    }
+    setShouldFinishChecklistButton(false);
+  }, "verifyNonRealizedChecklists");
+  const handleFinishChecklist = /* @__PURE__ */ __name(async () => {
+    try {
+      const response = await finishChecklistByPatrimonyid(Number(id_patrimonio));
+      if (response.status === 200) {
+        setShouldFinishChecklistButton(false);
+        displayAlert(
+          "success",
+          "Checklist finalizado, você pode movimentar o patrimônio"
+        );
+      }
+    } catch (e2) {
+      displayAlert("error", e2.message);
+    }
+  }, "handleFinishChecklist");
   reactExports.useEffect(() => {
     async function setAutoCompleteOptions() {
       const projectData = await fetchAllProjects();
@@ -81336,6 +81379,10 @@ function CreateMovementation({
     __name(setAutoCompleteOptions, "setAutoCompleteOptions");
     setAutoCompleteOptions();
   }, []);
+  reactExports.useEffect(() => {
+    console.log("verifyNonRealizedChecklists");
+    verifyNonRealizedChecklists();
+  }, [creatingMovementation]);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       IconButton,
@@ -81355,8 +81402,6 @@ function CreateMovementation({
         children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
           Box,
           {
-            display: "flex",
-            flexDirection: "column",
             gap: "1rem",
             sx: {
               position: "absolute",
@@ -81367,8 +81412,7 @@ function CreateMovementation({
                 xs: "85%",
                 sm: "65%",
                 md: "45%",
-                lg: "25%",
-                xl: "15%"
+                lg: "25%"
               },
               display: "flex",
               flexDirection: "column",
@@ -81395,29 +81439,39 @@ function CreateMovementation({
                   }
                 )
               ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { spacing: 2, children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { sx: { width: "100%", alignItems: "center" }, spacing: 2, children: [
                 getMovementationKeys().map(
                   (column2) => column2.dataKey === "id_projeto" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
                     Autocomplete,
                     {
                       disablePortal: true,
+                      fullWidth: true,
                       id: "combo-box-demo",
                       options: renderProjectOptions(),
                       onChange: handleSelectProject,
                       renderInput: (params) => /* @__PURE__ */ jsxRuntimeExports.jsx(TextField, { ...params, label: column2.label })
                     }
-                  ) : column2.dataKey === "data" ? /* @__PURE__ */ jsxRuntimeExports.jsx(LocalizationProvider, { dateAdapter: AdapterDayjs, children: /* @__PURE__ */ jsxRuntimeExports.jsx(DemoContainer, { components: ["DateField"], children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    DateField,
+                  ) : column2.dataKey === "data" ? /* @__PURE__ */ jsxRuntimeExports.jsx(LocalizationProvider, { dateAdapter: AdapterDayjs, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    DemoContainer,
                     {
-                      format: "DD/MM/YYYY",
-                      disabled: true,
-                      defaultValue: dayjs(/* @__PURE__ */ new Date()),
-                      label: column2.label
+                      components: ["DateField"],
+                      sx: { width: "100%" },
+                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        DateField,
+                        {
+                          format: "DD/MM/YYYY",
+                          disabled: true,
+                          fullWidth: true,
+                          defaultValue: dayjs(/* @__PURE__ */ new Date()),
+                          label: column2.label
+                        }
+                      )
                     }
-                  ) }) }) : column2.dataKey === "id_responsavel" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  ) }) : column2.dataKey === "id_responsavel" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
                     Autocomplete,
                     {
                       disablePortal: true,
+                      fullWidth: true,
                       id: "combo-box-demo",
                       options: renderPersonOptions(),
                       onChange: handleSelectReponsable,
@@ -81429,12 +81483,58 @@ function CreateMovementation({
                       onChange: handleChange,
                       id: column2.dataKey,
                       multiline: true,
+                      fullWidth: true,
                       placeholder: column2.label
                     }
                   )
                 ),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { onClick: handleSaveMovementation, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$g, {}) })
-              ] })
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  Button,
+                  {
+                    sx: { ...BaseButtonStyles, width: 200 },
+                    onClick: handleSaveMovementation,
+                    children: "Salvar"
+                  }
+                )
+              ] }),
+              shouldShowFinishChecklistButton && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                Box,
+                {
+                  sx: {
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: 2,
+                    width: "100%"
+                  },
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Button,
+                      {
+                        onClick: handleFinishChecklist,
+                        sx: { ...BaseButtonStyles, width: 200 },
+                        children: "Finalizar checklist"
+                      }
+                    ),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Alert,
+                      {
+                        sx: { width: "100%", border: "1px solid orange" },
+                        severity: "warning",
+                        children: "Há um checklist pendente, clique em finalizar ou realize para movimentar"
+                      }
+                    )
+                  ]
+                }
+              ),
+              alert2 && /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Alert,
+                {
+                  sx: { width: "100%", border: "1px solid green" },
+                  severity: alert2.severity,
+                  children: alert2.message
+                }
+              )
             ]
           }
         )
@@ -81699,48 +81799,48 @@ function CreatePatrimonyInfoModal() {
 }
 __name(CreatePatrimonyInfoModal, "CreatePatrimonyInfoModal");
 var ArrowDropDownCircle = {};
-var _interopRequireDefault$k = interopRequireDefaultExports;
+var _interopRequireDefault$l = interopRequireDefaultExports;
 Object.defineProperty(ArrowDropDownCircle, "__esModule", {
   value: true
 });
-var default_1$f = ArrowDropDownCircle.default = void 0;
-var _createSvgIcon$f = _interopRequireDefault$k(requireCreateSvgIcon());
-var _jsxRuntime$f = jsxRuntimeExports;
-default_1$f = ArrowDropDownCircle.default = (0, _createSvgIcon$f.default)(/* @__PURE__ */ (0, _jsxRuntime$f.jsx)("path", {
+var default_1$g = ArrowDropDownCircle.default = void 0;
+var _createSvgIcon$g = _interopRequireDefault$l(requireCreateSvgIcon());
+var _jsxRuntime$g = jsxRuntimeExports;
+default_1$g = ArrowDropDownCircle.default = (0, _createSvgIcon$g.default)(/* @__PURE__ */ (0, _jsxRuntime$g.jsx)("path", {
   d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m0 12-4-4h8z"
 }), "ArrowDropDownCircle");
 var Notifications = {};
-var _interopRequireDefault$j = interopRequireDefaultExports;
+var _interopRequireDefault$k = interopRequireDefaultExports;
 Object.defineProperty(Notifications, "__esModule", {
   value: true
 });
-var default_1$e = Notifications.default = void 0;
-var _createSvgIcon$e = _interopRequireDefault$j(requireCreateSvgIcon());
-var _jsxRuntime$e = jsxRuntimeExports;
-default_1$e = Notifications.default = (0, _createSvgIcon$e.default)(/* @__PURE__ */ (0, _jsxRuntime$e.jsx)("path", {
+var default_1$f = Notifications.default = void 0;
+var _createSvgIcon$f = _interopRequireDefault$k(requireCreateSvgIcon());
+var _jsxRuntime$f = jsxRuntimeExports;
+default_1$f = Notifications.default = (0, _createSvgIcon$f.default)(/* @__PURE__ */ (0, _jsxRuntime$f.jsx)("path", {
   d: "M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2m6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1z"
 }), "Notifications");
 var GridView = {};
-var _interopRequireDefault$i = interopRequireDefaultExports;
+var _interopRequireDefault$j = interopRequireDefaultExports;
 Object.defineProperty(GridView, "__esModule", {
   value: true
 });
-var default_1$d = GridView.default = void 0;
-var _createSvgIcon$d = _interopRequireDefault$i(requireCreateSvgIcon());
-var _jsxRuntime$d = jsxRuntimeExports;
-default_1$d = GridView.default = (0, _createSvgIcon$d.default)(/* @__PURE__ */ (0, _jsxRuntime$d.jsx)("path", {
+var default_1$e = GridView.default = void 0;
+var _createSvgIcon$e = _interopRequireDefault$j(requireCreateSvgIcon());
+var _jsxRuntime$e = jsxRuntimeExports;
+default_1$e = GridView.default = (0, _createSvgIcon$e.default)(/* @__PURE__ */ (0, _jsxRuntime$e.jsx)("path", {
   fillRule: "evenodd",
   d: "M3 3v8h8V3zm6 6H5V5h4zm-6 4v8h8v-8zm6 6H5v-4h4zm4-16v8h8V3zm6 6h-4V5h4zm-6 4v8h8v-8zm6 6h-4v-4h4z"
 }), "GridView");
 var TableRows = {};
-var _interopRequireDefault$h = interopRequireDefaultExports;
+var _interopRequireDefault$i = interopRequireDefaultExports;
 Object.defineProperty(TableRows, "__esModule", {
   value: true
 });
-var default_1$c = TableRows.default = void 0;
-var _createSvgIcon$c = _interopRequireDefault$h(requireCreateSvgIcon());
-var _jsxRuntime$c = jsxRuntimeExports;
-default_1$c = TableRows.default = (0, _createSvgIcon$c.default)(/* @__PURE__ */ (0, _jsxRuntime$c.jsx)("path", {
+var default_1$d = TableRows.default = void 0;
+var _createSvgIcon$d = _interopRequireDefault$i(requireCreateSvgIcon());
+var _jsxRuntime$d = jsxRuntimeExports;
+default_1$d = TableRows.default = (0, _createSvgIcon$d.default)(/* @__PURE__ */ (0, _jsxRuntime$d.jsx)("path", {
   d: "M21 8H3V4h18zm0 2H3v4h18zm0 6H3v4h18z"
 }), "TableRows");
 const TableViewToggleButton = /* @__PURE__ */ __name(({
@@ -81762,7 +81862,7 @@ const TableViewToggleButton = /* @__PURE__ */ __name(({
           sx: {
             ...buttonStylesMobile
           },
-          children: isCardViewActive ? /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$d, {}) : /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$c, {})
+          children: isCardViewActive ? /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$e, {}) : /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$d, {})
         }
       )
     }
@@ -81804,7 +81904,7 @@ const PatrimonySearchAppBarButtons = React$1.memo(
               sx: isMobile ? { ...buttonStylesMobile } : { ...BaseButtonStyles },
               children: [
                 !isMobile && /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { textTransform: "capitalize", children: "Ações" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$f, {})
+                /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$g, {})
               ]
             },
             index2
@@ -81883,7 +81983,7 @@ const PatrimonySearchAppBarButtons = React$1.memo(
             sx: isMobile ? { ...buttonStylesMobile } : { ...BaseButtonStyles },
             children: [
               !isMobile && /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { textTransform: "capitalize", children: "Checklists" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(Badge, { badgeContent: notifications == null ? void 0 : notifications.length, color: "primary", children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$e, {}) })
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Badge, { badgeContent: notifications == null ? void 0 : notifications.length, color: "primary", children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$f, {}) })
             ]
           },
           index2
@@ -82314,14 +82414,14 @@ const style$a = {
   p: 4
 };
 var Checklist = {};
-var _interopRequireDefault$g = interopRequireDefaultExports;
+var _interopRequireDefault$h = interopRequireDefaultExports;
 Object.defineProperty(Checklist, "__esModule", {
   value: true
 });
-var default_1$b = Checklist.default = void 0;
-var _createSvgIcon$b = _interopRequireDefault$g(requireCreateSvgIcon());
-var _jsxRuntime$b = jsxRuntimeExports;
-default_1$b = Checklist.default = (0, _createSvgIcon$b.default)(/* @__PURE__ */ (0, _jsxRuntime$b.jsx)("path", {
+var default_1$c = Checklist.default = void 0;
+var _createSvgIcon$c = _interopRequireDefault$h(requireCreateSvgIcon());
+var _jsxRuntime$c = jsxRuntimeExports;
+default_1$c = Checklist.default = (0, _createSvgIcon$c.default)(/* @__PURE__ */ (0, _jsxRuntime$c.jsx)("path", {
   d: "M22 7h-9v2h9zm0 8h-9v2h9zM5.54 11 2 7.46l1.41-1.41 2.12 2.12 4.24-4.24 1.41 1.41zm0 8L2 15.46l1.41-1.41 2.12 2.12 4.24-4.24 1.41 1.41z"
 }), "Checklist");
 var safeIsNaN = Number.isNaN || /* @__PURE__ */ __name(function ponyfill(value) {
@@ -83893,7 +83993,7 @@ function PatrimonyInfoTable() {
           align: "center",
           children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", children: [
             "",
-            /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: () => handleOpenChecklists(row), children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$b, {}) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: () => handleOpenChecklists(row), children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$c, {}) }),
             /* @__PURE__ */ jsxRuntimeExports.jsx(
               Checkbox,
               {
@@ -84785,25 +84885,25 @@ const Modal$2 = /* @__PURE__ */ reactExports.forwardRef(/* @__PURE__ */ __name(f
   });
 }, "Modal2"));
 var AttachFile = {};
-var _interopRequireDefault$f = interopRequireDefaultExports;
+var _interopRequireDefault$g = interopRequireDefaultExports;
 Object.defineProperty(AttachFile, "__esModule", {
   value: true
 });
-var default_1$a = AttachFile.default = void 0;
-var _createSvgIcon$a = _interopRequireDefault$f(requireCreateSvgIcon());
-var _jsxRuntime$a = jsxRuntimeExports;
-default_1$a = AttachFile.default = (0, _createSvgIcon$a.default)(/* @__PURE__ */ (0, _jsxRuntime$a.jsx)("path", {
+var default_1$b = AttachFile.default = void 0;
+var _createSvgIcon$b = _interopRequireDefault$g(requireCreateSvgIcon());
+var _jsxRuntime$b = jsxRuntimeExports;
+default_1$b = AttachFile.default = (0, _createSvgIcon$b.default)(/* @__PURE__ */ (0, _jsxRuntime$b.jsx)("path", {
   d: "M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6z"
 }), "AttachFile");
 var CloudUpload = {};
-var _interopRequireDefault$e = interopRequireDefaultExports;
+var _interopRequireDefault$f = interopRequireDefaultExports;
 Object.defineProperty(CloudUpload, "__esModule", {
   value: true
 });
-var default_1$9 = CloudUpload.default = void 0;
-var _createSvgIcon$9 = _interopRequireDefault$e(requireCreateSvgIcon());
-var _jsxRuntime$9 = jsxRuntimeExports;
-default_1$9 = CloudUpload.default = (0, _createSvgIcon$9.default)(/* @__PURE__ */ (0, _jsxRuntime$9.jsx)("path", {
+var default_1$a = CloudUpload.default = void 0;
+var _createSvgIcon$a = _interopRequireDefault$f(requireCreateSvgIcon());
+var _jsxRuntime$a = jsxRuntimeExports;
+default_1$a = CloudUpload.default = (0, _createSvgIcon$a.default)(/* @__PURE__ */ (0, _jsxRuntime$a.jsx)("path", {
   d: "M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96M14 13v4h-4v-4H7l5-5 5 5z"
 }), "CloudUpload");
 const MovementationFileContext = reactExports.createContext({
@@ -85018,7 +85118,7 @@ const MovimentationFileModal = reactExports.memo(
       fetchFileData();
     }, [fetchFileData, refreshMovementationFile]);
     return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "Anexos da movimentação", children: /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { "aria-label": "cart", onClick: handleOpen, children: /* @__PURE__ */ jsxRuntimeExports.jsx(StyledBadge, { badgeContent: fileData == null ? void 0 : fileData.length, color: "secondary", children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$a, { sx: { color: "#F7941E" } }) }) }) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "Anexos da movimentação", children: /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { "aria-label": "cart", onClick: handleOpen, children: /* @__PURE__ */ jsxRuntimeExports.jsx(StyledBadge, { badgeContent: fileData == null ? void 0 : fileData.length, color: "secondary", children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$b, { sx: { color: "#F7941E" } }) }) }) }),
       /* @__PURE__ */ jsxRuntimeExports.jsx(
         Modal$1,
         {
@@ -85072,7 +85172,7 @@ const MovimentationFileModal = reactExports.memo(
                     role: void 0,
                     variant: "contained",
                     tabIndex: -1,
-                    startIcon: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$9, {}),
+                    startIcon: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$a, {}),
                     sx: BaseButtonStyles,
                     children: [
                       "Anexar",
@@ -85280,14 +85380,14 @@ const ModalContent = styled$1("div")(
   `
 );
 var Edit = {};
-var _interopRequireDefault$d = interopRequireDefaultExports;
+var _interopRequireDefault$e = interopRequireDefaultExports;
 Object.defineProperty(Edit, "__esModule", {
   value: true
 });
-var default_1$8 = Edit.default = void 0;
-var _createSvgIcon$8 = _interopRequireDefault$d(requireCreateSvgIcon());
-var _jsxRuntime$8 = jsxRuntimeExports;
-default_1$8 = Edit.default = (0, _createSvgIcon$8.default)(/* @__PURE__ */ (0, _jsxRuntime$8.jsx)("path", {
+var default_1$9 = Edit.default = void 0;
+var _createSvgIcon$9 = _interopRequireDefault$e(requireCreateSvgIcon());
+var _jsxRuntime$9 = jsxRuntimeExports;
+default_1$9 = Edit.default = (0, _createSvgIcon$9.default)(/* @__PURE__ */ (0, _jsxRuntime$9.jsx)("path", {
   d: "M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75z"
 }), "Edit");
 const style$7 = {
@@ -85371,6 +85471,17 @@ function DeleteMovementationModal() {
   ) });
 }
 __name(DeleteMovementationModal, "DeleteMovementationModal");
+var Save = {};
+var _interopRequireDefault$d = interopRequireDefaultExports;
+Object.defineProperty(Save, "__esModule", {
+  value: true
+});
+var default_1$8 = Save.default = void 0;
+var _createSvgIcon$8 = _interopRequireDefault$d(requireCreateSvgIcon());
+var _jsxRuntime$8 = jsxRuntimeExports;
+default_1$8 = Save.default = (0, _createSvgIcon$8.default)(/* @__PURE__ */ (0, _jsxRuntime$8.jsx)("path", {
+  d: "M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3m3-10H5V5h10z"
+}), "Save");
 var Cancel = {};
 var _interopRequireDefault$c = interopRequireDefaultExports;
 Object.defineProperty(Cancel, "__esModule", {
@@ -85458,7 +85569,7 @@ function EditMovimentationObservationModal() {
               variant: "outlined",
               onClick: handleSave,
               sx: { width: "1rem", marginX: "1rem" },
-              children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$g, {})
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$8, {})
             }
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -85596,7 +85707,7 @@ const RowContent = reactExports.memo(
                 IconButton,
                 {
                   onClick: () => togglEditingMovementationObservation(true, row),
-                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$8, { sx: { color: "#F7941E" } })
+                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$9, { sx: { color: "#F7941E" } })
                 }
               ) }),
               column2.dataKey === "id_movimentacao" && /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "Excluir Movimentação", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -86192,7 +86303,7 @@ function PatrimonyFileModal() {
     fetchPatrimonyFiles();
   }, [refreshPatrimonyFile]);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(Badge, { badgeContent: (fileData == null ? void 0 : fileData.length) || 0, color: "primary", sx: styles$7.badge, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "Anexos do patrimônio", children: /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: handleOpen, sx: styles$7.iconButton, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$a, {}) }) }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Badge, { badgeContent: (fileData == null ? void 0 : fileData.length) || 0, color: "primary", sx: styles$7.badge, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Tooltip, { title: "Anexos do patrimônio", children: /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: handleOpen, sx: styles$7.iconButton, children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$b, {}) }) }) }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       Modal,
       {
@@ -86214,7 +86325,7 @@ function PatrimonyFileModal() {
                 role: void 0,
                 variant: "contained",
                 tabIndex: -1,
-                startIcon: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$9, {}),
+                startIcon: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$a, {}),
                 sx: { ...BaseButtonStyles, width: 100 },
                 children: [
                   "Anexar",
@@ -86373,7 +86484,7 @@ function CreatePatrimonyAccessoryModal() {
             {
               onClick: handleSave,
               sx: { width: "1rem", marginX: "1rem", marginTop: "1rem" },
-              children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$g, {})
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$8, {})
             }
           )
         ] })
@@ -86568,7 +86679,7 @@ function PatrimonyAccessoryModal() {
             {
               component: "label",
               variant: "contained",
-              startIcon: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$9, {}),
+              startIcon: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$a, {}),
               sx: {
                 mt: 2,
                 width: isMobile ? "100%" : "auto"
@@ -86856,7 +86967,7 @@ const PatrimonyDetails = /* @__PURE__ */ __name(() => {
                     {
                       onClick: () => window.open(`/patrimony/checklist/${id_patrimonio}`),
                       title: "Checklists do patrimônio",
-                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$b, { sx: { color: "#F7941E" } }) })
+                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$c, { sx: { color: "#F7941E" } }) })
                     }
                   )
                 ] }),
@@ -86908,7 +87019,7 @@ const PatrimonyDetails = /* @__PURE__ */ __name(() => {
                         variant: "outlined",
                         onClick: () => handleSave(),
                         sx: { width: "1rem", marginX: "1rem" },
-                        children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$g, {})
+                        children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$8, {})
                       }
                     ),
                     /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -91148,7 +91259,7 @@ const CardChecklistItem = /* @__PURE__ */ __name(({
                 },
                 children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", alignItems: "center", gap: 0.5, children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { fontSize: "small", children: "Novo Arquivo" }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$9, { sx: { fontSize: "16px" } })
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$a, { sx: { fontSize: "16px" } })
                 ] })
               }
             )
@@ -92840,7 +92951,7 @@ const CommentRow = /* @__PURE__ */ __name(({ index: index2, comment: comment2, s
         {
           sx: { ...buttonStylesMobile, marginX: 2 },
           onClick: () => handleStartEdition(),
-          children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$8, {})
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$9, {})
         }
       ),
       /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: alert2 && /* @__PURE__ */ jsxRuntimeExports.jsx(motion.div, { ...alertAnimation, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Alert, { severity: alert2 == null ? void 0 : alert2.severity, children: alert2 == null ? void 0 : alert2.message }) }) })
@@ -93119,7 +93230,7 @@ const OpportunityFiles = /* @__PURE__ */ __name(({
       ),
       /* @__PURE__ */ jsxRuntimeExports.jsxs(Stack, { direction: "row", alignItems: "center", gap: 0.5, children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { fontSize: "small", children: "Enviar Arquivo" }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$9, { sx: { fontSize: "16px" } })
+        /* @__PURE__ */ jsxRuntimeExports.jsx(default_1$a, { sx: { fontSize: "16px" } })
       ] })
     ] }) }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { sx: styles$4.gallery, children: files && files.map((file, index2) => /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { sx: styles$4.fileContainer, children: [

@@ -2,7 +2,7 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import { Autocomplete, AutocompleteChangeDetails, AutocompleteChangeReason, Button, IconButton, Stack, TextField } from "@mui/material";
+import { Alert, AlertColor, Autocomplete, AutocompleteChangeDetails, AutocompleteChangeReason, Button, IconButton, Stack, TextField } from "@mui/material";
 import AddCircle from "@mui/icons-material/AddCircle";
 import { fetchAllProjects, fetchPersons, Person, Project } from "../../../../Requisitions/utils";
 import { useState } from "react";
@@ -15,11 +15,12 @@ import dayjs from "dayjs";
 import CloseIcon from "@mui/icons-material/Close";
 import "dayjs/locale/pt-br";
 import { PatrimonyInfoContext } from "../../../context/patrimonyInfoContext";
-import SaveIcon from "@mui/icons-material/Save";
-import { createMovementation } from "../../../utils";
+import { createMovementation, finishChecklistByPatrimonyid, getNonRealizedChecklistByPatrimonyId } from "../../../utils";
 import { useNavigate, useParams } from "react-router-dom";
 import { MovimentationContext } from "../../../context/movementationContext";
 import { userContext } from "../../../../Requisitions/context/userContext";
+import { BaseButtonStyles } from "../../../../utilStyles";
+import { AlertInterface } from "../../../../Requisitions/types";
 
 dayjs.locale("pt-br");
 
@@ -72,6 +73,8 @@ export default function CreateMovementation({
     observacao: "",
     aceito: 0
   });
+  const [alert, setAlert] = useState<AlertInterface>();
+  const [shouldShowFinishChecklistButton, setShouldFinishChecklistButton] = useState<boolean>(false);
 
   const handleSaveMovementation = async () => {
     if (creatingPatrimonyInfo[0] && handleSave) {
@@ -101,9 +104,16 @@ export default function CreateMovementation({
       return;
     }
     console.log('response: ', response)
-    alert("Houve um erro ao criar a movimentação: \n" + response?.data.message);
-    // no caso de estar criando a movimentação para o patrimonio já existente, o id virá do contexto de criação da movimentação, que irá receber o id do patrimônio
+    window.alert("Houve um erro ao criar a movimentação: \n" + response?.data.message);
   };
+
+   const displayAlert = async (severity: string, message: string) => {
+     setTimeout(() => {
+       setAlert(undefined);
+     }, 3000);
+     setAlert({ message: message, severity: severity });
+     return;
+   };
 
   const handleOpen = () => {
     if (notAllowedToCreateMovementation()) {
@@ -207,6 +217,33 @@ export default function CreateMovementation({
     ];
   };
 
+  const verifyNonRealizedChecklists = async ( ) => { 
+        const nonRealizedChecklist = await getNonRealizedChecklistByPatrimonyId(
+          Number(id_patrimonio)
+        );
+        console.log({nonRealizedChecklist})
+        if(nonRealizedChecklist.id &&  user?.PERM_ADMINISTRADOR){ 
+          setShouldFinishChecklistButton(true);
+          return
+        }
+        setShouldFinishChecklistButton(false);
+  }
+
+  const handleFinishChecklist = async ( ) =>  {
+        try{ 
+            const response = await finishChecklistByPatrimonyid(Number(id_patrimonio));
+            if(response.status === 200){ 
+              setShouldFinishChecklistButton(false);
+              displayAlert(
+                "success",
+                "Checklist finalizado, você pode movimentar o patrimônio"
+              );
+            }
+        }catch(e : any){ 
+          displayAlert('error', e.message as string);
+        }
+  };
+
   React.useEffect(() => {
     async function setAutoCompleteOptions() {
       const projectData = await fetchAllProjects();
@@ -220,6 +257,12 @@ export default function CreateMovementation({
     }
     setAutoCompleteOptions();
   }, []);
+
+  React.useEffect(() => {
+    console.log("verifyNonRealizedChecklists");
+    verifyNonRealizedChecklists();
+  }, [creatingMovementation]);
+
 
   return (
     <div>
@@ -237,8 +280,6 @@ export default function CreateMovementation({
         aria-describedby="modal-modal-description"
       >
         <Box
-          display="flex"
-          flexDirection="column"
           gap="1rem"
           sx={{
             position: "absolute" as const,
@@ -250,7 +291,6 @@ export default function CreateMovementation({
               sm: "65%",
               md: "45%",
               lg: "25%",
-              xl: "15%",
             },
             display: "flex",
             flexDirection: "column",
@@ -277,11 +317,12 @@ export default function CreateMovementation({
               <CloseIcon />
             </IconButton>
           </Stack>
-          <Stack spacing={2}>
+          <Stack sx={{ width: "100%", alignItems: "center" }} spacing={2}>
             {getMovementationKeys().map((column) =>
               column.dataKey === "id_projeto" ? (
                 <Autocomplete
                   disablePortal
+                  fullWidth
                   id="combo-box-demo"
                   options={renderProjectOptions()}
                   onChange={handleSelectProject}
@@ -291,10 +332,14 @@ export default function CreateMovementation({
                 />
               ) : column.dataKey === "data" ? (
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer components={["DateField"]}>
+                  <DemoContainer
+                    components={["DateField"]}
+                    sx={{ width: "100%" }}
+                  >
                     <DateField
                       format="DD/MM/YYYY"
                       disabled
+                      fullWidth
                       defaultValue={dayjs(new Date())}
                       label={column.label}
                     />
@@ -303,9 +348,9 @@ export default function CreateMovementation({
               ) : column.dataKey === "id_responsavel" ? (
                 <Autocomplete
                   disablePortal
+                  fullWidth
                   id="combo-box-demo"
                   options={renderPersonOptions()}
-
                   onChange={handleSelectReponsable}
                   renderInput={(params) => (
                     <TextField {...params} label={column.label} />
@@ -316,16 +361,51 @@ export default function CreateMovementation({
                   onChange={handleChange}
                   id={column.dataKey}
                   multiline
+                  fullWidth
                   placeholder={column.label}
-                >
-
-                </TextField>
+                ></TextField>
               )
             )}
-            <Button onClick={handleSaveMovementation}>
-              <SaveIcon />
+            <Button
+              sx={{ ...BaseButtonStyles, width: 200 }}
+              onClick={handleSaveMovementation}
+            >
+              Salvar
             </Button>
           </Stack>
+          {shouldShowFinishChecklistButton && (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 2,
+                width: "100%",
+              }}
+            >
+              <Button
+                onClick={handleFinishChecklist}
+                sx={{ ...BaseButtonStyles, width: 200 }}
+              >
+                Finalizar checklist
+              </Button>
+              <Alert
+                sx={{ width: "100%", border: "1px solid orange" }}
+                severity="warning"
+              >
+                Há um checklist pendente, clique em finalizar ou realize para
+                movimentar
+              </Alert>
+            </Box>
+          )}
+          {alert && (
+            <Alert
+              sx={{ width: "100%", border: "1px solid green" }}
+              severity={alert.severity as AlertColor}
+            >
+              {alert.message}
+            </Alert>
+          )}
         </Box>
       </Modal>
     </div>
