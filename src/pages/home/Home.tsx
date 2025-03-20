@@ -1,12 +1,10 @@
 /* eslint-disable no-irregular-whitespace */
 import {
   Box,
-  Button,
   Card,
   CardActionArea,
   CardContent,
   CardMedia,
-  IconButton,
   Stack,
   Typography,
 } from "@mui/material";
@@ -41,14 +39,11 @@ const modules = [
       path: '/crm'
   },
 ];
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { Dropdown } from "@mui/base/Dropdown";
-import { Menu } from "@mui/base/Menu";
-import { MenuButton as BaseMenuButton } from "@mui/base/MenuButton";
+import ProfileButton from "../../components/ProfileButton";
 
 const Home = () => {
   const navigate = useNavigate();
-  const { logedIn, user, toggleLogedIn } = useContext(userContext);
+  const { logedIn, user } = useContext(userContext);
   useEffect(() => {
     console.log("user: ", user);
     if (!logedIn) {
@@ -59,11 +54,8 @@ const Home = () => {
   const handleNavigateToModule = (path: string) => {
     navigate(path);
   };
-  const handleLogOut = () => {
-    window.localStorage.removeItem("user");
-    window.localStorage.removeItem("token");
-    toggleLogedIn(false);
-  };
+
+
   return (
     <Box
       sx={{
@@ -75,7 +67,6 @@ const Home = () => {
       }}
     >
       <Box
- 
         sx={{
           background: `url('${logoUrl}')`,
           backgroundPosition: "left",
@@ -88,17 +79,7 @@ const Home = () => {
           height: "10%",
         }}
       >
-        <IconButton sx={{ position: "absolute", right: "1rem" }}>
-          <Dropdown>
-            <BaseMenuButton>
-              {" "}
-              <AccountCircleIcon sx={{ color: "#F7941E" }} />
-            </BaseMenuButton>
-            <Menu>
-              <Button sx={{marginTop: '0.5rem'}} onClick={() => handleLogOut()}><Typography fontSize="small" textTransform="lowercase" color="blue">Sair</Typography></Button>
-            </Menu>
-          </Dropdown>
-        </IconButton>
+          <ProfileButton />
       </Box>
 
       <Box
@@ -125,7 +106,6 @@ const Home = () => {
         </Typography>
         <Stack
           width="100%"
-
           direction="row"
           justifyContent="center"
           alignItems="center"
@@ -139,12 +119,12 @@ const Home = () => {
               index //box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
             ) => (
               <Card
-                 key={index}
+                key={index}
                 sx={{
                   width: 300,
                   height: "500px",
                   borderRadius: "30px",
-                  boxShadow: 'none'
+                  boxShadow: "none",
                 }}
               >
                 <CardActionArea

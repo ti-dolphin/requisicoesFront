@@ -120,6 +120,7 @@ const useRequisitionItems = (requisitionId: number, isInsertingQuantity?: boolea
     };
 
     const handleCancelEdition = async () => {
+        console.log('handleCancelEdition')
         const row = Object.keys(rowModesModel)[0];
         const { fieldToFocus } = rowModesModel[row] as any;
         stopEditMode(Number(row), fieldToFocus, true);
@@ -128,6 +129,7 @@ const useRequisitionItems = (requisitionId: number, isInsertingQuantity?: boolea
     }
 
     const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
+        console.log('processRowUpdate')
         if (isEditing) {
             const updatedRow = { ...newRow } as Item;
             setVisibleItems(visibleItems.map(item => (item.ID === updatedRow.ID ? updatedRow : item)));
@@ -169,6 +171,7 @@ const useRequisitionItems = (requisitionId: number, isInsertingQuantity?: boolea
     }, [toggleSave]);
 
     const stopEditMode = async (row: number, fieldToFocus: string, ignoreModifications: boolean) => {
+        console.log('stopEditMode')
         gridApiRef.current.stopRowEditMode({ id: row, field: fieldToFocus, ignoreModifications });
     }
 
@@ -235,3 +238,5 @@ const useRequisitionItems = (requisitionId: number, isInsertingQuantity?: boolea
     };
 };
 export default useRequisitionItems;
+
+

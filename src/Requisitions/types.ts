@@ -48,9 +48,13 @@ export interface Quote {
 export interface QuoteItem {
   id_item_cotacao: number; // id_item_cotacao
   id_cotacao: number; // id_cotacao
+  id_item_requisicao: number;
   descricao_item: string; // descricao_item
   preco_unitario: number; // preco_unitario
   quantidade: number; // quantidade
+  ICMS: number;
+  IPI: number;
+  ST: number
   subtotal: number; // subtotal calculado
 }
 export interface RequisitionPost {
