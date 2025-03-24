@@ -3,10 +3,7 @@ import { SxProps, Theme } from "@mui/material";
 const styles = {
 
     mainContainer: {
-        display: { 
-            xs: 'none',
-            md: 'flex',
-        },
+        display: 'flex',
         backgroundColor: 'white',
         flexDirection: "column",
         borderRadius: '5px',
@@ -15,6 +12,15 @@ const styles = {
         padding: 0.5,
         
     },
+    search: {
+        maxWidth: {
+            xs: 200,
+            sm: 200,
+            md: 250,
+        },
+        padding: 0.1,
+        border: "0.5px solid #e3e3e3",
+    } as SxProps<Theme>,
     container: {
         flexGrow: 1,
         flexShrink: 1,
@@ -25,7 +31,6 @@ const styles = {
         height: 'fit-content',
         padding: 1,
         borderRadius: '5px',
-        gridTemplateRows: "repeat(3, 1fr)", // 3 linhas com tamanho igual
         gridTemplateColumns: "repeat(5, 1fr)", // 5 colunas com tamanho igual
         gap: 1.2,
         alignItems: 'center'

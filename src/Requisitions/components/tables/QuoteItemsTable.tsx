@@ -124,7 +124,7 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
       editable: true,
       valueFormatter: (value: Number) =>
         value.toLocaleString("pt-BR", {
-          style: "currency",
+          style: "currency",  
           currency: "BRL",
         }),
     },

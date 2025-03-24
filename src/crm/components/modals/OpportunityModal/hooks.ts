@@ -269,6 +269,7 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
             setIsLoading(false);
             resetFormData();
             setRefreshOpportunityFields(!refreshOpportunityFields);  
+            setChangeWasMade(false);
             toggleRefreshOpportunityInfo();
         }
     };

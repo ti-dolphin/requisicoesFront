@@ -3,14 +3,20 @@ import { SxProps, Theme } from "@mui/material/styles";
 export const styles = {
     appBar: {
         display: "flex",
-        flexDirection: "row",
+        flexDirection: { 
+            xs: "column",
+            sm: "row",
+            md: "row",
+            lg: "row",
+        },
         flexWrap: 'noWrap',
+
         position: "static",
         backgroundColor: "#2B3990",
         alignItems: "start",
         justifyContent: "start",
         zIndex: 10,
-        minHeight: "180px",
+       
         gap: 0.4,
         padding: 1,
         boxShadow: "none",
@@ -51,15 +57,7 @@ export const styles = {
         padding: 1,
     } as SxProps<Theme>,
 
-    search: {
-        maxWidth: {
-            xs: 200,
-            sm: 200,
-            md: 250,
-        },
-        padding: 0.1,
-        border: "0.5px solid #e3e3e3",
-    } as SxProps<Theme>,
+
 
     stackButtons: {
         flexDirection: "row",
