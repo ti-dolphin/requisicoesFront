@@ -10,14 +10,14 @@ export const styles = {
             lg: "row",
         },
         flexWrap: 'noWrap',
-
+        
         position: "static",
         backgroundColor: "#2B3990",
         alignItems: "start",
         justifyContent: "start",
         zIndex: 10,
        
-        gap: 0.4,
+        gap: 2,
         padding: 1,
         boxShadow: "none",
     } as SxProps<Theme>,
@@ -82,12 +82,5 @@ export const styles = {
             borderColor: "#8dc6ff",
         },
         maxWidth: 150,
-    } as SxProps<Theme>,
-
-    checkbox: {
-        color: "white",
-        "& .Mui-checked": {
-            color: "white",
-        },
-    } as SxProps<Theme>,
+    } as SxProps<Theme>
 };

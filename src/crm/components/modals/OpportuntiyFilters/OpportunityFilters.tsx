@@ -6,7 +6,7 @@ import {
   OpportunityOptionField,
   Status,
 } from "../../../types";
-import { alpha, Autocomplete, Box, Checkbox, Chip, FormControl, IconButton, InputBase, Stack, styled, TextField, Tooltip, Typography } from "@mui/material";
+import { alpha, Box, Checkbox, FormControl, FormControlLabel, IconButton, InputBase, Stack, styled, TextField, Tooltip } from "@mui/material";
 import styles from "./OpportunityFilters.styles";
 import { GridColDef } from "@mui/x-data-grid";
 import { fetchAllClients, fetchManagers, fetchSalers, fetchStatusList } from "../../../utils";
@@ -15,6 +15,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
 import {debounce} from 'lodash';
+import FilterField from "../../FilterField/FilterField";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
 
 interface props {
   allRows: OpportunityInfo[];
@@ -37,6 +39,9 @@ interface props {
   }[];
   setDateFiltersActive: React.Dispatch<React.SetStateAction<boolean>>;
   calculateLayoutProps: (registerCount: number) => void;
+  handleChangeShowFinishedOpps: (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => void;
 }
 
 const createFilters = (columns: GridColDef<OpportunityInfo>[]) => {
@@ -96,7 +101,8 @@ const OpportunityFilters = ({
   dateParams,
   dateFilters,
   setDateFiltersActive,
-  calculateLayoutProps
+  calculateLayoutProps,
+  handleChangeShowFinishedOpps,
 }: props) => {
   const filteredColumns = columns.filter((column) => {
     if (
@@ -186,18 +192,19 @@ const OpportunityFilters = ({
       },
     }));
 
-    filterRows({
-      ...filters,
-      [dataKey]: {
-        ...filters[dataKey],
-        values,
+    filterRows(
+      {
+        ...filters,
+        [dataKey]: {
+          ...filters[dataKey],
+          values,
+        },
       },
-    },
-    searchTerm
-  );
+      searchTerm
+    );
   };
 
-  const filterRows = (currentFilters: any, valueReceived? : string) => {
+  const filterRows = (currentFilters: any, valueReceived?: string) => {
     console.log("filterRows");
     const composedFilteredRow: OpportunityInfo[] = [];
     const filterKeys = Object.keys(currentFilters);
@@ -215,7 +222,7 @@ const OpportunityFilters = ({
           });
           if (!oppIncludesValue) {
             shouldInclude = false;
-            break; 
+            break;
           }
         }
       }
@@ -223,7 +230,7 @@ const OpportunityFilters = ({
         composedFilteredRow.push(opportunity);
       }
     });
-    console.log("value received: ", valueReceived);
+
     if (valueReceived) {
       const filteredRows = composedFilteredRow.filter((row: OpportunityInfo) =>
         columns.some((column) => {
@@ -233,136 +240,34 @@ const OpportunityFilters = ({
           );
         })
       );
-       calculateLayoutProps(filteredRows.length);
-       setRows(filteredRows);
+      calculateLayoutProps(filteredRows.length);
+      setRows(filteredRows);
       return;
     }
-       const filteredRows = composedFilteredRow.filter((row: OpportunityInfo) =>
-         columns.some((column) => {
-           const cellValue = row[column.field as keyof OpportunityInfo];
-           return cellValue && String(cellValue).toLowerCase().includes(searchTerm) || !searchTerm || !valueReceived;
-         })
-       );
+    const filteredRows = composedFilteredRow.filter((row: OpportunityInfo) =>
+      columns.some((column) => {
+        const cellValue = row[column.field as keyof OpportunityInfo];
+        return (
+          (cellValue && String(cellValue).toLowerCase().includes(searchTerm)) ||
+          !searchTerm ||
+          !valueReceived
+        );
+      })
+    );
     calculateLayoutProps(filteredRows.length);
     setRows(filteredRows);
     return filteredRows;
   };
 
-  const renderFilterField = (filter: any) => {
-    const { dataKey, label } = filter;
-
-    // Campos com opções (Autocomplete com Checkboxes)
-    if (
-      dataKey === "nomeCliente" ||
-      dataKey === "nomeVendedor" ||
-      dataKey === "nomeStatus" ||
-      dataKey === "nomeGerente"
-    ) {
-      const options =
-        dataKey === "nomeCliente"
-          ? clientOptions
-          : dataKey === "nomeVendedor"
-          ? responsableOptions
-          : dataKey === "nomeStatus"
-          ? statusOptions
-          : managerOptions;
-      if (options) {
-        return (
-          <Autocomplete
-            key={dataKey}
-            multiple
-            options={options}
-            disableCloseOnSelect
-            getOptionKey={(option: any) => option.id}
-            getOptionLabel={(option) => option.label}
-            renderTags={(optionArray: any, getTagProps) =>
-              optionArray.map((option: any, index: number) => {
-                const { key, ...tagProps } = getTagProps({ index });
-                return (
-                  <Chip
-                    variant="outlined"
-                    label={option.label}
-                    key={key}
-                    {...tagProps}
-                    sx={{ display: "none" }}
-                  />
-                );
-              })
-            }
-            renderOption={(props, option, { selected }) => (
-              <Box>
-                <li {...props}>
-                  <Checkbox style={{ marginRight: 8 }} checked={selected} />
-                  <Typography sx={typographyStyles.smallText}>
-                    {option.label}
-                  </Typography>
-                </li>
-              </Box>
-            )}
-            value={options.filter((option: any) =>
-              filters[dataKey].values.includes(option.label)
-            )}
-            onChange={(_, newValue) => {
-              updateFilterValues(
-                dataKey,
-                newValue.map((option) => option.label)
-              );
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                InputLabelProps={{ shrink: true, sx: { color: "black" } }}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    padding: 0.5,
-                  },
-                }}
-                InputProps={{
-                  ...params.InputProps,
-                  sx: styles.input,
-                }}
-                label={label}
-              />
-            )}
-          />
-        );
-      }
-    }
-    return (
-      <TextField
-        key={dataKey}
-        label={label}
-        value={filters[dataKey].values.join(", ")} // Exibe os valores como texto
-        onChange={(e) =>
-          updateFilterValues(dataKey, e.target.value.split(", "))
-        }
-        fullWidth
-        InputLabelProps={{
-          shrink: true,
-          sx: {
-            color: "black",
-          },
-        }}
-        InputProps={{ sx: styles.input }}
-      />
-    );
-  };
-
-  const debouncedSearch = debounce(
-    (
-      value: string,
-      filters: any,
-    ) => {
-      filterRows(filters, value);
-    },
-    400
-  ); // 300ms de atraso
+  const debouncedSearch = debounce((value: string, filters: any) => {
+    filterRows(filters, value);
+  }, 400); // 300ms de atraso
 
   const handleGeneralSearch = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const value = e.target.value.toLowerCase();
-    setSearchTerm(value); 
+    setSearchTerm(value);
     debouncedSearch(value, filters);
   };
 
@@ -397,8 +302,33 @@ const OpportunityFilters = ({
           responsableOptions &&
           clientOptions &&
           Object.values(filters).map((filter: any) => (
-            <Box key={filter.dataKey}>{renderFilterField(filter)}</Box>
+            <Box key={filter.dataKey}>
+              {
+                <FilterField
+                  filter={filter}
+                  updateFilterValues={updateFilterValues}
+                  clientOptions={clientOptions}
+                  responsableOptions={responsableOptions}
+                  statusOptions={statusOptions}
+                  managerOptions={managerOptions}
+                  styles={styles}
+                  filters={filters}
+                />
+              }
+            </Box>
           ))}
+        <FormControlLabel
+        sx={{color: 'black'}}
+          control={
+            <Checkbox
+              onChange={handleChangeShowFinishedOpps}
+              checkedIcon={<CheckBoxIcon sx={{ color: "black" }} />}
+              
+            />
+          }
+          
+          label="Listar Finalizados"
+        />
       </Box>
       {dateFiltersActive && (
         <AnimatePresence>

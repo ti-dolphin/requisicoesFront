@@ -41,6 +41,7 @@ const OpportunityTableSearchBar = memo(
   }: OpportunityTableSearchBarProps) => {
     const navigate = useNavigate();
     const {
+      setFinishedOppsEnabled,
       dateFilters,
       setDateFilters,
       toggleRefreshOpportunityInfo,
@@ -82,6 +83,12 @@ const OpportunityTableSearchBar = memo(
       },
     ];
 
+    const handleChangeShowFinishedOpps = (
+      e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+      const { checked } = e.target;
+      setFinishedOppsEnabled(checked);
+    };
 
     const handleSearchWithDateParams = (
       _e: React.MouseEvent<HTMLButtonElement>
@@ -130,13 +137,11 @@ const OpportunityTableSearchBar = memo(
               <ArrowLeftIcon sx={{ color: "white" }} />
             </IconButton>
             <Typography color="white" fontSize="medium" fontFamily="Roboto">
-              Controle de Propostas e Oportunidades
+              PROPOSTAS E OPORTUNIDADES
             </Typography>
           </Stack>
 
           <Toolbar sx={styles.toolbar}>
-           
-
             <Stack sx={styles.stackButtons}>
               {dateFiltersActive && (
                 <>
@@ -186,8 +191,6 @@ const OpportunityTableSearchBar = memo(
                 isCardViewActive={isCardViewActive}
                 setIsCardViewActive={setIsCardViewActive}
               />
-
-             
             </Stack>
           </Toolbar>
         </Stack>
@@ -202,6 +205,7 @@ const OpportunityTableSearchBar = memo(
           dateParams={dateParams}
           setDateFiltersActive={setDateFiltersActive}
           calculateLayoutProps={calculateLayoutProps}
+          handleChangeShowFinishedOpps={handleChangeShowFinishedOpps}
         />
       </AppBar>
     );

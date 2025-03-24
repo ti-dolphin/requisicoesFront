@@ -50,5 +50,11 @@ const styles = {
         borderRadius: 0.5,
         zIndex: 20,
     } as SxProps<Theme>,
+    checkbox: {
+        color: "black",
+        "& .Mui-checked": {
+            color: "white",
+        },
+    }
 }
 export default styles;
