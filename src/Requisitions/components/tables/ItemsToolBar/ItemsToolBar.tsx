@@ -1,11 +1,12 @@
-import { Button, Stack } from '@mui/material'
-import ItemActions from '../ItemActions/ItemActions'
-import { Item } from '../../../types'
-import { BaseButtonStyles } from '../../../../utilStyles';
-import { ItemsContext } from '../../../context/ItemsContext';
-import { useContext } from 'react';
+import { Alert, AlertColor, Button, Stack } from "@mui/material";
+import ItemActions from "../ItemActions/ItemActions";
+import { AlertInterface, Item } from "../../../types";
+import { BaseButtonStyles } from "../../../../utilStyles";
+import { ItemsContext } from "../../../context/ItemsContext";
+import { useContext, useState } from "react";
 import { ProductsTableModal } from "../../modals/ProductsTableModal/ProductsTableModal";
 import { useParams } from "react-router-dom";
+import CreateQuoteModal from "../../modals/CreateQuoteModal/CreateQuoteModal";
 
 interface props {
   handleCancelItems: (items: Item[]) => Promise<void>;
@@ -20,10 +21,28 @@ const ItemsToolBar = ({
   handleActivateItems,
   handleCopyContent,
   handleDelete,
-  selectedRows,
+  selectedRows
 }: props) => {
-  const {  toggleAdding } = useContext(ItemsContext);
+  const { toggleAdding } = useContext(ItemsContext);
   const { id } = useParams();
+  const [alert, setAlert] = useState<AlertInterface>();
+  const [creatingQuote, setCreatingQuote] = useState<boolean>(false);
+
+  const displayAlert = async (severity: string, message: string) => {
+    setTimeout(() => {
+      setAlert(undefined);
+    }, 3000);
+    setAlert({ severity, message });
+    return;
+  };
+
+  const verifySelectedItems = () => {
+    if (!selectedRows?.length) {
+      displayAlert('warning', 'Selecione os items para gerar a cotação');
+      return;
+    }
+    setCreatingQuote(true);
+  };
   return (
     <Stack direction="row" sx={{ height: 30, alignItems: "center", gap: 2 }}>
       {
@@ -42,9 +61,25 @@ const ItemsToolBar = ({
         Adicionar items
       </Button>
 
+      <Button
+        onClick={verifySelectedItems}
+        sx={{ ...BaseButtonStyles, height: 30 }}
+      >
+        Gerar Cotação
+      </Button>
+
       <ProductsTableModal requisitionID={Number(id)} />
+      {alert && (
+        <Alert severity={alert.severity as AlertColor}>{alert.message}</Alert>
+      )}
+      <CreateQuoteModal
+        setCreatingQuote={setCreatingQuote}
+        creatingQuote={creatingQuote}
+        selectedRows={selectedRows}
+        requisitionId={1}
+      />
     </Stack>
   );
 };
 
-export default ItemsToolBar
+export default ItemsToolBar;

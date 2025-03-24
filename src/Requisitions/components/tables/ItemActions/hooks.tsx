@@ -113,7 +113,7 @@ export const useItemActions = (
         enterClassName="open"
         exitClassName="closed"
       >
-        <Listbox {...other} ref={ref} />
+        <Listbox {...other} ref={ref} sx={{display: open ? 'block' : 'none'}}/>
       </CssTransition>
     );
   });

@@ -6,13 +6,17 @@ import {
   OpportunityOptionField,
   Status,
 } from "../../../types";
-import { Autocomplete, Box, Checkbox, Chip, FormControl, IconButton, Stack, TextField, Tooltip, Typography } from "@mui/material";
+import { alpha, Box, Checkbox, FormControl, FormControlLabel, IconButton, InputBase, Stack, styled, TextField, Tooltip } from "@mui/material";
 import styles from "./OpportunityFilters.styles";
 import { GridColDef } from "@mui/x-data-grid";
 import { fetchAllClients, fetchManagers, fetchSalers, fetchStatusList } from "../../../utils";
 import typographyStyles from "../../../../Requisitions/utilStyles";
 import { AnimatePresence, motion } from "framer-motion";
 import CloseIcon from "@mui/icons-material/Close";
+import SearchIcon from "@mui/icons-material/Search";
+import {debounce} from 'lodash';
+import FilterField from "../../FilterField/FilterField";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
 
 interface props {
   allRows: OpportunityInfo[];
@@ -34,6 +38,10 @@ interface props {
     isFromParam: boolean;
   }[];
   setDateFiltersActive: React.Dispatch<React.SetStateAction<boolean>>;
+  calculateLayoutProps: (registerCount: number) => void;
+  handleChangeShowFinishedOpps: (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => void;
 }
 
 const createFilters = (columns: GridColDef<OpportunityInfo>[]) => {
@@ -48,6 +56,42 @@ const createFilters = (columns: GridColDef<OpportunityInfo>[]) => {
   }, {});
 };
 
+ const Search = styled("div")(({ theme }) => ({
+   position: "relative",
+   borderRadius: theme.shape.borderRadius,
+   backgroundColor: alpha(theme.palette.common.white, 0.15),
+   "&:hover": {
+     backgroundColor: alpha(theme.palette.common.white, 0.25),
+   },
+   marginLeft: 0,
+   width: "100%",
+   [theme.breakpoints.up("sm")]: {
+     marginLeft: theme.spacing(1),
+     width: "auto",
+   },
+ }));
+
+ const SearchIconWrapper = styled("div")(({ theme }) => ({
+   padding: theme.spacing(0, 2),
+   height: "100%",
+   position: "absolute",
+   pointerEvents: "none",
+   display: "flex",
+   alignItems: "center",
+   justifyContent: "center",
+ }));
+
+ const StyledInputBase = styled(InputBase)(({ theme }) => ({
+   color: "inherit",
+   width: "100%",
+   "& .MuiInputBase-input": {
+     height: 20,
+     padding: theme.spacing(0.5, 0.5, 0.5, 0),
+     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+     color: 'black'
+   },
+ }));
+
 const OpportunityFilters = ({
   columns,
   allRows,
@@ -56,9 +100,11 @@ const OpportunityFilters = ({
   handleChangeDateFilters,
   dateParams,
   dateFilters,
-  setDateFiltersActive
+  setDateFiltersActive,
+  calculateLayoutProps,
+  handleChangeShowFinishedOpps,
 }: props) => {
-  const filteredColumns = columns.filter((column) => { 
+  const filteredColumns = columns.filter((column) => {
     if (
       column.field !== "dataSolicitacao" &&
       column.field !== "dataFechamento" &&
@@ -84,19 +130,20 @@ const OpportunityFilters = ({
 
   const [managerOptions, setManagerOptions] = useState<any>();
 
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
-  const fetchManagerOptions = async ( ) => { 
-      const managers = await fetchManagers();
-      if (managers) {
-        const options = managers.map((manager: any) => ({
-          label: manager.NOME,
-          id: manager.CODPESSOA,
-          object: "manager",
-          key: manager.CODPESSOA,
-        }));
-        setManagerOptions(options);
-      }
-  }
+  const fetchManagerOptions = async () => {
+    const managers = await fetchManagers();
+    if (managers) {
+      const options = managers.map((manager: any) => ({
+        label: manager.NOME,
+        id: manager.CODPESSOA,
+        object: "manager",
+        key: manager.CODPESSOA,
+      }));
+      setManagerOptions(options);
+    }
+  };
 
   const fetchSalerOps = useCallback(async () => {
     const salers = await fetchSalers(0);
@@ -117,7 +164,6 @@ const OpportunityFilters = ({
       object: "client",
       key: client.CODCLIENTE,
     }));
-    console.log({ clientOptions: options });
 
     setClientOptions(options);
   }, [setClientOptions]);
@@ -145,31 +191,27 @@ const OpportunityFilters = ({
         values,
       },
     }));
-    console.log({
-      ...filters,
-      [dataKey]: {
-        ...filters[dataKey],
-        values,
+
+    filterRows(
+      {
+        ...filters,
+        [dataKey]: {
+          ...filters[dataKey],
+          values,
+        },
       },
-    });
-    filterRows({
-      ...filters,
-      [dataKey]: {
-        ...filters[dataKey],
-        values,
-      },
-    });
+      searchTerm
+    );
   };
 
-  const filterRows = (currentFilters: any) => {
-    console.log({ currentFilters });
-    const filteredRows: OpportunityInfo[] = [];
+  const filterRows = (currentFilters: any, valueReceived?: string) => {
+    console.log("filterRows");
+    const composedFilteredRow: OpportunityInfo[] = [];
     const filterKeys = Object.keys(currentFilters);
     allRows.forEach((opportunity) => {
       let shouldInclude = true; // Assume que a linha deve ser incluída inicialmente
       for (let dataKey of filterKeys) {
         const filterValues = currentFilters[dataKey].values;
-        // Se houver valores no filtro, verifica se a linha atende a pelo menos um deles
         if (filterValues.length > 0) {
           const oppIncludesValue = filterValues.some((filterValue: any) => {
             const searchTerm = String(filterValue).toUpperCase();
@@ -178,122 +220,55 @@ const OpportunityFilters = ({
               .toUpperCase()
               .includes(searchTerm);
           });
-          // Se a linha não atender a nenhum valor do filtro atual, não deve ser incluída
           if (!oppIncludesValue) {
             shouldInclude = false;
-            break; // Sai do loop interno, pois a linha já não atende a um dos filtros
+            break;
           }
         }
       }
-      // Se a linha atender a todos os filtros, adiciona ao array de linhas filtradas
       if (shouldInclude) {
-        filteredRows.push(opportunity);
+        composedFilteredRow.push(opportunity);
       }
     });
 
-    console.log({ filteredRows });
+    if (valueReceived) {
+      const filteredRows = composedFilteredRow.filter((row: OpportunityInfo) =>
+        columns.some((column) => {
+          const cellValue = row[column.field as keyof OpportunityInfo];
+          return (
+            cellValue && String(cellValue).toLowerCase().includes(searchTerm)
+          );
+        })
+      );
+      calculateLayoutProps(filteredRows.length);
+      setRows(filteredRows);
+      return;
+    }
+    const filteredRows = composedFilteredRow.filter((row: OpportunityInfo) =>
+      columns.some((column) => {
+        const cellValue = row[column.field as keyof OpportunityInfo];
+        return (
+          (cellValue && String(cellValue).toLowerCase().includes(searchTerm)) ||
+          !searchTerm ||
+          !valueReceived
+        );
+      })
+    );
+    calculateLayoutProps(filteredRows.length);
     setRows(filteredRows);
+    return filteredRows;
   };
 
-  const renderFilterField = (filter: any) => {
-    const { dataKey, label } = filter;
+  const debouncedSearch = debounce((value: string, filters: any) => {
+    filterRows(filters, value);
+  }, 400); // 300ms de atraso
 
-    // Campos com opções (Autocomplete com Checkboxes)
-    if (
-      dataKey === "nomeCliente" ||
-      dataKey === "nomeVendedor" ||
-      dataKey === "nomeStatus" ||
-      dataKey === 'nomeGerente'
-    ) {
-      const options =
-        dataKey === "nomeCliente"
-          ? clientOptions
-          : dataKey === "nomeVendedor"
-          ? responsableOptions
-          : dataKey === 'nomeStatus' ? statusOptions 
-          : managerOptions
-          console.log({managerOptions});
-      if(options){ 
- return (
-   <Autocomplete
-     key={dataKey}
-     multiple
-     options={options}
-     disableCloseOnSelect
-     getOptionKey={(option: any) => option.id}
-     getOptionLabel={(option) => option.label}
-     renderTags={(optionArray: any, getTagProps) =>
-       optionArray.map((option: any, index: number) => {
-         const { key, ...tagProps } = getTagProps({ index });
-         return (
-           <Chip
-             variant="outlined"
-             label={option.label}
-             key={key}
-             {...tagProps}
-             sx={{ display: "none" }}
-           />
-         );
-       })
-     }
-     renderOption={(props, option, { selected }) => (
-       <Box>
-         <li {...props}>
-           <Checkbox style={{ marginRight: 8 }} checked={selected} />
-           <Typography sx={typographyStyles.smallText}>
-             {option.label}
-           </Typography>
-         </li>
-       </Box>
-     )}
-     value={options.filter((option: any) =>
-       filters[dataKey].values.includes(option.label)
-     )}
-     onChange={(_, newValue) => {
-       updateFilterValues(
-         dataKey,
-         newValue.map((option) => option.label)
-       );
-     }}
-     renderInput={(params) => (
-       <TextField
-         {...params}
-         InputLabelProps={{ shrink: true, sx: { color: "black" } }}
-         sx={{
-           "& .MuiOutlinedInput-root": {
-             padding: 0.5,
-           },
-         }}
-         InputProps={{
-           ...params.InputProps,
-           sx: styles.input,
-         }}
-         label={label}
-       />
-     )}
-   />
- );
-      }
-     
-    }
-    return (
-      <TextField
-        key={dataKey}
-        label={label}
-        value={filters[dataKey].values.join(", ")} // Exibe os valores como texto
-        onChange={(e) =>
-          updateFilterValues(dataKey, e.target.value.split(", "))
-        }
-        fullWidth
-        InputLabelProps={{
-          shrink: true,
-          sx: {
-            color: "black",
-          },
-        }}
-        InputProps={{ sx: styles.input }}
-      />
-    );
+  const handleGeneralSearch = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const value = e.target.value.toLowerCase();
+    setSearchTerm(value);
+    debouncedSearch(value, filters);
   };
 
   useEffect(() => {
@@ -301,18 +276,59 @@ const OpportunityFilters = ({
     fetchClientOps();
     fetchSalerOps();
     fetchManagerOptions();
-    filterRows(filters);
+    filterRows(filters, searchTerm);
   }, [allRows]);
 
   return (
     <Box sx={styles.mainContainer}>
+      <Search sx={styles.search}>
+        <SearchIconWrapper>
+          <SearchIcon sx={{ color: "black" }} />
+        </SearchIconWrapper>
+        <StyledInputBase
+          onChange={handleGeneralSearch}
+          placeholder="Buscar..."
+          value={searchTerm}
+          autoFocus
+          inputProps={{
+            "aria-label": "search",
+            height: 20,
+            width: 100,
+          }}
+        />
+      </Search>
       <Box sx={styles.container}>
         {statusOptions &&
           responsableOptions &&
           clientOptions &&
           Object.values(filters).map((filter: any) => (
-            <Box key={filter.dataKey}>{renderFilterField(filter)}</Box>
+            <Box key={filter.dataKey}>
+              {
+                <FilterField
+                  filter={filter}
+                  updateFilterValues={updateFilterValues}
+                  clientOptions={clientOptions}
+                  responsableOptions={responsableOptions}
+                  statusOptions={statusOptions}
+                  managerOptions={managerOptions}
+                  styles={styles}
+                  filters={filters}
+                />
+              }
+            </Box>
           ))}
+        <FormControlLabel
+        sx={{color: 'black'}}
+          control={
+            <Checkbox
+              onChange={handleChangeShowFinishedOpps}
+              checkedIcon={<CheckBoxIcon sx={{ color: "black" }} />}
+              
+            />
+          }
+          
+          label="Listar Finalizados"
+        />
       </Box>
       {dateFiltersActive && (
         <AnimatePresence>

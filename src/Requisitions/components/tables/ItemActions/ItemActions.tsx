@@ -50,9 +50,13 @@ const ItemActions = ({
         setIsMenuActionsOpen={setOpen}
       />
 
-
       <Dropdown
         display={open ? "block" : "none"}
+        sx={{
+          ".base-Popup-root": {
+            display: open ? "block" : "none",
+          },
+        }}
         open={open}
         onOpenChange={(
           _event:

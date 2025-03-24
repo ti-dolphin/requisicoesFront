@@ -105,47 +105,47 @@ const columns: GridColDef[] = [
       </Typography>
     ),
   },
-  {
-    field: "ATIVO",
-    headerName: "Ativo",
-    width: 100, // Defina a largura desejada
-    type: "number",
-    editable: false,
-    renderCell: (params) => (
-      <Typography
-        sx={{
-          ...typographyStyles.smallText,
-          color: params.value ? "darkgreen" : "gray",
-        }}
-      >
-        {params.value ? "Sim" : "Não"}
-      </Typography>
-    ),
-  },
-  {
-    field: "ID",
-    headerName: "ID",
-    width: 100, // Defina a largura desejada
-    type: "number",
-    editable: false,
-    renderCell: (params) => (
-      <Typography sx={{ ...typographyStyles.bodyText }}>
-        {params.value}
-      </Typography>
-    ),
-  },
-  {
-    field: "ID_PRODUTO",
-    headerName: "ID Produto",
-    width: 120, // Defina a largura desejada
-    type: "number",
-    editable: false,
-    renderCell: (params) => (
-      <Typography sx={{ ...typographyStyles.bodyText }}>
-        {params.value}
-      </Typography>
-    ),
-  },
+  // {
+  //   field: "ATIVO",
+  //   headerName: "Ativo",
+  //   width: 100, // Defina a largura desejada
+  //   type: "number",
+  //   editable: false,
+  //   renderCell: (params) => (
+  //     <Typography
+  //       sx={{
+  //         ...typographyStyles.smallText,
+  //         color: params.value ? "darkgreen" : "gray",
+  //       }}
+  //     >
+  //       {params.value ? "Sim" : "Não"}
+  //     </Typography>
+  //   ),
+  // },
+  // {
+  //   field: "ID",
+  //   headerName: "ID",
+  //   width: 100, // Defina a largura desejada
+  //   type: "number",
+  //   editable: false,
+  //   renderCell: (params) => (
+  //     <Typography sx={{ ...typographyStyles.bodyText }}>
+  //       {params.value}
+  //     </Typography>
+  //   ),
+  // },
+  // {
+  //   field: "ID_PRODUTO",
+  //   headerName: "ID Produto",
+  //   width: 120, // Defina a largura desejada
+  //   type: "number",
+  //   editable: false,
+  //   renderCell: (params) => (
+  //     <Typography sx={{ ...typographyStyles.bodyText }}>
+  //       {params.value}
+  //     </Typography>
+  //   ),
+  // },
 ];
 
 const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
@@ -227,6 +227,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
           handleCopyContent={handleCopyContent}
           handleDelete={handleDelete}
           selectedRows={selectedRows}
+         
         />
       )}
 
@@ -257,7 +258,6 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
           "& .MuiDataGrid-cell": {
             display: "flex",
             alignItems: "center",
-             
           },
           "& .MuiDataGrid-menuIconButton": {
             display: "none",

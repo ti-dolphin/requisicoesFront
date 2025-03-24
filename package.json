@@ -29,6 +29,7 @@
     "dayjs": "^1.11.12",
     "framer-motion": "^11.2.6",
     "localforage": "^1.10.0",
+    "lodash": "^4.17.21",
     "lorem-ipsum": "^2.0.8",
     "match-sorter": "^6.3.4",
     "pdfjs-dist": "^3.4.120",
@@ -48,6 +49,7 @@
   "devDependencies": {
     "@types/axios": "^0.14.0",
     "@types/chance": "^1.1.6",
+    "@types/lodash": "^4.17.16",
     "@types/node": "^22.12.0",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.3.0",

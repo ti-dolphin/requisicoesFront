@@ -41,6 +41,7 @@ const gridCardColumns: { headerName: string; field: keyof OpportunityInfo }[] = 
   { field: "nomeStatus", headerName: "Status" }, // s.NOME
 
 ];
+
 const OpportunityInfoTable: React.FC = () => {
   const {
     rows,
@@ -58,7 +59,10 @@ const OpportunityInfoTable: React.FC = () => {
     selectOpportunity,
     columns,
     GridFooter,
+    calculateLayoutProps,
   } = UseOpportunityInfoTable();
+
+
  
   return (
     <Box
@@ -75,10 +79,12 @@ const OpportunityInfoTable: React.FC = () => {
     >
       <OpportunityTableSearchBar
         columns={columns}
+        rows={rows}
         allRows={allRows}
         setRows={setRows}
         isCardViewActive={isCardViewActive}
         setIsCardViewActive={setIsCardViewActive}
+        calculateLayoutProps={calculateLayoutProps}
       />
       <Box
         ref={GridOuterContainerRef}
@@ -127,17 +133,16 @@ const OpportunityInfoTable: React.FC = () => {
             width={gridColumnsCount * cardWidth + 20} // Width of the grid
           >
             {({ columnIndex, rowIndex, style }) => {
-              console.log(columnIndex);
-              return ( 
-                (
-                  <OpportunityCard
-                    key={rows[rowIndex].numeroOs}
-                    row={rows[rowIndex]}
-                    gridCardColumns={gridCardColumns}
-                    style={style}
-                  />
-                )
-              )
+             console.log('rowIndex', rowIndex);
+             console.log('columnIndex', columnIndex);
+              return (
+                <OpportunityCard
+                  key={rowIndex}
+                  row={rows[rowIndex]}
+                  gridCardColumns={gridCardColumns}
+                  style={style}
+                />
+              );
             }}
           </FixedSizeGrid>
         )}

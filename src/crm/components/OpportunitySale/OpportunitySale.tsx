@@ -30,6 +30,7 @@ import {
 import { BaseButtonStyles } from "../../../utilStyles";
 import { userContext } from "../../../Requisitions/context/userContext";
 import { AlertInterface } from "../../../Requisitions/types";
+import CurrencyInput from "../CurrencyInput/CurrencyInput";
 
 interface props {
   guide: Guide;
@@ -131,10 +132,9 @@ const OpportunitySale = ({
 
   const handleChangeTextField = (
     fieldReceived: Field,
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+     value: number | null
   ) => {
     if (guidesReference.current && sale) {
-      const { value } = e.target;
       const updatedSale = {
         ...sale,
         [fieldReceived.dataKey as keyof OpportunitySaleFields]: value,
@@ -254,15 +254,13 @@ const OpportunitySale = ({
           }
           if (sale) {
             return (
-              <TextField
-                key={field.dataKey}
-                type={field.type}
-                label={field.label}
-                disabled={field.dataKey === "valorTotal"}
-                InputLabelProps={{ shrink: true }}
-                onChange={(e) => handleChangeTextField(field, e)}
+              <CurrencyInput
                 value={sale[field.dataKey as keyof OpportunitySaleFields]}
-              ></TextField>
+                onChange={(newValue) => handleChangeTextField(field, newValue)}
+                InputLabelProps={{ shrink: true }}
+                key={field.dataKey}
+                label={field.label}
+              />
             );
           }
         })}
