@@ -322,9 +322,37 @@ const getQuoteById = async (quoteId : number) => {
     throw new Error();
   }
 }
+
+const getQuoteShipments = async ( ) => { 
+  try {
+    const response = await api.get(`requisition/quote/shipment-type`);
+    return response.data;
+  } catch (e: any) {
+    throw e;
+  }
+} 
+
+const getQuoteClassifications = async ( ) => {
+  try {
+    const response = await api.get(`requisition/quote/classification`);
+    return response.data;
+  } catch (e: any) {
+    throw e;
+  }
+}
+
+const getQuotesByRequisitionId = async (requisitionId : number) => { 
+  try{ 
+    const response = await api.get(`requisition/quote/quoteList/${requisitionId}`);
+    return response.data;
+  }catch(e : any){ 
+    throw e;
+  }
+}
+
 const updateQuoteItems = async (items : QuoteItem[] , quoteId : number) =>  {
   try{ 
-    const response = await api.put(`requisition/${quoteId}/items`,items );
+    const response = await api.put(`requisition/quote/${quoteId}/items`, items);
     return response;
   }catch(e){
     throw e;
@@ -396,7 +424,10 @@ export {
   createQuote,
   getQuoteById,
   updateQuote,
-  updateQuoteItems
+  updateQuoteItems,
+  getQuotesByRequisitionId,
+  getQuoteClassifications,
+  getQuoteShipments
 };
 export type {
   Requisition,

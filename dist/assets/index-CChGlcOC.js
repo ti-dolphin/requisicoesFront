@@ -63824,7 +63824,7 @@ axios.getAdapter = adapters.getAdapter;
 axios.HttpStatusCode = HttpStatusCode;
 axios.default = axios;
 const api = axios.create({
-  baseURL: "https://apicontrolehomologacao.dse.com.br",
+  baseURL: "https://apicontrole.dse.com.br",
   headers: {
     "Content-Type": "application/json",
     Authorization: window.localStorage.getItem("token")

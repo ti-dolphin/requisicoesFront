@@ -158,7 +158,9 @@ const useRequisitionItems = (requisitionId: number, isInsertingQuantity?: boolea
     }, [ isInsertingQuantity, addedItems]);
 
     const saveItems = useCallback(async () => {
+        
         try {
+            console.log('visibleItems: ', visibleItems)
             const response = await updateRequisitionItems(visibleItems, requisitionId);
             if (response.status === 200) {
                 displayAlert('success', 'Items atualizados com sucesso!');
@@ -175,12 +177,17 @@ const useRequisitionItems = (requisitionId: number, isInsertingQuantity?: boolea
         gridApiRef.current.stopRowEditMode({ id: row, field: fieldToFocus, ignoreModifications });
     }
 
-    const handleSave = async () => {
-        const row = Object.keys(rowModesModel)[0];
-        const { fieldToFocus } = rowModesModel[row] as any;
-        await stopEditMode(Number(row), fieldToFocus, false);
-        setToggleSave(!toggleSave)
-        setIsEditing(false);
+    const triggerSave = async () => {
+      try{ 
+          const row = Object.keys(rowModesModel)[0];
+          const { fieldToFocus } = rowModesModel[row] as any;
+          await stopEditMode(Number(row), fieldToFocus, false);
+          setToggleSave(!toggleSave)
+          setIsEditing(false);
+      }catch(e) {
+          setToggleSave(!toggleSave)
+          setIsEditing(false);
+      }
     }
 
     useEffect(() => {
@@ -188,7 +195,9 @@ const useRequisitionItems = (requisitionId: number, isInsertingQuantity?: boolea
             const target = event.target as HTMLElement;
             const isRowClicked = target.closest('.MuiDataGrid-row'); // Verifica se o clique foi em uma linha
             const isCellClicked = target.closest('.MuiDataGrid-cell'); // Verifica se o clique foi em uma célula
-            if (!isRowClicked && !isCellClicked && isEditing) {
+            const isSaveButtonClicked = target.closest(".MuiButton-root");
+            const shouldCancelEdition = !isRowClicked && !isCellClicked && isEditing && !isSaveButtonClicked
+            if (shouldCancelEdition) {
                 handleCancelEdition(); // Reverte as edições se o clique foi fora de qualquer linha
             }
         };
@@ -210,6 +219,8 @@ const useRequisitionItems = (requisitionId: number, isInsertingQuantity?: boolea
     }, [reverseChanges]);
 
     useEffect(() => {
+        console.log('saveItems useEffect')
+        console.log('shouldExecuteSaveItems.current: ', shouldExecuteSaveItems.current)
         if (shouldExecuteSaveItems.current) {
             saveItems();
         }
@@ -228,7 +239,7 @@ const useRequisitionItems = (requisitionId: number, isInsertingQuantity?: boolea
         handleRowModesModelChange,
         handleCancelEdition,
         processRowUpdate,
-        handleSave,
+        triggerSave,
         setIsEditing,
         handleChangeSelection,
         handleDelete,

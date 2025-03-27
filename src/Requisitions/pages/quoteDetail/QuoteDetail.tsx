@@ -1,23 +1,31 @@
 import React, { useEffect, useState } from "react";
 
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Alert, AlertColor, Autocomplete, AutocompleteChangeDetails, AutocompleteChangeReason, Box, Button, TextField, Typography } from "@mui/material";
 import typographyStyles, {
   boxDefaultStyles,
   quoteDetailPageStyles,
 } from "../../utilStyles";
-import { Quote, QuoteItem } from "../../types";
+import { AlertInterface, FiscalCategoryType, Quote, QuoteItem, ShipmentType } from "../../types";
 import QuoteItemsTable from "../../components/tables/QuoteItemsTable";
 import { BaseButtonStyles } from "../../../utilStyles";
 import { AnimatePresence, motion } from "framer-motion";
-import { Loader } from "../../../generalUtilities";
+import { formatDate, Loader } from "../../../generalUtilities";
 import { useParams } from "react-router-dom";
-import { getQuoteById, updateQuote } from "../../utils";
+import { getQuoteById, getQuoteClassifications, getQuoteShipments, updateQuote } from "../../utils";
 
-const quoteFields = [
+
+interface QuoteField{ 
+  label: string;
+  dataKey: string;
+  type: string;
+  autoComplete: boolean
+}
+const quoteFields : QuoteField[] = [
   {
     label: "Descrição",
     dataKey: "descricao",
     type: "string",
+    autoComplete: false,
   },
   // {
   //   label: "ID da Cotação",
@@ -38,6 +46,8 @@ const quoteFields = [
     label: "Fornecedor",
     dataKey: "fornecedor",
     type: "string",
+        autoComplete: false,
+
   },
   // {
   //   label: "Data da Cotação",
@@ -48,8 +58,32 @@ const quoteFields = [
     label: "Observação",
     dataKey: "observacao",
     type: "string",
+    autoComplete: false,
   },
+  { 
+    label: 'Tipo de Frete',
+    dataKey: 'id_tipo_frete',
+    type: 'number',
+    autoComplete: true
+  },
+  { 
+    label: 'Classificação Fiscal',
+    dataKey: 'id_classificacao_fiscal',
+    type: 'number',
+    autoComplete: true
+  },
+  { 
+    label: 'Valor Frete',
+    dataKey: 'valor_frete',
+    type: 'number',
+    autoComplete: false
+  }
 ];
+
+interface Option{ 
+  label: string;
+  id: number;
+}
 
 const QuoteDetail = () => {
   const [isEditing, setIsEditing] = useState<boolean>();
@@ -57,7 +91,12 @@ const QuoteDetail = () => {
   const [currentQuoteData, setCurrentQuoteData] = useState<Quote>();
   const [items, setItems] = useState<QuoteItem[]>();
   const [isSupplier, setIsSupplier] = useState<boolean>(false);
-
+  const [fiscalClassificationOps, setFiscalClassificationOps] = useState<Option[]>();
+  const [shipmentOps, setShipmentOps] = useState<Option[]>();
+  const [selectedShipment, setSelectedShipment] = useState<Option>();
+  const [selectedClassification, setSelectedClassification] = useState<Option>();
+  const [alert, setAlert] = useState<AlertInterface>();
+   
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     dataKey: string
@@ -74,7 +113,7 @@ const QuoteDetail = () => {
   const { quoteId } = useParams();
 
   const fetchQuoteData = async () => {
-    console.log("fetchQuoteData");
+
     try {
       const response = await getQuoteById(Number(quoteId));
       if (response.status === 200) {
@@ -83,35 +122,126 @@ const QuoteDetail = () => {
         console.log({quote});
         setCurrentQuoteData(quote);
         setItems(quote.items);
+        fetchOptions(quote);
         return;
       }
     } catch (e: any) {
-      alert(e.message);
+      displayAlert('error', e.message);
+}
+  };
+
+  const fetchOptions = async (quote : Quote) => {
+    try {
+      const shipmentTypes = await getQuoteShipments();
+      const classifications = await getQuoteClassifications();
+
+      if (classifications && shipmentTypes) {
+        const classificationOptions = classifications.map(
+          (classification: FiscalCategoryType) => ({
+            label: classification.nome,
+            id: classification.id_classificao_fiscal,
+          })
+        );
+        setFiscalClassificationOps(classificationOptions);
+        const shipmentOptions = shipmentTypes.map(
+          (shipmentType: ShipmentType) => ({
+            label: shipmentType.nome,
+            id: shipmentType.id_tipo_frete,
+          })
+        );
+        setShipmentOps(shipmentOptions);
+        setSelectedOptions(classificationOptions, shipmentOptions, quote);
+      }
+      
+    } catch (e: any) {
+      window.alert(e.message);
     }
   };
+
+  const setSelectedOptions = (
+    fiscalClassificationOps: Option[],
+    shipmentOps: Option[],
+    quote: Quote
+  ) => {
+    if (fiscalClassificationOps && shipmentOps) {
+      const selectedClassification = fiscalClassificationOps.find(
+        (option) => option.id === quote.id_classificacao_fiscal
+      );
+      const selectedShipment = shipmentOps.find(
+        (option) => option.id === quote.id_tipo_frete
+      );
+      setSelectedClassification(selectedClassification);
+      setSelectedShipment(selectedShipment);
+    }
+  };
+
+  const renderOptions = ( field: QuoteField) => { 
+      if(field.dataKey == 'id_tipo_frete'){ 
+        return shipmentOps;
+      }
+      if(field.dataKey === 'id_classificacao_fiscal'){ 
+       return fiscalClassificationOps;
+      }
+  };
+
+ const getValue = (field : QuoteField ) => { 
+   if (field.dataKey == "id_tipo_frete") {
+    console.log({ selectedShipment });
+     return selectedShipment;
+   }
+   if (field.dataKey === "id_classificacao_fiscal") {
+    console.log({ selectedClassification });
+     return selectedClassification;
+   }
+ };
+
+   const displayAlert = async (severity: string, message: string) => {
+     setTimeout(() => {
+       setAlert(undefined);
+     }, 3000);
+     setAlert({ severity, message });
+     return;
+   };
 
   const handleSave = async () => {
    if(currentQuoteData){ 
       try {
+        console.log({currentQuoteData})
         const response = await updateQuote(currentQuoteData);
         if (response.status === 200) {
           const newQuote = response.data;
           setCurrentQuoteData(newQuote);
+          displayAlert('success', 'Cotação atualizada!')
         }
-      } catch (e) {
-        alert("erro ao atualizar");
+      } catch (e : any) {
+        displayAlert("error", `Erro ao atualizar: ${e.message}`);
       }
    }
-
-    console.log("saving");
   };
 
-  const formatToBRL = (value: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(value);
-  };
+  const handleChangeAutoComplete = (field: QuoteField, value: Option | null ) => { 
+    if(value){ 
+        if (currentQuoteData) {
+          setCurrentQuoteData({
+            ...currentQuoteData,
+            [field.dataKey as keyof Quote]: value.id,
+          });
+        }
+        if (field.dataKey === "id_classificacao_fiscal") {
+          setSelectedClassification(value);
+        }
+        if (field.dataKey === "id_tipo_frete") {
+          setSelectedShipment(value);
+        }
+    }
+  }
+
+  // const formatToBRL = (value: number) => {
+  //   return new Intl.NumberFormat("pt-BR", {
+  //     style: "currency",
+  //     currency: "BRL",
+  //   }).format(value);
+  // };
 
   const verifySupplier = () => {
     setIsLoading(true);
@@ -122,48 +252,119 @@ const QuoteDetail = () => {
     setIsLoading(false);
   };
 
+
+
   useEffect(() => {
     verifySupplier();
   }, []);
 
   useEffect(() => {
     fetchQuoteData();
+    
   }, []);
 
   return (
     <Box sx={{ ...quoteDetailPageStyles }}>
       {!isLoading && !isSupplier && currentQuoteData && (
         <Box
-          sx={{ ...boxDefaultStyles, height: "fit-content", display: "flex", gap: 2 }}
+          sx={{
+            ...boxDefaultStyles,
+            height: "fit-content",
+            border: "1px solid",
+            display: "flex",
+            gap: 2,
+          }}
           className="shadow-lg"
         >
-          <Box sx={{ height: "100%", width: "40%", padding: 1 }}>
-            <Typography sx={typographyStyles.heading1}>
-              {currentQuoteData.descricao} | Fornecedor - {currentQuoteData.fornecedor}
+          <Box
+            sx={{
+              height: "100%",
+              width: "100%",
+              padding: 1,
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+            }}
+          >
+            <Typography sx={{ ...typographyStyles.heading2, color: "black" }}>
+              {`Cotação ${currentQuoteData.id_cotacao} | Requisição ${
+                currentQuoteData.id_requisicao
+              } | ${formatDate(currentQuoteData.data_cotacao)} ${
+                currentQuoteData.descricao
+                  ? `| ${currentQuoteData.descricao}`
+                  : ""
+              }`}
             </Typography>
+            {alert && (
+              <Alert severity={alert.severity as AlertColor}>
+                {alert.message}
+              </Alert>
+            )}
             <Box
               sx={{
                 display: "grid",
-                gridTemplateColumns: `1fr 1fr`,
+                width: "50%",
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  md: "1fr 1fr",
+                },
                 gap: 1,
+                rowGap: 1.5,
+                marginTop: 1,
                 alignContent: "start",
               }}
             >
-              {quoteFields.map((field) => (
-                <TextField
-                  key={field.dataKey}
-                  label={field.label}
-                  name={field.label}
-                  onFocus={() => setIsEditing(true)}
-                  onBlur={() => setIsEditing(false)}
-                  sx={{ display: "flex", flexShrink: 1 }}
-                  type={field.type === "number" ? "number" : "text"}
-                  value={currentQuoteData[field.dataKey as keyof Quote] || ""}
-                  onChange={(e) => handleChange(e, field.dataKey)}
-                  fullWidth
-                  margin="normal"
-                />
-              ))}
+              {fiscalClassificationOps &&
+                shipmentOps &&
+                quoteFields.map((field) => {
+                  if (!field.autoComplete) {
+                    return (
+                      <TextField
+                        key={field.dataKey}
+                        label={field.label}
+                        name={field.label}
+                        onFocus={() => setIsEditing(true)}
+                        onBlur={() => setIsEditing(false)}
+                        sx={{ display: "flex", flexShrink: 1, margin: 0 }}
+                        type={field.type === "number" ? "number" : "text"}
+                        value={
+                          currentQuoteData[field.dataKey as keyof Quote] || ""
+                        }
+                        onChange={(e) => handleChange(e, field.dataKey)}
+                        fullWidth
+                        margin="normal"
+                      />
+                    );
+                  }
+                  return (
+                    <Autocomplete
+                      key={field.dataKey}
+                      getOptionKey={(option: Option) => option.id}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                      }}
+                      onBlur={() => setIsEditing(false)}
+                      onFocus={() => setIsEditing(true)}
+                      onChange={(
+                        _event: React.SyntheticEvent,
+                        value: Option | null,
+                        _reason: AutocompleteChangeReason,
+                        _details?: AutocompleteChangeDetails<Option> | undefined
+                      ) => handleChangeAutoComplete(field, value)}
+                      value={getValue(field)}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label={field.label}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      )}
+                      options={renderOptions(field) || []}
+                    ></Autocomplete>
+                  );
+                })}
             </Box>
             <AnimatePresence>
               {isEditing && (
@@ -184,20 +385,11 @@ const QuoteDetail = () => {
               )}
             </AnimatePresence>
           </Box>
-          <Box sx={{ height: "100%", width: "30%", padding: 1 }}>
-            <Typography sx={typographyStyles.heading1}>
-              Total:{" "}
-              <span className="text-green-700">{`${formatToBRL(1500)}`}</span>
-            </Typography>
-          </Box>
         </Box>
       )}
       {!isLoading && currentQuoteData && items && (
         <Box sx={{ ...boxDefaultStyles, flexGrow: 1 }}>
-          <QuoteItemsTable
-            items={items}
-            isSupplier={isSupplier}
-          />
+          <QuoteItemsTable items={items} isSupplier={isSupplier} />
         </Box>
       )}
       {isLoading && <Loader />}

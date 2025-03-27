@@ -7,6 +7,7 @@ import { useContext, useState } from "react";
 import { ProductsTableModal } from "../../modals/ProductsTableModal/ProductsTableModal";
 import { useParams } from "react-router-dom";
 import CreateQuoteModal from "../../modals/CreateQuoteModal/CreateQuoteModal";
+import QuoteListModal from "../../modals/QuoteListModal/QuoteListModal";
 
 interface props {
   handleCancelItems: (items: Item[]) => Promise<void>;
@@ -27,6 +28,7 @@ const ItemsToolBar = ({
   const { id } = useParams();
   const [alert, setAlert] = useState<AlertInterface>();
   const [creatingQuote, setCreatingQuote] = useState<boolean>(false);
+  const [quoteListOpen, setQuoteListOpen] = useState<boolean>(false);
 
   const displayAlert = async (severity: string, message: string) => {
     setTimeout(() => {
@@ -35,6 +37,10 @@ const ItemsToolBar = ({
     setAlert({ severity, message });
     return;
   };
+
+  const handleViewQuoteList = ( ) => { 
+      setQuoteListOpen(true);
+  }
 
   const verifySelectedItems = () => {
     if (!selectedRows?.length) {
@@ -67,6 +73,12 @@ const ItemsToolBar = ({
       >
         Gerar Cotação
       </Button>
+      <Button
+        onClick={handleViewQuoteList}
+        sx={{ ...BaseButtonStyles, height: 30 }}
+      >
+        Ver Cotações
+      </Button>
 
       <ProductsTableModal requisitionID={Number(id)} />
       {alert && (
@@ -76,7 +88,13 @@ const ItemsToolBar = ({
         setCreatingQuote={setCreatingQuote}
         creatingQuote={creatingQuote}
         selectedRows={selectedRows}
-        requisitionId={1}
+        requisitionId={Number(id)}
+      />
+      <QuoteListModal
+        open={quoteListOpen}
+        requisitionId={Number(id)}
+        onClose={() => setQuoteListOpen(false)}
+        setQuoteListOpen={setQuoteListOpen}
       />
     </Stack>
   );

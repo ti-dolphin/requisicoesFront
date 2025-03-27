@@ -20,11 +20,168 @@ import {
 } from "@mui/material";
 import { BaseButtonStyles } from "../../../utilStyles";
 import typographyStyles from "../../utilStyles";
+import { green } from "@mui/material/colors";
+import { updateQuoteItems } from "../../utils";
+import { useParams } from "react-router-dom";
 
 interface props {
   items: QuoteItem[];
   isSupplier: boolean | undefined;
 }
+
+ const currencyFormatter = new Intl.NumberFormat("pt-BR", {
+   style: "currency",
+   currency: "BRL",
+ });
+
+ const columns: GridColDef[] = [
+   {
+     field: "id_item_cotacao",
+     headerName: "ID Item",
+     width: 100,
+     editable: false,
+     cellClassName: "id_item_cotacao-cell",
+   },
+   {
+     field: "descricao_item",
+     headerName: "Descrição",
+     width: 350,
+     editable: false,
+     cellClassName: "descricao_item-cell",
+   },
+   { 
+      field: 'observacao',
+      headerName: 'Observação',
+      width: 300,
+      editable: true
+   },
+   {
+     field: "preco_unitario",
+     headerName: `Preço Unitário`,
+     width: 150,
+     editable: true,
+     type: "number",
+     valueFormatter: (value: Number) => currencyFormatter.format(Number(value)),
+   },
+   {
+     field: "ICMS",
+     headerName: "ICMS %",
+     width: 100,
+     editable: true,
+     cellClassName: "ICMS-cell",
+     valueFormatter: (value: number) =>
+       value !== null && value !== undefined
+         ? `${Number(value).toFixed(2)}%`
+         : "",
+   },
+   {
+     field: "IPI",
+     headerName: "IPI %",
+     width: 100, // Ajustado para 150
+     editable: true,
+     cellClassName: "IPI-cell",
+     valueFormatter: (value: number) =>
+       value !== null && value !== undefined
+         ? `${Number(value).toFixed(2)}%`
+         : "",
+   },
+   {
+     field: "ST",
+     headerName: "ST %",
+     width: 100, // Ajustado para 150
+     editable: true,
+     cellClassName: "ST-cell",
+     valueFormatter: (value: number) =>
+       value !== null && value !== undefined
+         ? `${Number(value).toFixed(2)}%`
+         : "",
+   },
+   {
+     field: "quantidade_solicitada",
+     headerName: "Quantidade Solicitada",
+     width: 170,
+     editable: false,
+   },
+   {
+     field: "quantidade_cotada",
+     headerName: "Quantidade Cotada",
+     width: 170,
+     editable: true,
+     cellClassName: "quantidade_cotada-cell",
+   },
+   {
+     field: "subtotal",
+     headerName: "Subtotal (R$)",
+     width: 150,
+     editable: false,
+     cellClassName: "subtotal-cell",
+     valueFormatter: (value: Number) =>
+       value.toLocaleString("pt-BR", {
+         style: "currency",
+         currency: "BRL",
+       }),
+   },
+ ];
+
+ 
+  const fieldInstructions = () => {
+    const formFields = [
+      {
+        label: "Preço Unitário",
+        instructions: "com ICMS incluso",
+      },
+      {
+        label: "Alíquota ICMS",
+        instructions: "%",
+      },
+      {
+        label: "Alíquota IPI",
+        instructions: "%",
+      },
+      {
+        label: "Alíquota ST",
+        instructions: "%",
+      },
+      {
+        label: "Quantidade Cotada",
+        instructions:
+          "qunatidade disponível para fornecer, caso seja diferente da quantidade solicitada",
+      },
+      { 
+        label: 'Observação',
+        instructions: 'Caso não tenha o item mas tenha algum similar, informe o nome do item aqui'
+      }
+    ];
+    return (
+      <Stack direction="column" flexWrap="wrap" gap={2} alignItems="start">
+        <Typography sx={typographyStyles.heading2}>
+          Por favor, preencha as seguintes colunas:
+        </Typography>
+        <Typography sx={typographyStyles.smallText} component="div">
+          <ul>
+            {formFields.map((field, index) => (
+              <li key={index}>
+                <Typography sx={typographyStyles.bodyText} component="span">
+                  {field.label}{" "}
+                  {field.instructions && (
+                    <Typography
+                      component="span"
+                      sx={{
+                        ...typographyStyles.smallText,
+                        fontStyle: "italic",
+                      }}
+                    >
+                      ({field.instructions})
+                    </Typography>
+                  )}
+                </Typography>
+              </li>
+            ))}
+          </ul>
+        </Typography>
+      </Stack>
+    );
+  };
 
 const QuoteItemsTable = ({ items, isSupplier }: props) => {
   const [currentItems, setCurrentItems] = useState<QuoteItem[]>([...items]);
@@ -39,12 +196,7 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
   const gridApiRef = useGridApiRef();
   const shouldExecuteSaveItems = useRef(false);
   const shouldExecuteResetItems = useRef(false);
-
-  console.log({
-    isSelecting,
-    selectionModel,
-    setIsLoading
-  });
+  const {quoteId} = useParams();
 
   const handleGenerateSupplierUrl = () => {
     const url = new URL(window.location.href);
@@ -76,10 +228,59 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
     setRowModesModel(newRowModesModel);
   };
 
+  const validateQuotedQuantity =(item: QuoteItem ) => { 
+    const updatedRow = { ...item } as QuoteItem;
+    const { quantidade_solicitada, quantidade_cotada } = updatedRow;
+    if (quantidade_cotada > quantidade_solicitada) {
+      displayAlert("warning", "Quantidade cotada não pode ser maior que a quantidade solicitada");
+      updatedRow.quantidade_cotada = quantidade_solicitada;
+    }
+    return updatedRow;
+  };
+
+   function convertToNumber(valor: string | number) {
+     if (typeof valor === "number") return valor;
+     if (typeof valor === "string") {
+       const valorLimpo = valor
+         .replace(/[^\d,.]/g, "")
+         .replace(/\.(?=\d{3})/g, "")
+         .replace(",", ".");
+
+       const numero = parseFloat(valorLimpo);
+       return isNaN(numero) ? 0 : numero;
+     }
+     return 0;
+   }
+
+
+    const calculateSubtotal = (item: QuoteItem) => {
+      const precoUnitario = calculateTaxes(item);
+      const quantidadeCotada = item.quantidade_cotada || 0;
+      const subtotal = precoUnitario * quantidadeCotada;
+      item.ICMS = convertToNumber(item.ICMS);
+      item.IPI = convertToNumber(item.IPI);
+      item.ST = convertToNumber(item.ST);
+      item.subtotal = subtotal;
+      return item;
+    };
+
+ const calculateTaxes = (item: QuoteItem): number => {
+   const updatedRow = { ...item } as QuoteItem;
+   const { preco_unitario, IPI, ST } = updatedRow;
+   const precoUnitario = convertToNumber(preco_unitario);
+   const ipi = convertToNumber(IPI);
+   const st = convertToNumber(ST);
+   const unitPriceWithTaxes = precoUnitario * (1 + (ipi + st) / 100);
+   return unitPriceWithTaxes;
+ };
+  
+
   const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
     console.log("processRowUpdate");
     if (isEditing) {
-        const updatedRow = { ...newRow } as QuoteItem;
+        let updatedRow = { ...newRow} as QuoteItem;
+        updatedRow = validateQuotedQuantity(updatedRow);
+        updatedRow = calculateSubtotal(updatedRow);
         setCurrentItems(currentItems.map(item => (item.id_item_cotacao === updatedRow.id_item_cotacao ? updatedRow : item)));
         return updatedRow;
     }
@@ -88,86 +289,20 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
 
    
   const handleSave = async () => {
-    console.log("handleSave");
     try {
-        console.log('updatedItems: ', currentItems)
-    //   const response = await updateQuoteItems(currentItems, Number(quoteId));
-    //   if (response.status === 200) {
-    //     displayAlert('success', 'items da cotação atualizados com sucesso!');
-    //     const updatedItems = response.data;
-    //     setCurrentItems(updatedItems);
-    //   }
+      console.log('items sent to backend: ', currentItems)
+      const response = await updateQuoteItems(currentItems, Number(quoteId));
+      if (response.status === 200) {
+        displayAlert('success', 'items da cotação atualizados com sucesso!');
+        const updatedItems = response.data;
+        setCurrentItems(updatedItems);
+      }
     } catch (e: any) {
       displayAlert("error", e.message);
     }
   };
 
-  const columns: GridColDef[] = [
-    {
-      field: "id_item_cotacao",
-      headerName: "ID Item",
-      width: 100,
-      editable: false,
-      cellClassName: "id_item_cotacao-cell",
-    },
-    {
-      field: "descricao_item",
-      headerName: "Descrição",
-      width: 400,
-      editable: false,
-      cellClassName: "descricao_item-cell",
-    },
-    {
-      field: "preco_unitario",
-      headerName: "Preço Unitário (com ICMS incluso)",
-      width: 250,
-      editable: true,
-      valueFormatter: (value: Number) =>
-        value.toLocaleString("pt-BR", {
-          style: "currency",  
-          currency: "BRL",
-        }),
-    },
-    {
-      field: "ICMS",
-      headerName: "Alíquota ICMS %",
-      width: 150,
-      editable: true,
-      cellClassName: "ICMS-cell",
-    },
-    {
-      field: "IPI",
-      headerName: "Alíquota IPI %",
-      width: 150,
-      editable: true,
-      cellClassName: "IPI-cell",
-    },
-    {
-      field: "ST",
-      headerName: "Alíquota ST %",
-      width: 150,
-      editable: true,
-      cellClassName: "ST-cell",
-    },
-    {
-      field: "quantidade",
-      headerName: "Quantidade",
-      width: 120,
-      editable: false,
-    },
-    {
-      field: "subtotal",
-      headerName: "Subtotal (R$)",
-      width: 150,
-      editable: false,
-      cellClassName: "subtotal-cell",
-      valueFormatter: (value: Number) =>
-        value.toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        }),
-    },
-  ];
+ 
 
   const handleCellClick = (params: GridCellParams) => {
     gridApiRef.current.startRowEditMode({
@@ -180,8 +315,6 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
     }
   };
 
-
-
   const displayAlert = async (severity: string, message: string) => {
     setTimeout(() => {
       setAlert(undefined);
@@ -191,12 +324,17 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
   };
 
    const triggerSave = async () => {
-     console.log("triggerSave");
-     const row = Object.keys(rowModesModel)[0];
-     const { fieldToFocus } = rowModesModel[row] as any;
-     await stopEditMode(Number(row), fieldToFocus, false);
-     setSaveItems(!saveItems);
-     setIsEditing(false);
+      try{ 
+          console.log("triggerSave");
+        const row = Object.keys(rowModesModel)[0];
+        const { fieldToFocus } = rowModesModel[row] as any;
+        await stopEditMode(Number(row), fieldToFocus, false);
+        setSaveItems(!saveItems);
+        setIsEditing(false);
+      }catch(e) {
+          setSaveItems(!saveItems);
+          setIsEditing(false);
+      }
    };
 
   const stopEditMode = async (
@@ -221,12 +359,15 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
     setReverseChanges(!reverseChanges);
   };
 
+
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
       const isRowClicked = target.closest(".MuiDataGrid-row"); // Verifica se o clique foi em uma linha
-      const isCellClicked = target.closest(".MuiDataGrid-cell"); // Verifica se o clique foi em uma célula
-      if (!isRowClicked && !isCellClicked && isEditing) {
+      const isCellClicked = target.closest(".MuiDataGrid-cell"); // Verifica se o clique foi em uma célula7
+      const isButtonSaveClicked = target.closest(".MuiButton-root");
+      const shoudCancellEdition = !isRowClicked && !isCellClicked && isEditing && !isButtonSaveClicked
+      if (shoudCancellEdition) {
         handleCancelEdition(); // Reverte as edições se o clique foi fora de qualquer linha
       }
     };
@@ -255,7 +396,7 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
               }
       
           }, [saveItems]);
-
+  
   return (
     <Box
       sx={{
@@ -263,14 +404,26 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
         display: "flex",
         flexDirection: "column",
         alignItems: isLoading ? "center" : "start",
-        gap: 1,
+        gap: 2,
         padding: 1,
       }}
     >
       {alert && (
-        <Alert severity={alert.severity as AlertColor}>{alert?.message}</Alert>
+        <Alert
+          sx={{
+            border:
+              alert.severity === "error"
+                ? "1px solid red"
+                : alert.severity === "warning"
+                ? "1px solid orange"
+                : "1px solid green",
+          }}
+          severity={alert.severity as AlertColor}
+        >
+          {alert?.message}
+        </Alert>
       )}
-      <Stack direction="row" gap={2}>
+      <Stack direction="column" gap={2} sx={{ alignItems: "start" }}>
         {!isSupplier && (
           <Button
             sx={{ ...BaseButtonStyles, width: 200 }}
@@ -288,13 +441,8 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
           </Button>
         )}
         {isSupplier && (
-          <Stack direction="row" flexWrap="wrap" gap={2} alignItems="center">
-            <Typography sx={typographyStyles.heading1}>
-              Por favor, preencha a coluna preço unitário com seus valores!
-            </Typography>
-            <Typography sx={typographyStyles.heading2}>
-              após preencher todos os itens, clique em "Enviar Cotação"!
-            </Typography>
+          <Stack direction="column" flexWrap="wrap" gap={2} alignItems="start">
+            {fieldInstructions()}
           </Stack>
         )}
         {isEditing && !isSupplier && (
@@ -305,6 +453,14 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
             Salvar
           </Button>
         )}
+      </Stack>
+      <Stack direction="row" gap={1} alignItems="center">
+        <Typography sx={{ ...typographyStyles.heading2 }}>Total:</Typography>
+        <Typography sx={{ ...typographyStyles.heading2, color: green[500] }}>
+          {currencyFormatter.format(
+            currentItems.reduce((acc, item) => acc + item.subtotal, 0)
+          )}
+        </Typography>
       </Stack>
 
       {!isLoading && (
@@ -340,9 +496,16 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
             ".subtotal-cell": {
               color: "gray",
             },
-            '.descricao_item-cell': { 
-                color: 'gray'
-            }
+            ".descricao_item-cell": {
+              color: "gray",
+            },
+            ".quantidade_cotada-cell": {
+              color: "gray",
+            },
+            "& .MuiDataGrid-menuIcon": {
+              display: "none",
+            },
+            width: "100%",
           }}
         />
       )}

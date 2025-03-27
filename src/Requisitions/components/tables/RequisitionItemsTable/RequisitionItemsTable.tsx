@@ -161,7 +161,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     handleRowModesModelChange,
     handleCancelEdition,
     processRowUpdate,
-    handleSave,
+    triggerSave,
     setIsEditing,
     handleChangeSelection,
     handleDelete,
@@ -189,7 +189,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
 
         <GridFooter />
         {isEditing && (
-          <Button onClick={handleSave} sx={BaseButtonStyles}>
+          <Button onClick={triggerSave} sx={BaseButtonStyles}>
             Salvar
           </Button>
         )}
