@@ -33,6 +33,14 @@ export interface QuoteField {
   label: string;
   type: 'string' | 'number' | 'date' | 'boolean';
 }
+export interface ShipmentType{ 
+  nome: string;
+  id_tipo_frete: number
+}
+export interface FiscalCategoryType{ 
+  id_classificao_fiscal : number;
+   nome : string;
+}
 export interface Quote {
   descricao: string;
   id_cotacao: number; // id_cotacao
@@ -41,6 +49,9 @@ export interface Quote {
   fornecedor: string; // fornecedor
   data_cotacao: string; // data_cotacao
   observacao?: string; // observacao
+  id_tipo_frete: number;
+  id_classificacao_fiscal: number;
+  valor_frete: number;
   itens: QuoteItem[]; // Lista de itens vinculados
 }
 
@@ -51,7 +62,9 @@ export interface QuoteItem {
   id_item_requisicao: number;
   descricao_item: string; // descricao_item
   preco_unitario: number; // preco_unitario
-  quantidade: number; // quantidade
+  quantidade_solicitada: number; // quantidade
+  quantidade_cotada: number; // quantidade_cotada
+  observacao: string; // observacao
   ICMS: number;
   IPI: number;
   ST: number

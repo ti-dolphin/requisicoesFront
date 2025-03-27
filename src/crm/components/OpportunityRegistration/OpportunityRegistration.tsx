@@ -20,6 +20,7 @@ interface OpportunityRegistrationFields {
   codStatus: number;
   descricaoVenda: string;
   fkCodCliente: number;
+  fkCodColigada: number;
   dataSolicitacao: Date;
   dataInicio: Date;
   dataEntrega: Date;
@@ -52,9 +53,10 @@ const OpportunityRegistration = ({
       codStatus: guide.fields[3].data,
       descricaoVenda: guide.fields[4].data,
       fkCodCliente: guide.fields[5].data,
-      dataSolicitacao: guide.fields[6].data,
-      dataInicio: guide.fields[7].data,
-      dataEntrega: guide.fields[8].data,
+      fkCodColigada  :guide.fields[6].data,
+      dataSolicitacao: guide.fields[7].data,
+      dataInicio: guide.fields[8].data,
+      dataEntrega: guide.fields[9].data,
     });
 
   const renderOptions = (column: {
@@ -67,15 +69,7 @@ const OpportunityRegistration = ({
     if (column.dataKey === "fkCodCliente") return clientOptions;
   };
 
-  const changeReference = (field: Field) => {
-    if (guidesReference.current) {
-      const guideIndex = guidesReference.current.indexOf(guide);
-      const fieldIndex = guidesReference.current[guideIndex].fields.findIndex(
-        (referenceField) => referenceField.dataKey === field.dataKey
-      );
-      guidesReference.current[guideIndex].fields[fieldIndex] = field;
-    }
-  };
+
 
   const handleChangeTextField = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -88,8 +82,8 @@ const OpportunityRegistration = ({
         ...opportunityRegistration,
         [receivedField.dataKey]: value,
       });
-      changeReference(receivedField);
       setChangeWasMade(true)
+      return;
     }
     if (receivedField.type === "date") {
       receivedField.data = value;
@@ -97,10 +91,10 @@ const OpportunityRegistration = ({
         ...opportunityRegistration,
         [receivedField.dataKey]: value,
       });
-      changeReference(receivedField);
       setChangeWasMade(true);
+       return;
     }
-    return;
+   
   };
 
   const handleChangeAutoComplete = (
@@ -117,7 +111,7 @@ const OpportunityRegistration = ({
       [field.dataKey]: value?.id,
     });
     field.data = value?.id;
-    changeReference(field);
+    // changeReference(field);
     setChangeWasMade(true);
 
   };
@@ -129,21 +123,19 @@ const OpportunityRegistration = ({
   const setDefaultClientWhenNotDefined = async () => {
     const clientNotDefined =
       (opportunityRegistration.fkCodCliente as any) == "-";
-    console.log({
-      clientNotDefined,
-      idProjeto: opportunityRegistration.idProjeto,
-    });
+  
     if (clientNotDefined && opportunityRegistration.idProjeto) {
       const clientFromFirstProject = await fetchClientFromFirstProjectOption(
         opportunityRegistration.idProjeto
       );
-      console.log({ clientFromFirstProject });
       setOpportunityRegistration({
         ...opportunityRegistration,
         fkCodCliente: clientFromFirstProject.id,
+        fkCodColigada: clientFromFirstProject.fkCodColigada,
       });
       if (guidesReference.current) {
         guide.fields[5].data = clientFromFirstProject.id;
+        guide.fields[6].data = clientFromFirstProject.fkCodColigada;
         guidesReference.current[0] = guide;
       }
 
@@ -223,18 +215,7 @@ const OpportunityRegistration = ({
 
   useEffect(() => {
     if (!isEditing) {
-      console.log("REGISTRATION");
-      console.log({
-        idProjeto: guide.fields[0].data,
-        numeroAdicional: guide.fields[1].data,
-        nome: guide.fields[2].data,
-        codStatus: guide.fields[3].data,
-        descricaoVenda: guide.fields[4].data,
-        fkCodCliente: guide.fields[5].data,
-        dataSolicitacao: guide.fields[6].data,
-        dataInicio: guide.fields[7].data,
-        dataEntrega: guide.fields[8].data,
-      });
+  
       setOpportunityRegistration({
         idProjeto: guide.fields[0].data,
         numeroAdicional: guide.fields[1].data,
@@ -242,9 +223,10 @@ const OpportunityRegistration = ({
         codStatus: guide.fields[3].data,
         descricaoVenda: guide.fields[4].data,
         fkCodCliente: guide.fields[5].data,
-        dataSolicitacao: guide.fields[6].data,
-        dataInicio: guide.fields[7].data,
-        dataEntrega: guide.fields[8].data,
+        fkCodColigada: guide.fields[6].data,
+        dataSolicitacao: guide.fields[7].data,
+        dataInicio: guide.fields[8].data,
+        dataEntrega: guide.fields[9].data,
       });
     }
   }, [guide]);
@@ -263,7 +245,8 @@ const OpportunityRegistration = ({
             if (
               editableField(field) &&
               !field.autoComplete &&
-              field.dataKey !== "codOs"
+              field.dataKey !== "codOs" &&
+              field.dataKey !== 'fkCodColigada'
             ) {
               return (
                 <TextField

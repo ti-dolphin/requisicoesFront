@@ -230,6 +230,7 @@ export const fetchClientFromFirstProjectOption = async (projectId: number ) =>  
           id: client.CODCLIENTE,
           object: "client",
           key: client.CODCLIENTE,
+          fkCodColigada: client.CODCOLIGADA
         }));
         const olyOptionAvailable = options.find(
           (option: any) => option.label !== "-"
@@ -381,8 +382,8 @@ export const opportunityInputFields: OpportunityColumn[] = [
 
 export const opportunityDefault = {
   codOs: 0, // Exemplo de código de OS (AUTO_INCREMENT, não precisa definir)
-  codTipoOs: 1, // Valor padrão para o tipo de OS (campo com valor padrão '1')
-  codCCusto: null, // Opcional
+  codTipoOs: 21, // Valor padrão para o tipo de OS (campo com valor padrão '1')
+  codCCusto: "2.02.0002", // Opcional
   obra: null, // Opcional
   dataSolicitacao: null, // Data atual (pode ser null se não obrigatório)
   dataNecessidade: null, // Data atual (pode ser null se não obrigatório)
@@ -393,7 +394,7 @@ export const opportunityDefault = {
   dataEntrega: null, // Opcional
   codStatus: 1, // Valor padrão para o status (campo com valor padrão '1')
   nome: "", // Nome obrigatório
-  descricao: '', // Opcional
+  descricao: "", // Opcional
   atividades: null, // Opcional
   prioridade: 0, // Valor padrão (campo com valor padrão '0')
   solicitante: 1, // Valor padrão para o solicitante (campo com valor padrão '1')
@@ -405,7 +406,7 @@ export const opportunityDefault = {
   tendencia: 1, // Valor padrão para tendência (campo com valor padrão '1')
   dataLiberacao: null, // Opcional
   relacionamento: 1, // Valor padrão para relacionamento (campo com valor padrão '1')
-  fkCodCliente: '-', // Valor padrão (campo com valor padrão '-')
+  fkCodCliente: "-", // Valor padrão (campo com valor padrão '-')
   fkCodColigada: 0, // Valor padrão para código de coligada (campo com valor padrão '0')
   valorFatDireto: 0.0, // Valor padrão (campo com valor padrão '0.00')
   valorServicoMO: 0.0, // Valor padrão (campo com valor padrão '0.00')
@@ -428,5 +429,5 @@ export const opportunityDefault = {
   numeroAdicional: 0, // Valor padrão com
   comentarios: [],
   seguidores: [],
-}
+};
 

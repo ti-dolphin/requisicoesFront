@@ -219,6 +219,7 @@ export interface OpportunityColumn {
 export interface Client {
   CODCLIENTE: number;
   NOMEFANTASIA: string;
+  CODCOLIGADA?: number;
 }
 
 
