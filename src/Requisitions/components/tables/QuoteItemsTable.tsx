@@ -197,6 +197,11 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
   const shouldExecuteSaveItems = useRef(false);
   const shouldExecuteResetItems = useRef(false);
   const {quoteId} = useParams();
+  console.log({
+    setIsLoading,
+    selectionModel,
+    isSelecting,
+  });
 
   const handleGenerateSupplierUrl = () => {
     const url = new URL(window.location.href);

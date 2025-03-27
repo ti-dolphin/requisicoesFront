@@ -41,7 +41,6 @@ const OpportunityFollowers = ({
       }
       setFollowers([...guide.fields[0].data]);
       setFilteredFollowers([...guide.fields[0].data]);
-      console.log("followers: ", guide.fields[0].data);
     }
   }, [guide]);
 

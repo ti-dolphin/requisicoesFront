@@ -66,7 +66,6 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
     };
 
     const handleClose = () => {
-        console.log('handleClose')
         setCreatingOpportunity(false);
         setCurrentOppIdSelected(0);
         setCurrentSlideIndex(0);
@@ -90,6 +89,7 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
                     { label: "Status", dataKey: "codStatus", autoComplete: true, type: "number", data: opportunity["codStatus"] },
                     { label: 'Descrição da Venda', dataKey: 'descricaoVenda', autoComplete: false, type: 'text', data: opportunity['descricaoVenda']},
                     { label: "Cliente", dataKey: "fkCodCliente", autoComplete: true, type: "number", data: opportunity["fkCodCliente"] },
+                    { label: 'Codigo Coligada', dataKey: 'fkCodColigada', autoComplete: false, type: 'number', data: opportunity['fkCodColigada']},
                     { label: "Data de Solicitação", dataKey: "dataSolicitacao", type: "date", data: opportunity["dataSolicitacao"] },
                     { label: "Data de Início", dataKey: "dataInicio", type: "date", data: opportunity["dataInicio"] },
                     { label: "Data de Fechamento", dataKey: "dataEntrega", type: "date", data: opportunity["dataEntrega"] },
@@ -141,7 +141,6 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
             dataLiberacao: data.dataLiberacao ? new Date(data.dataLiberacao).toISOString().split("T")[0] : null,
             dataInteracao: data.dataInteracao ? new Date(data.dataInteracao).toISOString().split("T")[0] : null,
         };
-        console.log({formattedOpp})
         setCurrentOpportunity(formattedOpp);
         setIsLoading(false);
     }, [currentOppIdSelected, setCurrentOpportunity]);
@@ -180,9 +179,8 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
 
     const getUpdatedOpportunity = () => {
         let updatedOpportunity = { ...opportunity };
-        guidesReference.current?.forEach((guide) => {
-            guide.fields.forEach((field) => {
-                console.log({dataKey: field.dataKey, data: field.data})
+        guidesReference.current?.forEach((guide, _index) => {
+            guide.fields.forEach((field, _index) => {
                 updatedOpportunity = {
                     ...updatedOpportunity,
                     [field.dataKey]: field.data,
@@ -288,13 +286,11 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
 
 
     useEffect(() => {
-        console.log('useEffect setGuidesReference')
         setGuidesReference();
         setRenderFields(!renderFields);
     }, [opportunity, refreshOpportunityFields]);
 
     useEffect(() => {
-        console.log('useEffect fetch data')
         if (creatingOpportunity) {
             setIsAdicionalChoiceOpen(true);
             setIsLoading(false)

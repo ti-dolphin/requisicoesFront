@@ -11,13 +11,7 @@ import typographyStyles from "../../../utilStyles";
 import { Quote } from "../../../types";
 import { blue } from "@mui/material/colors";
 
-interface QuoteItem {
-  // Defina os campos do QuoteItem conforme necessário
-  id: number;
-  descricao: string;
-  quantidade: number;
-  preco: number;
-}
+
 
 interface Props {
   open: boolean;

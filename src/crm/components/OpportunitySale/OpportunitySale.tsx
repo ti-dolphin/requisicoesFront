@@ -60,9 +60,11 @@ const OpportunitySale = ({
   const oppId = useRef<number>();
 
   const setDefaultResponsableWhenNotDefined = async () => {
-    console.log("setDefaultResponsableWhen -- NotDefined");
-    console.log("condition: ", oppId.current);
-
+     console.log("guidesReference.current:", guidesReference.current);
+     console.log("oppId.current:", oppId.current);
+     console.log("sale:", sale);
+     console.log("responsableOptions:", responsableOptions);
+     console.log("projectId.current:", projectId.current);
     if (
       guidesReference.current &&
       oppId.current &&
@@ -71,18 +73,19 @@ const OpportunitySale = ({
       projectId.current
     ) {
       const noResponsableDefined = sale.responsavel == 1;
-      console.log({ noResponsableDefined });
 
       if (noResponsableDefined && projectId.current) {
         const responsableForFirstProject =
           await fetchResponsableForFirstProjectOption(projectId.current);
-        console.log({ responsableForFirstProject });
         setCurrentResponsable(
           responsableOptions.find(
             (respOption: any) => respOption.id === responsableForFirstProject.id
           )
         );
-        console.log({ responsableForFirstProject });
+        console.log(
+          "resopnsable for first project: ",
+          responsableForFirstProject
+        );
         guide.fields[0].data = responsableForFirstProject.id;
         guidesReference.current[3] = guide;
         return;
@@ -91,12 +94,10 @@ const OpportunitySale = ({
   };
 
   const setCurrentResponsableWhenDefined = () => {
-    console.log("setCurrentResponsableWhen -- Defined");
     if (sale?.responsavel && responsableOptions) {
       const responsable = responsableOptions.find(
         (option: any) => option.id === sale.responsavel
       );
-      console.log("defined responsable found: ", responsable);
       if (responsable) {
         setCurrentResponsable(
           responsableOptions.find(
@@ -159,7 +160,7 @@ const OpportunitySale = ({
   useEffect(() => {
     if (guidesReference.current) {
       projectId.current = guidesReference.current[0].fields[0].data;
-      oppId.current = guidesReference.current[0].fields[9].data;
+      oppId.current = guidesReference.current[0].fields[10].data;
     }
     const firstsSaleState = {
       responsavel: guide.fields[0].data,
@@ -195,7 +196,6 @@ const OpportunitySale = ({
            (field) => field.dataKey === "codOs"
          );
          const codOs = codOsField?.data;
-         console.log({ codOs, user });
          try {
            const response = await sendSaleEmailByOppId(codOs, user);
            if(response.status === 200){ 
