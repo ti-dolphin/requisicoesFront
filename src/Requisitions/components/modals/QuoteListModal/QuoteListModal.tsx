@@ -1,17 +1,13 @@
 import { Modal, Box, Typography } from "@mui/material";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { FixedSizeList, ListChildComponentProps } from "react-window";
+import { FixedSizeList } from "react-window";
 import styles from "./QuoteListModal.styles";
 import { CloseModalButton } from "../../../../generalUtilities";
 import { AlertInterface } from "../../../types";
 import { getQuotesByRequisitionId } from "../../../utils";
 import typographyStyles from "../../../utilStyles";
-
-// Interface da cotação
 import { Quote } from "../../../types";
-import { blue } from "@mui/material/colors";
-
-
+import QuoteCard from "../../QuoteCard/QuoteCard";
 
 interface Props {
   open: boolean;
@@ -19,80 +15,6 @@ interface Props {
   onClose: () => void;
   setQuoteListOpen: Dispatch<SetStateAction<boolean>>;
 }
-
-// Componente do item da lista
-const Row = ({ index, style, data }: ListChildComponentProps) => {
-  const quote: Quote = data[index];
-  const handleNavigateToQuote = ( ) => { 
-      window.open(`/requisitions/quote/${quote.id_cotacao}`, '_blank')
-  };
-  return (
-    <Box style={style} sx={styles.rowStyle} onClick={handleNavigateToQuote}>
-      <Typography
-        sx={{ ...typographyStyles.heading2, color: "black" }}
-        variant="subtitle1"
-      >
-        Cotação {quote.id_cotacao}
-      </Typography>
-      <Typography
-        sx={{
-          ...typographyStyles.heading2,
-          strong: {
-            color: blue[900],
-          },
-        }}
-        variant="body2"
-      >
-        <strong>Fornecedor:</strong> {quote.fornecedor}
-      </Typography>
-      <Typography
-        sx={{
-          ...typographyStyles.heading2,
-          strong: {
-            color: blue[900],
-          },
-        }}
-        variant="body2"
-      >
-        <strong>Data:</strong>{" "}
-        {new Date(quote.data_cotacao).toLocaleDateString()}
-      </Typography>
-      <Typography
-        sx={{
-          ...typographyStyles.heading2,
-          strong: {
-            color: blue[900],
-          },
-        }}
-        variant="body2"
-      >
-        <strong>Condições de Pagamento:</strong> {quote.condicoes_pagamento}
-      </Typography>
-      <Typography
-        sx={{
-          ...typographyStyles.heading2,
-          strong: {
-            color: blue[900],
-          },
-        }}
-        variant="body2"
-      >
-        <strong>Descrição:</strong> {quote.descricao}
-      </Typography>
-      <Typography
-        sx={{
-          ...typographyStyles.heading2,
-          strong: {
-            color: blue[900],
-          },
-        }}
-        variant="body2"
-      >
-        <strong>Observação:</strong> {quote.observacao || "Nenhuma"}
-      </Typography>
-    </Box>
-  );
-};
 
 const QuoteListModal = ({
   open,
@@ -150,11 +72,11 @@ const QuoteListModal = ({
             height={600} // Altura da lista
             width="100%"
             itemCount={quotes.length}
-            itemSize={250} // Altura fixa de cada item (ajuste conforme necessário)
+            itemSize={300} // Altura fixa de cada item (ajuste conforme necessário)
             itemData={quotes}
             
           >
-            {Row}
+            {({index, style, data}) =>  <QuoteCard index={index} style={style} data={data} />}
           </FixedSizeList>
         )}
         {alert && (

@@ -197,11 +197,7 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
   const shouldExecuteSaveItems = useRef(false);
   const shouldExecuteResetItems = useRef(false);
   const {quoteId} = useParams();
-  console.log({
-    setIsLoading,
-    selectionModel,
-    isSelecting,
-  });
+
 
   const handleGenerateSupplierUrl = () => {
     const url = new URL(window.location.href);
@@ -294,6 +290,7 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
 
    
   const handleSave = async () => {
+    console.log('handleSave')
     try {
       console.log('items sent to backend: ', currentItems)
       const response = await updateQuoteItems(currentItems, Number(quoteId));
@@ -383,11 +380,7 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
   }, [isEditing]);
 
       useEffect(() => {
-        console.log("reverseChanges");
-        console.log(
-          "shouldExecuteResetItems.current: ",
-          shouldExecuteResetItems.current
-        );
+       
           if (shouldExecuteResetItems.current) {
             console.log(items);
               setCurrentItems(items);

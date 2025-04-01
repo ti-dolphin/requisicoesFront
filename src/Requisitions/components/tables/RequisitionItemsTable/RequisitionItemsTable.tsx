@@ -29,6 +29,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import typographyStyles from "../../../utilStyles";
 import useRequisitionItems from "./hooks";
 import ItemsToolBar from "../ItemsToolBar/ItemsToolBar";
+import { green } from "@mui/material/colors";
 
 interface RequisitionItemsTableProps {
   requisitionId: number;
@@ -36,117 +37,7 @@ interface RequisitionItemsTableProps {
   isInsertingQuantity? : boolean;
 }
 
-const columns: GridColDef[] = [
-  {
-    field: "nome_fantasia",
-    headerName: "Nome Fantasia",
-    editable: false,
-    width: 300,
-    renderCell: (params) => (
-      <Typography sx={{ ...typographyStyles.bodyText }}>
-        {params.value}
-      </Typography>
-    ),
-  },
-  {
-    field: "codigo",
-    headerName: "Código",
-    width: 150, // Defina a largura desejada
-    editable: false,
-    renderCell: (params) => (
-      <Typography sx={{ ...typographyStyles.bodyText }}>
-        {params.value ? params.value : "Sem código"}
-      </Typography>
-    ),
-  },
-  {
-    field: "OC",
-    headerName: "OC",
-    width: 100, // Defina a largura desejada
-    type: "number",
-    editable: true,
-    renderCell: (params) => (
-      <Typography sx={{ ...typographyStyles.bodyText }}>
-        {params.value ?? "-"}
-      </Typography>
-    ),
-  },
-  {
-    field: "QUANTIDADE",
-    headerName: "Quantidade",
-    width: 120, // Defina a largura desejada
-    type: "number",
-    editable: true,
-    renderCell: (params) => (
-      <Typography sx={{ ...typographyStyles.bodyText, pointerEvents: 'none' }}>
-        {params.value}
-      </Typography>
-    ),
-  },
-  {
-    field: "UNIDADE",
-    headerName: "Unidade",
-    width: 100, // Defina a largura desejada
-    editable: false,
-    renderCell: (params) => (
-      <Typography sx={{ ...typographyStyles.bodyText }}>
-        {params.value ?? "-"}
-      </Typography>
-    ),
-  },
-  {
-    field: "OBSERVACAO",
-    headerName: "Observação",
-    width: 200, // Defina a largura desejada
-    editable: true,
-    renderCell: (params) => (
-      <Typography sx={{ ...typographyStyles.bodyText }}>
-        {params.value && params.value !== "null" ? params.value : ""}
-      </Typography>
-    ),
-  },
-  // {
-  //   field: "ATIVO",
-  //   headerName: "Ativo",
-  //   width: 100, // Defina a largura desejada
-  //   type: "number",
-  //   editable: false,
-  //   renderCell: (params) => (
-  //     <Typography
-  //       sx={{
-  //         ...typographyStyles.smallText,
-  //         color: params.value ? "darkgreen" : "gray",
-  //       }}
-  //     >
-  //       {params.value ? "Sim" : "Não"}
-  //     </Typography>
-  //   ),
-  // },
-  // {
-  //   field: "ID",
-  //   headerName: "ID",
-  //   width: 100, // Defina a largura desejada
-  //   type: "number",
-  //   editable: false,
-  //   renderCell: (params) => (
-  //     <Typography sx={{ ...typographyStyles.bodyText }}>
-  //       {params.value}
-  //     </Typography>
-  //   ),
-  // },
-  // {
-  //   field: "ID_PRODUTO",
-  //   headerName: "ID Produto",
-  //   width: 120, // Defina a largura desejada
-  //   type: "number",
-  //   editable: false,
-  //   renderCell: (params) => (
-  //     <Typography sx={{ ...typographyStyles.bodyText }}>
-  //       {params.value}
-  //     </Typography>
-  //   ),
-  // },
-];
+
 
 const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
   requisitionId,
@@ -158,6 +49,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     isEditing,
     alert,
     gridApiRef,
+    dinamicColumns,
     handleRowModesModelChange,
     handleCancelEdition,
     processRowUpdate,
@@ -170,6 +62,107 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     handleCopyContent,
     selectedRows,
   } = useRequisitionItems(requisitionId, isInsertingQuantity, addedItems);
+  
+ 
+  const staticColumns: GridColDef[] = [
+    {
+      field: "nome_fantasia",
+      headerName: "Nome Fantasia",
+      editable: false,
+      width: 300,
+      renderCell: (params) => (
+        <Typography sx={{ ...typographyStyles.bodyText }}>
+          {params.value}
+        </Typography>
+      ),
+    },
+    {
+      field: "codigo",
+      headerName: "Código",
+      width: 150, // Defina a largura desejada
+      editable: false,
+      renderCell: (params) => (
+        <Typography sx={{ ...typographyStyles.bodyText }}>
+          {params.value ? params.value : "Sem código"}
+        </Typography>
+      ),
+    },
+    {
+      field: "OC",
+      headerName: "OC",
+      width: 100, // Defina a largura desejada
+      type: "number",
+      editable: true,
+      renderCell: (params) => (
+        <Typography sx={{ ...typographyStyles.bodyText }}>
+          {params.value ?? "-"}
+        </Typography>
+      ),
+    },
+    {
+      field: "QUANTIDADE",
+      headerName: "Quantidade",
+      width: 120, // Defina a largura desejada
+      type: "number",
+      editable: true,
+      renderCell: (params) => (
+        <Typography
+          sx={{ ...typographyStyles.bodyText, pointerEvents: "none" }}
+        >
+          {params.value}
+        </Typography>
+      ),
+    },
+    {
+      field: "UNIDADE",
+      headerName: "Unidade",
+      width: 100, // Defina a largura desejada
+      editable: false,
+      renderCell: (params) => (
+        <Typography sx={{ ...typographyStyles.bodyText }}>
+          {params.value ?? "-"}
+        </Typography>
+      ),
+    },
+    {
+      field: "OBSERVACAO",
+      headerName: "Observação",
+      width: 200, // Defina a largura desejada
+      editable: true,
+      renderCell: (params) => (
+        <Typography sx={{ ...typographyStyles.bodyText }}>
+          {params.value && params.value !== "null" ? params.value : ""}
+        </Typography>
+      ),
+    },
+  ];
+
+  
+   const currencyFormatter = new Intl.NumberFormat("pt-BR", {
+     style: "currency",
+     currency: "BRL",
+   });
+
+  const  getColumns =  () => { 
+      let supllierColumns : GridColDef[] = [];
+      if(dinamicColumns) {
+        dinamicColumns.forEach((c : string) => {
+          supllierColumns.push({
+            field: c,
+            headerName: c,
+            width: 150, // Defina a largura desejada
+            editable: false,
+            renderCell: (params) => (
+              <Typography sx={{ ...typographyStyles.bodyText, color: green[600] }}>
+                {params.value ? currencyFormatter.format(params.value) : ""}
+              </Typography>
+            ),
+          });
+        });
+      }
+      return [...staticColumns, ...supllierColumns]
+
+  }
 
   const ReqItemsFooter = (props: GridFooterContainerProps) => {
     return (
@@ -202,7 +195,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     );
   };
 
-  const insertingQuantityColumns = columns.filter(
+  const insertingQuantityColumns = staticColumns.filter(
     (column) =>
       column.field === "QUANTIDADE" ||
       column.field === "nome_fantasia" ||
@@ -235,7 +228,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
         density={isInsertingQuantity ? "comfortable" : "compact"}
         rows={visibleItems}
         getRowId={(item: Item) => item.ID}
-        columns={isInsertingQuantity ? insertingQuantityColumns : columns}
+        columns={isInsertingQuantity ? insertingQuantityColumns : getColumns()}
         initialState={{
           pagination: {
             paginationModel: {

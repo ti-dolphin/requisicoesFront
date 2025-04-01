@@ -261,7 +261,7 @@ const fetchRequsitionById = async (id: number) => {
 
 const fetchItems = async (id: number) => {
   try {
-    const response = await api.get<Item[]>(
+    const response = await api.get<any>(
       `requisition/requisitionItems/${id}`
     );
     return response.data;

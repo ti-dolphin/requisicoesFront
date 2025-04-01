@@ -18,7 +18,7 @@ const useRequisitionItems = (requisitionId: number, isInsertingQuantity?: boolea
     const shouldExecuteSaveItems = useRef(false);
     const shouldExecuteResetItems = useRef(false);
     const { adding, setProductIdList } = useContext(ItemsContext);
-
+    const [dinamicColumns, setDinamicColumns ] = useState<any>();
 
     const displayAlert = async (severity: string, message: string) => {
         setTimeout(() => {
@@ -139,19 +139,18 @@ const useRequisitionItems = (requisitionId: number, isInsertingQuantity?: boolea
     };
 
     const fetchReqItems = useCallback(async () => {
-        const items = await fetchItems(requisitionId);
-        console.log({
-            isInsertingQuantity,
-            addedItems
-        })
+        console.log('fetchReqItems')
+        const {items, columns} = await fetchItems(requisitionId);
+        console.log('columns: ', columns)
+        setDinamicColumns(columns);
         if (items) {
             if (isInsertingQuantity && addedItems?.length) {
-                const itemsToBeSet = items.filter((item) => addedItems.find((addedItem) => addedItem.ID === item.ID))
+                const itemsToBeSet = items.filter((item : Item) => addedItems.find((addedItem) => addedItem.ID === item.ID))
                 setItems(itemsToBeSet);
                 setVisibleItems(itemsToBeSet);
                 return;
             }
-            setProductIdList(items.map(item => item.ID_PRODUTO));
+            setProductIdList(items.map((item : Item) => item.ID_PRODUTO));
             setItems(items);
             setVisibleItems(items);
         }
@@ -235,6 +234,7 @@ const useRequisitionItems = (requisitionId: number, isInsertingQuantity?: boolea
         rowModesModel,
         gridApiRef,
         selectedRows,
+        dinamicColumns,
         displayAlert,
         handleRowModesModelChange,
         handleCancelEdition,

@@ -20,64 +20,55 @@ interface QuoteField{
   type: string;
   autoComplete: boolean
 }
-const quoteFields : QuoteField[] = [
+const quoteFields: QuoteField[] = [
   {
     label: "Descrição",
     dataKey: "descricao",
     type: "string",
     autoComplete: false,
   },
-  // {
-  //   label: "ID da Cotação",
-  //   dataKey: "id_cotacao",
-  //   type: "number",
-  // },
-  // {
-  //   label: "ID da Requisição",
-  //   dataKey: "id_requisicao",
-  //   type: "number",
-  // },
-  // {
-  //   label: "Condições de Pagamento",
-  //   dataKey: "condicoes_pagamento",
-  //   type: "string",
-  // },
   {
     label: "Fornecedor",
     dataKey: "fornecedor",
     type: "string",
-        autoComplete: false,
-
+    autoComplete: false,
   },
-  // {
-  //   label: "Data da Cotação",
-  //   dataKey: "data_cotacao",
-  //   type: "string",
-  // },
   {
     label: "Observação",
     dataKey: "observacao",
     type: "string",
     autoComplete: false,
   },
-  { 
-    label: 'Tipo de Frete',
-    dataKey: 'id_tipo_frete',
-    type: 'number',
-    autoComplete: true
+  {
+    label: "Tipo de Frete",
+    dataKey: "id_tipo_frete",
+    type: "number",
+    autoComplete: true,
   },
-  { 
-    label: 'Classificação Fiscal',
-    dataKey: 'id_classificacao_fiscal',
-    type: 'number',
-    autoComplete: true
+  {
+    label: "Classificação Fiscal",
+    dataKey: "id_classificacao_fiscal",
+    type: "number",
+    autoComplete: true,
   },
-  { 
-    label: 'Valor Frete',
-    dataKey: 'valor_frete',
-    type: 'number',
-    autoComplete: false
-  }
+  {
+    label: "Valor Frete",
+    dataKey: "valor_frete",
+    type: "number",
+    autoComplete: false,
+  },
+  {
+    label: "CNPJ do Faturamento",
+    dataKey: "cnpj_faturamento",
+    type: "string",
+    autoComplete: false,
+  },
+  {
+    label: "CNPJ do Fornecedor",
+    dataKey: "cnpj_fornecedor",
+    type: "string",
+    autoComplete: false,
+  },
 ];
 
 interface Option{ 
@@ -113,13 +104,10 @@ const QuoteDetail = () => {
   const { quoteId } = useParams();
 
   const fetchQuoteData = async () => {
-
     try {
       const response = await getQuoteById(Number(quoteId));
       if (response.status === 200) {
         const  quote  = response.data;
-        console.log(response.data)
-        console.log({quote});
         setCurrentQuoteData(quote);
         setItems(quote.items);
         fetchOptions(quote);
@@ -186,11 +174,10 @@ const QuoteDetail = () => {
 
  const getValue = (field : QuoteField ) => { 
    if (field.dataKey == "id_tipo_frete") {
-    console.log({ selectedShipment });
+
      return selectedShipment;
    }
    if (field.dataKey === "id_classificacao_fiscal") {
-    console.log({ selectedClassification });
      return selectedClassification;
    }
  };
@@ -207,12 +194,12 @@ const QuoteDetail = () => {
    if(currentQuoteData){ 
       try {
         console.log({currentQuoteData})
-        const response = await updateQuote(currentQuoteData);
-        if (response.status === 200) {
-          const newQuote = response.data;
-          setCurrentQuoteData(newQuote);
-          displayAlert('success', 'Cotação atualizada!')
-        }
+        // const response = await updateQuote(currentQuoteData);
+        // if (response.status === 200) {
+        //   const newQuote = response.data;
+        //   setCurrentQuoteData(newQuote);
+        //   displayAlert('success', 'Cotação atualizada!')
+        // }
       } catch (e : any) {
         displayAlert("error", `Erro ao atualizar: ${e.message}`);
       }
@@ -220,28 +207,21 @@ const QuoteDetail = () => {
   };
 
   const handleChangeAutoComplete = (field: QuoteField, value: Option | null ) => { 
-    if(value){ 
-        if (currentQuoteData) {
-          setCurrentQuoteData({
-            ...currentQuoteData,
-            [field.dataKey as keyof Quote]: value.id,
-          });
-        }
+    if(value){
+      if (currentQuoteData) {
         if (field.dataKey === "id_classificacao_fiscal") {
           setSelectedClassification(value);
         }
         if (field.dataKey === "id_tipo_frete") {
           setSelectedShipment(value);
         }
+        setCurrentQuoteData({
+          ...currentQuoteData,
+          [field.dataKey as keyof Quote]: value.id,
+        });
+      }
     }
   }
-
-  // const formatToBRL = (value: number) => {
-  //   return new Intl.NumberFormat("pt-BR", {
-  //     style: "currency",
-  //     currency: "BRL",
-  //   }).format(value);
-  // };
 
   const verifySupplier = () => {
     setIsLoading(true);
@@ -252,7 +232,21 @@ const QuoteDetail = () => {
     setIsLoading(false);
   };
 
-
+  const handleFocus = (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+    field: QuoteField
+  ) => {
+    if (!isSupplier) {
+      if(!isEditing) setIsEditing(true)
+      return;
+    }
+    if(field.dataKey === 'observacao' || field.dataKey === 'descricao'){ 
+        displayAlert("warning", `Não é permitido editar ${field.label}`);
+        e.currentTarget.blur();
+        return;
+    }
+     if (!isEditing) setIsEditing(true);
+  };
 
   useEffect(() => {
     verifySupplier();
@@ -265,7 +259,7 @@ const QuoteDetail = () => {
 
   return (
     <Box sx={{ ...quoteDetailPageStyles }}>
-      {!isLoading && !isSupplier && currentQuoteData && (
+      {!isLoading && currentQuoteData && (
         <Box
           sx={{
             ...boxDefaultStyles,
@@ -323,13 +317,17 @@ const QuoteDetail = () => {
                         key={field.dataKey}
                         label={field.label}
                         name={field.label}
-                        onFocus={() => setIsEditing(true)}
+                        onFocus={(e) => handleFocus(e, field)}
                         onBlur={() => setIsEditing(false)}
                         sx={{ display: "flex", flexShrink: 1, margin: 0 }}
                         type={field.type === "number" ? "number" : "text"}
                         value={
                           currentQuoteData[field.dataKey as keyof Quote] || ""
                         }
+                        InputLabelProps={{
+                          shrink: true,
+                          sx: { color: "black" },
+                        }}
                         onChange={(e) => handleChange(e, field.dataKey)}
                         fullWidth
                         margin="normal"
@@ -358,13 +356,26 @@ const QuoteDetail = () => {
                         <TextField
                           {...params}
                           label={field.label}
-                          InputLabelProps={{ shrink: true }}
+                          InputLabelProps={{
+                            shrink: true,
+                            sx: { color: "black" },
+                          }}
                         />
                       )}
                       options={renderOptions(field) || []}
                     ></Autocomplete>
                   );
                 })}
+              {isSupplier && (
+                <Box>
+                  <Typography
+                    sx={{ fontStyle: "italic", ...typographyStyles.heading2 }}
+                  >
+                    * Preencha a classificação fiscal, valor do frete, tipo
+                    de frete e  o seu CNPJ
+                  </Typography>
+                </Box>
+              )}
             </Box>
             <AnimatePresence>
               {isEditing && (
@@ -389,7 +400,10 @@ const QuoteDetail = () => {
       )}
       {!isLoading && currentQuoteData && items && (
         <Box sx={{ ...boxDefaultStyles, flexGrow: 1 }}>
-          <QuoteItemsTable items={items} isSupplier={isSupplier} />
+          <QuoteItemsTable
+            items={items}
+            isSupplier={isSupplier}
+          />
         </Box>
       )}
       {isLoading && <Loader />}
