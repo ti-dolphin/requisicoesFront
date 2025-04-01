@@ -304,8 +304,6 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
     }
   };
 
- 
-
   const handleCellClick = (params: GridCellParams) => {
     gridApiRef.current.startRowEditMode({
       id: params.row.id_item_cotacao,
@@ -327,7 +325,7 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
 
    const triggerSave = async () => {
       try{ 
-          console.log("triggerSave");
+        console.log("triggerSave");
         const row = Object.keys(rowModesModel)[0];
         const { fieldToFocus } = rowModesModel[row] as any;
         await stopEditMode(Number(row), fieldToFocus, false);

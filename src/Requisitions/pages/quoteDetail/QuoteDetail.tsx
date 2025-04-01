@@ -90,16 +90,31 @@ const QuoteDetail = () => {
    
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    dataKey: string
+    field: QuoteField
   ) => {
     const { value } = e.target;
     if(currentQuoteData){ 
       setCurrentQuoteData({
         ...currentQuoteData,
-        [dataKey]: value,
+        [field.dataKey as keyof Quote]: field.type === "number" ? Number(value) : value
       });
     }
   };
+
+  const handleChangeAutoComplete = (field: QuoteField, value: Option | null) => {
+  if (!value || !currentQuoteData) return;
+  
+   setCurrentQuoteData({ 
+    ...currentQuoteData,
+    [field.dataKey as keyof Quote] : value.id
+   })
+  // Atualiza o estado do option selecionado
+  if (field.dataKey === "id_classificacao_fiscal") {
+    setSelectedClassification(value);
+  } else if (field.dataKey === "id_tipo_frete") {
+    setSelectedShipment(value);
+  }
+};
 
   const { quoteId } = useParams();
 
@@ -193,35 +208,18 @@ const QuoteDetail = () => {
   const handleSave = async () => {
    if(currentQuoteData){ 
       try {
-        console.log({currentQuoteData})
-        // const response = await updateQuote(currentQuoteData);
-        // if (response.status === 200) {
-        //   const newQuote = response.data;
-        //   setCurrentQuoteData(newQuote);
-        //   displayAlert('success', 'Cotação atualizada!')
-        // }
+        const response = await updateQuote(currentQuoteData);
+        if (response.status === 200) {
+          const newQuote = response.data;
+          setCurrentQuoteData(newQuote);
+          displayAlert('success', 'Cotação atualizada!')
+        }
       } catch (e : any) {
         displayAlert("error", `Erro ao atualizar: ${e.message}`);
       }
    }
   };
 
-  const handleChangeAutoComplete = (field: QuoteField, value: Option | null ) => { 
-    if(value){
-      if (currentQuoteData) {
-        if (field.dataKey === "id_classificacao_fiscal") {
-          setSelectedClassification(value);
-        }
-        if (field.dataKey === "id_tipo_frete") {
-          setSelectedShipment(value);
-        }
-        setCurrentQuoteData({
-          ...currentQuoteData,
-          [field.dataKey as keyof Quote]: value.id,
-        });
-      }
-    }
-  }
 
   const verifySupplier = () => {
     setIsLoading(true);
@@ -232,21 +230,24 @@ const QuoteDetail = () => {
     setIsLoading(false);
   };
 
-  const handleFocus = (
-    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
-    field: QuoteField
-  ) => {
-    if (!isSupplier) {
-      if(!isEditing) setIsEditing(true)
-      return;
+ const handleFocus = (field: QuoteField) => {
+   if (
+     isSupplier &&
+     (field.dataKey === "observacao" || field.dataKey === "descricao")
+   ) {
+     displayAlert("warning", `Não é permitido editar ${field.label}`);
+     return false;
+   }
+   if(!isEditing) {
+    setIsEditing(true);
+    return;
+   }
+ };
+ const handleBlur = ( ) =>  {
+    if(!isEditing){ 
+      setIsEditing(false);
     }
-    if(field.dataKey === 'observacao' || field.dataKey === 'descricao'){ 
-        displayAlert("warning", `Não é permitido editar ${field.label}`);
-        e.currentTarget.blur();
-        return;
-    }
-     if (!isEditing) setIsEditing(true);
-  };
+ };
 
   useEffect(() => {
     verifySupplier();
@@ -254,8 +255,8 @@ const QuoteDetail = () => {
 
   useEffect(() => {
     fetchQuoteData();
-    
   }, []);
+
 
   return (
     <Box sx={{ ...quoteDetailPageStyles }}>
@@ -317,8 +318,8 @@ const QuoteDetail = () => {
                         key={field.dataKey}
                         label={field.label}
                         name={field.label}
-                        onFocus={(e) => handleFocus(e, field)}
-                        onBlur={() => setIsEditing(false)}
+                        onFocus={(e) => handleFocus(field)}
+                        onBlur={handleBlur}
                         sx={{ display: "flex", flexShrink: 1, margin: 0 }}
                         type={field.type === "number" ? "number" : "text"}
                         value={
@@ -328,7 +329,7 @@ const QuoteDetail = () => {
                           shrink: true,
                           sx: { color: "black" },
                         }}
-                        onChange={(e) => handleChange(e, field.dataKey)}
+                        onChange={(e) => handleChange(e, field)}
                         fullWidth
                         margin="normal"
                       />
@@ -343,8 +344,6 @@ const QuoteDetail = () => {
                         flexDirection: "column",
                         justifyContent: "center",
                       }}
-                      onBlur={() => setIsEditing(false)}
-                      onFocus={() => setIsEditing(true)}
                       onChange={(
                         _event: React.SyntheticEvent,
                         value: Option | null,
