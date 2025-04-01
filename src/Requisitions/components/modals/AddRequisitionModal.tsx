@@ -13,6 +13,7 @@ import { ItemsContextProvider } from "../../context/ItemsContext";
 import { useContext } from "react";
 import { RequisitionContext } from "../../context/RequisitionContext";
 import AddIcon from "@mui/icons-material/Add";
+import { CloseModalButton } from "../../../generalUtilities";
 
 
 const style = {
@@ -75,12 +76,7 @@ const NestedModal: React.FC = () => {
             border: "1px solid gray",
           }}
         >
-          <Button
-            onClick={handleClose}
-            sx={{ position: "absolute", top: "10px", right: "0" }}
-          >
-            <CloseIcon />
-          </Button>
+          <CloseModalButton handleClose={handleClose}/>
           <Typography variant="h6" id="parent-modal-title">
             Nova Requisição
           </Typography>

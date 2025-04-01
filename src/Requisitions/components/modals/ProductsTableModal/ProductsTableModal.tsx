@@ -226,6 +226,7 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
             isInsertingQuantity={isInsertingQuantity}
             setIsInsertingQuantity={setIsInsertingQuantity}
             setSelectedProducts={setSelectedProducts}
+            reqID={requisitionID}
           />
         </FullScreenModalBox>
       </Modal>

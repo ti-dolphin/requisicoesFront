@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import {
   Item
 } from "../../../utils";
@@ -34,7 +34,8 @@ import { green } from "@mui/material/colors";
 interface RequisitionItemsTableProps {
   requisitionId: number;
   addedItems?: Item[];
-  isInsertingQuantity? : boolean;
+  isInsertingQuantity?: boolean;
+  setIsInsertingQuantity: Dispatch<SetStateAction<boolean>>;
 }
 
 
@@ -42,7 +43,8 @@ interface RequisitionItemsTableProps {
 const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
   requisitionId,
   addedItems,
-  isInsertingQuantity
+  isInsertingQuantity,
+  setIsInsertingQuantity
 }) => {
   const {
     visibleItems,
@@ -61,7 +63,12 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     handleActivateItems,
     handleCopyContent,
     selectedRows,
-  } = useRequisitionItems(requisitionId, isInsertingQuantity, addedItems);
+  } = useRequisitionItems(
+    setIsInsertingQuantity,
+    requisitionId,
+    isInsertingQuantity,
+    addedItems,
+  );
   
  
   const staticColumns: GridColDef[] = [

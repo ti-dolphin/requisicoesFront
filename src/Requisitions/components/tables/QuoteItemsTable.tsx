@@ -27,6 +27,10 @@ import { useParams } from "react-router-dom";
 interface props {
   items: QuoteItem[];
   isSupplier: boolean | undefined;
+  isEditing: boolean | undefined;
+  setIsEditing: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+  saveQuoteData: () => Promise<void>;
+  shippingPrice: number;
 }
 
  const currencyFormatter = new Intl.NumberFormat("pt-BR", {
@@ -183,7 +187,14 @@ interface props {
     );
   };
 
-const QuoteItemsTable = ({ items, isSupplier }: props) => {
+const QuoteItemsTable = ({
+  items,
+  isSupplier,
+  isEditing,
+  setIsEditing,
+  saveQuoteData,
+  shippingPrice,
+}: props) => {
   const [currentItems, setCurrentItems] = useState<QuoteItem[]>([...items]);
   const [isSelecting, setIsSelecting] = useState<boolean>(false);
   const [selectionModel, setSelectionModel] = useState<number[]>();
@@ -191,13 +202,12 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
   const [reverseChanges, setReverseChanges] = useState(false);
   const [saveItems, setSaveItems] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isEditing, setIsEditing] = useState<boolean>(false);
+
   const [alert, setAlert] = useState<AlertInterface>();
   const gridApiRef = useGridApiRef();
   const shouldExecuteSaveItems = useRef(false);
   const shouldExecuteResetItems = useRef(false);
-  const {quoteId} = useParams();
-
+  const { quoteId } = useParams();
 
   const handleGenerateSupplierUrl = () => {
     const url = new URL(window.location.href);
@@ -229,77 +239,138 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
     setRowModesModel(newRowModesModel);
   };
 
-  const validateQuotedQuantity =(item: QuoteItem ) => { 
+  const validateQuotedQuantity = (item: QuoteItem) => {
     const updatedRow = { ...item } as QuoteItem;
     const { quantidade_solicitada, quantidade_cotada } = updatedRow;
     if (quantidade_cotada > quantidade_solicitada) {
-      displayAlert("warning", "Quantidade cotada não pode ser maior que a quantidade solicitada");
+      displayAlert(
+        "warning",
+        "Quantidade cotada não pode ser maior que a quantidade solicitada"
+      );
       updatedRow.quantidade_cotada = quantidade_solicitada;
     }
     return updatedRow;
   };
 
-   function convertToNumber(valor: string | number) {
-     if (typeof valor === "number") return valor;
-     if (typeof valor === "string") {
-       const valorLimpo = valor
-         .replace(/[^\d,.]/g, "")
-         .replace(/\.(?=\d{3})/g, "")
-         .replace(",", ".");
+  function convertToNumber(valor: string | number) {
+    if (typeof valor === "number") return valor;
+    if (typeof valor === "string") {
+      const valorLimpo = valor
+        .replace(/[^\d,.]/g, "")
+        .replace(/\.(?=\d{3})/g, "")
+        .replace(",", ".");
 
-       const numero = parseFloat(valorLimpo);
-       return isNaN(numero) ? 0 : numero;
-     }
-     return 0;
-   }
+      const numero = parseFloat(valorLimpo);
+      return isNaN(numero) ? 0 : numero;
+    }
+    return 0;
+  }
 
+  const calculateSubtotal = (item: QuoteItem) => {
+    const precoUnitario = calculateTaxes(item);
+    const quantidadeCotada = item.quantidade_cotada || 0;
+    const subtotal = precoUnitario * quantidadeCotada;
+    item.ICMS = convertToNumber(item.ICMS);
+    item.IPI = convertToNumber(item.IPI);
+    item.ST = convertToNumber(item.ST);
+    item.subtotal = subtotal;
+    return item;
+  };
 
-    const calculateSubtotal = (item: QuoteItem) => {
-      const precoUnitario = calculateTaxes(item);
-      const quantidadeCotada = item.quantidade_cotada || 0;
-      const subtotal = precoUnitario * quantidadeCotada;
-      item.ICMS = convertToNumber(item.ICMS);
-      item.IPI = convertToNumber(item.IPI);
-      item.ST = convertToNumber(item.ST);
-      item.subtotal = subtotal;
-      return item;
-    };
-
- const calculateTaxes = (item: QuoteItem): number => {
-   const updatedRow = { ...item } as QuoteItem;
-   const { preco_unitario, IPI, ST } = updatedRow;
-   const precoUnitario = convertToNumber(preco_unitario);
-   const ipi = convertToNumber(IPI);
-   const st = convertToNumber(ST);
-   const unitPriceWithTaxes = precoUnitario * (1 + (ipi + st) / 100);
-   return unitPriceWithTaxes;
- };
-  
+  const calculateTaxes = (item: QuoteItem): number => {
+    const updatedRow = { ...item } as QuoteItem;
+    const { preco_unitario, IPI, ST } = updatedRow;
+    const precoUnitario = convertToNumber(preco_unitario);
+    const ipi = convertToNumber(IPI);
+    const st = convertToNumber(ST);
+    const unitPriceWithTaxes = precoUnitario * (1 + (ipi + st) / 100);
+    return unitPriceWithTaxes;
+  };
 
   const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
     console.log("processRowUpdate");
     if (isEditing) {
-        let updatedRow = { ...newRow} as QuoteItem;
-        updatedRow = validateQuotedQuantity(updatedRow);
-        updatedRow = calculateSubtotal(updatedRow);
-        setCurrentItems(currentItems.map(item => (item.id_item_cotacao === updatedRow.id_item_cotacao ? updatedRow : item)));
-        return updatedRow;
+      let updatedRow = { ...newRow } as QuoteItem;
+      updatedRow = validateQuotedQuantity(updatedRow);
+      updatedRow = calculateSubtotal(updatedRow);
+      setCurrentItems(
+        currentItems.map((item) =>
+          item.id_item_cotacao === updatedRow.id_item_cotacao
+            ? updatedRow
+            : item
+        )
+      );
+      return updatedRow;
     }
     return oldRow as QuoteItem;
   };
 
-   
+  const validateItems =(items: QuoteItem[]) =>{ 
+      console.log('validateItems')
+          if (!items || items.length === 0) {
+            throw new Error("A cotação deve conter pelo menos um item");
+          }
+          for (const [index, item] of items.entries()) {
+            if (!item.preco_unitario || item.preco_unitario === 0) {
+              if (item.quantidade_cotada !== 0) {
+                throw new Error(
+                  `Item ${index + 1} (${
+                    item.descricao_item
+                  }): Quando o preço unitário é zero, a quantidade cotada deve ser 0`
+                );
+              }
+              continue; // Pula as outras validações se o preço for zero
+            }
+
+            const missingTaxes = [];
+            if (
+              item.ICMS === undefined ||
+              item.ICMS === null ||
+              item.ICMS === 0
+            ) {
+              missingTaxes.push("ICMS");
+            }
+            if (
+              item.IPI === undefined ||
+              item.IPI === null ||
+              item.IPI === 0
+            ) {
+              missingTaxes.push("IPI");
+            }
+            if (item.ST === undefined || item.ST === null || item.ST === 0) {
+              missingTaxes.push("ST");
+            }
+            if (missingTaxes.length > 0) {
+              throw new Error(
+                `Item ${index + 1} (${
+                  item.descricao_item
+                }): Com preço unitário definido, os seguintes impostos devem ser preenchidos: ${missingTaxes.join(
+                  ", "
+                )}`
+              );
+            }
+            if (item.quantidade_cotada < 0) {
+              throw new Error(
+                `Item ${index + 1} (${
+                  item.descricao_item
+                }): A quantidade cotada não pode ser negativa`
+              );
+            }
+          }
+  }
+
   const handleSave = async () => {
-    console.log('handleSave')
     try {
-      console.log('items sent to backend: ', currentItems)
+      await saveQuoteData();
+      validateItems(currentItems);
       const response = await updateQuoteItems(currentItems, Number(quoteId));
       if (response.status === 200) {
-        displayAlert('success', 'items da cotação atualizados com sucesso!');
+        displayAlert("success", "items da cotação atualizados com sucesso!");
         const updatedItems = response.data;
         setCurrentItems(updatedItems);
       }
     } catch (e: any) {
+      setIsEditing(true);
       displayAlert("error", e.message);
     }
   };
@@ -318,24 +389,24 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
   const displayAlert = async (severity: string, message: string) => {
     setTimeout(() => {
       setAlert(undefined);
-    }, 3000);
+    }, 8000);
     setAlert({ severity, message });
     return;
   };
 
-   const triggerSave = async () => {
-      try{ 
-        console.log("triggerSave");
-        const row = Object.keys(rowModesModel)[0];
-        const { fieldToFocus } = rowModesModel[row] as any;
-        await stopEditMode(Number(row), fieldToFocus, false);
-        setSaveItems(!saveItems);
-        setIsEditing(false);
-      }catch(e) {
-          setSaveItems(!saveItems);
-          setIsEditing(false);
-      }
-   };
+  const triggerSave = async () => {
+    try {
+      console.log("triggerSave");
+      const row = Object.keys(rowModesModel)[0];
+      const { fieldToFocus } = rowModesModel[row] as any;
+      await stopEditMode(Number(row), fieldToFocus, false);
+      setSaveItems(!saveItems);
+      setIsEditing(false);
+    } catch (e) {
+      setSaveItems(!saveItems);
+      setIsEditing(false);
+    }
+  };
 
   const stopEditMode = async (
     row: number,
@@ -351,52 +422,43 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
   };
 
   const handleCancelEdition = async () => {
-    console.log("handleCancelEdition");
-    const row = Object.keys(rowModesModel)[0];
-    const { fieldToFocus } = rowModesModel[row] as any;
-    stopEditMode(Number(row), fieldToFocus, true);
-    setIsEditing(false);
-    setReverseChanges(!reverseChanges);
+    try {
+      const row = Object.keys(rowModesModel)[0];
+      const { fieldToFocus } = rowModesModel[row] as any;
+      stopEditMode(Number(row), fieldToFocus, true);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsEditing(false);
+      setReverseChanges(!reverseChanges);
+    }
   };
 
+  useEffect(() => {
+    console.log("");
+    if (shouldExecuteResetItems.current) {
+      //fetchQuoteData();
+      setCurrentItems(items);
+      return;
+    }
+  }, [reverseChanges]);
 
   useEffect(() => {
-    const handleClick = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      const isRowClicked = target.closest(".MuiDataGrid-row"); // Verifica se o clique foi em uma linha
-      const isCellClicked = target.closest(".MuiDataGrid-cell"); // Verifica se o clique foi em uma célula7
-      const isButtonSaveClicked = target.closest(".MuiButton-root");
-      const shoudCancellEdition = !isRowClicked && !isCellClicked && isEditing && !isButtonSaveClicked
-      if (shoudCancellEdition) {
-        handleCancelEdition(); // Reverte as edições se o clique foi fora de qualquer linha
-      }
-    };
-    window.addEventListener("click", handleClick);
-    return () => {
-      window.removeEventListener("click", handleClick);
-    };
+    if (shouldExecuteSaveItems.current) {
+      handleSave();
+    }
+  }, [saveItems]);
+
+  useEffect(() => {
+    if (isEditing) {
+      shouldExecuteSaveItems.current = true;
+    }
   }, [isEditing]);
 
-      useEffect(() => {
-       
-          if (shouldExecuteResetItems.current) {
-            console.log(items);
-              setCurrentItems(items);
-              return;
-          }
-      }, [reverseChanges]);
-
-         useEffect(() => {
-              if (shouldExecuteSaveItems.current) {
-                  handleSave();
-              }
-      
-          }, [saveItems]);
-  
   return (
     <Box
       sx={{
-        height: "100%",
+        flexGrow: 1,
         display: "flex",
         flexDirection: "column",
         alignItems: isLoading ? "center" : "start",
@@ -429,12 +491,22 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
           </Button>
         )}
         {isSupplier && (
-          <Button
-            sx={{ ...BaseButtonStyles, width: 200 }}
-            onClick={triggerSave}
-          >
-            Enviar cotação
-          </Button>
+          <Stack direction="row" gap={2}>
+            <Button
+              sx={{ ...BaseButtonStyles, width: 200 }}
+              onClick={triggerSave}
+            >
+              Enviar cotação
+            </Button>
+            {isEditing && (
+              <Button
+                onClick={handleCancelEdition}
+                sx={{ ...BaseButtonStyles, width: 200 }}
+              >
+                Cancelar edição
+              </Button>
+            )}
+          </Stack>
         )}
         {isSupplier && (
           <Stack direction="column" flexWrap="wrap" gap={2} alignItems="start">
@@ -442,19 +514,28 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
           </Stack>
         )}
         {isEditing && !isSupplier && (
-          <Button
-            onClick={triggerSave}
-            sx={{ ...BaseButtonStyles, width: 200 }}
-          >
-            Salvar
-          </Button>
+          <Stack direction="row" gap={2}>
+            <Button
+              onClick={triggerSave}
+              sx={{ ...BaseButtonStyles, width: 200 }}
+            >
+              Salvar
+            </Button>
+            <Button
+              onClick={handleCancelEdition}
+              sx={{ ...BaseButtonStyles, width: 200 }}
+            >
+              Cancelar edição
+            </Button>
+          </Stack>
         )}
       </Stack>
       <Stack direction="row" gap={1} alignItems="center">
         <Typography sx={{ ...typographyStyles.heading2 }}>Total:</Typography>
         <Typography sx={{ ...typographyStyles.heading2, color: green[500] }}>
           {currencyFormatter.format(
-            currentItems.reduce((acc, item) => acc + item.subtotal, 0)
+            currentItems.reduce((acc, item) => acc + item.subtotal, 0) +
+              Number(shippingPrice)
           )}
         </Typography>
       </Stack>
@@ -486,6 +567,7 @@ const QuoteItemsTable = ({ items, isSupplier }: props) => {
           pageSizeOptions={[50, 100]}
           disableRowSelectionOnClick
           sx={{
+            maxHeight: 500,
             ".id_item_cotacao-cell": {
               color: "gray",
             },

@@ -119,6 +119,7 @@ const QuoteDetail = () => {
   const { quoteId } = useParams();
 
   const fetchQuoteData = async () => {
+    console.log("fetchQuoteData");
     try {
       const response = await getQuoteById(Number(quoteId));
       if (response.status === 200) {
@@ -205,21 +206,39 @@ const QuoteDetail = () => {
      return;
    };
 
-  const handleSave = async () => {
+   const validateRequiredFields = (quoteData: Quote) => {
+     const {
+       cnpj_faturamento,
+       cnpj_fornecedor,
+       id_tipo_frete,
+       id_classificacao_fiscal,
+     } = quoteData;
+     if (!id_tipo_frete) {
+       throw new Error("O tipo de frete é obrigatório");
+     }
+     if (!id_classificacao_fiscal) {
+       throw new Error("A classificação fiscal é obrigatória");
+     }
+     if (!cnpj_faturamento) {
+       throw new Error("CNPJ do faturamento é obrigatório");
+     }
+     if (!cnpj_fornecedor) {
+       throw new Error("CNPJ do fornecedor é obrigatório");
+     }
+   };
+
+  const saveQuoteData = async () => {
    if(currentQuoteData){ 
-      try {
+      validateRequiredFields(currentQuoteData);
         const response = await updateQuote(currentQuoteData);
         if (response.status === 200) {
           const newQuote = response.data;
           setCurrentQuoteData(newQuote);
           displayAlert('success', 'Cotação atualizada!')
-        }
-      } catch (e : any) {
-        displayAlert("error", `Erro ao atualizar: ${e.message}`);
-      }
+      
    }
-  };
-
+   }
+}
 
   const verifySupplier = () => {
     setIsLoading(true);
@@ -242,11 +261,6 @@ const QuoteDetail = () => {
     setIsEditing(true);
     return;
    }
- };
- const handleBlur = ( ) =>  {
-    if(!isEditing){ 
-      setIsEditing(false);
-    }
  };
 
   useEffect(() => {
@@ -302,6 +316,7 @@ const QuoteDetail = () => {
                 gridTemplateColumns: {
                   xs: "1fr",
                   md: "1fr 1fr",
+                  xl: '1fr 1fr 1fr'
                 },
                 gap: 1,
                 rowGap: 1.5,
@@ -319,7 +334,6 @@ const QuoteDetail = () => {
                         label={field.label}
                         name={field.label}
                         onFocus={(e) => handleFocus(field)}
-                        onBlur={handleBlur}
                         sx={{ display: "flex", flexShrink: 1, margin: 0 }}
                         type={field.type === "number" ? "number" : "text"}
                         value={
@@ -344,6 +358,8 @@ const QuoteDetail = () => {
                         flexDirection: "column",
                         justifyContent: "center",
                       }}
+                      onFocus={(e) => handleFocus(field)}
+           
                       onChange={(
                         _event: React.SyntheticEvent,
                         value: Option | null,
@@ -370,30 +386,12 @@ const QuoteDetail = () => {
                   <Typography
                     sx={{ fontStyle: "italic", ...typographyStyles.heading2 }}
                   >
-                    * Preencha a classificação fiscal, valor do frete, tipo
-                    de frete e  o seu CNPJ
+                    * Preencha a classificação fiscal, valor do frete, tipo de
+                    frete e o seu CNPJ
                   </Typography>
                 </Box>
               )}
             </Box>
-            <AnimatePresence>
-              {isEditing && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <Button
-                    sx={BaseButtonStyles}
-                    onClick={handleSave}
-                    className="shadow-lg"
-                  >
-                    Salvar alterações
-                  </Button>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </Box>
         </Box>
       )}
@@ -402,6 +400,10 @@ const QuoteDetail = () => {
           <QuoteItemsTable
             items={items}
             isSupplier={isSupplier}
+            setIsEditing={setIsEditing}
+            isEditing={isEditing}
+            saveQuoteData={saveQuoteData}
+            shippingPrice={currentQuoteData.valor_frete}
           />
         </Box>
       )}
