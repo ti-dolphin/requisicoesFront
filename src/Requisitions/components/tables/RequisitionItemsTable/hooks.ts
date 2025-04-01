@@ -23,12 +23,11 @@ import { ItemsContext } from "../../../context/ItemsContext";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const useRequisitionItems = (
-  setIsInsertingQuantity: Dispatch<SetStateAction<boolean>>,
   requisitionId: number,
+  setIsInsertingQuantity?: Dispatch<SetStateAction<boolean>>,
   isInsertingQuantity?: boolean,
   addedItems?: Item[],
 ) => {
-  const { toggleAdding } = useContext(ItemsContext);
   const [items, setItems] = useState<Item[]>([]);
   const [visibleItems, setVisibleItems] = useState<Item[]>([]);
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -43,7 +42,7 @@ const useRequisitionItems = (
   const [refresh, setRefresh] = useState(false);
   const shouldExecuteSaveItems = useRef(false);
   const shouldExecuteResetItems = useRef(false);
-  const { adding, setProductIdList } = useContext(ItemsContext);
+  const { adding, setProductIdList, toggleAdding } = useContext(ItemsContext);
   const [dinamicColumns, setDinamicColumns] = useState<any>();
   const location = useLocation();
   const navigate = useNavigate();
@@ -233,8 +232,12 @@ const useRequisitionItems = (
         if(location.pathname === `/requisitions`){ 
             navigate(`requisitionDetail/${requisitionId}`);
         }
-        setIsInsertingQuantity(false);
-        toggleAdding()
+        if (setIsInsertingQuantity){ 
+          setIsInsertingQuantity(false);
+        }
+        if(adding){ 
+          toggleAdding()
+        }
         return;
       }
     } catch (e: any) {

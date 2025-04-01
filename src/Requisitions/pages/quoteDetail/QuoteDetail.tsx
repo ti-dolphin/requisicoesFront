@@ -79,6 +79,7 @@ interface Option{
 const QuoteDetail = () => {
   const [isEditing, setIsEditing] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [originalQuoteData, setOriginalQuoteData] = useState<Quote>();
   const [currentQuoteData, setCurrentQuoteData] = useState<Quote>();
   const [items, setItems] = useState<QuoteItem[]>();
   const [isSupplier, setIsSupplier] = useState<boolean>(false);
@@ -124,6 +125,7 @@ const QuoteDetail = () => {
       const response = await getQuoteById(Number(quoteId));
       if (response.status === 200) {
         const  quote  = response.data;
+        setOriginalQuoteData(quote);
         setCurrentQuoteData(quote);
         setItems(quote.items);
         fetchOptions(quote);
@@ -263,6 +265,29 @@ const QuoteDetail = () => {
    }
  };
 
+  useEffect(( ) =>  { 
+    const pairOptions = ( ) => {
+      console.log('pairOptions')
+        if(currentQuoteData){ 
+            const { id_tipo_frete, id_classificacao_fiscal } = currentQuoteData;
+            if (id_tipo_frete !== selectedShipment?.id) {
+              const option = shipmentOps?.find(
+                (opt) => opt.id === id_tipo_frete
+              );
+              setSelectedShipment(option);
+            }
+            if (id_classificacao_fiscal !== selectedClassification?.id) {
+              const option = fiscalClassificationOps?.find(
+                (opt) => opt.id === id_classificacao_fiscal
+              );
+              setSelectedClassification(option);
+            }
+            return;
+        }
+    }
+    pairOptions();
+ }, [currentQuoteData])
+
   useEffect(() => {
     verifySupplier();
   }, []);
@@ -312,11 +337,15 @@ const QuoteDetail = () => {
             <Box
               sx={{
                 display: "grid",
-                width: "50%",
+                width: {
+                  xs: "100%",
+                  sm: "70%",
+                  md: "50%",
+                },
                 gridTemplateColumns: {
                   xs: "1fr",
                   md: "1fr 1fr",
-                  xl: '1fr 1fr 1fr'
+                  xl: "1fr 1fr 1fr",
                 },
                 gap: 1,
                 rowGap: 1.5,
@@ -359,7 +388,6 @@ const QuoteDetail = () => {
                         justifyContent: "center",
                       }}
                       onFocus={(e) => handleFocus(field)}
-           
                       onChange={(
                         _event: React.SyntheticEvent,
                         value: Option | null,
@@ -404,6 +432,8 @@ const QuoteDetail = () => {
             isEditing={isEditing}
             saveQuoteData={saveQuoteData}
             shippingPrice={currentQuoteData.valor_frete}
+            setCurrentQuoteData={setCurrentQuoteData}
+            originalQuoteData={originalQuoteData}
           />
         </Box>
       )}

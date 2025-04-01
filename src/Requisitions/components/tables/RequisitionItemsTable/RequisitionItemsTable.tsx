@@ -35,7 +35,7 @@ interface RequisitionItemsTableProps {
   requisitionId: number;
   addedItems?: Item[];
   isInsertingQuantity?: boolean;
-  setIsInsertingQuantity: Dispatch<SetStateAction<boolean>>;
+  setIsInsertingQuantity?: Dispatch<SetStateAction<boolean>>;
 }
 
 
@@ -64,10 +64,10 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     handleCopyContent,
     selectedRows,
   } = useRequisitionItems(
-    setIsInsertingQuantity,
     requisitionId,
+    setIsInsertingQuantity,
     isInsertingQuantity,
-    addedItems,
+    addedItems
   );
   
  
@@ -194,7 +194,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
           </Button>
         )}
         {isEditing && (
-          <Button onClick={handleCancelEdition} sx={BaseButtonStyles}>
+          <Button onClick={handleCancelEdition} sx={{ ...BaseButtonStyles, height: 40}}>
             Cancelar edição
           </Button>
         )}

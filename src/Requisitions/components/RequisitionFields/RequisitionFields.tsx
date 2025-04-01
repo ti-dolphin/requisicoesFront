@@ -35,12 +35,11 @@ const RequisitionFields = () => {
 
   return (
     <Box sx={styles.fieldsGridContainer}>
-      <Stack direction="row" gap={2} alignItems="center">
+      <Stack direction="column" gap={2} alignItems="start">
         <Typography sx={typographyStyles.heading1}>Detalhes da requisição</Typography>
         <Typography sx={typographyStyles.heading2}>
           Ultima atualização: {dateTimeRenderer(requisitionData?.LAST_UPDATE_ON)} 
         </Typography>
-         /
         <Typography sx={typographyStyles.heading2}>
           Criada em: {dateTimeRenderer(requisitionData?.CREATED_ON)}
         </Typography>
@@ -72,6 +71,10 @@ const RequisitionFields = () => {
                 <TextField
                   key={field.key}
                   label={field.label}
+                  sx={{gridColumn : { 
+                    xs: 'span 2',
+                    md: 'span 1'
+                  }}}
                   multiline
                   value={renderValue(field)}
                   onFocus={handleFocus}

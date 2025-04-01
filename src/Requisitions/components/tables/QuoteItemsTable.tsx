@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { AlertInterface, QuoteItem } from "../../types";
+import { AlertInterface, Quote, QuoteItem } from "../../types";
 import {
   DataGrid,
   GridCellParams,
@@ -20,7 +20,7 @@ import {
 } from "@mui/material";
 import { BaseButtonStyles } from "../../../utilStyles";
 import typographyStyles from "../../utilStyles";
-import { green } from "@mui/material/colors";
+import { green, red } from "@mui/material/colors";
 import { updateQuoteItems } from "../../utils";
 import { useParams } from "react-router-dom";
 
@@ -31,6 +31,8 @@ interface props {
   setIsEditing: React.Dispatch<React.SetStateAction<boolean | undefined>>;
   saveQuoteData: () => Promise<void>;
   shippingPrice: number;
+  setCurrentQuoteData: (value: React.SetStateAction<Quote | undefined>) => void;
+  originalQuoteData: Quote | undefined;
 }
 
  const currencyFormatter = new Intl.NumberFormat("pt-BR", {
@@ -194,6 +196,8 @@ const QuoteItemsTable = ({
   setIsEditing,
   saveQuoteData,
   shippingPrice,
+  setCurrentQuoteData,
+  originalQuoteData
 }: props) => {
   const [currentItems, setCurrentItems] = useState<QuoteItem[]>([...items]);
   const [isSelecting, setIsSelecting] = useState<boolean>(false);
@@ -429,15 +433,17 @@ const QuoteItemsTable = ({
     } catch (e) {
       console.log(e);
     } finally {
+      console.log('finally');
       setIsEditing(false);
       setReverseChanges(!reverseChanges);
     }
   };
 
   useEffect(() => {
-    console.log("");
     if (shouldExecuteResetItems.current) {
-      //fetchQuoteData();
+      console.log('reversing changes')
+      console.log('setting orgiinal data: ', originalQuoteData)
+      setCurrentQuoteData(originalQuoteData)
       setCurrentItems(items);
       return;
     }
@@ -452,6 +458,7 @@ const QuoteItemsTable = ({
   useEffect(() => {
     if (isEditing) {
       shouldExecuteSaveItems.current = true;
+      shouldExecuteResetItems.current = true;
     }
   }, [isEditing]);
 
@@ -491,9 +498,22 @@ const QuoteItemsTable = ({
           </Button>
         )}
         {isSupplier && (
-          <Stack direction="row" gap={2}>
+          <Stack
+            direction={{
+              xs: "column",
+              md: "row",
+            }}
+            gap={2}
+          >
             <Button
-              sx={{ ...BaseButtonStyles, width: 200 }}
+              sx={{
+                ...BaseButtonStyles,
+                width: 200,
+                backgroundColor: green[600],
+                "&:hover": {
+                  backgroundColor: green[500],
+                },
+              }}
               onClick={triggerSave}
             >
               Enviar cotação
@@ -501,7 +521,14 @@ const QuoteItemsTable = ({
             {isEditing && (
               <Button
                 onClick={handleCancelEdition}
-                sx={{ ...BaseButtonStyles, width: 200 }}
+                sx={{
+                  ...BaseButtonStyles,
+                  width: 200,
+                  backgroundColor: red[700],
+                  "&:hover": {
+                    backgroundColor: red[500],
+                  },
+                }}
               >
                 Cancelar edição
               </Button>
@@ -514,16 +541,36 @@ const QuoteItemsTable = ({
           </Stack>
         )}
         {isEditing && !isSupplier && (
-          <Stack direction="row" gap={2}>
+          <Stack
+            direction={{
+              xs: "column",
+              md: "row",
+            }}
+            gap={2}
+          >
             <Button
               onClick={triggerSave}
-              sx={{ ...BaseButtonStyles, width: 200 }}
+              sx={{
+                ...BaseButtonStyles,
+                width: 200,
+                backgroundColor: green[700],
+                "&:hover": {
+                  backgroundColor: green[500],
+                },
+              }}
             >
               Salvar
             </Button>
             <Button
               onClick={handleCancelEdition}
-              sx={{ ...BaseButtonStyles, width: 200 }}
+              sx={{
+                ...BaseButtonStyles,
+                width: 200,
+                backgroundColor: red[700],
+                "&:hover": {
+                  backgroundColor: red[500],
+                },
+              }}
             >
               Cancelar edição
             </Button>
