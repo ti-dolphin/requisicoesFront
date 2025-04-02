@@ -211,7 +211,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
 
   const handleCellClick = (params: GridCellParams) => {
     console.log("handleCellClick");
-      gridApiRef.current.startRowEditMode({id: params.row.ID, fieldToFocus: params.colDef.field});
+      gridApiRef.current.startRowEditMode({id: params.row.ID, fieldToFocus: params.colDef.field, deleteValue: true});
       if(!isEditing){ 
         setIsEditing(true)
         return;

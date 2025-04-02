@@ -304,7 +304,6 @@ const QuoteDetail = () => {
           sx={{
             ...boxDefaultStyles,
             height: "fit-content",
-            border: "1px solid",
             display: "flex",
             gap: 2,
           }}

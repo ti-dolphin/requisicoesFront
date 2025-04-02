@@ -383,6 +383,7 @@ const QuoteItemsTable = ({
     gridApiRef.current.startRowEditMode({
       id: params.row.id_item_cotacao,
       fieldToFocus: params.colDef.field,
+      deleteValue: true
     });
     if (!isEditing) {
       setIsEditing(true);
