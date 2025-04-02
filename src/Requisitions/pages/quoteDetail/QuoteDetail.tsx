@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
 
-import { Alert, AlertColor, Autocomplete, AutocompleteChangeDetails, AutocompleteChangeReason, Box, Button, TextField, Typography } from "@mui/material";
+import { Alert, AlertColor, Autocomplete, AutocompleteChangeDetails, AutocompleteChangeReason, Box,  IconButton, TextField, Typography } from "@mui/material";
 import typographyStyles, {
   boxDefaultStyles,
   quoteDetailPageStyles,
 } from "../../utilStyles";
 import { AlertInterface, FiscalCategoryType, Quote, QuoteItem, ShipmentType } from "../../types";
 import QuoteItemsTable from "../../components/tables/QuoteItemsTable";
-import { BaseButtonStyles } from "../../../utilStyles";
-import { AnimatePresence, motion } from "framer-motion";
 import { formatDate, Loader } from "../../../generalUtilities";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getQuoteById, getQuoteClassifications, getQuoteShipments, updateQuote } from "../../utils";
+import ArrowCircleLeftIcon from "@mui/icons-material/ArrowCircleLeft";
 
 
 interface QuoteField{ 
@@ -88,6 +87,7 @@ const QuoteDetail = () => {
   const [selectedShipment, setSelectedShipment] = useState<Option>();
   const [selectedClassification, setSelectedClassification] = useState<Option>();
   const [alert, setAlert] = useState<AlertInterface>();
+  const navigate = useNavigate();
    
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -120,7 +120,7 @@ const QuoteDetail = () => {
   const { quoteId } = useParams();
 
   const fetchQuoteData = async () => {
-    console.log("fetchQuoteData");
+
     try {
       const response = await getQuoteById(Number(quoteId));
       if (response.status === 200) {
@@ -309,6 +309,18 @@ const QuoteDetail = () => {
           }}
           className="shadow-lg"
         >
+          {!isSupplier && (
+            <IconButton
+              onClick={() =>
+                navigate(
+                  `/requisitions/requisitionDetail/${originalQuoteData?.id_requisicao}`
+                )
+              }
+              sx={{ position: "absolute" }}
+            >
+              <ArrowCircleLeftIcon />
+            </IconButton>
+          )}
           <Box
             sx={{
               height: "100%",
@@ -316,6 +328,7 @@ const QuoteDetail = () => {
               padding: 1,
               display: "flex",
               flexDirection: "column",
+              marginTop: 4,
               gap: 1,
             }}
           >
@@ -361,7 +374,7 @@ const QuoteDetail = () => {
                         key={field.dataKey}
                         label={field.label}
                         name={field.label}
-                        onFocus={(e) => handleFocus(field)}
+                        onFocus={(_e) => handleFocus(field)}
                         sx={{ display: "flex", flexShrink: 1, margin: 0 }}
                         type={field.type === "number" ? "number" : "text"}
                         value={
@@ -386,7 +399,7 @@ const QuoteDetail = () => {
                         flexDirection: "column",
                         justifyContent: "center",
                       }}
-                      onFocus={(e) => handleFocus(field)}
+                      onFocus={(_e) => handleFocus(field)}
                       onChange={(
                         _event: React.SyntheticEvent,
                         value: Option | null,

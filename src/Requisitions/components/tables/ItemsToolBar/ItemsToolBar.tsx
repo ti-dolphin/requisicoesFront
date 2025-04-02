@@ -15,6 +15,7 @@ interface props {
   handleCopyContent: (selectedItems: Item[]) => Promise<void>;
   handleDelete: (requisitionItems: Item[]) => Promise<void>;
   selectedRows: Item[] | undefined;
+  requisitionStatus? : string;
 }
 
 const ItemsToolBar = ({
@@ -23,6 +24,7 @@ const ItemsToolBar = ({
   handleCopyContent,
   handleDelete,
   selectedRows,
+  requisitionStatus
 }: props) => {
   const { toggleAdding } = useContext(ItemsContext);
   const { id } = useParams();
@@ -47,11 +49,14 @@ const ItemsToolBar = ({
       displayAlert("warning", "Selecione os items para gerar a cotação");
       return;
     }
+    if(requisitionStatus !== 'Em cotação'){ 
+        displayAlert('warning', `Só é permitido gerar cotação no Status 'Em cotação'`)
+        return;
+    }
     setCreatingQuote(true);
   };
   return (
     <Stack
-
       direction="row"
       sx={{
         height: 46,
@@ -76,7 +81,13 @@ const ItemsToolBar = ({
         />
       }
       <Button
-        onClick={() => toggleAdding()}
+        onClick={() => { 
+          if(requisitionStatus === 'Em edição'){ 
+            toggleAdding();
+            return;
+          }
+          displayAlert('warning', `Não é permitido adicionar items no status '${requisitionStatus}`)
+        }}
         sx={{ ...BaseButtonStyles, height: 30, minWidth: 150 }}
       >
         Adicionar items

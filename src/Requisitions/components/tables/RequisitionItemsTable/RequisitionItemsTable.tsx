@@ -32,10 +32,12 @@ import ItemsToolBar from "../ItemsToolBar/ItemsToolBar";
 import { green } from "@mui/material/colors";
 
 interface RequisitionItemsTableProps {
+
   requisitionId: number;
   addedItems?: Item[];
   isInsertingQuantity?: boolean;
   setIsInsertingQuantity?: Dispatch<SetStateAction<boolean>>;
+  requisitionStatus?: string;
 }
 
 
@@ -44,7 +46,8 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
   requisitionId,
   addedItems,
   isInsertingQuantity,
-  setIsInsertingQuantity
+  setIsInsertingQuantity,
+  requisitionStatus
 }) => {
   const {
     visibleItems,
@@ -63,14 +66,14 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     handleActivateItems,
     handleCopyContent,
     selectedRows,
+    displayAlert
   } = useRequisitionItems(
     requisitionId,
     setIsInsertingQuantity,
     isInsertingQuantity,
     addedItems
   );
-  
- 
+
   const staticColumns: GridColDef[] = [
     {
       field: "nome_fantasia",
@@ -144,32 +147,32 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     },
   ];
 
-  
-   const currencyFormatter = new Intl.NumberFormat("pt-BR", {
-     style: "currency",
-     currency: "BRL",
-   });
+  const currencyFormatter = new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
 
-  const  getColumns =  () => { 
-      let supllierColumns : GridColDef[] = [];
-      if(dinamicColumns) {
-        dinamicColumns.forEach((c : string) => {
-          supllierColumns.push({
-            field: c,
-            headerName: c,
-            width: 150, // Defina a largura desejada
-            editable: false,
-            renderCell: (params) => (
-              <Typography sx={{ ...typographyStyles.bodyText, color: green[600] }}>
-                {params.value ? currencyFormatter.format(params.value) : ""}
-              </Typography>
-            ),
-          });
+  const getColumns = () => {
+    let supllierColumns: GridColDef[] = [];
+    if (dinamicColumns) {
+      dinamicColumns.forEach((c: string) => {
+        supllierColumns.push({
+          field: c,
+          headerName: c,
+          width: 150, // Defina a largura desejada
+          editable: false,
+          renderCell: (params) => (
+            <Typography
+              sx={{ ...typographyStyles.bodyText, color: green[600] }}
+            >
+              {params.value ? currencyFormatter.format(params.value) : ""}
+            </Typography>
+          ),
         });
-      }
-      return [...staticColumns, ...supllierColumns]
-
-  }
+      });
+    }
+    return [...staticColumns, ...supllierColumns];
+  };
 
   const ReqItemsFooter = (props: GridFooterContainerProps) => {
     return (
@@ -194,7 +197,10 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
           </Button>
         )}
         {isEditing && (
-          <Button onClick={handleCancelEdition} sx={{ ...BaseButtonStyles, height: 40}}>
+          <Button
+            onClick={handleCancelEdition}
+            sx={{ ...BaseButtonStyles, height: 40 }}
+          >
             Cancelar edição
           </Button>
         )}
@@ -210,12 +216,18 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
   );
 
   const handleCellClick = (params: GridCellParams) => {
-    console.log("handleCellClick");
-      gridApiRef.current.startRowEditMode({id: params.row.ID, fieldToFocus: params.colDef.field, deleteValue: true});
-      if(!isEditing){ 
-        setIsEditing(true)
-        return;
-      }
+    if(requisitionStatus === 'Em edição'){ 
+       gridApiRef.current.startRowEditMode({
+         id: params.row.ID,
+         fieldToFocus: params.colDef.field,
+         deleteValue: true,
+       });
+       if (!isEditing) {
+         setIsEditing(true);
+         return;
+       }
+    }
+    displayAlert("warning", `Não é permitido editar items no status '${requisitionStatus}'`);
   };
 
   return (
@@ -225,9 +237,9 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
           handleCancelItems={handleCancelItems}
           handleActivateItems={handleActivateItems}
           handleCopyContent={handleCopyContent}
+          requisitionStatus={requisitionStatus}
           handleDelete={handleDelete}
           selectedRows={selectedRows}
-         
         />
       )}
 

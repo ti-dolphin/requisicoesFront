@@ -6,7 +6,6 @@ import {
   GridColDef,
   GridRowModel,
   GridRowModesModel,
-  GridRowSelectionModel,
   useGridApiRef,
 } from "@mui/x-data-grid";
 import {
@@ -93,7 +92,7 @@ interface props {
    },
    {
      field: "ST",
-     headerName: "ST %",
+     headerName: "ST/DIFAL%",
      width: 100, // Ajustado para 150
      editable: true,
      cellClassName: "ST-cell",
@@ -200,13 +199,12 @@ const QuoteItemsTable = ({
   originalQuoteData
 }: props) => {
   const [currentItems, setCurrentItems] = useState<QuoteItem[]>([...items]);
-  const [isSelecting, setIsSelecting] = useState<boolean>(false);
-  const [selectionModel, setSelectionModel] = useState<number[]>();
+  // const [, setIsSelecting] = useState<boolean>(false);
+  // const [selectionModel, setSelectionModel] = useState<number[]>();
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
   const [reverseChanges, setReverseChanges] = useState(false);
   const [saveItems, setSaveItems] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
-
   const [alert, setAlert] = useState<AlertInterface>();
   const gridApiRef = useGridApiRef();
   const shouldExecuteSaveItems = useRef(false);
@@ -227,15 +225,15 @@ const QuoteItemsTable = ({
     displayAlert("success", "Link copiado para área de transferência");
   };
 
-  const handleSelection = (newSelectionModel: GridRowSelectionModel) => {
-    setIsSelecting(true);
-    if (newSelectionModel.length) {
-      setIsSelecting(true);
-      setSelectionModel(newSelectionModel as number[]);
-      return;
-    }
-    setIsSelecting(false);
-  };
+  // const handleSelection = (newSelectionModel: GridRowSelectionModel) => {
+  //   setIsSelecting(true);
+  //   if (newSelectionModel.length) {
+  //     setIsSelecting(true);
+  //     setSelectionModel(newSelectionModel as number[]);
+  //     return;
+  //   }
+  //   setIsSelecting(false);
+  // };
 
   const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
     shouldExecuteSaveItems.current = true;
@@ -309,62 +307,43 @@ const QuoteItemsTable = ({
     return oldRow as QuoteItem;
   };
 
-  const validateItems =(items: QuoteItem[]) =>{ 
-      console.log('validateItems')
-          if (!items || items.length === 0) {
-            throw new Error("A cotação deve conter pelo menos um item");
-          }
-          for (const [index, item] of items.entries()) {
-            if (!item.preco_unitario || item.preco_unitario === 0) {
-              if (item.quantidade_cotada !== 0) {
-                throw new Error(
-                  `Item ${index + 1} (${
-                    item.descricao_item
-                  }): Quando o preço unitário é zero, a quantidade cotada deve ser 0`
-                );
-              }
-              continue; // Pula as outras validações se o preço for zero
-            }
+    const validateItems = (items: QuoteItem[]) => {
+      console.log("validateItems");
 
-            const missingTaxes = [];
-            if (
-              item.ICMS === undefined ||
-              item.ICMS === null ||
-              item.ICMS === 0
-            ) {
-              missingTaxes.push("ICMS");
-            }
-            if (
-              item.IPI === undefined ||
-              item.IPI === null ||
-              item.IPI === 0
-            ) {
-              missingTaxes.push("IPI");
-            }
-            if (item.ST === undefined || item.ST === null || item.ST === 0) {
-              missingTaxes.push("ST");
-            }
-            if (missingTaxes.length > 0) {
-              throw new Error(
-                `Item ${index + 1} (${
-                  item.descricao_item
-                }): Com preço unitário definido, os seguintes impostos devem ser preenchidos: ${missingTaxes.join(
-                  ", "
-                )}`
-              );
-            }
-            if (item.quantidade_cotada < 0) {
-              throw new Error(
-                `Item ${index + 1} (${
-                  item.descricao_item
-                }): A quantidade cotada não pode ser negativa`
-              );
-            }
+      if (!items || items.length === 0) {
+        throw new Error("A cotação deve conter pelo menos um item");
+      }
+      for (const [index, item] of items.entries()) {
+        if (!item.preco_unitario || item.preco_unitario === 0) {
+          if (item.quantidade_cotada !== 0) {
+            throw new Error(
+              `Item ${index + 1} (${
+                item.descricao_item
+              }): Quando o preço unitário é zero, a quantidade cotada deve ser 0`
+            );
           }
-  }
+        }
+
+        if (item.ICMS === undefined || item.ICMS === null || item.ICMS === 0) {
+          throw new Error(
+            `Item ${index + 1} (${
+              item.descricao_item
+            }): O ICMS deve ser preenchido quando há preço unitário`
+          );
+        }
+        if (item.quantidade_cotada < 0) {
+          throw new Error(
+            `Item ${index + 1} (${
+              item.descricao_item
+            }): A quantidade cotada não pode ser negativa`
+          );
+        }
+      }
+    };
 
   const handleSave = async () => {
     try {
+      setIsLoading(true);
       await saveQuoteData();
       validateItems(currentItems);
       const response = await updateQuoteItems(currentItems, Number(quoteId));
@@ -373,9 +352,12 @@ const QuoteItemsTable = ({
         const updatedItems = response.data;
         setCurrentItems(updatedItems);
       }
+      setIsLoading(false);
     } catch (e: any) {
       setIsEditing(true);
       displayAlert("error", e.message);
+      setIsLoading(false);
+
     }
   };
 
@@ -474,6 +456,7 @@ const QuoteItemsTable = ({
         padding: 1,
       }}
     >
+    
       {alert && (
         <Alert
           sx={{
@@ -603,7 +586,7 @@ const QuoteItemsTable = ({
           editMode="row"
           onRowEditStart={() => setIsEditing(true)}
           apiRef={gridApiRef}
-          onRowSelectionModelChange={handleSelection}
+          // onRowSelectionModelChange={handleSelection}
           onRowModesModelChange={(rowModesModel: GridRowModesModel) =>
             handleRowModesModelChange(rowModesModel)
           }
