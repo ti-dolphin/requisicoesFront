@@ -346,7 +346,7 @@ const QuoteItemsTable = ({
       setIsLoading(true);
       await saveQuoteData();
       validateItems(currentItems);
-      const response = await updateQuoteItems(currentItems, Number(quoteId));
+      const response = await updateQuoteItems(currentItems, Number(quoteId), isSupplier);
       if (response.status === 200) {
         displayAlert("success", "items da cotação atualizados com sucesso!");
         const updatedItems = response.data;

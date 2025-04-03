@@ -33,6 +33,7 @@ const columns: GridColDef[] = [
     ),
   },
   {
+    
     field: "STATUS",
     headerName: "Status",
     width: 120,
@@ -246,6 +247,7 @@ export default function RequisitionsDataGrid() {
           slots={{
             toolbar: GridToolbar,
           }}
+          
           slotProps={{
             toolbar: {
               showQuickFilter: true,

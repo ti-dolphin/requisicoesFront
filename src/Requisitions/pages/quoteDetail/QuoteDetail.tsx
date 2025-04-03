@@ -120,9 +120,9 @@ const QuoteDetail = () => {
   const { quoteId } = useParams();
 
   const fetchQuoteData = async () => {
-
+    
     try {
-      const response = await getQuoteById(Number(quoteId));
+      const response = await getQuoteById(Number(quoteId), verifySupplier());
       if (response.status === 200) {
         const  quote  = response.data;
         setOriginalQuoteData(quote);
@@ -133,13 +133,15 @@ const QuoteDetail = () => {
       }
     } catch (e: any) {
       displayAlert('error', e.message);
-}
+    }finally{ 
+      setIsLoading(false)
+    }
   };
 
   const fetchOptions = async (quote : Quote) => {
     try {
-      const shipmentTypes = await getQuoteShipments();
-      const classifications = await getQuoteClassifications();
+      const shipmentTypes = await getQuoteShipments(verifySupplier());
+      const classifications = await getQuoteClassifications(verifySupplier());
 
       if (classifications && shipmentTypes) {
         const classificationOptions = classifications.map(
@@ -232,7 +234,7 @@ const QuoteDetail = () => {
   const saveQuoteData = async () => {
    if(currentQuoteData){ 
       validateRequiredFields(currentQuoteData);
-        const response = await updateQuote(currentQuoteData);
+        const response = await updateQuote(currentQuoteData, verifySupplier());
         if (response.status === 200) {
           const newQuote = response.data;
           setCurrentQuoteData(newQuote);
@@ -243,12 +245,12 @@ const QuoteDetail = () => {
 }
 
   const verifySupplier = () => {
-    setIsLoading(true);
     const url = new URL(window.location.href);
     if (Number(url.searchParams.get("supplier")) === 1) {
       setIsSupplier(true);
+      return true
     }
-    setIsLoading(false);
+    return false;
   };
 
  const handleFocus = (field: QuoteField) => {
@@ -267,7 +269,6 @@ const QuoteDetail = () => {
 
   useEffect(( ) =>  { 
     const pairOptions = ( ) => {
-      console.log('pairOptions')
         if(currentQuoteData){ 
             const { id_tipo_frete, id_classificacao_fiscal } = currentQuoteData;
             if (id_tipo_frete !== selectedShipment?.id) {
@@ -288,11 +289,12 @@ const QuoteDetail = () => {
     pairOptions();
  }, [currentQuoteData])
 
-  useEffect(() => {
-    verifySupplier();
-  }, []);
+ useEffect(( ) =>  {
+   verifySupplier();
+ }, [])
 
   useEffect(() => {
+   
     fetchQuoteData();
   }, []);
 
