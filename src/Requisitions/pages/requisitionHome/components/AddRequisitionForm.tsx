@@ -16,6 +16,7 @@ import { useContext } from "react";
 import { ItemsContext } from "../../../context/ItemsContext";
 import { userContext } from "../../../context/userContext";
 import { RequisitionType } from "../../../types";
+import { BaseButtonStyles } from "../../../../utilStyles";
 
 interface RequisitionFields {
   ID_RESPONSAVEL: number;
@@ -199,7 +200,7 @@ const AddRequisitionForm: React.FC = () => {
           onChange={handleChange}
         />
       </Box>
-      <Button onClick={() => handleSubmit} type="submit">
+      <Button sx={{...BaseButtonStyles}} onClick={() => handleSubmit} type="submit">
         Seguir
       </Button>
       {currentId > 0 && <ProductsTableModal requisitionID={currentId} />}

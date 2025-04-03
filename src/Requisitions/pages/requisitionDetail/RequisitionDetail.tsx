@@ -96,7 +96,9 @@ const RequisitionDetail: React.FC = () => {
         className="req-items-table-container"
         sx={styles.requisitionItemsTableContainer}
         >
-          <RequisitionItemsTable requisitionId={Number(id)}/>
+          <RequisitionItemsTable
+          requisitionStatus={requisitionData?.STATUS}
+          requisitionId={Number(id)}/>
         </Box>
       </Stack>
     </Box>

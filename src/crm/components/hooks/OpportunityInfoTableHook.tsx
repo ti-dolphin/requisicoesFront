@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Tooltip, Typography } from "@mui/material";
 import {
   GridColDef,
   GridFooterContainer,
@@ -18,6 +18,46 @@ import { userContext } from "../../../Requisitions/context/userContext";
 import { OpportunityInfoContext } from "../../context/OpportunityInfoContext";
 import { OpportunityInfo } from "../../types";
 import { getOpportunities } from "../../utils";
+import {
+  Error as ErrorIcon, // Vermelho - Vencida
+  Warning as WarningIcon, // Amarelo - A vencer
+  CheckCircle as CheckIcon, // Verde - Em dia
+  Help as HelpIcon, // Cinza - Sem data
+} from "@mui/icons-material";
+
+const StatusIconCell = ({ row }: { row: OpportunityInfo }) => {
+  let icon = null;
+  let tooltip = "";
+
+  if (row.dataInteracao_vencida) {
+    icon = <ErrorIcon color="error" />;
+    tooltip = "Data vencida";
+  } else if (row.dataInteracao_a_vencer) {
+    icon = <WarningIcon color="warning" />;
+    tooltip = "A vencer (próximos 5 dias)";
+  } else if (row.dataInteracao_em_dia) {
+    icon = <CheckIcon color="success" />;
+    tooltip = "Em dia";
+  } else {
+    icon = <HelpIcon color="disabled" />;
+    tooltip = "Sem data definida";
+  }
+
+  return (
+    <Tooltip title={tooltip} arrow>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100%",
+        }}
+      >
+        {icon}
+      </div>
+    </Tooltip>
+  );
+};
 
 const UseOpportunityInfoTable = () => {
   const windowWith = window.innerWidth;
@@ -38,9 +78,20 @@ const UseOpportunityInfoTable = () => {
     dateFilters,
     setCurrentOppIdSelected,
   } = useContext(OpportunityInfoContext);
+// dataInteracao_vencida? : number;
+//   dataInteracao_a_vencer? : number;
+//   dataInteracao_em_dia? : number;
 
   const columns: GridColDef<OpportunityInfo>[] = useMemo(
     () => [
+      {
+        field: "",
+        headerName: "Situação",
+        width: 100,
+        renderCell: (params) => <StatusIconCell row={params.row} />,
+        sortable: false,
+        filterable: false,
+      },
       { field: "numeroProjeto", headerName: "Nº Projeto" }, // os.ID_PROJETO
       { field: "numeroAdicional", headerName: "Nº Adicional" }, // os.ID_ADICIONAL
       { field: "nomeStatus", headerName: "Status" }, // s.NOME
@@ -85,9 +136,10 @@ const UseOpportunityInfoTable = () => {
         field: "dataInteracao",
         headerName: "Data de Interação",
         valueFormatter: (value: Date) => {
-          if (value) return formatDate(value);
-          return "-";
+          if (!value) return "-";
+          return formatDate(value);
         },
+        cellClassName: "dataInteracao-cell",
       },
       {
         field: "dataInicio",

@@ -15,6 +15,7 @@ interface props {
   handleCopyContent: (selectedItems: Item[]) => Promise<void>;
   handleDelete: (requisitionItems: Item[]) => Promise<void>;
   selectedRows: Item[] | undefined;
+  requisitionStatus? : string;
 }
 
 const ItemsToolBar = ({
@@ -22,7 +23,8 @@ const ItemsToolBar = ({
   handleActivateItems,
   handleCopyContent,
   handleDelete,
-  selectedRows
+  selectedRows,
+  requisitionStatus
 }: props) => {
   const { toggleAdding } = useContext(ItemsContext);
   const { id } = useParams();
@@ -38,19 +40,37 @@ const ItemsToolBar = ({
     return;
   };
 
-  const handleViewQuoteList = ( ) => { 
-      setQuoteListOpen(true);
-  }
+  const handleViewQuoteList = () => {
+    setQuoteListOpen(true);
+  };
 
   const verifySelectedItems = () => {
     if (!selectedRows?.length) {
-      displayAlert('warning', 'Selecione os items para gerar a cotação');
+      displayAlert("warning", "Selecione os items para gerar a cotação");
       return;
+    }
+    if(requisitionStatus !== 'Em cotação'){ 
+        displayAlert('warning', `Só é permitido gerar cotação no Status 'Em cotação'`)
+        return;
     }
     setCreatingQuote(true);
   };
   return (
-    <Stack direction="row" sx={{ height: 30, alignItems: "center", gap: 2 }}>
+    <Stack
+      direction="row"
+      sx={{
+        height: 46,
+        alignItems: "center",
+        gap: 2,
+        overflowX: "auto",
+        "&::-webkit-scrollbar-thumb": {
+          display: "none",
+          height: "2px",
+          backgroundColor: "#888", // Cor da barra de rolagem
+          borderRadius: "4px", // Bordas arredondadas
+        },
+      }}
+    >
       {
         <ItemActions
           handleCancelItems={handleCancelItems}
@@ -61,21 +81,27 @@ const ItemsToolBar = ({
         />
       }
       <Button
-        onClick={() => toggleAdding()}
-        sx={{ ...BaseButtonStyles, height: 30 }}
+        onClick={() => { 
+          if(requisitionStatus === 'Em edição'){ 
+            toggleAdding();
+            return;
+          }
+          displayAlert('warning', `Não é permitido adicionar items no status '${requisitionStatus}`)
+        }}
+        sx={{ ...BaseButtonStyles, height: 30, minWidth: 150 }}
       >
         Adicionar items
       </Button>
 
       <Button
         onClick={verifySelectedItems}
-        sx={{ ...BaseButtonStyles, height: 30 }}
+        sx={{ ...BaseButtonStyles, height: 30, minWidth: 150 }}
       >
         Gerar Cotação
       </Button>
       <Button
         onClick={handleViewQuoteList}
-        sx={{ ...BaseButtonStyles, height: 30 }}
+        sx={{ ...BaseButtonStyles, height: 30, minWidth: 150 }}
       >
         Ver Cotações
       </Button>

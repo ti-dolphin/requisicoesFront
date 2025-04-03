@@ -261,7 +261,7 @@ const fetchRequsitionById = async (id: number) => {
 
 const fetchItems = async (id: number) => {
   try {
-    const response = await api.get<Item[]>(
+    const response = await api.get<any>(
       `requisition/requisitionItems/${id}`
     );
     return response.data;
@@ -314,32 +314,6 @@ const updateRequisitionItems = async (items: Item[], requisitonId: number) => {
     throw new Error(e)
   }
 };
-const getQuoteById = async (quoteId : number) => { 
-  try {
-    const response = await api.get(`/requisition/quote/${quoteId}`);
-    return response;
-  } catch (e) {
-    throw new Error();
-  }
-}
-
-const getQuoteShipments = async ( ) => { 
-  try {
-    const response = await api.get(`requisition/quote/shipment-type`);
-    return response.data;
-  } catch (e: any) {
-    throw e;
-  }
-} 
-
-const getQuoteClassifications = async ( ) => {
-  try {
-    const response = await api.get(`requisition/quote/classification`);
-    return response.data;
-  } catch (e: any) {
-    throw e;
-  }
-}
 
 const getQuotesByRequisitionId = async (requisitionId : number) => { 
   try{ 
@@ -350,23 +324,56 @@ const getQuotesByRequisitionId = async (requisitionId : number) => {
   }
 }
 
-const updateQuoteItems = async (items : QuoteItem[] , quoteId : number) =>  {
-  try{ 
-    const response = await api.put(`requisition/quote/${quoteId}/items`, items);
+const getQuoteById = async (quoteId: number, isSupplier?: boolean) => {
+  try {
+    const prefix = isSupplier ? 'supplier/' : '';
+    const response = await api.get(`/${prefix}requisition/quote/${quoteId}`);
     return response;
-  }catch(e){
+  } catch (e) {
+    throw new Error("Failed to fetch quote by ID");
+  }
+};
+
+const getQuoteShipments = async (isSupplier?: boolean) => {
+  try {
+    const prefix = isSupplier ? 'supplier/' : '';
+    const response = await api.get(`/${prefix}requisition/quote/shipment-type`);
+    return response.data;
+  } catch (e: any) {
+    throw e;
+  }
+};
+
+const getQuoteClassifications = async (isSupplier?: boolean) => {
+  try {
+    const prefix = isSupplier ? 'supplier/' : '';
+    const response = await api.get(`/${prefix}requisition/quote/classification`);
+    return response.data;
+  } catch (e: any) {
+    throw e;
+  }
+};
+
+const updateQuoteItems = async (items: QuoteItem[], quoteId: number, isSupplier?: boolean) => {
+  try {
+    const prefix = isSupplier ? 'supplier/' : '';
+    const response = await api.put(`/${prefix}requisition/quote/${quoteId}/items`, items);
+    return response;
+  } catch (e) {
     throw e;
   }
 }
 
-const updateQuote = async (quote : Quote) => { 
-  try{ 
-    const response = await api.put(`/requisition/quote/${quote.id_cotacao}`, quote);
+const updateQuote = async (quote: Quote, isSupplier?: boolean) => {
+  try {
+    const prefix = isSupplier ? 'supplier/' : '';
+    const response = await api.put(`/${prefix}requisition/quote/${quote.id_cotacao}`, quote);
     return response;
-  }catch(e: any){ 
-    throw new Error(e);
+  } catch (e: any) {
+    throw e;
   }
 }
+
 
 const createQuote = async (items: Item[], requisitionId: number, descricao : string, fornecedor : string) => {
   console.log('createQuote')

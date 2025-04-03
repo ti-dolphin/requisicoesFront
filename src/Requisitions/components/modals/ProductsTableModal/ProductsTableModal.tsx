@@ -6,7 +6,6 @@ import {
   RequisitionItemPost,
 
 } from "../../../types";
-import ProductsTable from "../../tables/ProductsTable";
 import { DataGrid, GridCallbackDetails, GridColDef, GridRowSelectionModel, useGridApiRef } from "@mui/x-data-grid";
 import {  postRequistionItems } from "../../../utils";
 import typographyStyles from "../../../utilStyles";
@@ -226,6 +225,7 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
             isInsertingQuantity={isInsertingQuantity}
             setIsInsertingQuantity={setIsInsertingQuantity}
             setSelectedProducts={setSelectedProducts}
+            reqID={requisitionID}
           />
         </FullScreenModalBox>
       </Modal>
@@ -233,4 +233,4 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
   );
 };
 
-export { ProductsTable };
+export default ProductsTableModal;

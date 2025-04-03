@@ -17,6 +17,9 @@ export interface OpportunityInfo {
   valorFaturamentoDireto: string; // VALORFATDIRETO (FORMATADO)
   valorTotal: string; // VALORTOTAL (FORMATADO)
   numeroOs: number; // CODOS
+  dataInteracao_vencida? : number;
+  dataInteracao_a_vencer? : number;
+  dataInteracao_em_dia? : number;
 }
 
 export interface Opportunity {

@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
 
-import { Alert, AlertColor, Autocomplete, AutocompleteChangeDetails, AutocompleteChangeReason, Box, Button, TextField, Typography } from "@mui/material";
+import { Alert, AlertColor, Autocomplete, AutocompleteChangeDetails, AutocompleteChangeReason, Box,  IconButton, TextField, Typography } from "@mui/material";
 import typographyStyles, {
   boxDefaultStyles,
   quoteDetailPageStyles,
 } from "../../utilStyles";
 import { AlertInterface, FiscalCategoryType, Quote, QuoteItem, ShipmentType } from "../../types";
 import QuoteItemsTable from "../../components/tables/QuoteItemsTable";
-import { BaseButtonStyles } from "../../../utilStyles";
-import { AnimatePresence, motion } from "framer-motion";
 import { formatDate, Loader } from "../../../generalUtilities";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getQuoteById, getQuoteClassifications, getQuoteShipments, updateQuote } from "../../utils";
+import ArrowCircleLeftIcon from "@mui/icons-material/ArrowCircleLeft";
 
 
 interface QuoteField{ 
@@ -20,64 +19,55 @@ interface QuoteField{
   type: string;
   autoComplete: boolean
 }
-const quoteFields : QuoteField[] = [
+const quoteFields: QuoteField[] = [
   {
     label: "Descrição",
     dataKey: "descricao",
     type: "string",
     autoComplete: false,
   },
-  // {
-  //   label: "ID da Cotação",
-  //   dataKey: "id_cotacao",
-  //   type: "number",
-  // },
-  // {
-  //   label: "ID da Requisição",
-  //   dataKey: "id_requisicao",
-  //   type: "number",
-  // },
-  // {
-  //   label: "Condições de Pagamento",
-  //   dataKey: "condicoes_pagamento",
-  //   type: "string",
-  // },
   {
     label: "Fornecedor",
     dataKey: "fornecedor",
     type: "string",
-        autoComplete: false,
-
+    autoComplete: false,
   },
-  // {
-  //   label: "Data da Cotação",
-  //   dataKey: "data_cotacao",
-  //   type: "string",
-  // },
   {
     label: "Observação",
     dataKey: "observacao",
     type: "string",
     autoComplete: false,
   },
-  { 
-    label: 'Tipo de Frete',
-    dataKey: 'id_tipo_frete',
-    type: 'number',
-    autoComplete: true
+  {
+    label: "Tipo de Frete",
+    dataKey: "id_tipo_frete",
+    type: "number",
+    autoComplete: true,
   },
-  { 
-    label: 'Classificação Fiscal',
-    dataKey: 'id_classificacao_fiscal',
-    type: 'number',
-    autoComplete: true
+  {
+    label: "Classificação Fiscal",
+    dataKey: "id_classificacao_fiscal",
+    type: "number",
+    autoComplete: true,
   },
-  { 
-    label: 'Valor Frete',
-    dataKey: 'valor_frete',
-    type: 'number',
-    autoComplete: false
-  }
+  {
+    label: "Valor Frete",
+    dataKey: "valor_frete",
+    type: "number",
+    autoComplete: false,
+  },
+  {
+    label: "CNPJ do Faturamento",
+    dataKey: "cnpj_faturamento",
+    type: "string",
+    autoComplete: false,
+  },
+  {
+    label: "CNPJ do Fornecedor",
+    dataKey: "cnpj_fornecedor",
+    type: "string",
+    autoComplete: false,
+  },
 ];
 
 interface Option{ 
@@ -88,6 +78,7 @@ interface Option{
 const QuoteDetail = () => {
   const [isEditing, setIsEditing] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [originalQuoteData, setOriginalQuoteData] = useState<Quote>();
   const [currentQuoteData, setCurrentQuoteData] = useState<Quote>();
   const [items, setItems] = useState<QuoteItem[]>();
   const [isSupplier, setIsSupplier] = useState<boolean>(false);
@@ -96,30 +87,45 @@ const QuoteDetail = () => {
   const [selectedShipment, setSelectedShipment] = useState<Option>();
   const [selectedClassification, setSelectedClassification] = useState<Option>();
   const [alert, setAlert] = useState<AlertInterface>();
+  const navigate = useNavigate();
    
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    dataKey: string
+    field: QuoteField
   ) => {
     const { value } = e.target;
     if(currentQuoteData){ 
       setCurrentQuoteData({
         ...currentQuoteData,
-        [dataKey]: value,
+        [field.dataKey as keyof Quote]: field.type === "number" ? Number(value) : value
       });
     }
   };
 
+  const handleChangeAutoComplete = (field: QuoteField, value: Option | null) => {
+  if (!value || !currentQuoteData) return;
+  
+   setCurrentQuoteData({ 
+    ...currentQuoteData,
+    [field.dataKey as keyof Quote] : value.id
+   })
+  // Atualiza o estado do option selecionado
+  if (field.dataKey === "id_classificacao_fiscal") {
+    setSelectedClassification(value);
+  } else if (field.dataKey === "id_tipo_frete") {
+    setSelectedShipment(value);
+  }
+};
+
   const { quoteId } = useParams();
 
   const fetchQuoteData = async () => {
-
+    
     try {
-      const response = await getQuoteById(Number(quoteId));
+      const response = await getQuoteById(Number(quoteId), verifySupplier());
       if (response.status === 200) {
         const  quote  = response.data;
-        console.log(response.data)
-        console.log({quote});
+        setOriginalQuoteData(quote);
         setCurrentQuoteData(quote);
         setItems(quote.items);
         fetchOptions(quote);
@@ -127,13 +133,15 @@ const QuoteDetail = () => {
       }
     } catch (e: any) {
       displayAlert('error', e.message);
-}
+    }finally{ 
+      setIsLoading(false)
+    }
   };
 
   const fetchOptions = async (quote : Quote) => {
     try {
-      const shipmentTypes = await getQuoteShipments();
-      const classifications = await getQuoteClassifications();
+      const shipmentTypes = await getQuoteShipments(verifySupplier());
+      const classifications = await getQuoteClassifications(verifySupplier());
 
       if (classifications && shipmentTypes) {
         const classificationOptions = classifications.map(
@@ -186,11 +194,10 @@ const QuoteDetail = () => {
 
  const getValue = (field : QuoteField ) => { 
    if (field.dataKey == "id_tipo_frete") {
-    console.log({ selectedShipment });
+
      return selectedShipment;
    }
    if (field.dataKey === "id_classificacao_fiscal") {
-    console.log({ selectedClassification });
      return selectedClassification;
    }
  };
@@ -203,79 +210,119 @@ const QuoteDetail = () => {
      return;
    };
 
-  const handleSave = async () => {
+   const validateRequiredFields = (quoteData: Quote) => {
+     const {
+       cnpj_faturamento,
+       cnpj_fornecedor,
+       id_tipo_frete,
+       id_classificacao_fiscal,
+     } = quoteData;
+     if (!id_tipo_frete) {
+       throw new Error("O tipo de frete é obrigatório");
+     }
+     if (!id_classificacao_fiscal) {
+       throw new Error("A classificação fiscal é obrigatória");
+     }
+     if (!cnpj_faturamento) {
+       throw new Error("CNPJ do faturamento é obrigatório");
+     }
+     if (!cnpj_fornecedor) {
+       throw new Error("CNPJ do fornecedor é obrigatório");
+     }
+   };
+
+  const saveQuoteData = async () => {
    if(currentQuoteData){ 
-      try {
-        console.log({currentQuoteData})
-        const response = await updateQuote(currentQuoteData);
+      validateRequiredFields(currentQuoteData);
+        const response = await updateQuote(currentQuoteData, verifySupplier());
         if (response.status === 200) {
           const newQuote = response.data;
           setCurrentQuoteData(newQuote);
           displayAlert('success', 'Cotação atualizada!')
-        }
-      } catch (e : any) {
-        displayAlert("error", `Erro ao atualizar: ${e.message}`);
-      }
+      
    }
-  };
-
-  const handleChangeAutoComplete = (field: QuoteField, value: Option | null ) => { 
-    if(value){ 
-        if (currentQuoteData) {
-          setCurrentQuoteData({
-            ...currentQuoteData,
-            [field.dataKey as keyof Quote]: value.id,
-          });
-        }
-        if (field.dataKey === "id_classificacao_fiscal") {
-          setSelectedClassification(value);
-        }
-        if (field.dataKey === "id_tipo_frete") {
-          setSelectedShipment(value);
-        }
-    }
-  }
-
-  // const formatToBRL = (value: number) => {
-  //   return new Intl.NumberFormat("pt-BR", {
-  //     style: "currency",
-  //     currency: "BRL",
-  //   }).format(value);
-  // };
+   }
+}
 
   const verifySupplier = () => {
-    setIsLoading(true);
     const url = new URL(window.location.href);
     if (Number(url.searchParams.get("supplier")) === 1) {
       setIsSupplier(true);
+      return true
     }
-    setIsLoading(false);
+    return false;
   };
 
+ const handleFocus = (field: QuoteField) => {
+   if (
+     isSupplier &&
+     (field.dataKey === "observacao" || field.dataKey === "descricao")
+   ) {
+     displayAlert("warning", `Não é permitido editar ${field.label}`);
+     return false;
+   }
+   if(!isEditing) {
+    setIsEditing(true);
+    return;
+   }
+ };
 
+  useEffect(( ) =>  { 
+    const pairOptions = ( ) => {
+        if(currentQuoteData){ 
+            const { id_tipo_frete, id_classificacao_fiscal } = currentQuoteData;
+            if (id_tipo_frete !== selectedShipment?.id) {
+              const option = shipmentOps?.find(
+                (opt) => opt.id === id_tipo_frete
+              );
+              setSelectedShipment(option);
+            }
+            if (id_classificacao_fiscal !== selectedClassification?.id) {
+              const option = fiscalClassificationOps?.find(
+                (opt) => opt.id === id_classificacao_fiscal
+              );
+              setSelectedClassification(option);
+            }
+            return;
+        }
+    }
+    pairOptions();
+ }, [currentQuoteData])
+
+ useEffect(( ) =>  {
+   verifySupplier();
+ }, [])
 
   useEffect(() => {
-    verifySupplier();
-  }, []);
-
-  useEffect(() => {
+   
     fetchQuoteData();
-    
   }, []);
+
 
   return (
     <Box sx={{ ...quoteDetailPageStyles }}>
-      {!isLoading && !isSupplier && currentQuoteData && (
+      {!isLoading && currentQuoteData && (
         <Box
           sx={{
             ...boxDefaultStyles,
             height: "fit-content",
-            border: "1px solid",
             display: "flex",
             gap: 2,
           }}
           className="shadow-lg"
         >
+          {!isSupplier && (
+            <IconButton
+              onClick={() =>
+                navigate(
+                  `/requisitions/requisitionDetail/${originalQuoteData?.id_requisicao}`
+                )
+              }
+              sx={{ position: "absolute" }}
+            >
+              <ArrowCircleLeftIcon />
+            </IconButton>
+          )}
           <Box
             sx={{
               height: "100%",
@@ -283,6 +330,7 @@ const QuoteDetail = () => {
               padding: 1,
               display: "flex",
               flexDirection: "column",
+              marginTop: 4,
               gap: 1,
             }}
           >
@@ -303,10 +351,15 @@ const QuoteDetail = () => {
             <Box
               sx={{
                 display: "grid",
-                width: "50%",
+                width: {
+                  xs: "100%",
+                  sm: "70%",
+                  md: "50%",
+                },
                 gridTemplateColumns: {
                   xs: "1fr",
                   md: "1fr 1fr",
+                  xl: "1fr 1fr 1fr",
                 },
                 gap: 1,
                 rowGap: 1.5,
@@ -323,14 +376,17 @@ const QuoteDetail = () => {
                         key={field.dataKey}
                         label={field.label}
                         name={field.label}
-                        onFocus={() => setIsEditing(true)}
-                        onBlur={() => setIsEditing(false)}
+                        onFocus={(_e) => handleFocus(field)}
                         sx={{ display: "flex", flexShrink: 1, margin: 0 }}
                         type={field.type === "number" ? "number" : "text"}
                         value={
                           currentQuoteData[field.dataKey as keyof Quote] || ""
                         }
-                        onChange={(e) => handleChange(e, field.dataKey)}
+                        InputLabelProps={{
+                          shrink: true,
+                          sx: { color: "black" },
+                        }}
+                        onChange={(e) => handleChange(e, field)}
                         fullWidth
                         margin="normal"
                       />
@@ -345,8 +401,7 @@ const QuoteDetail = () => {
                         flexDirection: "column",
                         justifyContent: "center",
                       }}
-                      onBlur={() => setIsEditing(false)}
-                      onFocus={() => setIsEditing(true)}
+                      onFocus={(_e) => handleFocus(field)}
                       onChange={(
                         _event: React.SyntheticEvent,
                         value: Option | null,
@@ -358,38 +413,42 @@ const QuoteDetail = () => {
                         <TextField
                           {...params}
                           label={field.label}
-                          InputLabelProps={{ shrink: true }}
+                          InputLabelProps={{
+                            shrink: true,
+                            sx: { color: "black" },
+                          }}
                         />
                       )}
                       options={renderOptions(field) || []}
                     ></Autocomplete>
                   );
                 })}
-            </Box>
-            <AnimatePresence>
-              {isEditing && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <Button
-                    sx={BaseButtonStyles}
-                    onClick={handleSave}
-                    className="shadow-lg"
+              {isSupplier && (
+                <Box>
+                  <Typography
+                    sx={{ fontStyle: "italic", ...typographyStyles.heading2 }}
                   >
-                    Salvar alterações
-                  </Button>
-                </motion.div>
+                    * Preencha a classificação fiscal, valor do frete, tipo de
+                    frete e o seu CNPJ
+                  </Typography>
+                </Box>
               )}
-            </AnimatePresence>
+            </Box>
           </Box>
         </Box>
       )}
       {!isLoading && currentQuoteData && items && (
         <Box sx={{ ...boxDefaultStyles, flexGrow: 1 }}>
-          <QuoteItemsTable items={items} isSupplier={isSupplier} />
+          <QuoteItemsTable
+            items={items}
+            isSupplier={isSupplier}
+            setIsEditing={setIsEditing}
+            isEditing={isEditing}
+            saveQuoteData={saveQuoteData}
+            shippingPrice={currentQuoteData.valor_frete}
+            setCurrentQuoteData={setCurrentQuoteData}
+            originalQuoteData={originalQuoteData}
+          />
         </Box>
       )}
       {isLoading && <Loader />}

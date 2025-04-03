@@ -49,6 +49,10 @@ export interface Quote {
   fornecedor: string; // fornecedor
   data_cotacao: string; // data_cotacao
   observacao?: string; // observacao
+  total? : number;
+  cnpj_fornecedor? : string;
+  cnpj_faturamento? : string
+  nome_frete: string;
   id_tipo_frete: number;
   id_classificacao_fiscal: number;
   valor_frete: number;
@@ -223,24 +227,7 @@ export interface EnhancedTableProps {
        handleDelete : (items : Item[]) => void;
       //  item : Item;
  }
-export interface SearchAppBarProps {
-  addedItems?: Item[];
-  caller: string;
-  handleSearch: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  handleOpen?: (_e: React.MouseEvent<HTMLButtonElement>, item: Product) => void;
-  handleClose?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  handleQuantityChange?: (
-    e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement>
-  ) => void;
-  handleDelete?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  currentSelectedItem?: Item | undefined;
-  openQuantityInput?: boolean;
-  setIsCreating?: (value: boolean) => void;
-  refreshToggler: boolean;
-  setFilteredRows ? :(requisitions: Requisition[]) => void;
-  filteredRows?: Requisition[];
-  setRefreshTooggler: (value: boolean) => void;
-}
+
 
 export interface AddedItemsModalProps {
   addedItems?: Item[];
