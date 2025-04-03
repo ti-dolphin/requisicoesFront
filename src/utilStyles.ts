@@ -22,31 +22,33 @@ export const OpportunityGridStyles = {
                  borderRadius: 0,
                  color: "#233142",
                  "& .MuiDataGrid-columnHeaders": {
-                   fontWeight: "bold",
                    color: "black",
+                   
                    "& .MuiDataGrid-columnHeader": {
-                     backgroundColor: "#ececec",
-                     borderRadius: 0
+                     borderRadius: 0,
+                     backgroundColor: '#f5f5f5', // Cinza claro
+                   },
+                 },
+                 "& .MuiDataGrid-row" : {
+                   '&:nth-of-type(odd)': {  // Linhas ímpares
+                     backgroundColor: '#f5f5f5', // Cinza claro
+                   },
+                   '&:nth-of-type(even)': { // Linhas pares
+                     backgroundColor: '#ffffff', // Branco
+                   },
+                   '&:hover': {
+                     backgroundColor: '#e0e0e0 !important', // Cinza mais escuro ao passar o mouse
                    },
                  },
                  "& .MuiDataGrid-topContainer": {
-                   borderRadius: 0
+                   borderRadius: 0,
                  },
                  "& .MuiDataGrid-columnHeaderTitle": {
-                   fontWeight: "bold",
+                   fontWeight: "semibold",
                    fontSize: 12,
                  },
                  "& .description-cell": { 
                     color: 'blue'
-                 },
-                 "& .status-cell": { 
-                    
-                 },
-                 "& .MuiDataGrid-row": {
-                   cursor: "pointer",
-                   ":nth-child(even)": {
-                     backgroundColor: "#ececec",
-                   },
                  },
                  "& .MuiDataGrid-cell": {
                    paddingLeft: 1.2,

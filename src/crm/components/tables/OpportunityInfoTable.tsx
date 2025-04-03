@@ -71,7 +71,7 @@ const OpportunityInfoTable: React.FC = () => {
         height: "100%",
         backgroundColor: "#fff",
         display: "flex",
-        boxSizing: 'border-box',
+        boxSizing: "border-box",
         flexDirection: "column",
         gap: 0,
         flex: 1,
@@ -89,10 +89,10 @@ const OpportunityInfoTable: React.FC = () => {
       <Box
         ref={GridOuterContainerRef}
         sx={{
-          display: 'flex',
+          display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          boxSizing: 'border-box',
+          boxSizing: "border-box",
           width: "100%",
           flexGrow: 1,
         }}
@@ -105,23 +105,26 @@ const OpportunityInfoTable: React.FC = () => {
               getRowId={(row) => row.numeroOs}
               rowHeight={36}
               density="compact"
-              columnHeaderHeight={40}
+              columnHeaderHeight={60}
               autosizeOnMount
               autosizeOptions={{
                 expand: true,
               }}
-              sx={{ ...OpportunityGridStyles, maxHeight: gridOuterContainerHeight }}
+              showCellVerticalBorder
+              showColumnVerticalBorder
+              sx={{
+                ...OpportunityGridStyles,
+                maxHeight: gridOuterContainerHeight,
+              }}
               onRowClick={selectOpportunity}
               disableRowSelectionOnClick
               slots={{
                 footer: GridFooter,
-                row: CustomOpportunityRow,
-                
+                row: CustomOpportunityRow
               }}
             />
           </ThemeProvider>
         )}
-
 
         {!isLoading && shouldShowGrid() && (
           <FixedSizeGrid
@@ -134,7 +137,6 @@ const OpportunityInfoTable: React.FC = () => {
           >
             {({ columnIndex, rowIndex, style }) => {
               const itemIndex = rowIndex * gridColumnsCount + columnIndex;
-              console.log("itemIndex: ", itemIndex);
               return (
                 <OpportunityCard
                   key={rows[itemIndex].numeroOs}
@@ -147,11 +149,7 @@ const OpportunityInfoTable: React.FC = () => {
           </FixedSizeGrid>
         )}
 
-        {isLoading && (
-          <Loader />
-        )}
-
-
+        {isLoading && <Loader />}
       </Box>
 
       <OpportunityModal />
