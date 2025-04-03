@@ -133,12 +133,12 @@ const OpportunityInfoTable: React.FC = () => {
             width={gridColumnsCount * cardWidth + 20} // Width of the grid
           >
             {({ columnIndex, rowIndex, style }) => {
-             console.log('rowIndex', rowIndex);
-             console.log('columnIndex', columnIndex);
+              const itemIndex = rowIndex * gridColumnsCount + columnIndex;
+              console.log("itemIndex: ", itemIndex);
               return (
                 <OpportunityCard
-                  key={rowIndex}
-                  row={rows[rowIndex]}
+                  key={rows[itemIndex].numeroOs}
+                  row={rows[itemIndex]}
                   gridCardColumns={gridCardColumns}
                   style={style}
                 />
