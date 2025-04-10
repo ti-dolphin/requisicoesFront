@@ -1,6 +1,6 @@
 import { Alert, AlertColor, Button, Stack } from "@mui/material";
 import ItemActions from "../ItemActions/ItemActions";
-import { AlertInterface, Item } from "../../../types";
+import { AlertInterface, Item, RequisitionStatus } from "../../../types";
 import { BaseButtonStyles } from "../../../../utilStyles";
 import { ItemsContext } from "../../../context/ItemsContext";
 import { useContext, useState } from "react";
@@ -15,7 +15,7 @@ interface props {
   handleCopyContent: (selectedItems: Item[]) => Promise<void>;
   handleDelete: (requisitionItems: Item[]) => Promise<void>;
   selectedRows: Item[] | undefined;
-  requisitionStatus? : string;
+  requisitionStatus? : RequisitionStatus
 }
 
 const ItemsToolBar = ({
@@ -49,7 +49,7 @@ const ItemsToolBar = ({
       displayAlert("warning", "Selecione os items para gerar a cotação");
       return;
     }
-    if(requisitionStatus !== 'Em cotação'){ 
+    if(requisitionStatus?.etapa !==  2){ 
         displayAlert('warning', `Só é permitido gerar cotação no Status 'Em cotação'`)
         return;
     }
@@ -81,30 +81,37 @@ const ItemsToolBar = ({
         />
       }
       <Button
-        onClick={() => { 
-          if(requisitionStatus === 'Em edição'){ 
+        onClick={() => {
+          if (requisitionStatus?.etapa === 0) {
             toggleAdding();
             return;
           }
-          displayAlert('warning', `Não é permitido adicionar items no status '${requisitionStatus}`)
+          displayAlert(
+            "warning",
+            `Não é permitido adicionar items no status '${requisitionStatus?.nome}'`
+          );
         }}
         sx={{ ...BaseButtonStyles, height: 30, minWidth: 150 }}
       >
         Adicionar items
       </Button>
 
-      <Button
-        onClick={verifySelectedItems}
-        sx={{ ...BaseButtonStyles, height: 30, minWidth: 150 }}
-      >
-        Gerar Cotação
-      </Button>
-      <Button
-        onClick={handleViewQuoteList}
-        sx={{ ...BaseButtonStyles, height: 30, minWidth: 150 }}
-      >
-        Ver Cotações
-      </Button>
+      {requisitionStatus?.etapa === 2 && (
+        <Button
+          onClick={verifySelectedItems}
+          sx={{ ...BaseButtonStyles, height: 30, minWidth: 150 }}
+        >
+          Gerar Cotação
+        </Button>
+      )}
+      {requisitionStatus?.etapa === 2 && (
+        <Button
+          onClick={handleViewQuoteList}
+          sx={{ ...BaseButtonStyles, height: 30, minWidth: 150 }}
+        >
+          Ver Cotações
+        </Button>
+      )}
 
       <ProductsTableModal requisitionID={Number(id)} />
       {alert && (

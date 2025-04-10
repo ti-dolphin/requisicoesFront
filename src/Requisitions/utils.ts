@@ -10,10 +10,8 @@ import {
   QuoteItem,
   Requisition,
   RequisitionItemPost,
-  RequisitionPost,
   anexoRequisicao,
 } from "./types";
-import { User } from "./context/userContext";
 
 const logIn = async (username: string, password: string) => {
   try {
@@ -155,9 +153,9 @@ const postRequistionItems = async (
   } 
 };
 
-const postRequisition = async (requistions: RequisitionPost[]) => {
+const postRequisition = async (requistion: Requisition) => {
   try {
-    const response = await api.post("/requisition", requistions);
+    const response = await api.post("/requisition", requistion);
     return response;
   } catch (e : any) {
     throw new Error(e);
@@ -232,21 +230,12 @@ const searchProducts = async (name: string, type : number) => {
 };
 
 const fecthRequisitions = async (
-  user: User,
-  currentKanbanFilter: string,
-  search?: string
 ) => {
   try {
-    const response = await api.get<Requisition[]>("/requisition", {
-      params: {
-        userID: user.CODPESSOA,
-        search,
-        currentKanbanFilter,
-      },
-    });
+    const response = await api.get<Requisition[]>("/requisition");
     return response.data;
   } catch (e) {
-    console.log(e);
+    throw e;
   }
 };
 
@@ -363,6 +352,14 @@ const updateQuoteItems = async (items: QuoteItem[], quoteId: number, isSupplier?
     throw e;
   }
 }
+const getRequisitionStatusList = async  ( ) => { 
+  try{ 
+    const response = await api.get('/requisition/status');
+    return response.data;
+  }catch(e){ 
+    throw e;
+  }
+}
 
 const updateQuote = async (quote: Quote, isSupplier?: boolean) => {
   try {
@@ -434,7 +431,8 @@ export {
   updateQuoteItems,
   getQuotesByRequisitionId,
   getQuoteClassifications,
-  getQuoteShipments
+  getQuoteShipments,
+  getRequisitionStatusList
 };
 export type {
   Requisition,

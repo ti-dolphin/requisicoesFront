@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import HorizontalLinearStepper from "../../components/Stepper/Stepper";
-import {
-  IconButton,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Alert, AlertColor, IconButton, Stack, Typography } from "@mui/material";
 import ArrowCircleLeftIcon from "@mui/icons-material/ArrowCircleLeft";
 import {
-  Item,
   Requisition,
-  fetchPersonById,
   fetchRequsitionById,
 } from "../../utils";
 import { useNavigate, useParams } from "react-router-dom";
@@ -20,23 +14,39 @@ import { userContext } from "../../context/userContext";
 import RequisitionFields from "../../components/RequisitionFields/RequisitionFields";
 import styles from "./RequisitionDetail.styles";
 import RequisitionItemsTable from "../../components/tables/RequisitionItemsTable/RequisitionItemsTable";
+import { AlertInterface } from "../../types";
 
 const RequisitionDetail: React.FC = () => {
   const { id } = useParams();
   const [requisitionData, setRequisitionData] = useState<Requisition>();
-  const [requisitionItems, setRequisitionItems] = useState<Item[]>([]);
-  console.log(setRequisitionItems)
   const { refreshRequisition } = useContext(RequisitionContext);
+  const [alert, setAlert] = useState<AlertInterface>();
   const { logedIn } = useContext(userContext);
   const navigate = useNavigate();
+
   const fetchRequisitionData = async () => {
-    const data = await fetchRequsitionById(Number(id));
-    if (data) {
-      const personData = await fetchPersonById(data.ID_RESPONSAVEL);
-      if (personData) {
-        setRequisitionData({ ...data, ["RESPONSAVEL"]: personData?.NOME });
+      try {
+        if (id) {
+          const requisition = await fetchRequsitionById(Number(id));
+          console.log('status: ', requisition)
+          setRequisitionData(requisition);
+        }
+      } catch (error) {
+        console.error("Error fetching requisition data:", error);
+        displayAlert("error", "Falha ao busar os dados da requisição");
       }
-    }
+  };
+
+  const handleNavigateHome = () => {
+    navigate("/requisitions");
+  };
+
+  const displayAlert = async (severity: string, message: string) => {
+    setTimeout(() => {
+      setAlert(undefined);
+    }, 3000);
+    setAlert({ severity, message });
+    return;
   };
 
   useEffect(() => {
@@ -45,17 +55,10 @@ const RequisitionDetail: React.FC = () => {
 
   useEffect(() => {
     fetchRequisitionData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshRequisition]);
 
-  const handleNavigateHome = () => {
-    navigate("/requisitions");
-  };
-
   return (
-    <Box
-      sx={styles.requisitionPageContainer}
-    >
+    <Box sx={styles.requisitionPageContainer}>
       <Box className="req-page-header" sx={styles.requisitionPageHeader}>
         <IconButton onClick={() => handleNavigateHome()}>
           <ArrowCircleLeftIcon />
@@ -69,13 +72,13 @@ const RequisitionDetail: React.FC = () => {
           }}
         >
           Nº {requisitionData?.ID_REQUISICAO} | {requisitionData?.DESCRIPTION} |
-          Projeto {requisitionData?.DESCRICAO}
+          Projeto: {requisitionData?.projeto_descricao?.DESCRICAO}
         </Typography>
       </Box>
       <Box className="stepper-container" sx={styles.requisitionStepper}>
+        {alert && <Alert severity={alert.severity as AlertColor}>{alert.message}</Alert>}
         {requisitionData && (
           <HorizontalLinearStepper
-            items={requisitionItems}
             requisitionData={requisitionData}
             setRequisitionData={setRequisitionData}
           />
@@ -84,21 +87,22 @@ const RequisitionDetail: React.FC = () => {
       <Stack
         className="requsition-content"
         direction="column"
-        sx={{ 
+        sx={{
           padding: 1,
           gap: 1,
-          width: '100%',
-          border: '1px solid lightgray'
-         }}
+          width: "100%",
+          border: "1px solid lightgray",
+        }}
       >
         <RequisitionFields />
         <Box
-        className="req-items-table-container"
-        sx={styles.requisitionItemsTableContainer}
+          className="req-items-table-container"
+          sx={styles.requisitionItemsTableContainer}
         >
           <RequisitionItemsTable
-          requisitionStatus={requisitionData?.STATUS}
-          requisitionId={Number(id)}/>
+            requisitionStatus={requisitionData?.status}
+            requisitionId={Number(id)}
+          />
         </Box>
       </Stack>
     </Box>

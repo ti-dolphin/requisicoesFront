@@ -4,29 +4,58 @@ export interface Option {
   label: string;
   id: number;
 }
-export interface Requisition {
-  OBSERVACAO: string;
-  ID_REQUISICAO: number;
-  STATUS: string;
-  DESCRIPTION: string;
-  ID_RESPONSAVEL: number;
-  ID_PROJETO: number;
-  DESCRICAO: string;
-  RESPONSAVEL: string;
-  NOME_RESPONSAVEL : string;
-  LAST_UPDATE_ON: string;
-  LAST_MODIFIED_BY_NAME: string;
-  CREATED_ON: string;
-  TIPO : number;
-  nome_tipo : string;
-  projectOption : Option;
-  projectOptions: Option[];
-  responsableOption: Option
-  responsableOptions :  Option[];
-  typeOption : Option;
-  typeOptions : Option[];
+
+export interface RequisitionStatus {
+  id_status_requisicao : number;
+  nome : string;
+  acao_posterior : string;
+  etapa : number;
+  acao_anterior : string;
 }
 
+export interface Requisition {
+  ID_REQUISICAO: number;
+  DESCRIPTION: string;
+  ID_PROJETO?: number | null;  // Optional project reference
+  ID_RESPONSAVEL: number;
+  OBSERVACAO?: string | null;
+  TIPO: number;
+  criado_por: number;
+  alterado_por?: number;
+  data_alteracao: Date | string;
+  data_criacao: Date | string;
+  id_status_requisicao: number;
+
+  //tabelas relacionadas
+  status? : RequisitionStatus;
+  responsavel_pessoa? : { 
+    NOME : string;
+    CODPESSOA : number
+  }
+  alterado_por_pessoa? : { 
+    NOME: string;
+    CODPESSOA: number
+  }
+  projeto_gerente?: { 
+    ID_PROJETO : number;
+    DESCRICAO  :string;
+    gerente : { 
+      NOME: string;
+      CODPESSOA: number
+    }
+  },
+  projeto_descricao? : { 
+    ID_PROJETO: number;
+    DESCRICAO: string;
+  }
+
+  responsableOption?: Option; // JSON_OBJECT('label', PESSOA.NOME, 'id', PESSOA.CODPESSOA)
+  projectOption?: Option; // JSON_OBJECT('label', PROJETOS.DESCRICAO, 'id', PROJETOS.ID)
+  typeOption?: Option; // JSON_OBJECT('label', nome_tipo, 'id', TIPO)
+  typeOptions?: Option[]; // JSON_ARRAYAGG for web_tipo_requisicao
+  projectOptions?: Option[]; // JSON_ARRAYAGG for PROJETOS
+  responsableOptions?: Option[]; // JSON_ARRAYAGG for PESSOA
+}
 
 export interface QuoteField {
   dataKey: string;
@@ -74,12 +103,7 @@ export interface QuoteItem {
   ST: number
   subtotal: number; // subtotal calculado
 }
-export interface RequisitionPost {
-  STATUS: string;
-  DESCRIPTION: string;
-  ID_RESPONSAVEL: number;
-  ID_PROJETO: number;
-}
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface RequisitionItemPost {
   QUANTIDADE: number;

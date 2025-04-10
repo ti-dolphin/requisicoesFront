@@ -35,7 +35,6 @@ const QuoteListModal = ({
 
   useEffect(() => {
     const fetchQuoteData = async () => {
-  
       try {
         const data = await getQuotesByRequisitionId(requisitionId);
         if (data) {
