@@ -355,7 +355,9 @@ const QuoteItemsTable = ({
       setIsLoading(false);
     } catch (e: any) {
       setIsEditing(true);
-      displayAlert("error", e.message);
+      if(isSupplier){ 
+          displayAlert("error", e.message);
+      }
       setIsLoading(false);
 
     }

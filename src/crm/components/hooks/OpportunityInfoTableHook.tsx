@@ -3,6 +3,7 @@ import {
   GridColDef,
   GridFooterContainer,
   GridPagination,
+  GridRenderCellParams,
   GridRowParams,
 } from "@mui/x-data-grid";
 import {
@@ -85,11 +86,21 @@ const UseOpportunityInfoTable = () => {
   const columns: GridColDef<OpportunityInfo>[] = useMemo(
     () => [
       {
-        field: "",
+        field: "situacao", // Damos um nome ao field (não pode ser vazio)
         headerName: "Situação",
         width: 100,
-        renderCell: (params) => <StatusIconCell row={params.row} />,
-        sortable: false,
+        align: "center", // Centraliza o ícone
+        headerAlign: "center",
+        valueGetter: (_value : any, row : OpportunityInfo) => {
+          if (row.dataInteracao_vencida) return 1; // "Data vencida"
+          if (row.dataInteracao_a_vencer) return 2; // "A vencer"
+          if (row.dataInteracao_em_dia) return 3; // "Em dia"
+          return 4; // "Sem data definida"
+        },
+        renderCell: (params: GridRenderCellParams) => (
+          <StatusIconCell row={params.row} />
+        ),
+        sortable: true,
         filterable: false,
       },
       { field: "numeroProjeto", headerName: "Nº Projeto" }, // os.ID_PROJETO
@@ -103,18 +114,48 @@ const UseOpportunityInfoTable = () => {
       },
       { field: "nomeCliente", headerName: "Cliente" }, // c.NOME
       { field: "nomeVendedor", headerName: "Vendedor" }, // vendedor.NOME
-      { field: "nomeGerente", headerName: "Gerente" }, // gerente.NOME
+      // gerente.NOME
       {
         field: "valorFaturamentoDolphin",
         headerName: "Faturamento Dolphin",
+        type: "number",
+        valueFormatter: (value: number) => {
+          if (value != null) {
+            return new Intl.NumberFormat("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            }).format(value);
+          }
+          return "-";
+        },
       },
       {
         field: "valorFaturamentoDireto",
         headerName: "Faturamento Direto",
+        type: "number",
+        valueFormatter: (value: number) => {
+          if (value != null) {
+            return new Intl.NumberFormat("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            }).format(value);
+          }
+          return "-";
+        },
       },
       {
         field: "valorTotal",
         headerName: "Valor Total",
+        type: "number",
+        valueFormatter: (value: number) => {
+          if (value != null) {
+            return new Intl.NumberFormat("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            }).format(value);
+          }
+          return "-";
+        },
       },
       {
         field: "dataSolicitacao",
@@ -293,13 +334,6 @@ const UseOpportunityInfoTable = () => {
           <Typography fontSize="small" color="white">
             <span className="font-semibold tracking-wide">
               {" "}
-              Nº de Registros{" "}
-            </span>{" "}
-            {rows.length}
-          </Typography>
-          <Typography fontSize="small" color="white">
-            <span className="font-semibold tracking-wide">
-              {" "}
               Faturamento Dolphin:{" "}
             </span>{" "}
             {new Intl.NumberFormat("pt-BR", {
@@ -307,14 +341,30 @@ const UseOpportunityInfoTable = () => {
               currency: "BRL",
             }).format(
               rows.reduce((acumulador, opp) => {
-                const valorLimpo = String(opp.valorFaturamentoDireto)
-                  .replace("R$", "")
-                  .replace(/\./g, "")
-                  .replace(",", ".");
-                return acumulador + Number(valorLimpo);
+                // Assume que valorFaturamentoDolphin é um número
+                const valor = Number(opp.valorFaturamentoDolphin) || 0; // Garante que seja um número, default 0 se for null/undefined
+                return acumulador + valor;
               }, 0)
             )}
           </Typography>
+
+          <Typography fontSize="small" color="white">
+            <span className="font-semibold tracking-wide">
+              {" "}
+              Faturamento Direto:{" "}
+            </span>{" "}
+            {new Intl.NumberFormat("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            }).format(
+              rows.reduce((acumulador, opp) => {
+                // Assume que valorFaturamentoDireto é um número
+                const valor = Number(opp.valorFaturamentoDireto) || 0; // Garante que seja um número, default 0 se for null/undefined
+                return acumulador + valor;
+              }, 0)
+            )}
+          </Typography>
+
           <Typography fontSize="small" color="white">
             <span className="font-semibold tracking-wide"> Valor Total: </span>{" "}
             {new Intl.NumberFormat("pt-BR", {
@@ -322,11 +372,9 @@ const UseOpportunityInfoTable = () => {
               currency: "BRL",
             }).format(
               rows.reduce((acumulador, opp) => {
-                const valorLimpo = String(opp.valorTotal ? opp.valorTotal : 0)
-                  .replace("R$", "")
-                  .replace(/\./g, "")
-                  .replace(",", ".");
-                return acumulador + Number(valorLimpo);
+                // Assume que ambos os valores são números
+                const valorTotal = Number(opp.valorTotal);
+                return acumulador + valorTotal;
               }, 0)
             )}
           </Typography>

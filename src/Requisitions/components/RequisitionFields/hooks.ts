@@ -5,10 +5,12 @@ import { Requisition, OptionsState, AlertInterface } from "../../types";
 import { fetchRequsitionById, updateRequisition } from "../../utils";
 import { Option } from "../../types";
 import { dateTimeRenderer } from "../../../Patrimony/utils";
+import { RequisitionContext } from "../../context/RequisitionContext";
 
 export const useRequisitionFields = () => {
     const { id } = useParams();
     const { user } = useContext(userContext);
+    const {refreshRequisition} = useContext(RequisitionContext)
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [requisitionData, setRequisitionData] = useState<Requisition>();
     const [optionsState, setOptionsState] = useState<OptionsState>();
@@ -30,7 +32,7 @@ export const useRequisitionFields = () => {
     };
 
     const userAllowedToEdit = () => {
-        if (requisitionData?.STATUS === 'Em edição') {
+        if (requisitionData?.status?.nome === 'Em edição') {
             return user?.PERM_COMPRADOR || user?.CODPESSOA === requisitionData?.ID_RESPONSAVEL;
         }
         return user?.PERM_COMPRADOR;
@@ -100,7 +102,9 @@ export const useRequisitionFields = () => {
 
     const renderOptions = (field: any) => {
         if (optionsState) {
+            console.log('field: ', field)
             const options = optionsState[field.optionName as keyof OptionsState] as Option[];
+            console.log('options: ', options)
             return options;
         }
         return [{ label: 'Sem opções', id: 0 }];
@@ -147,7 +151,7 @@ export const useRequisitionFields = () => {
 
     useEffect(() => {
         fetchRequisitionData();
-    }, []);
+    }, [refreshRequisition]);
 
     return {
         isEditing,

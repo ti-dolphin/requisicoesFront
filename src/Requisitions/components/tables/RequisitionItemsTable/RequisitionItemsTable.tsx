@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useContext } from "react";
 import {
   Item
 } from "../../../utils";
@@ -30,6 +30,8 @@ import typographyStyles from "../../../utilStyles";
 import useRequisitionItems from "./hooks";
 import ItemsToolBar from "../ItemsToolBar/ItemsToolBar";
 import { green } from "@mui/material/colors";
+import { RequisitionStatus } from "../../../types";
+import { ItemsContext } from "../../../context/ItemsContext";
 
 interface RequisitionItemsTableProps {
 
@@ -37,7 +39,7 @@ interface RequisitionItemsTableProps {
   addedItems?: Item[];
   isInsertingQuantity?: boolean;
   setIsInsertingQuantity?: Dispatch<SetStateAction<boolean>>;
-  requisitionStatus?: string;
+  requisitionStatus?: RequisitionStatus
 }
 
 
@@ -49,6 +51,8 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
   setIsInsertingQuantity,
   requisitionStatus
 }) => {
+  const {adding } = useContext(ItemsContext);
+
   const {
     visibleItems,
     isEditing,
@@ -73,6 +77,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     isInsertingQuantity,
     addedItems
   );
+
 
   const staticColumns: GridColDef[] = [
     {
@@ -216,7 +221,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
   );
 
   const handleCellClick = (params: GridCellParams) => {
-    if(requisitionStatus === 'Em edição'){ 
+    if(requisitionStatus?.etapa === 0 || adding){ 
        gridApiRef.current.startRowEditMode({
          id: params.row.ID,
          fieldToFocus: params.colDef.field,
@@ -226,8 +231,12 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
          setIsEditing(true);
          return;
        }
+       return;
     }
-    displayAlert("warning", `Não é permitido editar items no status '${requisitionStatus}'`);
+    displayAlert(
+      "warning",
+      `Não é permitido editar items no status '${requisitionStatus?.nome}'`
+    );
   };
 
   return (

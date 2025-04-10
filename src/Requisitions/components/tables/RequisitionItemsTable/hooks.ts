@@ -21,6 +21,7 @@ import {
 } from "../../../utils";
 import { ItemsContext } from "../../../context/ItemsContext";
 import { useLocation, useNavigate } from "react-router-dom";
+import { RequisitionContext } from "../../../context/RequisitionContext";
 
 const useRequisitionItems = (
   requisitionId: number,
@@ -28,6 +29,7 @@ const useRequisitionItems = (
   isInsertingQuantity?: boolean,
   addedItems?: Item[],
 ) => {
+  const { toggleCreating } = useContext(RequisitionContext);
   const [items, setItems] = useState<Item[]>([]);
   const [visibleItems, setVisibleItems] = useState<Item[]>([]);
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -236,7 +238,8 @@ const useRequisitionItems = (
           setIsInsertingQuantity(false);
         }
         if(adding){ 
-          toggleAdding()
+          toggleAdding();
+          toggleCreating()
         }
         return;
       }

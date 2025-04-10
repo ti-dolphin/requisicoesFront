@@ -226,7 +226,7 @@ const QuoteDetail = () => {
      if (!cnpj_faturamento) {
        throw new Error("CNPJ do faturamento é obrigatório");
      }
-     if (!cnpj_fornecedor) {
+     if (isSupplier && !cnpj_fornecedor) {
        throw new Error("CNPJ do fornecedor é obrigatório");
      }
    };
@@ -238,6 +238,7 @@ const QuoteDetail = () => {
         if (response.status === 200) {
           const newQuote = response.data;
           setCurrentQuoteData(newQuote);
+          setOriginalQuoteData(newQuote);
           displayAlert('success', 'Cotação atualizada!')
       
    }

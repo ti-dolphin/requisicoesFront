@@ -5,218 +5,151 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { Item, Requisition, updateRequisition } from "../../utils";
+import { getRequisitionStatusList, Requisition, updateRequisition } from "../../utils";
 import { useContext } from "react";
 import { useState } from "react";
 import { RequisitionContext } from "../../context/RequisitionContext";
 import { userContext } from "../../context/userContext";
-import { Alert } from "@mui/material";
+import { Alert, AlertColor, Stack } from "@mui/material";
 
-const steps = ["Em edição", "Requisitado", "Em cotação", "Cotado", "Concluído"];
+import { AlertInterface, RequisitionStatus } from "../../types";
+import typographyStyles from "../../utilStyles";
+import { BaseButtonStyles } from "../../../utilStyles";
+
+
 interface props {
   requisitionData: Requisition;
   setRequisitionData: (requisition: Requisition) => void;
-  items?: Item[];
 }
+
+
 const HorizontalLinearStepper: React.FC<props> = ({
   requisitionData,
-  setRequisitionData,
-  items
+  // setRequisitionData,
+  // items
 }) => {
+
   const { user } = useContext(userContext);
-  const { toggleRefreshRequisition, changeActiveStep, refreshRequisition } =
-    useContext(RequisitionContext);
-  const [nonPurchaserAlert, toggleNonPurchaserAlert] = useState<boolean>(false);
-  const [nonRegisteredProductsAlert, toggleNonRegisteredProductsAlert] = useState<boolean>(false);
-  const [activeStep, setActiveStep] = useState(
-    steps.indexOf(requisitionData.STATUS) === steps.length - 1
-      ? steps.length
-      : steps.indexOf(requisitionData.STATUS)
-  );
+  const { toggleRefreshRequisition } = useContext(RequisitionContext);
 
-  React.useEffect(() => {
-    console.log("requisiton: ", requisitionData);
-    changeActiveStep(activeStep);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeStep, refreshRequisition]);
+  const [alert, setAlert] = useState<AlertInterface>();
+  const [steps, setSteps] = useState<RequisitionStatus[]>();
+  const [activeStep, setActiveStep] = useState<number>();
 
-  const displayAlert = (alertType: string) => {
-    if (alertType === 'nonPurchaser') {
-      setTimeout(() => {
-        toggleNonPurchaserAlert(false);
-      }, 3 * 1000);
-      toggleNonPurchaserAlert(true);
-      return;
-    }
-    if (alertType === 'nonRegistreredProduct') {
-      setTimeout(() => {
-        toggleNonRegisteredProductsAlert(false);
-      }, 3 * 1000);
-      toggleNonRegisteredProductsAlert(true);
-      return;
-    }
-  }
-  
-  const [skipped] = React.useState(new Set<number>());
+   const displayAlert = async (severity: string, message: string) => {
+     setTimeout(() => {
+       setAlert(undefined);
+     }, 5000);
+     setAlert({ severity, message });
+     return;
+   };
 
-  const isStepOptional = (step: number) => {
-    return step === -1;
-  };
-  const isStepSkipped = (step: number) => {
-    return skipped.has(step);
-  };
-
-  const handleNext = async () => {
-    const isPurchaser = user?.PERM_COMPRADOR;
-    if (!isPurchaser && activeStep > 0) {
-      displayAlert('nonPurchaser');
-      return;
-    }
-    const nextStep = activeStep + 1;
-    if (isThereNonRegisteredProducts() && nextStep > 3) {
-      displayAlert('nonRegistreredProduct');
-      return;
-    }
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    changeActiveStep(nextStep);
-    if (nextStep < steps.length) {
-      const editedRequisition = {
-        ...requisitionData,
-        ["STATUS"]: steps[activeStep + 1],
-      };
-
-      if (user) {
-        console.log('editRequisition: ', editedRequisition);
+  const handleNext = async ( ) => { 
+     if(user){ 
         try {
-          await updateRequisition(user.CODPESSOA, editedRequisition);
-
-          setRequisitionData(editedRequisition);
-          toggleRefreshRequisition();
-        } catch (e) {
-          console.log(e);
+          const { status } = requisitionData;
+          if (status) {
+            const newStatus = steps?.find((s) => s.etapa === status.etapa + 1);
+             await updateRequisition(user.CODPESSOA, {
+               ...requisitionData,
+               id_status_requisicao: newStatus?.id_status_requisicao || 0
+             });
+               setActiveStep(newStatus?.etapa);
+             toggleRefreshRequisition();
+          }
+        } catch (e: any) {
+          displayAlert("error", e.message);
         }
-      }
-    }
-  };
-
-  const isThereNonRegisteredProducts = () => {
-    const nonRegisteredProducts = items?.filter((item) =>
-      productNotRegistered(item.nome_fantasia)
-    );
-    if (nonRegisteredProducts && nonRegisteredProducts.length) {
-      return true;
-    }
-    return false;
-  };
-
-  const productNotRegistered = (productName: string) => {
-    return productName.toUpperCase() === "MATERIAL/SERVIÇO - NÃO CADASTRADO";
-  };
+     }
+  }
 
   const handleBack = async () => {
-    const isPurchaser = user?.PERM_COMPRADOR;
-    if (isPurchaser) {
-      setActiveStep((prevActiveStep) => prevActiveStep - 1);
-      const previousStep = activeStep - 1;
-      changeActiveStep(previousStep);
-      const editedRequisition = {
-        ...requisitionData,
-        ["STATUS"]: steps[activeStep - 1],
-      };
-
-      if (user) {
-        try {
-          await updateRequisition(user.CODPESSOA, editedRequisition);
-
-          setRequisitionData(editedRequisition);
-          toggleRefreshRequisition();
-        } catch (e) {
-          console.log(e);
-        }
+  if (user) {
+    try {
+      const { status } = requisitionData;
+      if (status) {
+        const newStatus = steps?.find((s) => s.etapa === status.etapa - 1);
+        await updateRequisition(user.CODPESSOA, {
+          ...requisitionData,
+          id_status_requisicao: newStatus?.id_status_requisicao || 0,
+        });
+        setActiveStep(newStatus?.etapa);
+        toggleRefreshRequisition();
       }
-    } else {
-      displayAlert('nonPurchaser');
+    } catch (e: any) {
+      displayAlert("error", e.message);
     }
+  }
   };
+  React.useEffect(() => {
+    if (requisitionData) {
+      console.log("status: ", requisitionData.status);
+      setActiveStep(requisitionData.status?.etapa);
+    }
+  }, []);
 
-  //eslint-disable-next-line @typescript-eslint/no-unused-vars
+  React.useEffect(() => {
+    const fetchStatusList = async () => {
+      const statusList = await getRequisitionStatusList();
+      setSteps(statusList);
+    };
+    fetchStatusList();
+   
+  }, []);
+
 
   return (
-    <Box sx={{ width: "100%", paddingX: "0.5rem" }}>
-      {nonPurchaserAlert && (
-        <Alert
-          variant="filled"
-          className="drop-shadow-lg"
-          severity="warning"
+    <Box
+      sx={{
+        width: "100%",
+        paddingX: 1,
+        display: "flex",
+        flexDirection: "column",
+        gap: 1,
+      }}
+    >
+      {steps && (
+        <Stepper
           sx={{
-            width: "400px",
-            position: "absolute",
-            left: "50%",
-            marginLeft: "-200px",
+            width: "100%",
+            overflow: "scroll",
+            "&::-webkit-scrollbar": { display: "none" },
+            "-ms-overflow-style": "none",
+            "scrollbar-width": "none",
           }}
+          activeStep={activeStep}
+          alternativeLabel
         >
-          Você não tem permissão para alterar Status
-        </Alert>
-      )}
-      {nonRegisteredProductsAlert &&
-        <Alert
-          variant="filled"
-          className="drop-shadow-lg"
-          severity="warning"
-          sx={{
-            width: "400px",
-            position: "absolute",
-            left: "50%",
-            marginLeft: "-200px",
-          }}
-        >
-          Há produtos não registrados, registre antes de prosseguir!
-        </Alert>
-      }
-      <Stepper sx={{ flexWrap: "wrap", gap: "0.5rem" }} activeStep={activeStep}>
-        {steps.map((label, index) => {
-          const stepProps: { completed?: boolean } = {};
-          const labelProps: {
-            optional?: React.ReactNode;
-          } = {};
-          if (isStepOptional(index)) {
-            labelProps.optional = (
-              <Typography variant="caption">Optional</Typography>
-            );
-          }
-          if (isStepSkipped(index)) {
-            stepProps.completed = false;
-          }
-          return (
-            <Step key={label} {...stepProps}>
-              <StepLabel {...labelProps}>{label}</StepLabel>
+          {steps.map((step) => (
+            <Step key={step.id_status_requisicao}>
+              <StepLabel sx={{ textAlign: "left" }}>
+                <Typography sx={typographyStyles.smallText}>
+                  {step.nome}
+                </Typography>
+              </StepLabel>
             </Step>
-          );
-        })}
-      </Stepper>
-      {activeStep === steps.length ? (
-        <React.Fragment>
-          <Typography sx={{ mt: 2, mb: 1 }}>Requisição tratada!</Typography>
-          
-        </React.Fragment>
-      ) : (
-        <React.Fragment>
-          <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-            <Button
-              color="inherit"
-              disabled={activeStep === 0}
-              onClick={handleBack}
-              sx={{ mr: 1, color: "#2B3990" }}
-            >
-              Voltar
+          ))}
+        </Stepper>
+      )}
+      {requisitionData.status && (
+        <Stack
+          direction="row"
+          sx={{ width: "100%", justifyContent: "space-between" }}
+        >
+          {requisitionData.status.acao_anterior !== "-" ? (
+            <Button sx={BaseButtonStyles} onClick={handleBack}>
+              {requisitionData.status.acao_anterior}
             </Button>
-            <Box sx={{ flex: "1 1 auto" }} />
-
-            <Button onClick={handleNext} sx={{ color: "#2B3990" }}>
-              {activeStep === steps.length - 1 ? "Finalizar" : "Avançar"}
-            </Button>
-          </Box>
-        </React.Fragment>
+          ) : (
+            <Box></Box>
+          )}
+          <Button onClick={handleNext} sx={BaseButtonStyles}>
+            {requisitionData.status.acao_posterior}
+          </Button>
+        </Stack>
+      )}
+      {alert && (
+        <Alert severity={alert.severity as AlertColor}>{alert.message}</Alert>
       )}
     </Box>
   );

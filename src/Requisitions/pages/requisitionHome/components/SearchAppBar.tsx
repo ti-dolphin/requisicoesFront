@@ -1,79 +1,183 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
+import {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useState,
+  useEffect,
+} from "react";
+import { useNavigate } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import React, { useContext, useEffect, useState } from "react";
-import { Button, IconButton, Menu, MenuItem, Stack, Typography } from "@mui/material";
-import { RequisitionContext } from "../../../context/RequisitionContext";
+import {
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  Stack,
+  Typography,
+} from "@mui/material";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import ArrowCircleLeftIcon from "@mui/icons-material/ArrowCircleLeft";
 import { userContext } from "../../../context/userContext";
 import AddRequisitionModal from "../../../components/modals/AddRequisitionModal";
-import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import { BaseButtonStyles, buttonStylesMobile } from "../../../../utilStyles";
 import { orange } from "@mui/material/colors";
 import typographyStyles from "../../../utilStyles";
-import ArrowCircleLeftIcon from "@mui/icons-material/ArrowCircleLeft";
-import { useNavigate } from "react-router-dom";
+import { Requisition } from "../../../types";
 
+const kanbanFiltersByProfile = {
+  manager: [
+    { label: "Backlog", statuses: ["Em edição"] },
+    {
+      label: "Acompanhamento",
+      statuses: [
+        "Em edição",
+        "Em cotação",
+        "Requisitado",
+        "Aprovação Gerente",
+        "Aprovação Diretoria",
+        "Gerar OC",
+        "OC Gerada",
+      ],
+    },
+    {
+      label: "A Fazer",
+      statuses: ["Aprovação Gerente"],
+    },
+    { label: "Tudo", statuses: [] },
+  ],
+  purchaser: [
+    { label: "A Fazer", statuses: ["Requisitado"] },
+    {
+      label: "Fazendo",
+      statuses: ["Aprovação Gerente", "Aprovação Diretoria", "Gerar OC"],
+    },
+    { label: "Concluído", statuses: ["OC Gerada"] },
+    { label: "Tudo", statuses: [] },
+  ],
+  responsible: [
+    { label: "Backlog", statuses: ["Em edição"] },
+    {
+      label: "Acompanhamento",
+      statuses: [
+        "Em cotação",
+        "Requisitado",
+        "Aprovação Gerente",
+        "Aprovação Diretoria",
+        "Gerar OC",
+        "OC Gerada",
+      ],
+    },
+    { label: "Tudo", statuses: [] },
+  ],
+};
 
-const SearchAppBar: React.FC = () => {
-  const { currentKanbanFilter, changeKanbanFilter, changeSubFilter, currentSubFilter } = useContext(RequisitionContext);
+interface Props {
+  filteredRows: Requisition[];
+  setFilteredRows: Dispatch<SetStateAction<Requisition[]>>;
+  allRows: Requisition[]; // Adicionamos todas as requisições para filtragem
+}
+
+const SearchAppBar = ({ setFilteredRows, allRows }: Props) => {
   const { user } = useContext(userContext);
-  const [availableKanbanFilters, setAvailableKanbanFilter] = useState<string[]>(
-    []
-  );
   const navigate = useNavigate();
-    const subFilters = [ 
-      'Minhas',
-      'Todas'
-    ];
-   
-    const [filterMenu, setFilterMenu] = React.useState<null | HTMLElement>(
-      null
-    );
+  const subFilters = ["Minhas", "Todas"];
+  const [filterMenu, setFilterMenu] = useState<null | HTMLElement>(null);
+  const [kanbanFilter, setKanbanFilter] = useState<{
+    label: string;
+    statuses: string[];
+  } | null>(null);
+  const [availableKanbanFilters, setAvailableKanbanFilters] = useState<
+    { label: string; statuses: string[] }[]
+  >([]);
+  const [subFilter, setSubFilter] = useState<string>("Minhas");
+
   const filterMenuOpen = Boolean(filterMenu);
-  
-  const handleClickFilter = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setFilterMenu(event.currentTarget);
-  };
-  
-  const handleCloseFilter = () => {
-    setFilterMenu(null);
-  };
-  
-  const handleSelectFilter = async (filter: string) => {
-    localStorage.setItem('currentSubFilter', JSON.stringify({ label: filter}));
-    changeSubFilter({label : filter});
-  };
 
-
-  const defineAvailableKanbanFilters = () => {
-    console.log("user: ", user);
-    if (user?.PERM_COMPRADOR && user?.PERM_COMPRADOR > 0) {
-      setAvailableKanbanFilter([...filterAvailableByUser.purchaser]);
-      return;
+  const determineUserProfile = () => {
+    if (user?.CODGERENTE) {
+      return "manager"; // Gerente
+    } else if (user?.PERM_COMPRADOR && user.PERM_COMPRADOR > 0) {
+      return "purchaser"; // Comprador
+    } else {
+      return "responsible"; // Responsável
     }
-    setAvailableKanbanFilter([...filterAvailableByUser.nonPurchaser]);
   };
 
   useEffect(() => {
-    defineAvailableKanbanFilters();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentKanbanFilter]);
+    const profile = determineUserProfile();
+    const filters = kanbanFiltersByProfile[profile];
+    setAvailableKanbanFilters(filters);
+    setKanbanFilter(filters[0]); 
+  }, [user]);
+ 
+  useEffect(() => {
+    if (!kanbanFilter) return;
+    const applyKanbanFilter = (rows: Requisition[]) => {
+      if (kanbanFilter.statuses.length > 0) {
+        return rows.filter((row) =>
+          kanbanFilter.statuses.includes(row.status?.nome || "")
+        );
+      }
+      return rows;
+    };
+    const applySubFilter = (rows: Requisition[]) => {
+      if (subFilter === "Minhas" && user) {
+        if (determineUserProfile() === "manager") {
+          return rows.filter(
+            (row) =>
+              row.projeto_gerente?.gerente?.CODPESSOA === user.CODPESSOA ||
+              row.alterado_por_pessoa?.CODPESSOA === user.CODPESSOA ||
+              row.responsavel_pessoa?.CODPESSOA === user.CODPESSOA
+          );
+        } else {
+          return rows.filter(
+            (row) =>
+              row.alterado_por_pessoa?.CODPESSOA === user.CODPESSOA ||
+              row.responsavel_pessoa?.CODPESSOA === user.CODPESSOA
+          );
+        }
+      }
+      return rows;
+    };
 
-  const handleChangeKanbanFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
-    localStorage.setItem(
-      "currentKanbanFilter",
-      JSON.stringify({ label: e.currentTarget.id })
-    );
-    changeKanbanFilter({ label: e.currentTarget.id });
+    const filterRows = () => {
+      let filteredRows = allRows;
+      filteredRows = applyKanbanFilter(filteredRows);
+      filteredRows = applySubFilter(filteredRows);
+      setFilteredRows(filteredRows);
+    };
+
+    filterRows();
+  }, [kanbanFilter, subFilter, allRows, user]);
+
+  const handleClickFilter = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setFilterMenu(event.currentTarget);
+  };
+
+  const handleCloseFilter = () => {
+    setFilterMenu(null);
+  };
+
+  const handleSelectFilter = (filter: string) => {
+    localStorage.setItem("currentSubFilter", JSON.stringify({ label: filter }));
+    setSubFilter(filter);
+    handleCloseFilter();
+  };
+
+  const handleChangeKanbanFilter = (filter: {
+    label: string;
+    statuses: string[];
+  }) => {
+    setKanbanFilter(filter);
   };
 
   return (
     <Box sx={{ width: "100%" }}>
       <AppBar
         sx={{
-          backgroundColor: "#2B3990", //  className="text-gray-[#2B3990]"
+          backgroundColor: "#2B3990",
           height: "fit-content",
           display: "flex",
           boxShadow: "none",
@@ -81,11 +185,15 @@ const SearchAppBar: React.FC = () => {
         }}
         position="static"
       >
-        {" "}
-        <IconButton onClick={( ) => navigate(`/home`)}  sx={{ position: "absolute" }}>
+        <IconButton
+          onClick={() => navigate(`/home`)}
+          sx={{ position: "absolute" }}
+        >
           <ArrowCircleLeftIcon sx={{ color: "white" }} />
         </IconButton>
-        <Typography sx={{ ...typographyStyles.heading2, marginX: 6, color: "white" }}>
+        <Typography
+          sx={{ ...typographyStyles.heading2, marginX: 6, color: "white" }}
+        >
           Requisições de Materiais / Serviços
         </Typography>
         <Toolbar sx={{ padding: 0, marginX: 2 }}>
@@ -106,8 +214,9 @@ const SearchAppBar: React.FC = () => {
                 },
               }}
             >
-              {availableKanbanFilters.map((kanbanFilter) => (
+              {availableKanbanFilters.map((filter) => (
                 <Button
+                  key={filter.label}
                   sx={{
                     ...BaseButtonStyles,
                     minWidth: 80,
@@ -115,19 +224,18 @@ const SearchAppBar: React.FC = () => {
                       backgroundColor: orange[200],
                     },
                     backgroundColor:
-                      currentKanbanFilter?.label === kanbanFilter
+                      kanbanFilter?.label === filter.label
                         ? orange[200]
                         : "orange",
                   }}
-                  onClick={handleChangeKanbanFilter}
-                  id={kanbanFilter}
+                  onClick={() => handleChangeKanbanFilter(filter)}
                 >
                   <Typography
                     color="white"
                     sx={{ textTransform: "underline" }}
                     fontSize="small"
                   >
-                    {kanbanFilter}
+                    {filter.label}
                   </Typography>
                 </Button>
               ))}
@@ -137,9 +245,7 @@ const SearchAppBar: React.FC = () => {
                 aria-haspopup="true"
                 aria-expanded={filterMenuOpen ? "true" : undefined}
                 onClick={handleClickFilter}
-                sx={{
-                  ...buttonStylesMobile,
-                }}
+                sx={{ ...buttonStylesMobile }}
               >
                 <FilterAltIcon sx={{ color: "white" }} />
               </IconButton>
@@ -157,9 +263,7 @@ const SearchAppBar: React.FC = () => {
                     key={filter}
                     sx={{
                       backgroundColor:
-                        filter === currentSubFilter?.label
-                          ? "#e3e3e3"
-                          : "white",
+                        subFilter === filter ? "#e3e3e3" : "white",
                     }}
                     onClick={() => handleSelectFilter(filter)}
                   >
@@ -175,10 +279,5 @@ const SearchAppBar: React.FC = () => {
     </Box>
   );
 };
+
 export default SearchAppBar;
-
-
-const filterAvailableByUser = {
-  purchaser: ["A Fazer", "Fazendo", "Concluído", "Tudo"],
-  nonPurchaser: ["Backlog", "Acompanhamento", "Tudo"],
-};

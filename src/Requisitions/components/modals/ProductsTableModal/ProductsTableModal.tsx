@@ -142,7 +142,7 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
             >
               {requisition && (
                 <Typography sx={typographyStyles.heading2}>
-                  {requisition.DESCRICAO} | {requisition.nome_tipo}
+                  {requisition.projeto_descricao?.DESCRICAO} | {requisition.DESCRIPTION}
                 </Typography>
               )}
               <TextField
