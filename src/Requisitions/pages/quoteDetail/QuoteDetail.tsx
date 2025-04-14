@@ -11,6 +11,7 @@ import { formatDate, Loader } from "../../../generalUtilities";
 import { useNavigate, useParams } from "react-router-dom";
 import { getQuoteById, getQuoteClassifications, getQuoteShipments, updateQuote } from "../../utils";
 import ArrowCircleLeftIcon from "@mui/icons-material/ArrowCircleLeft";
+import QuoteFileList from "../../components/QuoteFileList/QuoteFileList";
 
 
 interface QuoteField{ 
@@ -74,6 +75,9 @@ interface Option{
   label: string;
   id: number;
 }
+
+
+
 
 const QuoteDetail = () => {
   const [isEditing, setIsEditing] = useState<boolean>();
@@ -308,10 +312,16 @@ const QuoteDetail = () => {
             ...boxDefaultStyles,
             height: "fit-content",
             display: "flex",
+            flexDirection: { 
+              md: 'row',
+              xs: 'column'
+            },
             gap: 2,
+    
           }}
           className="shadow-lg"
         >
+
           {!isSupplier && (
             <IconButton
               onClick={() =>
@@ -352,11 +362,7 @@ const QuoteDetail = () => {
             <Box
               sx={{
                 display: "grid",
-                width: {
-                  xs: "100%",
-                  sm: "70%",
-                  md: "50%",
-                },
+               
                 gridTemplateColumns: {
                   xs: "1fr",
                   md: "1fr 1fr",
@@ -436,8 +442,15 @@ const QuoteDetail = () => {
               )}
             </Box>
           </Box>
+
+          <QuoteFileList 
+          quoteId={currentQuoteData.id_cotacao}
+          itemSize={30} 
+          height={300}
+          />
         </Box>
       )}
+        
       {!isLoading && currentQuoteData && items && (
         <Box sx={{ ...boxDefaultStyles, flexGrow: 1 }}>
           <QuoteItemsTable

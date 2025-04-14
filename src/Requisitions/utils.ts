@@ -7,6 +7,7 @@ import {
   Product,
   Project,
   Quote,
+  QuoteFile,
   QuoteItem,
   Requisition,
   RequisitionItemPost,
@@ -34,6 +35,41 @@ const logIn = async (username: string, password: string) => {
     console.log(e);
   }
 };
+
+const deleteQuoteFile = async (quoteFile: QuoteFile) => {
+  try {
+    const response = await api.delete(`requisition/quote/file/${quoteFile.id_cotacao}/${quoteFile.id_anexo_cotacao}`);
+    return response.status;
+  } catch (e) {
+    console.log(e);
+    throw new Error("Failed to delete quote file");
+  }
+};
+
+const getFilesByQuoteId = async (quoteId: number ) => { 
+  try {
+    const response = await api.get<QuoteFile[]>(`requisition/quote/file/${quoteId}`);
+    return response.data;
+  } catch (e) {
+    console.log(e);
+    throw new Error("Failed to fetch files by quote ID");
+  }
+}
+
+const createQuoteFile = async (quoteId: number, formData : FormData ) => { 
+  try {
+    const config: AxiosRequestConfig = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    };
+    const response = await api.post(`requisition/quote/file/${quoteId}`, formData, config);
+    return response.data as QuoteFile;
+  } catch (e) {
+    console.log(e);
+    throw new Error("Failed to create quote file");
+  }
+}
 
 const fetchRequisitionFiles = async (requisitionID: number) => {
   try {
@@ -432,7 +468,10 @@ export {
   getQuotesByRequisitionId,
   getQuoteClassifications,
   getQuoteShipments,
-  getRequisitionStatusList
+  getRequisitionStatusList,
+  createQuoteFile,
+  getFilesByQuoteId,
+  deleteQuoteFile
 };
 export type {
   Requisition,
