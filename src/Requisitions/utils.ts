@@ -37,6 +37,16 @@ const logIn = async (username: string, password: string) => {
   }
 };
 
+const getStatusHistory = async (requisitionID: number) => {
+  try {
+    const response = await api.get(`/requisition/statusChanges/${requisitionID}`);
+    return response.data;
+  } catch (e) {
+    console.log(e);
+    throw new Error("Falha ao carregar histórico de status");
+  }
+};
+
 const deleteQuoteFile = async (quoteFile: QuoteFile, isSupplier?: boolean) => {
   try {
     const prefix = getPrefix(isSupplier);
@@ -477,7 +487,8 @@ export {
   getRequisitionStatusList,
   createQuoteFile,
   getFilesByQuoteId,
-  deleteQuoteFile
+  deleteQuoteFile,
+  getStatusHistory
 };
 export type {
   Requisition,

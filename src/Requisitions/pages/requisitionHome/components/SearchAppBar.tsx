@@ -48,7 +48,7 @@ const kanbanFiltersByProfile = {
     { label: "Tudo", statuses: [] },
   ],
   purchaser: [
-    { label: "A Fazer", statuses: ["Requisitado"] },
+    { label: "A Fazer", statuses: ["Requisitado", "Gerar OC"] },
     {
       label: "Fazendo",
       statuses: ["Aprovação Gerente", "Em cotação", "Aprovação Diretoria", "Gerar OC"],
