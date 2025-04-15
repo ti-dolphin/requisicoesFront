@@ -134,7 +134,7 @@ const HorizontalLinearStepper: React.FC<props> = ({
       {requisitionData.status && (
         <Stack
           direction="row"
-          sx={{ width: "100%", justifyContent: "space-between" }}
+          sx={{ width: "100%", justifyContent: "center", gap: 2, padding: 1 }}
         >
           {requisitionData.status.acao_anterior !== "-" ? (
             <Button sx={BaseButtonStyles} onClick={handleBack}>

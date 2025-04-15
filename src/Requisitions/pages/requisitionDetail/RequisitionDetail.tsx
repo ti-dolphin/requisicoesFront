@@ -15,6 +15,7 @@ import RequisitionFields from "../../components/RequisitionFields/RequisitionFie
 import styles from "./RequisitionDetail.styles";
 import RequisitionItemsTable from "../../components/tables/RequisitionItemsTable/RequisitionItemsTable";
 import { AlertInterface } from "../../types";
+import RequisitionStatusHistory from "../../components/RequisitionStatusHistory/RequisitionStatusHistory";
 
 const RequisitionDetail: React.FC = () => {
   const { id } = useParams();
@@ -76,7 +77,9 @@ const RequisitionDetail: React.FC = () => {
         </Typography>
       </Box>
       <Box className="stepper-container" sx={styles.requisitionStepper}>
-        {alert && <Alert severity={alert.severity as AlertColor}>{alert.message}</Alert>}
+        {alert && (
+          <Alert severity={alert.severity as AlertColor}>{alert.message}</Alert>
+        )}
         {requisitionData && (
           <HorizontalLinearStepper
             requisitionData={requisitionData}
@@ -94,7 +97,14 @@ const RequisitionDetail: React.FC = () => {
           border: "1px solid lightgray",
         }}
       >
-        <RequisitionFields />
+        <Box sx={{ display: "flex", flexDirection: "row", gap: 1 }}>
+          <RequisitionFields />
+          {requisitionData && (
+            <RequisitionStatusHistory
+              requisitionId={requisitionData?.ID_REQUISICAO}
+            />
+          )}
+        </Box>
         <Box
           className="req-items-table-container"
           sx={styles.requisitionItemsTableContainer}
