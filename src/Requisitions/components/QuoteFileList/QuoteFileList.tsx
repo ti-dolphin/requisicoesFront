@@ -15,7 +15,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CloseIcon from "@mui/icons-material/Close";
 import { BaseButtonStyles } from "../../../utilStyles";
 import { AlertInterface } from "../../types";
-import { createQuoteFile, deleteQuoteFile, getFilesByQuoteId, getQuoteShipments } from "../../utils";
+import { createQuoteFile, deleteQuoteFile, getFilesByQuoteId } from "../../utils";
 import { useEffect } from "react";
 
 // Interface para o tipo QuoteFile
@@ -34,14 +34,6 @@ interface QuoteFileListProps {
   itemSize?: number; // Tamanho de cada item na lista
 }
 
-const sampleFiles: QuoteFile[] = [
-  {
-    id_anexo_cotacao: 3,
-    id_cotacao: 102,
-    nome_arquivo: "string",
-    url: "https://via.placeholder.com/1200x800.png",
-  },
-];
 
 const QuoteFileList: React.FC<QuoteFileListProps> = ({
   quoteId,
@@ -55,6 +47,8 @@ const QuoteFileList: React.FC<QuoteFileListProps> = ({
   const [quoteFiles, setQuoteFiles] = useState<QuoteFile[]>();
   const [alert, setAlert] = useState<AlertInterface>();
   const [isLoading, setIsLoading] = useState(false); // State to track loading
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // State for confirmation modal
+  const [fileToDelete, setFileToDelete] = useState<QuoteFile | null>(null); // File to delete
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
@@ -67,15 +61,14 @@ const QuoteFileList: React.FC<QuoteFileListProps> = ({
       const formData = new FormData();
       formData.append("file", file);
       const createdFile = await createQuoteFile(quoteId, formData);
-      console.log('CREATE FILE: ', createdFile)
+      console.log("CREATE FILE: ", createdFile);
       if (createdFile && quoteFiles) {
-         setQuoteFiles([...quoteFiles, createdFile]);
-         displayAlert(
-                 "success",
-                 `Arquivo ${createdFile.nome_arquivo} anexado com sucesso.`
-               );
+        setQuoteFiles([...quoteFiles, createdFile]);
+        displayAlert(
+          "success",
+          `Arquivo ${createdFile.nome_arquivo} anexado com sucesso.`
+        );
       }
-       
     } catch (e: any) {
       displayAlert("error", e.message);
     } finally {
@@ -105,8 +98,24 @@ const QuoteFileList: React.FC<QuoteFileListProps> = ({
   // Função para determinar se o arquivo é um PDF ou uma imagem
   const isPDF = (url: string) => url.toLowerCase().endsWith(".pdf");
 
-  const handleDelete = async (file: QuoteFile) => {
+  const openConfirmModal = (file: QuoteFile) => {
+    setFileToDelete(file);
+    setIsConfirmModalOpen(true);
+  };
 
+  const closeConfirmModal = () => {
+    setFileToDelete(null);
+    setIsConfirmModalOpen(false);
+  };
+
+  const confirmDelete = async () => {
+    if (fileToDelete) {
+      await handleDelete(fileToDelete);
+      closeConfirmModal();
+    }
+  };
+
+  const handleDelete = async (file: QuoteFile) => {
     try {
       const responseStatus = await deleteQuoteFile(file);
       if (responseStatus === 200) {
@@ -133,7 +142,7 @@ const QuoteFileList: React.FC<QuoteFileListProps> = ({
     let file;
     if (quoteFiles) {
       file = quoteFiles[index];
-      console.log('file: ', file.url)
+      console.log("file: ", file.url);
     }
     return (
       <>
@@ -173,7 +182,7 @@ const QuoteFileList: React.FC<QuoteFileListProps> = ({
                 event: React.MouseEvent<HTMLButtonElement, MouseEvent>
               ) => {
                 event.stopPropagation(); // Prevent row click
-                handleDelete(file);
+                openConfirmModal(file); // Open confirmation modal
               }}
               sx={{
                 color: "#d32f2f",
@@ -323,6 +332,50 @@ const QuoteFileList: React.FC<QuoteFileListProps> = ({
               )}
             </Box>
           )}
+        </Paper>
+      </Modal>
+      <Modal
+        open={isConfirmModalOpen}
+        onClose={closeConfirmModal}
+        aria-labelledby="confirm-delete-title"
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Paper
+          sx={{
+            width: { xs: "90%", md: "400px" },
+            p: 3,
+            borderRadius: "8px",
+            textAlign: "center",
+          }}
+        >
+          <Typography
+            id="confirm-delete-title"
+            variant="h6"
+            sx={{ mb: 2, fontWeight: "bold" }}
+          >
+            Confirmar Exclusão
+          </Typography>
+          <Typography sx={{ mb: 3 }}>
+            Tem certeza que deseja excluir o arquivo{" "}
+            <strong>{fileToDelete?.nome_arquivo}</strong>?
+          </Typography>
+          <Box
+            sx={{ display: "flex", justifyContent: "space-between", gap: 2 }}
+          >
+            <Button
+              onClick={confirmDelete}
+              sx={{ ...BaseButtonStyles, backgroundColor: "#d32f2f" }}
+            >
+              Confirmar
+            </Button>
+            <Button onClick={closeConfirmModal} sx={BaseButtonStyles}>
+              Cancelar
+            </Button>
+          </Box>
         </Paper>
       </Modal>
       {alert && (

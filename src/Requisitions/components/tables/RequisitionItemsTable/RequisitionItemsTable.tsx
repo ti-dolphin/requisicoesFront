@@ -85,6 +85,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
       headerName: "Nome Fantasia",
       editable: false,
       width: 300,
+      flex: 1,
       renderCell: (params) => (
         <Typography sx={{ ...typographyStyles.bodyText }}>
           {params.value}

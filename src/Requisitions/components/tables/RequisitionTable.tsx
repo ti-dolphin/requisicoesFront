@@ -244,64 +244,66 @@ export default function RequisitionsDataGrid() {
         filteredRows={filteredRows}
         setFilteredRows={setFilteredRows}
       />
-      { alert && <Alert severity={alert.severity as AlertColor}>{alert.message}</Alert>}
+      {alert && (
+        <Alert severity={alert.severity as AlertColor}>{alert.message}</Alert>
+      )}
       {loading ? (
         <CircularProgress />
       ) : (
-        <DataGrid
-          rows={filteredRows}
-          getRowId={(row: Requisition) => row.ID_REQUISICAO}
-          columns={columns}
-          pageSizeOptions={[20, 50, 100]}
-          rowHeight={40}
-          showColumnVerticalBorder
-          showCellVerticalBorder
-          paginationModel={paginationModel}
-          onPaginationModelChange={setPaginationModel}
-          sortModel={sortModel}
-          onSortModelChange={setSortModel}
-          onRowClick={handleRowClick}
-          slots={{
-            toolbar: GridToolbar,
-          }}
-          slotProps={{
-            toolbar: {
-              showQuickFilter: true,
-              quickFilterProps: { debounceMs: 500, placeholder: "Pesquisar" },
-              sx: {
-                display: "!important flex",
-                flexDirection: "row-reverse",
-                justifyContent: "center",
-                border: "1px solid lightgray",
-                padding: 1,
-                "& .MuiButtonBase-root": {
-                  display: "none",
+       
+          <DataGrid
+            rows={filteredRows}
+            getRowId={(row: Requisition) => row.ID_REQUISICAO}
+            columns={columns}
+            pageSizeOptions={[20, 50, 100]}
+            rowHeight={40}
+            showColumnVerticalBorder
+            showCellVerticalBorder
+            paginationModel={paginationModel}
+            onPaginationModelChange={setPaginationModel}
+            sortModel={sortModel}
+            onSortModelChange={setSortModel}
+            onRowClick={handleRowClick}
+            slots={{
+              toolbar: GridToolbar,
+            }}
+            slotProps={{
+              toolbar: {
+                showQuickFilter: true,
+                quickFilterProps: { debounceMs: 500, placeholder: "Pesquisar" },
+                sx: {
+                  display: "!important flex",
+                  flexDirection: "row-reverse",
+                  justifyContent: "center",
+                  border: "1px solid lightgray",
+                  padding: 1,
+                  "& .MuiButtonBase-root": {
+                    display: "none",
+                  },
                 },
               },
-            },
-          }}
-          sx={{
-            width: "100%",
-            maxHeight: tableHeight,
-            "& .MuiDataGrid-row": {
-              cursor: "pointer",
+            }}
+            sx={{
+              width: "100%",
+              maxHeight: tableHeight,
+              "& .MuiDataGrid-row": {
+                cursor: "pointer",
 
-              "&:hover": {
-                backgroundColor: "rgba(0, 0, 0, 0.04)",
+                "&:hover": {
+                  backgroundColor: "rgba(0, 0, 0, 0.04)",
+                },
               },
-            },
-            "& .MuiDataGrid-cell": {
-              display: "flex",
-              alignItems: "center",
-              padding: 1,
-              whiteSpace: "normal",
-
-            },
-            "& .MuiDataGrid-menuIcon": {
-              display: "none",
-            },
-          }}
-        />
+              "& .MuiDataGrid-cell": {
+                display: "flex",
+                alignItems: "center",
+                padding: 1,
+                whiteSpace: "normal",
+              },
+              "& .MuiDataGrid-menuIcon": {
+                display: "none",
+              },
+            }}
+          />
       )}
       <DeleteRequisitionModal
         isDeleteRequisitionModalOpen={isDeleteRequisitionModalOpen}
