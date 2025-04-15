@@ -51,13 +51,14 @@ interface props {
      field: "descricao_item",
      headerName: "Descrição",
      width: 350,
+     flex: 1,
      editable: false,
      cellClassName: "descricao_item-cell",
    },
    { 
       field: 'observacao',
       headerName: 'Observação',
-      width: 300,
+      width: 200,
       editable: true
    },
    {

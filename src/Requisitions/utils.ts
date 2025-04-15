@@ -7,11 +7,13 @@ import {
   Product,
   Project,
   Quote,
+  QuoteFile,
   QuoteItem,
   Requisition,
   RequisitionItemPost,
   anexoRequisicao,
 } from "./types";
+const getPrefix = (isSupplier?: boolean) => (isSupplier ? 'supplier/' : '');
 
 const logIn = async (username: string, password: string) => {
   try {
@@ -30,8 +32,48 @@ const logIn = async (username: string, password: string) => {
     );
     return response.data;
   } catch (e) {
-    return { message: "login failed" };
     console.log(e);
+    return { message: "login failed" };
+  }
+};
+
+const deleteQuoteFile = async (quoteFile: QuoteFile, isSupplier?: boolean) => {
+  try {
+    const prefix = getPrefix(isSupplier);
+    const response = await api.delete(
+      `/${prefix}requisition/quote/file/${quoteFile.id_cotacao}/${quoteFile.id_anexo_cotacao}`
+    );
+    return response.status;
+  } catch (e) {
+    console.log(e);
+    throw new Error("Failed to delete quote file");
+  }
+};
+
+const getFilesByQuoteId = async (quoteId: number, isSupplier?: boolean) => {
+  try {
+    const prefix = getPrefix(isSupplier);
+    const response = await api.get<QuoteFile[]>(`/${prefix}requisition/quote/file/${quoteId}`);
+    return response.data;
+  } catch (e) {
+    console.log(e);
+    throw new Error("Failed to fetch files by quote ID");
+  }
+};
+
+const createQuoteFile = async (quoteId: number, formData: FormData, isSupplier?: boolean) => { 
+  try {
+    const prefix = getPrefix(isSupplier);
+    const config: AxiosRequestConfig = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    };
+    const response = await api.post(`/${prefix}requisition/quote/file/${quoteId}`, formData, config);
+    return response.data as QuoteFile;
+  } catch (e) {
+    console.log(e);
+    throw new Error("Failed to create quote file");
   }
 };
 
@@ -432,7 +474,10 @@ export {
   getQuotesByRequisitionId,
   getQuoteClassifications,
   getQuoteShipments,
-  getRequisitionStatusList
+  getRequisitionStatusList,
+  createQuoteFile,
+  getFilesByQuoteId,
+  deleteQuoteFile
 };
 export type {
   Requisition,

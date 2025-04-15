@@ -33,6 +33,7 @@ const columns: GridColDef[] = [
   {
     headerName: "Nome",
     field: "nome_fantasia",
+    flex: 1,
     width: 250,
     
   },
