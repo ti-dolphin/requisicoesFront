@@ -312,16 +312,14 @@ const QuoteDetail = () => {
             ...boxDefaultStyles,
             height: "fit-content",
             display: "flex",
-            flexDirection: { 
-              md: 'row',
-              xs: 'column'
+            flexDirection: {
+              md: "row",
+              xs: "column",
             },
             gap: 2,
-    
           }}
           className="shadow-lg"
         >
-
           {!isSupplier && (
             <IconButton
               onClick={() =>
@@ -362,7 +360,7 @@ const QuoteDetail = () => {
             <Box
               sx={{
                 display: "grid",
-               
+
                 gridTemplateColumns: {
                   xs: "1fr",
                   md: "1fr 1fr",
@@ -443,14 +441,15 @@ const QuoteDetail = () => {
             </Box>
           </Box>
 
-          <QuoteFileList 
-          quoteId={currentQuoteData.id_cotacao}
-          itemSize={30} 
-          height={300}
+          <QuoteFileList
+            isSupplier={isSupplier}
+            quoteId={currentQuoteData.id_cotacao}
+            itemSize={30}
+            height={300}
           />
         </Box>
       )}
-        
+
       {!isLoading && currentQuoteData && items && (
         <Box sx={{ ...boxDefaultStyles, flexGrow: 1 }}>
           <QuoteItemsTable

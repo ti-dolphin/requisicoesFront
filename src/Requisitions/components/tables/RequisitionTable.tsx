@@ -21,13 +21,12 @@ const columns: GridColDef[] = [
   {
     field: "DESCRIPTION",
     headerName: "Descrição",
+    width: 250,
     flex: 1,
-    minWidth: 300,
-
     renderCell: (params) => (
       <Typography
         textTransform="capitalize"
-        sx={{ ...typographyStyles.smallText, color: 'black' }}
+        sx={{ ...typographyStyles.smallText, color: "black" }}
       >
         {String(params.value).toLowerCase()}
       </Typography>
@@ -37,11 +36,11 @@ const columns: GridColDef[] = [
     field: "status",
     headerName: "Status",
     width: 120,
-    align: "center",
+    flex: 0.5,
     valueGetter: (status: RequisitionStatus) => status?.nome || "",
     renderCell: (params) => (
       <Typography
-        sx={{ ...typographyStyles.bodytext }}
+        sx={{ ...typographyStyles.smallText, color: 'black', fontWeight: 'semibold' }}
         textTransform="capitalize"
       >
         {String(params.value).toLowerCase()}
@@ -51,8 +50,8 @@ const columns: GridColDef[] = [
   {
     field: "projeto_descricao",
     headerName: "Projeto",
-    width: 350,
-
+    width: 300,
+    flex: 1,
     valueGetter: (projeto: {
       ID_PROJETO: number;
       DESCRICAO: string;
@@ -74,10 +73,10 @@ const columns: GridColDef[] = [
     field: "projeto_gerente",
     headerName: "Gerente",
     width: 200,
-    flex: 1,
-     renderCell: (params) => (
+    flex: 0.8,
+    renderCell: (params) => (
       <Typography
-        sx={{ ...typographyStyles.bodyText, color: 'black' }}
+        sx={{ ...typographyStyles.bodyText, color: "black" }}
         textTransform="capitalize"
       >
         {String(params.value).toLowerCase()}
@@ -96,12 +95,11 @@ const columns: GridColDef[] = [
     field: "responsavel_pessoa",
     headerName: "Responsável",
     width: 180,
-    flex: 1,
-    minWidth: 200,
+    flex: 0.8,
     valueGetter: (responsavel_pessoa: Pessoa) => responsavel_pessoa?.NOME || "",
     renderCell: (params) => (
       <Typography
-        sx={{ ...typographyStyles.bodyText, color: 'black' }}
+        sx={{ ...typographyStyles.bodyText, color: "black" }}
         textTransform="capitalize"
       >
         {String(params.value).toLowerCase()}
@@ -111,7 +109,8 @@ const columns: GridColDef[] = [
   {
     field: "ID_REQUISICAO",
     headerName: "Nº",
-    width: 80,
+    width: 100,
+    flex: 0.5,
     type: "number",
     align: "center",
   },
@@ -119,7 +118,7 @@ const columns: GridColDef[] = [
     field: "data_criacao",
     headerName: "Data de Criação",
     width: 180,
-    minWidth: 200,
+    flex: 0.8,
     valueFormatter: (value: string) => {
       if (typeof value === "string") {
         const date = value.substring(0, 10).replace(/-/g, "/");
@@ -133,7 +132,7 @@ const columns: GridColDef[] = [
     field: "data_alteracao",
     headerName: "Última Alteração",
     width: 180,
-    minWidth: 200,
+    flex: 0.8,
     align: "center",
     valueFormatter: (value: string) => {
       if (typeof value === "string") {
@@ -148,13 +147,12 @@ const columns: GridColDef[] = [
     field: "alterado_por_pessoa",
     headerName: "Alterado Por",
     width: 150,
-    flex: 1,
-    minWidth: 200,
+    flex: 0.8,
     valueGetter: (alterado_por_pessoa: Pessoa) =>
       alterado_por_pessoa?.NOME || "",
     renderCell: (params: GridRenderCellParams) => (
       <Typography
-        sx={{ ...typographyStyles.bodyText, color: 'black' }}
+        sx={{ ...typographyStyles.bodyText, color: "black" }}
         textTransform="capitalize"
       >
         {String(params.value).toLowerCase()}
@@ -297,7 +295,7 @@ export default function RequisitionsDataGrid() {
                 display: "flex",
                 alignItems: "center",
                 padding: 1,
-                whiteSpace: "normal",
+               
               },
               "& .MuiDataGrid-menuIcon": {
                 display: "none",

@@ -32,6 +32,7 @@ interface QuoteFileListProps {
   height?: number; // Altura da lista
   width?: number | string; // Largura da lista
   itemSize?: number; // Tamanho de cada item na lista
+  isSupplier?: boolean;
 }
 
 
@@ -39,7 +40,8 @@ const QuoteFileList: React.FC<QuoteFileListProps> = ({
   quoteId,
   height = 400,
   width = "100%",
-  itemSize = 60,
+  isSupplier,
+itemSize = 60,
 }) => {
   // Estado para controlar o modal e o arquivo selecionado
   const [openModal, setOpenModal] = useState(false);
@@ -60,7 +62,7 @@ const QuoteFileList: React.FC<QuoteFileListProps> = ({
 
       const formData = new FormData();
       formData.append("file", file);
-      const createdFile = await createQuoteFile(quoteId, formData);
+      const createdFile = await createQuoteFile(quoteId, formData, isSupplier);
       console.log("CREATE FILE: ", createdFile);
       if (createdFile && quoteFiles) {
         setQuoteFiles([...quoteFiles, createdFile]);
@@ -117,7 +119,7 @@ const QuoteFileList: React.FC<QuoteFileListProps> = ({
 
   const handleDelete = async (file: QuoteFile) => {
     try {
-      const responseStatus = await deleteQuoteFile(file);
+      const responseStatus = await deleteQuoteFile(file, isSupplier);
       if (responseStatus === 200) {
         setQuoteFiles((prevFiles) =>
           prevFiles
@@ -203,7 +205,7 @@ const QuoteFileList: React.FC<QuoteFileListProps> = ({
     const fetchQuoteFiles = async () => {
       try {
         setIsLoading(true); // Start loader
-        const files = await getFilesByQuoteId(quoteId);
+        const files = await getFilesByQuoteId(quoteId, isSupplier);
         setQuoteFiles(files);
       } catch (error) {
         displayAlert("error", "Erro ao buscar arquivos da cotação.");

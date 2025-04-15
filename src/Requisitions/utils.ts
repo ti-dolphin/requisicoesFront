@@ -13,6 +13,7 @@ import {
   RequisitionItemPost,
   anexoRequisicao,
 } from "./types";
+const getPrefix = (isSupplier?: boolean) => (isSupplier ? 'supplier/' : '');
 
 const logIn = async (username: string, password: string) => {
   try {
@@ -31,14 +32,17 @@ const logIn = async (username: string, password: string) => {
     );
     return response.data;
   } catch (e) {
-    return { message: "login failed" };
     console.log(e);
+    return { message: "login failed" };
   }
 };
 
-const deleteQuoteFile = async (quoteFile: QuoteFile) => {
+const deleteQuoteFile = async (quoteFile: QuoteFile, isSupplier?: boolean) => {
   try {
-    const response = await api.delete(`requisition/quote/file/${quoteFile.id_cotacao}/${quoteFile.id_anexo_cotacao}`);
+    const prefix = getPrefix(isSupplier);
+    const response = await api.delete(
+      `/${prefix}requisition/quote/file/${quoteFile.id_cotacao}/${quoteFile.id_anexo_cotacao}`
+    );
     return response.status;
   } catch (e) {
     console.log(e);
@@ -46,30 +50,32 @@ const deleteQuoteFile = async (quoteFile: QuoteFile) => {
   }
 };
 
-const getFilesByQuoteId = async (quoteId: number ) => { 
+const getFilesByQuoteId = async (quoteId: number, isSupplier?: boolean) => {
   try {
-    const response = await api.get<QuoteFile[]>(`requisition/quote/file/${quoteId}`);
+    const prefix = getPrefix(isSupplier);
+    const response = await api.get<QuoteFile[]>(`/${prefix}requisition/quote/file/${quoteId}`);
     return response.data;
   } catch (e) {
     console.log(e);
     throw new Error("Failed to fetch files by quote ID");
   }
-}
+};
 
-const createQuoteFile = async (quoteId: number, formData : FormData ) => { 
+const createQuoteFile = async (quoteId: number, formData: FormData, isSupplier?: boolean) => { 
   try {
+    const prefix = getPrefix(isSupplier);
     const config: AxiosRequestConfig = {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     };
-    const response = await api.post(`requisition/quote/file/${quoteId}`, formData, config);
+    const response = await api.post(`/${prefix}requisition/quote/file/${quoteId}`, formData, config);
     return response.data as QuoteFile;
   } catch (e) {
     console.log(e);
     throw new Error("Failed to create quote file");
   }
-}
+};
 
 const fetchRequisitionFiles = async (requisitionID: number) => {
   try {
