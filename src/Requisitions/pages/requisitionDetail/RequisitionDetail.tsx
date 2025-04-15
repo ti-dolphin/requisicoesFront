@@ -29,7 +29,6 @@ const RequisitionDetail: React.FC = () => {
       try {
         if (id) {
           const requisition = await fetchRequsitionById(Number(id));
-          console.log('status: ', requisition)
           setRequisitionData(requisition);
         }
       } catch (error) {
