@@ -68,10 +68,13 @@ export interface StatusChange{
   id_alteracao: number;
   id_requisicao: number;
   id_status_requisicao: number;
-  status_nome: string;
+  id_status_anterior : number;
+  status? : RequisitionStatus;
+  status_anterior? : RequisitionStatus;
   alterado_por: number;
   alterado_por_pessoa: Person;
   data_alteracao: Date | string;
+  justificativa? : string
 }
 
 export interface QuoteField {

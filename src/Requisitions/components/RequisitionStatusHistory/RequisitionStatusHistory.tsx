@@ -2,10 +2,8 @@ import { useContext, useEffect, useState } from 'react';
 import { AlertInterface, StatusChange } from '../../types';
 import { Alert, AlertColor, Box } from '@mui/material';
 import { getStatusHistory } from '../../utils';
-import { Typography } from '@mui/material';
-import typographyStyles from '../../utilStyles';
 import { RequisitionContext } from '../../context/RequisitionContext';
-import { formatDate } from '../../../generalUtilities';
+import StatusChangeRow from '../StatusChangeRow/StatusChangeRow';
 
 
 interface props {
@@ -58,31 +56,7 @@ const RequisitionStatusHistory = ({ requisitionId }: props) => {
       {alert && <Alert severity={alert?.severity as AlertColor}>{alert?.message}</Alert>}
       {rows &&
         rows.map((row) => (
-          <Box
-            key={row.id_alteracao}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              padding: 2,
-              marginBottom: 1,
-              border: "1px solid #ccc",
-              borderRadius: 2,
-              backgroundColor: "#f9f9f9",
-              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-            }}
-          >
-            <Typography
-              sx={{ ...typographyStyles.bodyText, textTransform: "capitalize" }}
-            >
-              {row.alterado_por_pessoa.NOME.toLowerCase()}
-            </Typography>
-            <Typography sx={{ ...typographyStyles.bodyText }}>
-              alterou para "{row.status_nome}"
-            </Typography>
-            <Typography sx={{ ...typographyStyles.smallText }}>
-              {formatDate(row.data_alteracao.toString())}
-            </Typography>
-          </Box>
+         <StatusChangeRow key={row.id_alteracao} row={row} />
         ))}
     </Box>
   );

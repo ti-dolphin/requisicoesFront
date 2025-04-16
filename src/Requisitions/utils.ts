@@ -437,12 +437,16 @@ const createQuote = async (items: Item[], requisitionId: number, descricao : str
 
 const updateRequisition = async (
   codpessoa: number,
-  requisition: Requisition
+  requisition: Requisition,
+  justification? : string,
+  id_status_anterior?  : number
 ) => {
   try {
    const response = await api.put(`requisition/${requisition.ID_REQUISICAO}`, {
       codpessoa,
       requisition,
+     justification,
+     id_status_anterior
     });
     return response
   } catch (e : any) {
