@@ -21,7 +21,7 @@ const columns: GridColDef[] = [
   {
     field: "DESCRIPTION",
     headerName: "Descrição",
-    width: 250,
+    minWidth: 250,
     flex: 1,
     renderCell: (params) => (
       <Typography
@@ -35,8 +35,7 @@ const columns: GridColDef[] = [
   {
     field: "status",
     headerName: "Status",
-    width: 120,
-    flex: 0.5,
+    width: 100,
     valueGetter: (status: RequisitionStatus) => status?.nome || "",
     renderCell: (params) => (
       <Typography
@@ -50,7 +49,7 @@ const columns: GridColDef[] = [
   {
     field: "projeto_descricao",
     headerName: "Projeto",
-    width: 300,
+    minWidth: 300,
     flex: 1,
     valueGetter: (projeto: {
       ID_PROJETO: number;
@@ -72,7 +71,7 @@ const columns: GridColDef[] = [
   {
     field: "projeto_gerente",
     headerName: "Gerente",
-    width: 200,
+    minWidth: 200,
     flex: 0.8,
     renderCell: (params) => (
       <Typography
@@ -94,8 +93,8 @@ const columns: GridColDef[] = [
   {
     field: "responsavel_pessoa",
     headerName: "Responsável",
-    width: 180,
-    flex: 0.8,
+    minWidth: 180,
+    flex: 0.5 ,
     valueGetter: (responsavel_pessoa: Pessoa) => responsavel_pessoa?.NOME || "",
     renderCell: (params) => (
       <Typography
@@ -109,16 +108,16 @@ const columns: GridColDef[] = [
   {
     field: "ID_REQUISICAO",
     headerName: "Nº",
-    width: 100,
-    flex: 0.5,
+    width: 60,
+    
     type: "number",
     align: "center",
   },
   {
     field: "data_criacao",
     headerName: "Data de Criação",
-    width: 180,
-    flex: 0.8,
+    width: 150,
+
     valueFormatter: (value: string) => {
       if (typeof value === "string") {
         const date = value.substring(0, 10).replace(/-/g, "/");
@@ -131,9 +130,8 @@ const columns: GridColDef[] = [
   {
     field: "data_alteracao",
     headerName: "Última Alteração",
-    width: 180,
-    flex: 0.8,
-    align: "center",
+    width: 150,
+
     valueFormatter: (value: string) => {
       if (typeof value === "string") {
         const date = value.substring(0, 10).replace(/-/g, "/");
@@ -146,8 +144,8 @@ const columns: GridColDef[] = [
   {
     field: "alterado_por_pessoa",
     headerName: "Alterado Por",
-    width: 150,
-    flex: 0.8,
+    width: 140,
+
     valueGetter: (alterado_por_pessoa: Pessoa) =>
       alterado_por_pessoa?.NOME || "",
     renderCell: (params: GridRenderCellParams) => (
@@ -248,7 +246,6 @@ export default function RequisitionsDataGrid() {
       {loading ? (
         <CircularProgress />
       ) : (
-       
           <DataGrid
             rows={filteredRows}
             getRowId={(row: Requisition) => row.ID_REQUISICAO}
@@ -284,9 +281,9 @@ export default function RequisitionsDataGrid() {
             sx={{
               width: "100%",
               maxHeight: tableHeight,
+              padding: 2,
               "& .MuiDataGrid-row": {
                 cursor: "pointer",
-
                 "&:hover": {
                   backgroundColor: "rgba(0, 0, 0, 0.04)",
                 },

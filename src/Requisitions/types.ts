@@ -64,6 +64,19 @@ export interface QuoteFile {
   url: string;
 }
 
+export interface StatusChange{ 
+  id_alteracao: number;
+  id_requisicao: number;
+  id_status_requisicao: number;
+  id_status_anterior : number;
+  status? : RequisitionStatus;
+  status_anterior? : RequisitionStatus;
+  alterado_por: number;
+  alterado_por_pessoa: Person;
+  data_alteracao: Date | string;
+  justificativa? : string
+}
+
 export interface QuoteField {
   dataKey: string;
   label: string;

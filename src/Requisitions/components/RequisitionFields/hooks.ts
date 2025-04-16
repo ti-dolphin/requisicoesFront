@@ -102,9 +102,7 @@ export const useRequisitionFields = () => {
 
     const renderOptions = (field: any) => {
         if (optionsState) {
-            console.log('field: ', field)
             const options = optionsState[field.optionName as keyof OptionsState] as Option[];
-            console.log('options: ', options)
             return options;
         }
         return [{ label: 'Sem opções', id: 0 }];
