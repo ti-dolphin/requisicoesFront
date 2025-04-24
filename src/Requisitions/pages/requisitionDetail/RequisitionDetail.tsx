@@ -98,6 +98,7 @@ const RequisitionDetail: React.FC = () => {
       >
         <Box sx={{ display: "flex", flexDirection: "row", gap: 1 }}>
           <RequisitionFields />
+          
           {requisitionData && (
             <RequisitionStatusHistory
               requisitionId={requisitionData?.ID_REQUISICAO}

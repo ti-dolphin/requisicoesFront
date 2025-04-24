@@ -7,6 +7,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { alertAnimation, BaseButtonStyles } from "../../../utilStyles";
 import Alert, { AlertColor } from "@mui/material/Alert";
 import { useRequisitionFields } from "./hooks";
+import RequisitionFileList from '../RequisitionFileList/RequisitionFileList';
+import { formatDate } from '../../../generalUtilities';
 const fields = [
   { label: "Descrição", key: "DESCRIPTION", type: "text", autoComplete: false },
   { label: "Observação", key: "OBSERVACAO", type: "text", autoComplete: false },
@@ -51,25 +53,37 @@ const RequisitionFields = () => {
 
   return (
     <Box sx={styles.fieldsGridContainer}>
+     
       <Stack direction="column" gap={2} alignItems="start">
-        <Typography sx={typographyStyles.heading1}>
-          Detalhes da requisição
-        </Typography>
-        {requisitionData && (
-          <Typography sx={typographyStyles.heading2}>
-            Ultima atualização:{" "}
-            {new Date(requisitionData.data_alteracao).toLocaleDateString()}
-          </Typography>
-        )}
-        {requisitionData && (
-          <Typography sx={typographyStyles.heading2}>
-            Criada em:{" "}
-            {new Date(requisitionData?.data_criacao).toLocaleDateString()}
-          </Typography>
-        )}
+        
+       <Box sx={{display: 'flex', flexGrow: 1, gap: 1, width: '100%', flexDirection: { 
+        xs: 'column',
+        md: 'row'
+       }}}>
+          <Box sx={{ display: 'flex', minWidth: 300, flexGrow: 1, flexDirection: 'column', padding: 1, gap: 1, borderRadius: 2 }}>
+            <Typography sx={typographyStyles.bodyText}>
+              Detalhes da requisição
+            </Typography>
+            {requisitionData && (
+              <Typography sx={typographyStyles.bodyText}>
+                Ultima atualização:{" "}
+                {formatDate(requisitionData?.data_alteracao)}
+              </Typography>
+            )}
+            {requisitionData && (
+              <Typography sx={typographyStyles.bodyText}>
+                Criada em:{" "}
+                {formatDate(requisitionData?.data_criacao)}
+              </Typography>
+            )}
+           </Box>
+          {requisitionData && <RequisitionFileList requisitionId={requisitionData.ID_REQUISICAO} />}
+       </Box>
       </Stack>
       {requisitionData && optionsState && (
+        
         <Box sx={styles.fieldsGrid}>
+         
           {fields.map((field) => {
             if (field.autoComplete) {
               return (
