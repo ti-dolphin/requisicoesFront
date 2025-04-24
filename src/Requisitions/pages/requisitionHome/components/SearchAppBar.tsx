@@ -91,7 +91,7 @@ const SearchAppBar = ({ setFilteredRows, allRows }: Props) => {
   const [availableKanbanFilters, setAvailableKanbanFilters] = useState<
     { label: string; statuses: string[] }[]
   >([]);
-  const [subFilter, setSubFilter] = useState<string>("Minhas");
+  const [subFilter, setSubFilter] = useState<string>("Todas");
 
   const filterMenuOpen = Boolean(filterMenu);
 

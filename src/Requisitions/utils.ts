@@ -11,7 +11,7 @@ import {
   QuoteItem,
   Requisition,
   RequisitionItemPost,
-  anexoRequisicao,
+  RequisitionFile,
 } from "./types";
 const getPrefix = (isSupplier?: boolean) => (isSupplier ? 'supplier/' : '');
 
@@ -89,7 +89,7 @@ const createQuoteFile = async (quoteId: number, formData: FormData, isSupplier?:
 
 const fetchRequisitionFiles = async (requisitionID: number) => {
   try {
-    return await api.get<anexoRequisicao>(`requisitionFiles/${requisitionID}`);
+    return await api.get<RequisitionFile>(`requisitionFiles/${requisitionID}`);
   } catch (e) {
     console.log(e);
   }
@@ -130,13 +130,13 @@ const postRequisitionLinkFile = async (id: number, link: string) => {
     const response = await api.post(`requisitionFiles/link/${id}`, {
       link: link,
     });
-    return response;
+    return response.status
   } catch (e) {
     console.log(e);
   }
 };
 
-const deleteItemFile = async (file: anexoRequisicao | ItemFile) => {
+const deleteItemFile = async (file: RequisitionFile | ItemFile) => {
   try {
     const response = await api.delete(`itemFiles/${file.nome_arquivo}/${file.id}`);
     return response.status;
@@ -144,7 +144,7 @@ const deleteItemFile = async (file: anexoRequisicao | ItemFile) => {
     console.log(e);
   }
 };
-const deleteRequisitionFile = async (file: ItemFile | anexoRequisicao) => {
+const deleteRequisitionFile = async (file: ItemFile | RequisitionFile) => {
   try {
     const response = await api.delete(`requisitionFiles/${file.nome_arquivo}/${file.id}`);
     if (response.status === 200) {
@@ -182,7 +182,7 @@ const postRequisitionFile = async (
 
 const getRequisitionFiles = async (requisitionID: number) => {
   try {
-    const reponse = await api.get<anexoRequisicao[]>(
+    const reponse = await api.get<RequisitionFile[]>(
       `requisitionFiles/${requisitionID}`
     );
     return reponse.data;
@@ -501,7 +501,6 @@ export type {
   Project,
   RequisitionItemPost,
   Item,
-  anexoRequisicao,
 };
 
 

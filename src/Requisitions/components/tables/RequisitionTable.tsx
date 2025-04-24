@@ -40,7 +40,7 @@ const columns: GridColDef[] = [
     renderCell: (params) => (
       <Typography
         sx={{ ...typographyStyles.smallText, color: 'black', fontWeight: 'semibold' }}
-        textTransform="capitalize"
+        textTransform="uppercase"
       >
         {String(params.value).toLowerCase()}
       </Typography>

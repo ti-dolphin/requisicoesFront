@@ -131,7 +131,7 @@ export interface RequisitionItemPost {
   ID_PRODUTO: number;
 }
 
-export interface anexoRequisicao {
+export interface RequisitionFile {
   id: number;
   nome_arquivo: string;
   arquivo: string;
@@ -191,7 +191,7 @@ export interface ItemFile{
 
 export interface InteractiveListProps {
   editItemsAllowed? : boolean;
-  files: anexoRequisicao[] | ItemFile[];
+  files: RequisitionFile[] | ItemFile[];
   setRefreshToggler: (value: boolean) => void;
   refreshToggler: boolean;
   currentStatus ? : string;
