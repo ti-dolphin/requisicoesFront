@@ -209,7 +209,7 @@ const QuoteDetail = () => {
    const displayAlert = async (severity: string, message: string) => {
      setTimeout(() => {
        setAlert(undefined);
-     }, 3000);
+     }, 8000);
      setAlert({ severity, message });
      return;
    };
@@ -236,18 +236,23 @@ const QuoteDetail = () => {
    };
 
   const saveQuoteData = async () => {
-   if(currentQuoteData){ 
-      validateRequiredFields(currentQuoteData);
-        const response = await updateQuote(currentQuoteData, verifySupplier());
-        if (response.status === 200) {
-          const newQuote = response.data;
-          setCurrentQuoteData(newQuote);
-          setOriginalQuoteData(newQuote);
-          displayAlert('success', 'Cotação atualizada!')
-      
-   }
-   }
-}
+    console.log('SAVE QUOTE DATA')
+    if (currentQuoteData) {
+          try{ 
+            validateRequiredFields(currentQuoteData);
+            const response = await updateQuote(currentQuoteData, verifySupplier());
+            if (response.status === 200) {
+              const newQuote = response.data;
+              setCurrentQuoteData(newQuote);
+              setOriginalQuoteData(newQuote);
+              displayAlert('success', 'Cotação atualizada!')
+              return;
+          }
+        }catch(e: any){ 
+            displayAlert('error', e.message);
+          }
+      }
+    }
 
   const verifySupplier = () => {
     const url = new URL(window.location.href);

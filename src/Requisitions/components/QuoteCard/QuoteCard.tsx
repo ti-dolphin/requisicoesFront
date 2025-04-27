@@ -4,8 +4,12 @@ import styles from "../modals/QuoteListModal/QuoteListModal.styles";
 import { Box, Typography } from "@mui/material";
 import { blue, green } from "@mui/material/colors";
 import typographyStyles from "../../utilStyles";
+import { useNavigate } from "react-router-dom";
 
 const QuoteCard = ({ index, style, data }: ListChildComponentProps) => {
+
+  const navigate = useNavigate();
+
   const currencyFormatter = new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",
@@ -13,7 +17,7 @@ const QuoteCard = ({ index, style, data }: ListChildComponentProps) => {
 
   const quote: Quote = data[index];
   const handleNavigateToQuote = () => {
-    window.open(`/requisitions/quote/${quote.id_cotacao}`, "_blank");
+    navigate(`/requisitions/quote/${quote.id_cotacao}`);
   };
   return (
     <Box style={style} onClick={handleNavigateToQuote}>

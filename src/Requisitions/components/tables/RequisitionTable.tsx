@@ -16,6 +16,7 @@ import SearchAppBar from "../../pages/requisitionHome/components/SearchAppBar";
 import typographyStyles from "../../utilStyles";
 import { AlertInterface, RequisitionStatus } from "../../types";
 import { Pessoa } from "../../../crm/types";
+import { useNavigate } from "react-router-dom";
 
 const columns: GridColDef[] = [
   {
@@ -174,6 +175,7 @@ export default function RequisitionsDataGrid() {
   const [loading, setLoading] = useState(false);
   const [tableHeight, setTableHeight] = useState<number>(600);
   const [alert, setAlert] = useState<AlertInterface>();
+  const  navigate  = useNavigate();
   
   const containerRef = useRef<HTMLDivElement>(null);
   const {
@@ -208,8 +210,7 @@ export default function RequisitionsDataGrid() {
   };
 
   const handleRowClick = (params: any) => {
-
-       window.open(`requisitions/requisitionDetail/${params.row.ID_REQUISICAO}`, "_blank");
+       navigate(`/requisitions/requisitionDetail/${params.row.ID_REQUISICAO}`);
   };  
 
   useEffect(() => {
