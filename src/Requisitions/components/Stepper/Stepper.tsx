@@ -47,7 +47,7 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
         if (status) {
           const newStatus = steps?.find((s) => s.etapa === status.etapa + 1);
           if (newStatus?.id_status_requisicao === 3 && !user.PERM_COMPRADOR) {
-            throw new Error("Você não tem permissão para aprovar a requisição.");
+            throw new Error("Você não tem permissão para avançar.");
           }
           if (newStatus?.id_status_requisicao === 4 && !user.PERM_COMPRADOR) {
             throw new Error("Você não tem permissão para aprovar a requisição.");
