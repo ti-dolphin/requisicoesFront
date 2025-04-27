@@ -46,6 +46,24 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
         const { status } = requisitionData;
         if (status) {
           const newStatus = steps?.find((s) => s.etapa === status.etapa + 1);
+          if (newStatus?.id_status_requisicao === 3 && !user.PERM_COMPRADOR) {
+            throw new Error("Você não tem permissão para avançar.");
+          }
+          if (newStatus?.id_status_requisicao === 4 && !user.PERM_COMPRADOR) {
+            throw new Error("Você não tem permissão para aprovar a requisição.");
+          }
+          if(newStatus?.id_status_requisicao === 6 && !user.PERM_COMPRADOR){ 
+             throw new Error("Você não tem permissão para finalizar a cotação.");
+          }
+          if(newStatus?.id_status_requisicao === 7 && !user.CODGERENTE){
+            throw new Error("Você não tem permissão para aprovar a requisição.");
+          }
+          if(newStatus?.id_status_requisicao === 8 && !user.PERM_DIRETOR){
+            throw new Error("Você não tem permissão para aprovar a requisição.");
+          }
+          if(newStatus?.id_status_requisicao === 9 && !user.PERM_COMPRADOR){
+            throw new Error("Você não tem permissão para avançar para este status.");
+          }
           await updateRequisition(
             user.CODPESSOA,
             {

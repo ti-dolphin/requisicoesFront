@@ -8,6 +8,7 @@ export interface User {
   PERM_CADASTRAR_PAT: number;
   PERM_COMPRADOR?: number;
   PERM_ADMINISTRADOR? : number;
+  PERM_DIRETOR?: number;
   NOME? : string;
   responsavel_tipo?: number;
 }

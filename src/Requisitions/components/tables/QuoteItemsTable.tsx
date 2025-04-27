@@ -324,14 +324,6 @@ const QuoteItemsTable = ({
             );
           }
         }
-
-        if (item.ICMS === undefined || item.ICMS === null || item.ICMS === 0) {
-          throw new Error(
-            `Item ${index + 1} (${
-              item.descricao_item
-            }): O ICMS deve ser preenchido quando há preço unitário`
-          );
-        }
         if (item.quantidade_cotada < 0) {
           throw new Error(
             `Item ${index + 1} (${
@@ -356,11 +348,10 @@ const QuoteItemsTable = ({
       setIsLoading(false);
     } catch (e: any) {
       setIsEditing(true);
-      if(isSupplier){ 
-          displayAlert("error", e.message);
-      }
+      displayAlert("error", e.message);
       setIsLoading(false);
-
+    }finally{ 
+      setIsEditing(false)
     }
   };
 

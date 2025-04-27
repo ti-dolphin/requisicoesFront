@@ -35,7 +35,7 @@ export const useRequisitionFields = () => {
         if (requisitionData?.status?.nome === 'Em edição') {
             return user?.PERM_COMPRADOR || user?.CODPESSOA === requisitionData?.ID_RESPONSAVEL;
         }
-        return user?.PERM_COMPRADOR;
+  
     };
 
     const displayAlert = async (severity: string, message: string) => {
@@ -128,7 +128,7 @@ export const useRequisitionFields = () => {
             setIsEditing(true);
             return;
         }
-        await displayAlert('warning', 'Não é permitido editar a requisição');
+        await displayAlert('warning', 'Não é permitido editar o cabeçalho da requisição');
         target.blur();
     };
 
