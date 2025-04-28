@@ -5,7 +5,7 @@ import axios from "axios";
 //http://localhost:3000
 
 export const api = axios.create({
-  baseURL: "https://apicontrolehomologacao.dse.com.br",
+  baseURL: "https://apicontrolehomologacao.dse",
   headers: {
     "Content-Type": "application/json",
     Authorization: window.localStorage.getItem("token"),
