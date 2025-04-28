@@ -342,6 +342,7 @@ const QuoteItemsTable = ({
       const response = await updateQuoteItems(currentItems, Number(quoteId), isSupplier);
       if (response.status === 200) {
         displayAlert("success", "items da cotação atualizados com sucesso!");
+        console.log('updated items: ', response.data)
         const updatedItems = response.data;
         setCurrentItems(updatedItems);
       }
@@ -558,7 +559,7 @@ const QuoteItemsTable = ({
       <Stack direction="row" gap={1} alignItems="center">
         <Typography sx={{ ...typographyStyles.heading2 }}>Total:</Typography>
         <Typography sx={{ ...typographyStyles.heading2, color: green[500] }}>
-          {currencyFormatter.format(
+          {currentItems && currencyFormatter.format(
             currentItems.reduce((acc, item) => acc + item.subtotal, 0) +
               Number(shippingPrice)
           )}

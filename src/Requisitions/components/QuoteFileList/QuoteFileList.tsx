@@ -86,9 +86,13 @@ itemSize = 60,
     return;
   };
   // Função para abrir o modal com o arquivo selecionado
-  const handleOpenModal = (file: QuoteFile) => {
-    setSelectedFile(file);
-    setOpenModal(true);
+  const handleViewFile = (file: QuoteFile) => {
+    if(isPDF(file.url) || isImage(file.url)){ 
+      setSelectedFile(file);
+      setOpenModal(true);
+      return;
+    }
+    window.open(file.url, "_blank");
   };
 
   // Função para fechar o modal
@@ -99,6 +103,8 @@ itemSize = 60,
 
   // Função para determinar se o arquivo é um PDF ou uma imagem
   const isPDF = (url: string) => url.toLowerCase().endsWith(".pdf");
+  const isXLSX = (url: string) => url.toLowerCase().endsWith(".xlsx");
+  const isImage = (url: string) => url.match(/\.(jpeg|jpg|gif|png)$/i);
 
   const openConfirmModal = (file: QuoteFile) => {
     setFileToDelete(file);
@@ -163,7 +169,7 @@ itemSize = 60,
                 cursor: "pointer",
               },
             }}
-            onClick={() => handleOpenModal(file)}
+            onClick={() => handleViewFile(file)}
           >
             <Typography
               variant="body1"
