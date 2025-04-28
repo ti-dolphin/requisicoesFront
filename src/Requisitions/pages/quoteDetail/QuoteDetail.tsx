@@ -243,6 +243,7 @@ const QuoteDetail = () => {
             const response = await updateQuote(currentQuoteData, verifySupplier());
             if (response.status === 200) {
               const newQuote = response.data;
+              console.log('newQuote', newQuote)
               setCurrentQuoteData(newQuote);
               setOriginalQuoteData(newQuote);
               displayAlert('success', 'Cotação atualizada!')
