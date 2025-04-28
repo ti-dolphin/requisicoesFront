@@ -24,6 +24,7 @@ import {
     deleteRequisitionFile,
     postRequisitionLinkFile,
 } from "../../utils";
+import { blue } from "@mui/material/colors";
 
 interface RequisitionFile {
     id: number;
@@ -173,8 +174,28 @@ const RequisitionFileList: React.FC<RequisitionFileListProps> = ({
         setOpenViewModal(false);
         setSelectedFile(null);
     };
+    const isXLSX = (url: string) => url?.toLowerCase().endsWith(".xlsx") || url?.toLowerCase().endsWith(".xls");
     const isPDF = (url: string) => url?.toLowerCase().endsWith(".pdf");
     const isImage = (url: string) => /\.(jpe?g|png|gif|bmp|webp|svg)$/i.test(url?.toLowerCase());
+    const isLink = (url: string) => {
+        const pattern = /^(ftp|http|https):\/\/[^ "]+$/;
+        return pattern.test(url);
+    };
+    const handleClickFile = (file: RequisitionFile) => {
+        if (isPDF(file.arquivo) || isImage(file.arquivo)) {
+            handleOpenViewModal(file);
+            return;
+        }
+        if (isLink(file.nome_arquivo)) {
+            window.open(file.arquivo, "_blank");
+            return;
+        }
+        if(isXLSX(file.arquivo)) {
+            window.open(file.arquivo, "_blank");
+            return;
+        }
+        window.open(file.arquivo, "_blank");
+    }
 
     const Row: React.FC<ListChildComponentProps> = ({ index, style }) => {
         const file = requisitionFiles[index];
@@ -196,7 +217,9 @@ const RequisitionFileList: React.FC<RequisitionFileListProps> = ({
                     "&:hover": {
                         backgroundColor: "#f0f0f0",
                     },
+                    cursor: "pointer",
                 }}
+                
             >
                 <Typography
                     variant="body2"
@@ -207,9 +230,14 @@ const RequisitionFileList: React.FC<RequisitionFileListProps> = ({
                         whiteSpace: "nowrap",
                         fontStyle: "italic",
                         color: "text.secondary",
+                        "&:hover": { 
+                            color: blue[500],
+                            textDecoration: "underline",
+                        }
                     }}
+                    onClick={() => handleClickFile(file)}
                 >
-                    {file.nome_arquivo}
+                    {file.arquivo }
                 </Typography>
 
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -299,7 +327,7 @@ const RequisitionFileList: React.FC<RequisitionFileListProps> = ({
                                 type="file"
                                 hidden
                                 onChange={handleFileUpload}
-                                accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.svg,application/pdf,image/*"
+                                accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp,.svg,application/pdf,image/*, .csv"
                             />
                         </Button>
                         <Button
