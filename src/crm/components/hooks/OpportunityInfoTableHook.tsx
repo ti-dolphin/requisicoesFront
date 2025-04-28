@@ -349,6 +349,10 @@ const UseOpportunityInfoTable = () => {
           </Typography>
 
           <Typography fontSize="small" color="white">
+           Nº de Registros: {rows.length} 
+          </Typography>
+
+          <Typography fontSize="small" color="white">
             <span className="font-semibold tracking-wide">
               {" "}
               Faturamento Direto:{" "}
