@@ -53,6 +53,7 @@ const kanbanFiltersByProfile = {
       label: "Fazendo",
       statuses: ["Em cotação", "Gerar OC"],
     },
+    { label: 'Acompanhamento', statuses: ['Aprovação Gerente', 'Aprovação Diretoria']},
     { label: "Concluído", statuses: ["OC Gerada"] },
     { label: "Tudo", statuses: [] },
   ],

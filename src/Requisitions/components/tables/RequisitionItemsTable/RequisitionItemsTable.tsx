@@ -8,6 +8,7 @@ import {
   AlertColor,
   Box,
   Button,
+  Checkbox,
   Typography,
 } from "@mui/material";
 import {
@@ -17,6 +18,7 @@ import {
   GridFooter,
   GridFooterContainer,
   GridFooterContainerProps,
+  GridRenderCellParams,
   GridRowModel,
   GridRowModesModel,
 } from "@mui/x-data-grid";
@@ -70,7 +72,9 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     handleActivateItems,
     handleCopyContent,
     selectedRows,
-    displayAlert
+    displayAlert,
+    selectingPrices, setSelectingPrices,
+    itemToSupplierMap, setItemToSupplierMap,
   } = useRequisitionItems(
     requisitionId,
     setIsInsertingQuantity,
@@ -158,21 +162,55 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     currency: "BRL",
   });
 
+  const handleChangeSupplierSelected = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    params: GridRenderCellParams
+  ) => {
+    const isChecked = e.target.checked;
+    const { ID } = params.row;
+    const { field: supplier } = params;
+
+    if (isChecked) {
+      const updatedMap = itemToSupplierMap.some((item: any) => item.ID === ID)
+        ? itemToSupplierMap.map((item: any) =>
+            item.ID === ID ? { ID, supplier } : item
+          )
+        : [...itemToSupplierMap, { ID, supplier }];
+
+      setItemToSupplierMap(updatedMap);
+    } else {
+      setItemToSupplierMap(
+        itemToSupplierMap.filter((item: any) => item.ID !== ID)
+      );
+    }
+  };
+
   const getColumns = () => {
     let supllierColumns: GridColDef[] = [];
     if (dinamicColumns) {
+      const supplierSelected = (ID: number, supplier: string) => {
+        return itemToSupplierMap.some((item: any) => {
+          return item.ID === ID && item.supplier === supplier;
+        });
+      };
       dinamicColumns.forEach((c: string) => {
         supllierColumns.push({
           field: c,
           headerName: c,
           width: 150, // Defina a largura desejada
           editable: false,
-          renderCell: (params) => (
-            <Typography
+          renderCell: (params : GridRenderCellParams) => (
+          
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Typography
               sx={{ ...typographyStyles.bodyText, color: green[600] }}
-            >
+              >
               {params.value ? currencyFormatter.format(params.value) : ""}
-            </Typography>
+              </Typography>
+              {selectingPrices && (<Checkbox checked={supplierSelected(params.row.ID, params.field)}
+                   sx={{ zIndex: 40 }}  
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeSupplierSelected(e, params)} />)}
+            </Box>
           ),
         });
       });
@@ -234,6 +272,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
        }
        return;
     }
+    if(selectingPrices) return;
     displayAlert(
       "warning",
       `Não é permitido editar items no status '${requisitionStatus?.nome}'`
@@ -243,54 +282,58 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
   return (
     <Box sx={{ ...styles.container }}>
       {!isInsertingQuantity && (
-        <ItemsToolBar
-          handleCancelItems={handleCancelItems}
-          handleActivateItems={handleActivateItems}
-          handleCopyContent={handleCopyContent}
-          requisitionStatus={requisitionStatus}
-          handleDelete={handleDelete}
-          selectedRows={selectedRows}
-        />
+      <ItemsToolBar
+        handleCancelItems={handleCancelItems}
+        handleActivateItems={handleActivateItems}
+        handleCopyContent={handleCopyContent}
+        requisitionStatus={requisitionStatus}
+        handleDelete={handleDelete}
+        selectedRows={selectedRows}
+        setSelectingPrices={setSelectingPrices}
+        setItemToSupplierMap={setItemToSupplierMap}
+        selectingPrices={selectingPrices}
+        itemToSupplierMap={itemToSupplierMap}
+      />
       )}
 
       <DataGrid
-        density={isInsertingQuantity ? "comfortable" : "compact"}
-        rows={visibleItems}
-        getRowId={(item: Item) => item.ID}
-        columns={isInsertingQuantity ? insertingQuantityColumns : getColumns()}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 100,
-            },
-          },
-        }}
-        apiRef={gridApiRef}
-        editMode="row"
-        pageSizeOptions={[100]}
-        checkboxSelection={!isInsertingQuantity}
-        onCellClick={handleCellClick}
-        disableRowSelectionOnClick
-        onRowSelectionModelChange={handleChangeSelection}
-        onRowEditStart={() => setIsEditing(true)}
-        processRowUpdate={(newRow: GridRowModel, oldRow: GridRowModel) =>
-          processRowUpdate(newRow, oldRow)
-        }
-        sx={{
-          "& .MuiDataGrid-cell": {
-            display: "flex",
-            alignItems: "center",
-          },
-          "& .MuiDataGrid-menuIconButton": {
-            display: "none",
-          },
-        }}
-        slots={{
-          footer: ReqItemsFooter,
-        }}
-        onRowModesModelChange={(rowModesModel: GridRowModesModel) =>
-          handleRowModesModelChange(rowModesModel)
-        }
+      density={isInsertingQuantity ? "comfortable" : "compact"}
+      rows={visibleItems}
+      getRowId={(item: Item) => item.ID}
+      columns={isInsertingQuantity ? insertingQuantityColumns : getColumns()}
+      initialState={{
+        pagination: {
+        paginationModel: {
+          pageSize: 100,
+        },
+        },
+      }}
+      apiRef={gridApiRef}
+      editMode="row"
+      pageSizeOptions={[100]}
+      checkboxSelection={!isInsertingQuantity}
+      onCellClick={handleCellClick}
+      disableRowSelectionOnClick
+      onRowSelectionModelChange={handleChangeSelection}
+      onRowEditStart={() => setIsEditing(true)}
+      processRowUpdate={(newRow: GridRowModel, oldRow: GridRowModel) =>
+        processRowUpdate(newRow, oldRow)
+      }
+      sx={{
+        "& .MuiDataGrid-cell": {
+        display: "flex",
+        alignItems: "center",
+        },
+        "& .MuiDataGrid-menuIconButton": {
+        display: "none",
+        },
+      }}
+      slots={{
+        footer: ReqItemsFooter,
+      }}
+      onRowModesModelChange={(rowModesModel: GridRowModesModel) =>
+        handleRowModesModelChange(rowModesModel)
+      }
       />
     </Box>
   );

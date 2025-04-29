@@ -46,6 +46,9 @@ const useRequisitionItems = (
   const shouldExecuteResetItems = useRef(false);
   const { adding, setProductIdList, toggleAdding } = useContext(ItemsContext);
   const [dinamicColumns, setDinamicColumns] = useState<any>();
+  const [selectingPrices, setSelectingPrices] = useState<boolean>(false);
+  const [itemToSupplierMap, setItemToSupplierMap] = useState<any>([]); 
+
   const location = useLocation();
   const navigate = useNavigate();
   const displayAlert = async (severity: string, message: string) => {
@@ -186,9 +189,9 @@ const useRequisitionItems = (
   };
 
   const fetchReqItems = useCallback(async () => {
-    console.log("requisitonId: ", requisitionId);
+  
     const { items, columns } = await fetchItems(requisitionId);
-    console.log("items: ", items);
+   
     setDinamicColumns(columns);
     if (items) {
       if (isInsertingQuantity && addedItems?.length) {
@@ -324,6 +327,8 @@ const useRequisitionItems = (
     gridApiRef,
     selectedRows,
     dinamicColumns,
+    selectingPrices, setSelectingPrices,
+    itemToSupplierMap, setItemToSupplierMap,
     displayAlert,
     handleRowModesModelChange,
     handleCancelEdition,

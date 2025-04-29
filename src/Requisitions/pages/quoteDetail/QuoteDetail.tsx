@@ -264,19 +264,13 @@ const QuoteDetail = () => {
     return false;
   };
 
- const handleFocus = (field: QuoteField) => {
-   if (
-     isSupplier &&
-     (field.dataKey === "observacao" || field.dataKey === "descricao")
-   ) {
-     displayAlert("warning", `Não é permitido editar ${field.label}`);
-     return false;
-   }
-   if(!isEditing) {
-    setIsEditing(true);
-    return;
-   }
- };
+  const handleFocus = (_e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element | HTMLDivElement> , _field: QuoteField) => {
+
+    if (!isEditing) {
+      setIsEditing(true);
+      return;
+    }
+  };
 
   useEffect(( ) =>  { 
     const pairOptions = ( ) => {
@@ -387,7 +381,9 @@ const QuoteDetail = () => {
                         key={field.dataKey}
                         label={field.label}
                         name={field.label}
-                        onFocus={(_e) => handleFocus(field)}
+                        disabled={isSupplier && (field.dataKey !== "cnpj_fornecedor" && field.dataKey !== 'valor_frete')}
+
+                        onFocus={(e) => handleFocus(e, field)}
                         sx={{ display: "flex", flexShrink: 1, margin: 0 }}
                         type={field.type === "number" ? "number" : "text"}
                         value={
@@ -407,12 +403,12 @@ const QuoteDetail = () => {
                     <Autocomplete
                       key={field.dataKey}
                       getOptionKey={(option: Option) => option.id}
+                      disabled={isSupplier && (field.dataKey !== "cnpj_fornecedor" && field.dataKey !== 'valor_frete')}
                       sx={{
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "center",
                       }}
-                      onFocus={(_e) => handleFocus(field)}
                       onChange={(
                         _event: React.SyntheticEvent,
                         value: Option | null,
@@ -439,8 +435,7 @@ const QuoteDetail = () => {
                   <Typography
                     sx={{ fontStyle: "italic", ...typographyStyles.heading2 }}
                   >
-                    * Preencha a classificação fiscal, valor do frete, tipo de
-                    frete e o seu CNPJ
+                    * Preencha o valor do frete e o seu CNPJ
                   </Typography>
                 </Box>
               )}
