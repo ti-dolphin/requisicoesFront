@@ -8,6 +8,7 @@ import { ProductsTableModal } from "../../modals/ProductsTableModal/ProductsTabl
 import { useParams } from "react-router-dom";
 import CreateQuoteModal from "../../modals/CreateQuoteModal/CreateQuoteModal";
 import QuoteListModal from "../../modals/QuoteListModal/QuoteListModal";
+import { green } from "@mui/material/colors";
 
 interface props {
   handleCancelItems: (items: Item[]) => Promise<void>;
@@ -15,7 +16,11 @@ interface props {
   handleCopyContent: (selectedItems: Item[]) => Promise<void>;
   handleDelete: (requisitionItems: Item[]) => Promise<void>;
   selectedRows: Item[] | undefined;
-  requisitionStatus? : RequisitionStatus
+  requisitionStatus? : RequisitionStatus;
+  setSelectingPrices: React.Dispatch<React.SetStateAction<boolean>>;
+  setItemToSupplierMap: React.Dispatch<any>
+  selectingPrices: boolean;
+  itemToSupplierMap: any;
 }
 
 const ItemsToolBar = ({
@@ -24,13 +29,17 @@ const ItemsToolBar = ({
   handleCopyContent,
   handleDelete,
   selectedRows,
-  requisitionStatus
+  requisitionStatus,
+  setSelectingPrices,
+  selectingPrices
 }: props) => {
   const { toggleAdding } = useContext(ItemsContext);
   const { id } = useParams();
   const [alert, setAlert] = useState<AlertInterface>();
   const [creatingQuote, setCreatingQuote] = useState<boolean>(false);
   const [quoteListOpen, setQuoteListOpen] = useState<boolean>(false);
+
+
 
   const displayAlert = async (severity: string, message: string) => {
     setTimeout(() => {
@@ -39,6 +48,14 @@ const ItemsToolBar = ({
     setAlert({ severity, message });
     return;
   };
+
+  const handleSavePrices = ( ) => { 
+    try {
+      
+    } catch (e) {
+      displayAlert('error', 'Erro ao eleger preços da requisição');
+    }
+  }
 
   const handleViewQuoteList = () => {
     setQuoteListOpen(true);
@@ -104,7 +121,7 @@ const ItemsToolBar = ({
           Gerar Cotação
         </Button>
       )}
-      {requisitionStatus?.etapa === 2 && (
+      {requisitionStatus?.etapa && requisitionStatus?.etapa >= 2 && (
         <Button
           onClick={handleViewQuoteList}
           sx={{ ...BaseButtonStyles, height: 30, minWidth: 150 }}
@@ -112,6 +129,40 @@ const ItemsToolBar = ({
           Ver Cotações
         </Button>
       )}
+
+      {  !selectingPrices && requisitionStatus?.etapa === 2 && (
+          <Button
+            onClick={() => {setSelectingPrices(true)}}
+          
+            sx={{ ...BaseButtonStyles, height: 30, minWidth: 150 }}
+          >
+            Selecionar Preços
+            </Button>
+        )
+      }
+      { 
+        selectingPrices && (
+          <Button
+            onClick={() => {setSelectingPrices(false)}}
+            sx={{ ...BaseButtonStyles, height: 30, minWidth: 150 }}>
+            Cancelar Seleção de preços
+            </Button>
+
+        )
+      }
+      {
+        selectingPrices && (
+          <Button
+            onClick={() => handleSavePrices()}
+            sx={{
+              ...BaseButtonStyles, height: 30, minWidth: 150, backgroundColor: green[800], "&:hover": { backgroundColor: green[500] },
+              color: 'white'
+            }}>
+              Salvar seleção de preços
+          </Button>
+
+        )
+      }
 
       <ProductsTableModal requisitionID={Number(id)} />
       {alert && (
