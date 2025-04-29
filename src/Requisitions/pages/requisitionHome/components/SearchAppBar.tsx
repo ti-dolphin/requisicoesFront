@@ -32,13 +32,10 @@ const kanbanFiltersByProfile = {
     {
       label: "Acompanhamento",
       statuses: [
-        "Em edição",
         "Em cotação",
         "Requisitado",
-        "Aprovação Gerente",
         "Aprovação Diretoria",
-        "Gerar OC",
-        "OC Gerada",
+        "Gerar OC"
       ],
     },
     {
