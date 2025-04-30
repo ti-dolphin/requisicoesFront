@@ -1,4 +1,4 @@
-import { Alert, AlertColor, Button, Stack } from "@mui/material";
+import { Alert, AlertColor, Button, Stack, Typography } from "@mui/material";
 import ItemActions from "../ItemActions/ItemActions";
 import { AlertInterface, Item, RequisitionStatus } from "../../../types";
 import { BaseButtonStyles } from "../../../../utilStyles";
@@ -9,6 +9,8 @@ import { useParams } from "react-router-dom";
 import CreateQuoteModal from "../../modals/CreateQuoteModal/CreateQuoteModal";
 import QuoteListModal from "../../modals/QuoteListModal/QuoteListModal";
 import { green } from "@mui/material/colors";
+import { updateItemToSupplier } from "../../../utils";
+import typographyStyles from "../../../utilStyles";
 
 interface props {
   handleCancelItems: (items: Item[]) => Promise<void>;
@@ -21,6 +23,7 @@ interface props {
   setItemToSupplierMap: React.Dispatch<any>
   selectingPrices: boolean;
   itemToSupplierMap: any;
+  visibleRows? : Item[];
 }
 
 const ItemsToolBar = ({
@@ -31,7 +34,10 @@ const ItemsToolBar = ({
   selectedRows,
   requisitionStatus,
   setSelectingPrices,
-  selectingPrices
+  selectingPrices,
+  itemToSupplierMap,
+  setItemToSupplierMap,
+  visibleRows
 }: props) => {
   const { toggleAdding } = useContext(ItemsContext);
   const { id } = useParams();
@@ -39,7 +45,17 @@ const ItemsToolBar = ({
   const [creatingQuote, setCreatingQuote] = useState<boolean>(false);
   const [quoteListOpen, setQuoteListOpen] = useState<boolean>(false);
 
-
+  const calculateTotal = () => {
+    if (!visibleRows) return 0;
+    return visibleRows.reduce((total, item) => {
+      const matchingItemToSupplier = itemToSupplierMap.find((mapItem: any) => mapItem.ID === item.ID);
+      if (matchingItemToSupplier) {
+        const supplierValue = Number(item[matchingItemToSupplier.supplier as keyof Item] || 0);
+        return total + supplierValue;
+      }
+      return total;
+    }, 0);
+  };
 
   const displayAlert = async (severity: string, message: string) => {
     setTimeout(() => {
@@ -49,9 +65,15 @@ const ItemsToolBar = ({
     return;
   };
 
-  const handleSavePrices = ( ) => { 
+  const handleSavePrices = async ( ) => { 
+    if(!itemToSupplierMap.length){ 
+      displayAlert('warning', 'Nenhum item selecionado');
+      return;
+    }
     try {
-      
+      const updatedItemToSupplier = await updateItemToSupplier(itemToSupplierMap, Number(id));
+      setItemToSupplierMap(updatedItemToSupplier);
+      setSelectingPrices(false);
     } catch (e) {
       displayAlert('error', 'Erro ao eleger preços da requisição');
     }
@@ -163,7 +185,16 @@ const ItemsToolBar = ({
 
         )
       }
-
+      { 
+         <Stack direction="row" gap={1}>
+          <Typography sx={{ ...typographyStyles.heading2, color: 'black' }}>
+            {itemToSupplierMap.length === visibleRows?.length ? 'Total: ' : 'Total Parcial: '}
+          </Typography>
+          <Typography sx={{ ...typographyStyles.heading2, color: green[800] }}>
+            {calculateTotal().toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+          </Typography>
+         </Stack>
+      }
       <ProductsTableModal requisitionID={Number(id)} />
       {alert && (
         <Alert severity={alert.severity as AlertColor}>{alert.message}</Alert>

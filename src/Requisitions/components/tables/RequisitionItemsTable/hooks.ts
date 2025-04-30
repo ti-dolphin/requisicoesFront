@@ -17,6 +17,7 @@ import { AlertInterface, Item } from "../../../types";
 import {
   deleteRequisitionItems,
   fetchItems,
+  getItemToSupplierMapByReqId,
   updateRequisitionItems,
 } from "../../../utils";
 import { ItemsContext } from "../../../context/ItemsContext";
@@ -191,7 +192,7 @@ const useRequisitionItems = (
   const fetchReqItems = useCallback(async () => {
   
     const { items, columns } = await fetchItems(requisitionId);
-   
+    
     setDinamicColumns(columns);
     if (items) {
       if (isInsertingQuantity && addedItems?.length) {
@@ -207,6 +208,11 @@ const useRequisitionItems = (
       setVisibleItems(items);
     }
   }, [isInsertingQuantity, addedItems]);
+
+  const fetchItemToSupplierMap = useCallback(async () => {
+    const itemToSupplierMap = await getItemToSupplierMapByReqId(requisitionId);
+    setItemToSupplierMap(itemToSupplierMap);
+  }, [requisitionId]);
 
 
     function validateItems(items: Item[]): void {
@@ -298,6 +304,7 @@ const useRequisitionItems = (
 
   useEffect(() => {
     fetchReqItems();
+    fetchItemToSupplierMap();
   }, [refresh, adding]);
 
   useEffect(() => {
@@ -330,6 +337,7 @@ const useRequisitionItems = (
     selectingPrices, setSelectingPrices,
     itemToSupplierMap, setItemToSupplierMap,
     displayAlert,
+    
     handleRowModesModelChange,
     handleCancelEdition,
     processRowUpdate,

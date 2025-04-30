@@ -311,6 +311,24 @@ const fetchItems = async (id: number) => {
   }
 };
 
+const getItemToSupplierMapByReqId = async (requisitionId : number) => { 
+  try{ 
+    const response = await api.get(`requisition/requisitionItems/itemToSupplier/${requisitionId}`);
+    return response.data;
+  }catch(e){ 
+    throw e;
+  }
+}
+
+const updateItemToSupplier = async (itemToSupplierMap : any, reqId: number ) => { 
+    try{ 
+      const response = await api.put(`requisition/requisitionItems/itemToSupplier/${reqId}`, itemToSupplierMap);
+      return response.data;
+    }catch(e){ 
+      throw e;
+    }
+}
+
 const deleteRequisitionItems = async (
   ids: number[],
   requisitionId: number
@@ -459,6 +477,7 @@ export {
   fetchTenThousandProducts,
   fetchPersons,
   fetchAllProjects,
+  getItemToSupplierMapByReqId,
   postRequisition,
   postRequistionItems,
   fetchRequsitionById,
@@ -478,6 +497,7 @@ export {
   deleteItemFile,
   postItemLinkFile,
   postRequisitionLinkFile,
+  updateItemToSupplier,
   fetchAllTypes,
   logIn,
   fetchProjectOptionsByUser,

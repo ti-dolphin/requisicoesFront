@@ -203,13 +203,14 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
           
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <Typography
-              sx={{ ...typographyStyles.bodyText, color: green[600] }}
+                sx={{ ...typographyStyles.bodyText, color: green[600] }}
               >
-              {params.value ? currencyFormatter.format(params.value) : ""}
+                {params.value ? currencyFormatter.format(params.value) : ""}
               </Typography>
-              {selectingPrices && (<Checkbox checked={supplierSelected(params.row.ID, params.field)}
-                   sx={{ zIndex: 40 }}  
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeSupplierSelected(e, params)} />)}
+              {
+                (<Checkbox disabled={!selectingPrices} checked={supplierSelected(params.row.ID, params.field)}
+                  sx={{ zIndex: 40 }}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeSupplierSelected(e, params)} />)}
             </Box>
           ),
         });
@@ -293,6 +294,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
         setItemToSupplierMap={setItemToSupplierMap}
         selectingPrices={selectingPrices}
         itemToSupplierMap={itemToSupplierMap}
+        visibleRows={visibleItems}
       />
       )}
 
