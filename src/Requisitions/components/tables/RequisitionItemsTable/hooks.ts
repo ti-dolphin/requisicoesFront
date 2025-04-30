@@ -285,24 +285,6 @@ const useRequisitionItems = (
   };
 
   useEffect(() => {
-    const handleClick = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      const isRowClicked = target.closest(".MuiDataGrid-row"); // Verifica se o clique foi em uma linha
-      const isCellClicked = target.closest(".MuiDataGrid-cell"); // Verifica se o clique foi em uma célula
-      const isSaveButtonClicked = target.closest(".MuiButton-root");
-      const shouldCancelEdition =
-        !isRowClicked && !isCellClicked && isEditing && !isSaveButtonClicked;
-      if (shouldCancelEdition) {
-        handleCancelEdition(); // Reverte as edições se o clique foi fora de qualquer linha
-      }
-    };
-    window.addEventListener("click", handleClick);
-    return () => {
-      window.removeEventListener("click", handleClick);
-    };
-  }, [isEditing]);
-
-  useEffect(() => {
     fetchReqItems();
     fetchItemToSupplierMap();
   }, [refresh, adding]);

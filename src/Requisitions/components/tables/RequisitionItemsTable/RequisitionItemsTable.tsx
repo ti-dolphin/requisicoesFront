@@ -295,6 +295,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
         selectingPrices={selectingPrices}
         itemToSupplierMap={itemToSupplierMap}
         visibleRows={visibleItems}
+          getColumns={getColumns}
       />
       )}
 

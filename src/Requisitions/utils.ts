@@ -125,9 +125,10 @@ const postItemLinkFile = async (id: number, link: string) => {
   }
 };
 
-const postRequisitionLinkFile = async (id: number, link: string) => {
+const postRequisitionLinkFile = async (id: number, link: string, codpessoa : number) => {
   try {
     const response = await api.post(`requisitionFiles/link/${id}`, {
+      codpessoa : codpessoa,
       link: link,
     });
     return response.status
@@ -157,13 +158,15 @@ const deleteRequisitionFile = async (file: ItemFile | RequisitionFile) => {
 
 const postRequisitionFile = async (
   requisitionID: number,
-  formData: FormData
+  formData: FormData,
+  codpessoa : number
 ) => {
   const config: AxiosRequestConfig = {
     headers: {
       "Content-Type": "multipart/form-data",
     },
     data: formData,
+    params: { codpessoa },
   };
   try {
     const response = await api.post(
@@ -403,6 +406,16 @@ const getQuoteShipments = async (isSupplier?: boolean) => {
   }
 };
 
+const getQuotePaymentMethods = async (isSupplier?: boolean) => {
+  try {
+    const prefix = isSupplier ? 'supplier/' : '';
+    const response = await api.get(`/${prefix}requisition/quote/payment-method`);
+    return response.data;
+  } catch (e: any) {
+    throw e;
+  }
+};
+
 const getQuoteClassifications = async (isSupplier?: boolean) => {
   try {
     const prefix = isSupplier ? 'supplier/' : '';
@@ -488,6 +501,7 @@ export {
   updateRequisition,
   deleteRequisition,
   searchProducts,
+  getQuotePaymentMethods,
   fetchRequisitionFiles,
   postRequisitionFile,
   getRequisitionFiles,

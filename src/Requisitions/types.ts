@@ -104,6 +104,7 @@ export interface Quote {
   nome_frete: string;
   id_tipo_frete: number;
   id_classificacao_fiscal: number;
+  id_condicao_pagamento : number;
   valor_frete: number;
   itens: QuoteItem[]; // Lista de itens vinculados
 }
@@ -136,6 +137,13 @@ export interface RequisitionFile {
   nome_arquivo: string;
   arquivo: string;
   id_requisicao: number;
+  criado_por : number;
+  criado_por_pessoa?: {
+    CODPESSOA: number;
+    NOME: string;
+  };
+  criado_em? : Date | string;
+  
 }
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 

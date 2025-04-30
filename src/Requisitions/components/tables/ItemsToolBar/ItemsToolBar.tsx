@@ -11,6 +11,7 @@ import QuoteListModal from "../../modals/QuoteListModal/QuoteListModal";
 import { green } from "@mui/material/colors";
 import { updateItemToSupplier } from "../../../utils";
 import typographyStyles from "../../../utilStyles";
+import { GridColDef } from "@mui/x-data-grid";
 
 interface props {
   handleCancelItems: (items: Item[]) => Promise<void>;
@@ -23,7 +24,9 @@ interface props {
   setItemToSupplierMap: React.Dispatch<any>
   selectingPrices: boolean;
   itemToSupplierMap: any;
+  getColumns: () => GridColDef[]
   visibleRows? : Item[];
+
 }
 
 const ItemsToolBar = ({
@@ -37,13 +40,15 @@ const ItemsToolBar = ({
   selectingPrices,
   itemToSupplierMap,
   setItemToSupplierMap,
-  visibleRows
+  visibleRows,
+  getColumns
 }: props) => {
   const { toggleAdding } = useContext(ItemsContext);
   const { id } = useParams();
   const [alert, setAlert] = useState<AlertInterface>();
   const [creatingQuote, setCreatingQuote] = useState<boolean>(false);
   const [quoteListOpen, setQuoteListOpen] = useState<boolean>(false);
+  const quoteExists = getColumns().length > 6;
 
   const calculateTotal = () => {
     if (!visibleRows) return 0;
@@ -143,7 +148,7 @@ const ItemsToolBar = ({
           Gerar Cotação
         </Button>
       )}
-      {requisitionStatus?.etapa && requisitionStatus?.etapa >= 2 && (
+      {(quoteExists) && requisitionStatus && requisitionStatus?.etapa >= 2 && (
         <Button
           onClick={handleViewQuoteList}
           sx={{ ...BaseButtonStyles, height: 30, minWidth: 150 }}
@@ -152,10 +157,9 @@ const ItemsToolBar = ({
         </Button>
       )}
 
-      {  !selectingPrices && requisitionStatus?.etapa === 2 && (
+      {quoteExists && !selectingPrices && requisitionStatus?.etapa === 2 && (
           <Button
             onClick={() => {setSelectingPrices(true)}}
-          
             sx={{ ...BaseButtonStyles, height: 30, minWidth: 150 }}
           >
             Selecionar Preços

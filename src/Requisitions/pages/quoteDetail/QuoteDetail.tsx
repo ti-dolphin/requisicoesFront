@@ -9,7 +9,7 @@ import { AlertInterface, FiscalCategoryType, Quote, QuoteItem, ShipmentType } fr
 import QuoteItemsTable from "../../components/tables/QuoteItemsTable";
 import { formatDate, Loader } from "../../../generalUtilities";
 import { useNavigate, useParams } from "react-router-dom";
-import { getQuoteById, getQuoteClassifications, getQuoteShipments, updateQuote } from "../../utils";
+import { getQuoteById, getQuoteClassifications, getQuotePaymentMethods, getQuoteShipments, updateQuote } from "../../utils";
 import ArrowCircleLeftIcon from "@mui/icons-material/ArrowCircleLeft";
 import QuoteFileList from "../../components/QuoteFileList/QuoteFileList";
 
@@ -51,6 +51,12 @@ const quoteFields: QuoteField[] = [
     type: "number",
     autoComplete: true,
   },
+  { 
+    label: 'Condição de pagamento',
+    dataKey: 'id_condicao_pagamento',
+    type: 'number',
+    autoComplete: true
+  },
   {
     label: "Valor Frete",
     dataKey: "valor_frete",
@@ -88,8 +94,10 @@ const QuoteDetail = () => {
   const [isSupplier, setIsSupplier] = useState<boolean>(false);
   const [fiscalClassificationOps, setFiscalClassificationOps] = useState<Option[]>();
   const [shipmentOps, setShipmentOps] = useState<Option[]>();
+  const [paymentMethodOptions, setPaymentMethodOptions] = useState<Option[]>([]);
   const [selectedShipment, setSelectedShipment] = useState<Option>();
   const [selectedClassification, setSelectedClassification] = useState<Option>();
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<Option>();
   const [alert, setAlert] = useState<AlertInterface>();
   const navigate = useNavigate();
    
@@ -116,8 +124,13 @@ const QuoteDetail = () => {
   // Atualiza o estado do option selecionado
   if (field.dataKey === "id_classificacao_fiscal") {
     setSelectedClassification(value);
-  } else if (field.dataKey === "id_tipo_frete") {
+    return;
+  } 
+   if (field.dataKey === "id_tipo_frete") {
     setSelectedShipment(value);
+  }
+  if(field.dataKey === 'condicao_pagamento'){ 
+    setSelectedPaymentMethod(value)
   }
 };
 
@@ -129,6 +142,7 @@ const QuoteDetail = () => {
       const response = await getQuoteById(Number(quoteId), verifySupplier());
       if (response.status === 200) {
         const  quote  = response.data;
+        console.log('quote', quote)
         setOriginalQuoteData(quote);
         setCurrentQuoteData(quote);
         setItems(quote.items);
@@ -146,7 +160,9 @@ const QuoteDetail = () => {
     try {
       const shipmentTypes = await getQuoteShipments(verifySupplier());
       const classifications = await getQuoteClassifications(verifySupplier());
-
+      const paymentMethods = await getQuotePaymentMethods(verifySupplier());
+      console.log("paymentMethods", paymentMethods)
+     
       if (classifications && shipmentTypes) {
         const classificationOptions = classifications.map(
           (classification: FiscalCategoryType) => ({
@@ -154,25 +170,34 @@ const QuoteDetail = () => {
             id: classification.id_classificao_fiscal,
           })
         );
-        setFiscalClassificationOps(classificationOptions);
         const shipmentOptions = shipmentTypes.map(
           (shipmentType: ShipmentType) => ({
             label: shipmentType.nome,
             id: shipmentType.id_tipo_frete,
           })
         );
+        const paymentMethodOptions = paymentMethods.map(
+          (paymentMethod: any) => ({
+            label: paymentMethod.nome,
+            id: paymentMethod.id_condicao_pagamento,
+          })
+        );
+        setPaymentMethodOptions(paymentMethodOptions);
+        setFiscalClassificationOps(classificationOptions);
         setShipmentOps(shipmentOptions);
-        setSelectedOptions(classificationOptions, shipmentOptions, quote);
+        
+        setSelectedOptions(classificationOptions, shipmentOptions, paymentMethodOptions, quote);
       }
       
     } catch (e: any) {
-      window.alert(e.message);
+      displayAlert('error', e.message);
     }
   };
 
   const setSelectedOptions = (
     fiscalClassificationOps: Option[],
     shipmentOps: Option[],
+    paymentMethodOptions: Option[],
     quote: Quote
   ) => {
     if (fiscalClassificationOps && shipmentOps) {
@@ -182,6 +207,11 @@ const QuoteDetail = () => {
       const selectedShipment = shipmentOps.find(
         (option) => option.id === quote.id_tipo_frete
       );
+      console.log('paymentMethodOptions', paymentMethodOptions)  ;
+      const selectedPaymentMethod = paymentMethodOptions.find(
+        (option) => option.id === quote.id_condicao_pagamento);
+      console.log('selectedPaymentMethod', selectedPaymentMethod);
+      setSelectedPaymentMethod(selectedPaymentMethod);
       setSelectedClassification(selectedClassification);
       setSelectedShipment(selectedShipment);
     }
@@ -194,6 +224,9 @@ const QuoteDetail = () => {
       if(field.dataKey === 'id_classificacao_fiscal'){ 
        return fiscalClassificationOps;
       }
+      if(field.dataKey === 'id_condicao_pagamento'){ 
+        return paymentMethodOptions;
+      }
   };
 
  const getValue = (field : QuoteField ) => { 
@@ -204,6 +237,10 @@ const QuoteDetail = () => {
    if (field.dataKey === "id_classificacao_fiscal") {
      return selectedClassification;
    }
+   if(field.dataKey === 'id_condicao_pagamento'){ 
+    return selectedPaymentMethod;
+   }
+
  };
 
    const displayAlert = async (severity: string, message: string) => {
@@ -239,6 +276,7 @@ const QuoteDetail = () => {
     console.log('SAVE QUOTE DATA')
     if (currentQuoteData) {
           try{ 
+            console.log('currentQuoteData: ', currentQuoteData);
             validateRequiredFields(currentQuoteData);
             const response = await updateQuote(currentQuoteData, verifySupplier());
             if (response.status === 200) {
@@ -264,8 +302,7 @@ const QuoteDetail = () => {
     return false;
   };
 
-  const handleFocus = (_e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element | HTMLDivElement> , _field: QuoteField) => {
-
+  const handleFocus = (_e: React.FocusEvent<Element>, _field: QuoteField) => {
     if (!isEditing) {
       setIsEditing(true);
       return;
@@ -404,6 +441,7 @@ const QuoteDetail = () => {
                       key={field.dataKey}
                       getOptionKey={(option: Option) => option.id}
                       disabled={isSupplier && (field.dataKey !== "cnpj_fornecedor" && field.dataKey !== 'valor_frete')}
+                      onFocus={(e) => handleFocus(e, field)}
                       sx={{
                         display: "flex",
                         flexDirection: "column",

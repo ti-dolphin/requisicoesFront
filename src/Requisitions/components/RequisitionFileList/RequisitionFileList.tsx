@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import { FixedSizeList, ListChildComponentProps } from "react-window";
 import {
     Box,
@@ -17,7 +17,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import FileOpenIcon from '@mui/icons-material/FileOpen';
 import AddIcon from '@mui/icons-material/Add';
 import { BaseButtonStyles } from "../../../utilStyles";
-import { AlertInterface } from "../../types";
+import { AlertInterface, RequisitionFile } from "../../types";
 import {
     getRequisitionFiles,
     postRequisitionFile,
@@ -25,13 +25,9 @@ import {
     postRequisitionLinkFile,
 } from "../../utils";
 import { blue } from "@mui/material/colors";
-
-interface RequisitionFile {
-    id: number;
-    nome_arquivo: string;
-    arquivo: string;
-    id_requisicao: number;
-}
+import { userContext } from "../../context/userContext";
+import typographyStyles from "../../utilStyles";
+import { formatDate } from "../../../generalUtilities";
 
 interface RequisitionFileListProps {
     requisitionId: number;
@@ -55,7 +51,7 @@ const RequisitionFileList: React.FC<RequisitionFileListProps> = ({
     const [alert, setAlert] = useState<AlertInterface | undefined>();
     const [attachLinkModal, setAttachLinkModal] = useState(false);
     const [link, setLink] = useState<string>("");
-
+    const { user } = useContext(userContext)
     const displayAlert = useCallback((severity: AlertColor, message: string) => {
         setAlert({ severity, message });
         setTimeout(() => {
@@ -90,20 +86,22 @@ const RequisitionFileList: React.FC<RequisitionFileListProps> = ({
         const formData = new FormData();
         formData.append("file", file);
         setIsLoading(true);
-        try {
-            const responseStatus = await postRequisitionFile(requisitionId, formData);
-            if (responseStatus === 200) {
-                displayAlert("success", `Arquivo ${file.name} anexado com sucesso.`);
-                await fetchFiles(); 
-            } else {
-                throw new Error(`API retornou status inesperado: ${responseStatus}`);
+        if(user){ 
+            try {
+                const responseStatus = await postRequisitionFile(requisitionId, formData, user.CODPESSOA);
+                if (responseStatus === 200) {
+                    displayAlert("success", `Arquivo ${file.name} anexado com sucesso.`);
+                    await fetchFiles();
+                } else {
+                    throw new Error(`API retornou status inesperado: ${responseStatus}`);
+                }
+            } catch (error: any) {
+                console.error("Error uploading file:", error);
+                displayAlert("error", `Erro ao anexar arquivo: ${error.message || 'Erro desconhecido'}`);
+            } finally {
+                setIsLoading(false);
+                e.target.value = '';
             }
-        } catch (error: any) {
-            console.error("Error uploading file:", error);
-            displayAlert("error", `Erro ao anexar arquivo: ${error.message || 'Erro desconhecido'}`);
-        } finally {
-            setIsLoading(false);
-            e.target.value = '';
         }
     };
 
@@ -113,21 +111,23 @@ const RequisitionFileList: React.FC<RequisitionFileListProps> = ({
                                 return;
                             }
                             setIsLoading(true);
-                            try {
-                                const responseStatus = await postRequisitionLinkFile(requisitionId, link);
-                                if (responseStatus === 200) {
-                                    displayAlert("success", "Link anexado com sucesso.");
-                                    await fetchFiles();
-                                    setAttachLinkModal(false);
-                                    setLink("");
-                                } else {
-                                    throw new Error(`API retornou status inesperado: ${responseStatus}`);
+                            if(user){ 
+                                try {
+                                    const responseStatus = await postRequisitionLinkFile(requisitionId, link, user.CODPESSOA);
+                                    if (responseStatus === 200) {
+                                        displayAlert("success", "Link anexado com sucesso.");
+                                        await fetchFiles();
+                                        setAttachLinkModal(false);
+                                        setLink("");
+                                    } else {
+                                        throw new Error(`API retornou status inesperado: ${responseStatus}`);
+                                    }
+                                } catch (error: any) {
+                                    console.error("Error attaching link:", error);
+                                    displayAlert("error", `Erro ao anexar link: ${error.message || "Erro desconhecido"}`);
+                                } finally {
+                                    setIsLoading(false);
                                 }
-                            } catch (error: any) {
-                                console.error("Error attaching link:", error);
-                                displayAlert("error", `Erro ao anexar link: ${error.message || "Erro desconhecido"}`);
-                            } finally {
-                                setIsLoading(false);
                             }
                         }
 
@@ -228,18 +228,27 @@ const RequisitionFileList: React.FC<RequisitionFileListProps> = ({
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                         whiteSpace: "nowrap",
+                        maxWidth: 500,
+                   
                         fontStyle: "italic",
                         color: "text.secondary",
-                        "&:hover": { 
+                        "&:hover": {
                             color: blue[500],
                             textDecoration: "underline",
                         }
                     }}
                     onClick={() => handleClickFile(file)}
                 >
-                    {file.arquivo }
+                    {file.arquivo}
                 </Typography>
-
+                 <Stack direction="column" >
+                    <Typography sx={{...typographyStyles.smallText}}>
+                        {file.criado_em && formatDate(file.criado_em)}
+                    </Typography>
+                    <Typography sx={{ ...typographyStyles.smallText }}>
+                        {file.criado_por_pessoa && file.criado_por_pessoa.NOME}
+                    </Typography>
+                 </Stack>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <IconButton
                         aria-label="Visualizar arquivo"
