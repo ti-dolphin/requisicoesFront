@@ -107,6 +107,8 @@ export interface Quote {
   id_condicao_pagamento : number;
   valor_frete: number;
   itens: QuoteItem[]; // Lista de itens vinculados
+  nome_fornecedor? : string;
+  nome_faturamento?: string;
 }
 
 // Interface para a tabela `web_items_cotacao`

@@ -224,7 +224,10 @@ itemSize = 60,
   return (
     <Paper
       sx={{
-        width: "100%",
+        width: { 
+          xs: '100%',
+          sm: '50%'
+        },
         maxWidth: "800px",
         mx: "auto",
         display: "flex",
