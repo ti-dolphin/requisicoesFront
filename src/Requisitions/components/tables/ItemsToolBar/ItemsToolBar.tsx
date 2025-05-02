@@ -26,7 +26,7 @@ interface props {
   itemToSupplierMap: any;
   getColumns: () => GridColDef[]
   visibleRows? : Item[];
-
+  findQuotedQuantity: (supplier: string, row: any) => any
 }
 
 const ItemsToolBar = ({
@@ -41,7 +41,8 @@ const ItemsToolBar = ({
   itemToSupplierMap,
   setItemToSupplierMap,
   visibleRows,
-  getColumns
+  getColumns,
+  findQuotedQuantity
 }: props) => {
   const { toggleAdding } = useContext(ItemsContext);
   const { id } = useParams();
@@ -55,7 +56,7 @@ const ItemsToolBar = ({
     return visibleRows.reduce((total, item) => {
       const matchingItemToSupplier = itemToSupplierMap.find((mapItem: any) => mapItem.ID === item.ID);
       if (matchingItemToSupplier) {
-        const supplierValue = Number(item[matchingItemToSupplier.supplier as keyof Item] || 0);
+        const supplierValue = Number(item[matchingItemToSupplier.supplier as keyof Item] || 0) * findQuotedQuantity(matchingItemToSupplier.supplier, item);
         return total + supplierValue;
       }
       return total;

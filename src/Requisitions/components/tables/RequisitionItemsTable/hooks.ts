@@ -192,7 +192,7 @@ const useRequisitionItems = (
   const fetchReqItems = useCallback(async () => {
   
     const { items, columns } = await fetchItems(requisitionId);
-    
+    console.log('items: ', items)
     setDinamicColumns(columns);
     if (items) {
       if (isInsertingQuantity && addedItems?.length) {

@@ -186,6 +186,7 @@ export interface Item {
   ID: number;
   ATIVO? : number;
   QUANTIDADE: number;
+  quantidade_cotada? : number;
   nome_fantasia: string;
   codigo : string | undefined;
   ID_REQUISICAO: number;

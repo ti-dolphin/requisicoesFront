@@ -9,6 +9,7 @@ import {
   Box,
   Button,
   Checkbox,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import {
@@ -34,6 +35,7 @@ import ItemsToolBar from "../ItemsToolBar/ItemsToolBar";
 import { green } from "@mui/material/colors";
 import { RequisitionStatus } from "../../../types";
 import { ItemsContext } from "../../../context/ItemsContext";
+import ErrorIcon from '@mui/icons-material/Error';
 
 interface RequisitionItemsTableProps {
 
@@ -157,6 +159,11 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     },
   ];
 
+  const findQuotedQuantity = (supplier: string, row: any) => {
+    const matchingColumn = Object.keys(row).find((key: string) => (key !== supplier && key.toLowerCase().includes(supplier)));
+    return matchingColumn ? row[matchingColumn] : 0;
+  }
+
   const currencyFormatter = new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",
@@ -193,26 +200,42 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
           return item.ID === ID && item.supplier === supplier;
         });
       };
+
+      
       dinamicColumns.forEach((c: string) => {
         supllierColumns.push({
           field: c,
           headerName: c,
           width: 150, // Defina a largura desejada
           editable: false,
-          renderCell: (params : GridRenderCellParams) => (
-          
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Typography
-                sx={{ ...typographyStyles.bodyText, color: green[600] }}
-              >
-                {params.value ? currencyFormatter.format(params.value) : ""}
-              </Typography>
-              {
-                (<Checkbox disabled={!selectingPrices} checked={supplierSelected(params.row.ID, params.field)}
-                  sx={{ zIndex: 40 }}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeSupplierSelected(e, params)} />)}
-            </Box>
-          ),
+          renderCell: (params : GridRenderCellParams) =>  {
+          const quotedQuantity = findQuotedQuantity(c, params.row);
+          const quotedQuantityEqual = quotedQuantity === params.row.QUANTIDADE;
+            console.log('quotedQuantityEqual: ', quotedQuantityEqual);
+           return ( 
+             <Box sx={{
+               display: "flex", alignItems: "center", gap: 1,
+            
+             }}>
+               {!quotedQuantityEqual && ( 
+                 <Tooltip title={`Quantidade cotada: ${quotedQuantity}`}>
+                   <ErrorIcon sx={{ color: 'gray' }} />
+                 </Tooltip>
+               )
+                
+               }
+               <Typography
+                 sx={{ ...typographyStyles.bodyText, color: green[600] }}
+               >
+                 {params.value ? currencyFormatter.format(params.value) : ""}
+               </Typography>
+               {
+                 (<Checkbox disabled={!selectingPrices} checked={supplierSelected(params.row.ID, params.field)}
+                   sx={{ zIndex: 40 }}
+                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeSupplierSelected(e, params)} />)}
+             </Box>
+           )
+          },
         });
       });
     }
@@ -285,7 +308,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
       {!isInsertingQuantity && (
       <ItemsToolBar
         handleCancelItems={handleCancelItems}
-        handleActivateItems={handleActivateItems}
+      handleActivateItems={handleActivateItems}
         handleCopyContent={handleCopyContent}
         requisitionStatus={requisitionStatus}
         handleDelete={handleDelete}
@@ -296,6 +319,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
         itemToSupplierMap={itemToSupplierMap}
         visibleRows={visibleItems}
           getColumns={getColumns}
+          findQuotedQuantity={findQuotedQuantity}
       />
       )}
 
