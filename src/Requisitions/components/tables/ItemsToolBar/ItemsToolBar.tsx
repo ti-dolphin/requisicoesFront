@@ -1,6 +1,6 @@
 import { Alert, AlertColor, Button, Stack, Typography } from "@mui/material";
 import ItemActions from "../ItemActions/ItemActions";
-import { AlertInterface, Item, RequisitionStatus } from "../../../types";
+import { AlertInterface, Item, QuoteItem, RequisitionStatus } from "../../../types";
 import { BaseButtonStyles } from "../../../../utilStyles";
 import { ItemsContext } from "../../../context/ItemsContext";
 import { useContext, useState } from "react";
@@ -24,9 +24,10 @@ interface props {
   setItemToSupplierMap: React.Dispatch<any>
   selectingPrices: boolean;
   itemToSupplierMap: any;
-  getColumns: () => GridColDef[]
-  visibleRows? : Item[];
-  findQuotedQuantity: (supplier: string, row: any) => any
+  getColumns: () => GridColDef[];
+  findQuotedQuantity: (supplier: string, row: any) => any;
+  quoteItems?: QuoteItem[];
+  visibleRows?: Item[];
 }
 
 const ItemsToolBar = ({
@@ -41,27 +42,65 @@ const ItemsToolBar = ({
   itemToSupplierMap,
   setItemToSupplierMap,
   visibleRows,
-  getColumns,
-  findQuotedQuantity
-}: props) => {
+  quoteItems,
+  getColumns}: props) => {
   const { toggleAdding } = useContext(ItemsContext);
   const { id } = useParams();
   const [alert, setAlert] = useState<AlertInterface>();
   const [creatingQuote, setCreatingQuote] = useState<boolean>(false);
   const [quoteListOpen, setQuoteListOpen] = useState<boolean>(false);
+
   const quoteExists = getColumns().length > 6;
 
-  const calculateTotal = () => {
-    if (!visibleRows) return 0;
-    return visibleRows.reduce((total, item) => {
-      const matchingItemToSupplier = itemToSupplierMap.find((mapItem: any) => mapItem.ID === item.ID);
-      if (matchingItemToSupplier) {
-        const supplierValue = Number(item[matchingItemToSupplier.supplier as keyof Item] || 0) * findQuotedQuantity(matchingItemToSupplier.supplier, item);
-        return total + supplierValue;
-      }
-      return total;
-    }, 0);
+  const getItemCost = (item: QuoteItem) => {
+      const price = Number(item.preco_unitario);
+      const ipiPercentage = Number(item.IPI || 0 ) / 100;
+      const stPercentage = Number(item.ST || 0) / 100;
+      const ipi = price * ipiPercentage;
+      const st = price * stPercentage;
+      return price  + ipi + st;
+    
   };
+
+  const getItemsTotal = (items: Item[]) => { 0
+    const total =  items.reduce((acc : number, item : Item) => {
+         if(item.item_cotacao_selecionado){ 
+           acc += item?.item_cotacao_selecionado.quantidade_cotada * getItemCost(item.item_cotacao_selecionado);
+         }
+      return acc;
+      }, 0);
+      return total;
+  }
+
+  const getShippingCost = () => { 
+    const pricesBySupplier: { fornecedor: string; valor_frete: number }[] = [];
+    if (Array.isArray(itemToSupplierMap)) {
+      itemToSupplierMap.forEach((map: any) => {
+        const matchingQuoteItem = quoteItems?.find(
+          (quoteItem) => quoteItem.fornecedor === map.supplier
+        );
+        const isOnPricesBySupplier = pricesBySupplier.some(
+          (price: any) => price.fornecedor === map.supplier
+        );
+        if (matchingQuoteItem && !isOnPricesBySupplier) {
+          pricesBySupplier.push({
+            fornecedor: map.supplier,
+            valor_frete: Number(matchingQuoteItem.valor_frete),
+          });
+        }
+      });
+    }
+    console.log("pricesBySupplier: ", pricesBySupplier);
+    return pricesBySupplier.reduce((acc, price) => acc + price.valor_frete, 0);
+    
+  }
+
+  const calculateTotal = () => { 
+    if(visibleRows){ 
+      return getItemsTotal(visibleRows) + getShippingCost();
+    }
+
+  }
 
   const displayAlert = async (severity: string, message: string) => {
     setTimeout(() => {
@@ -100,6 +139,7 @@ const ItemsToolBar = ({
     }
     setCreatingQuote(true);
   };
+  
   return (
     <Stack
       direction="row"
@@ -196,7 +236,7 @@ const ItemsToolBar = ({
             {itemToSupplierMap.length === visibleRows?.length ? 'Total: ' : 'Total Parcial: '}
           </Typography>
           <Typography sx={{ ...typographyStyles.heading2, color: green[800] }}>
-            {calculateTotal().toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+            {calculateTotal()}
           </Typography>
          </Stack>
       }

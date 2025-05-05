@@ -96,7 +96,10 @@ const RequisitionDetail: React.FC = () => {
           border: "1px solid lightgray",
         }}
       >
-        <Box sx={{ display: "flex", flexDirection: "row", gap: 1 }}>
+        <Box sx={{ display: "flex", flexDirection: { 
+          xs: 'column',
+          md: 'row'
+        }, gap: 1}}>
           <RequisitionFields />
           
           {requisitionData && (

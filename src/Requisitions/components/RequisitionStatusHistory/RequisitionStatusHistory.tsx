@@ -28,7 +28,6 @@ const RequisitionStatusHistory = ({ requisitionId }: props) => {
     const fetchStatusChanges = async () => {
       try {
         const data = await getStatusHistory(requisitionId);
-        console.log('data: ', data)
         setRows(data);
       } catch (error) {
         console.error("Error fetching status changes:", error);

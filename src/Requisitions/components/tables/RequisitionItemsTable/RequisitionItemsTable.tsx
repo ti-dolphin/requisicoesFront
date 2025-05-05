@@ -33,7 +33,7 @@ import typographyStyles from "../../../utilStyles";
 import useRequisitionItems from "./hooks";
 import ItemsToolBar from "../ItemsToolBar/ItemsToolBar";
 import { green } from "@mui/material/colors";
-import { RequisitionStatus } from "../../../types";
+import { QuoteItem, RequisitionStatus } from "../../../types";
 import { ItemsContext } from "../../../context/ItemsContext";
 import ErrorIcon from '@mui/icons-material/Error';
 
@@ -55,7 +55,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
   setIsInsertingQuantity,
   requisitionStatus
 }) => {
-  const {adding } = useContext(ItemsContext);
+  const { adding } = useContext(ItemsContext);
 
   const {
     visibleItems,
@@ -73,16 +73,18 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     handleCancelItems,
     handleActivateItems,
     handleCopyContent,
-    selectedRows,
+    selectedRows, setVisibleItems,
     displayAlert,
     selectingPrices, setSelectingPrices,
     itemToSupplierMap, setItemToSupplierMap,
+    quoteItems
   } = useRequisitionItems(
     requisitionId,
     setIsInsertingQuantity,
     isInsertingQuantity,
     addedItems
   );
+
 
 
   const staticColumns: GridColDef[] = [
@@ -176,20 +178,50 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     const isChecked = e.target.checked;
     const { ID } = params.row;
     const { field: supplier } = params;
-
-    if (isChecked) {
-      const updatedMap = itemToSupplierMap.some((item: any) => item.ID === ID)
-        ? itemToSupplierMap.map((item: any) =>
-            item.ID === ID ? { ID, supplier } : item
-          )
-        : [...itemToSupplierMap, { ID, supplier }];
-
+    if (isChecked && quoteItems && visibleItems) {
+      const isOnMap = itemToSupplierMap.some((item: any) => item.ID === ID);
+      const editedMap = itemToSupplierMap.map((item: any) => item.ID === ID ? { ID, supplier } : item);
+      const incrementedMap = [...itemToSupplierMap, { ID, supplier }];
+      const updatedMap = isOnMap ? editedMap : incrementedMap;
       setItemToSupplierMap(updatedMap);
-    } else {
+
+      const matchingQuoteItem = quoteItems.find(
+        (quoteItem) =>
+          quoteItem.fornecedor === supplier && quoteItem.id_item_requisicao === ID
+      );
+      const matchingReqItem = visibleItems.find((item) => item.ID === matchingQuoteItem?.id_item_requisicao);
+      setVisibleItems(visibleItems.map((item) => { 
+        if (item.ID === matchingReqItem?.ID) {
+          return {
+            ...item,
+            item_cotacao_selecionado: matchingQuoteItem as QuoteItem | undefined
+          }
+        }
+        return item;
+      })) 
+      return;
+    }
+    if (!isChecked && quoteItems && visibleItems) {
+      const matchingQuoteItem = quoteItems.find(
+        (quoteItem) =>
+          quoteItem.fornecedor === supplier && quoteItem.id_item_requisicao === ID
+      );
+      const matchingReqItem = visibleItems.find((item) => item.ID === matchingQuoteItem?.id_item_requisicao);
+      setVisibleItems(
+        visibleItems.map((item) => {
+          if (item.ID === matchingReqItem?.ID) {
+            return {
+              ...item,
+              item_cotacao_selecionado: undefined
+            }
+          }
+          return item
+        }));
       setItemToSupplierMap(
         itemToSupplierMap.filter((item: any) => item.ID !== ID)
       );
-    }
+      return;
+    };
   };
 
   const getColumns = () => {
@@ -201,40 +233,39 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
         });
       };
 
-      
+
       dinamicColumns.forEach((c: string) => {
         supllierColumns.push({
           field: c,
           headerName: c,
           width: 150, // Defina a largura desejada
           editable: false,
-          renderCell: (params : GridRenderCellParams) =>  {
-          const quotedQuantity = findQuotedQuantity(c, params.row);
-          const quotedQuantityEqual = quotedQuantity === params.row.QUANTIDADE;
-            console.log('quotedQuantityEqual: ', quotedQuantityEqual);
-           return ( 
-             <Box sx={{
-               display: "flex", alignItems: "center", gap: 1,
-            
-             }}>
-               {!quotedQuantityEqual && ( 
-                 <Tooltip title={`Quantidade cotada: ${quotedQuantity}`}>
-                   <ErrorIcon sx={{ color: 'gray' }} />
-                 </Tooltip>
-               )
-                
-               }
-               <Typography
-                 sx={{ ...typographyStyles.bodyText, color: green[600] }}
-               >
-                 {params.value ? currencyFormatter.format(params.value) : ""}
-               </Typography>
-               {
-                 (<Checkbox disabled={!selectingPrices} checked={supplierSelected(params.row.ID, params.field)}
-                   sx={{ zIndex: 40 }}
-                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeSupplierSelected(e, params)} />)}
-             </Box>
-           )
+          renderCell: (params: GridRenderCellParams) => {
+            const quotedQuantity = findQuotedQuantity(c, params.row);
+            const quotedQuantityEqual = quotedQuantity === params.row.QUANTIDADE;
+            return (
+              <Box sx={{
+                display: "flex", alignItems: "center", gap: 1,
+
+              }}>
+                {!quotedQuantityEqual && (
+                  <Tooltip title={`Quantidade cotada: ${quotedQuantity}`}>
+                    <ErrorIcon sx={{ color: 'gray' }} />
+                  </Tooltip>
+                )
+
+                }
+                <Typography
+                  sx={{ ...typographyStyles.bodyText, color: green[600] }}
+                >
+                  {params.value ? currencyFormatter.format(params.value) : ""}
+                </Typography>
+                {
+                  (<Checkbox disabled={!selectingPrices} checked={supplierSelected(params.row.ID, params.field)}
+                    sx={{ zIndex: 40 }}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeSupplierSelected(e, params)} />)}
+              </Box>
+            )
           },
         });
       });
@@ -284,19 +315,19 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
   );
 
   const handleCellClick = (params: GridCellParams) => {
-    if(requisitionStatus?.etapa === 0 || adding){ 
-       gridApiRef.current.startRowEditMode({
-         id: params.row.ID,
-         fieldToFocus: params.colDef.field,
-         deleteValue: true,
-       });
-       if (!isEditing) {
-         setIsEditing(true);
-         return;
-       }
-       return;
+    if (requisitionStatus?.etapa === 0 || adding) {
+      gridApiRef.current.startRowEditMode({
+        id: params.row.ID,
+        fieldToFocus: params.colDef.field,
+        deleteValue: true,
+      });
+      if (!isEditing) {
+        setIsEditing(true);
+        return;
+      }
+      return;
     }
-    if(selectingPrices) return;
+    if (selectingPrices) return;
     displayAlert(
       "warning",
       `Não é permitido editar items no status '${requisitionStatus?.nome}'`
@@ -306,62 +337,74 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
   return (
     <Box sx={{ ...styles.container }}>
       {!isInsertingQuantity && (
-      <ItemsToolBar
-        handleCancelItems={handleCancelItems}
-      handleActivateItems={handleActivateItems}
-        handleCopyContent={handleCopyContent}
-        requisitionStatus={requisitionStatus}
-        handleDelete={handleDelete}
-        selectedRows={selectedRows}
-        setSelectingPrices={setSelectingPrices}
-        setItemToSupplierMap={setItemToSupplierMap}
-        selectingPrices={selectingPrices}
-        itemToSupplierMap={itemToSupplierMap}
-        visibleRows={visibleItems}
+        <ItemsToolBar
+          handleCancelItems={handleCancelItems}
+          handleActivateItems={handleActivateItems}
+          handleCopyContent={handleCopyContent}
+          requisitionStatus={requisitionStatus}
+          handleDelete={handleDelete}
+          selectedRows={selectedRows}
+          setSelectingPrices={setSelectingPrices}
+          setItemToSupplierMap={setItemToSupplierMap}
+          selectingPrices={selectingPrices}
+          itemToSupplierMap={itemToSupplierMap}
+          visibleRows={visibleItems}
+          quoteItems={quoteItems}
           getColumns={getColumns}
           findQuotedQuantity={findQuotedQuantity}
-      />
+        />
       )}
+      {
+        visibleItems &&
+        <DataGrid
+          density={isInsertingQuantity ? "comfortable" : "compact"}
+          rows={visibleItems}
+          getRowId={(item: Item) => item.ID}
+          columns={isInsertingQuantity ? insertingQuantityColumns : getColumns()}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 100,
+              },
+            },
+          }}
+          apiRef={gridApiRef}
+          editMode="row"
+          pageSizeOptions={[100]}
+          checkboxSelection={!isInsertingQuantity}
+          onCellClick={handleCellClick}
+          disableRowSelectionOnClick
+          onRowSelectionModelChange={handleChangeSelection}
+          onRowEditStart={() => setIsEditing(true)}
 
-      <DataGrid
-      density={isInsertingQuantity ? "comfortable" : "compact"}
-      rows={visibleItems}
-      getRowId={(item: Item) => item.ID}
-      columns={isInsertingQuantity ? insertingQuantityColumns : getColumns()}
-      initialState={{
-        pagination: {
-        paginationModel: {
-          pageSize: 100,
-        },
-        },
-      }}
-      apiRef={gridApiRef}
-      editMode="row"
-      pageSizeOptions={[100]}
-      checkboxSelection={!isInsertingQuantity}
-      onCellClick={handleCellClick}
-      disableRowSelectionOnClick
-      onRowSelectionModelChange={handleChangeSelection}
-      onRowEditStart={() => setIsEditing(true)}
-      processRowUpdate={(newRow: GridRowModel, oldRow: GridRowModel) =>
-        processRowUpdate(newRow, oldRow)
+          // processRowUpdate={(newRow: GridRowModel, oldRow: GridRowModel) =>
+          //   processRowUpdate(newRow, oldRow)
+          // }
+          processRowUpdate={(newRow: GridRowModel, oldRow: GridRowModel) => {
+            const updatedRow = processRowUpdate(newRow, oldRow);
+            if (!updatedRow) {
+              throw new Error("Row update failed: processRowUpdate returned undefined.");
+            }
+            return updatedRow;
+          }}
+          sx={{
+            "& .MuiDataGrid-cell": {
+              display: "flex",
+              alignItems: "center",
+            },
+            "& .MuiDataGrid-menuIconButton": {
+              display: "none",
+            },
+          }}
+          slots={{
+            footer: ReqItemsFooter,
+          }}
+          onRowModesModelChange={(rowModesModel: GridRowModesModel) =>
+            handleRowModesModelChange(rowModesModel)
+          }
+        />
       }
-      sx={{
-        "& .MuiDataGrid-cell": {
-        display: "flex",
-        alignItems: "center",
-        },
-        "& .MuiDataGrid-menuIconButton": {
-        display: "none",
-        },
-      }}
-      slots={{
-        footer: ReqItemsFooter,
-      }}
-      onRowModesModelChange={(rowModesModel: GridRowModesModel) =>
-        handleRowModesModelChange(rowModesModel)
-      }
-      />
+
     </Box>
   );
 };

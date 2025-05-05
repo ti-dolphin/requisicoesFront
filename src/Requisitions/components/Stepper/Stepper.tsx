@@ -5,16 +5,28 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { getRequisitionStatusList, Requisition, updateRequisition } from "../../utils";
+import {
+  getRequisitionStatusList,
+  Requisition,
+  updateRequisition,
+} from "../../utils";
 import { useContext } from "react";
 import { useState } from "react";
 import { RequisitionContext } from "../../context/RequisitionContext";
 import { userContext } from "../../context/userContext";
-import { Alert, AlertColor, Modal, Stack, Paper, TextField } from "@mui/material";
+import {
+  Alert,
+  AlertColor,
+  Modal,
+  Stack,
+  Paper,
+  TextField,
+} from "@mui/material";
 
 import { AlertInterface, RequisitionStatus } from "../../types";
 import typographyStyles from "../../utilStyles";
 import { BaseButtonStyles } from "../../../utilStyles";
+import { green } from "@mui/material/colors";
 
 interface props {
   requisitionData: Requisition;
@@ -50,19 +62,27 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
             throw new Error("Você não tem permissão para avançar.");
           }
           if (newStatus?.id_status_requisicao === 4 && !user.PERM_COMPRADOR) {
-            throw new Error("Você não tem permissão para aprovar a requisição.");
+            throw new Error(
+              "Você não tem permissão para aprovar a requisição."
+            );
           }
-          if(newStatus?.id_status_requisicao === 6 && !user.PERM_COMPRADOR){ 
-             throw new Error("Você não tem permissão para finalizar a cotação.");
+          if (newStatus?.id_status_requisicao === 6 && !user.PERM_COMPRADOR) {
+            throw new Error("Você não tem permissão para finalizar a cotação.");
           }
-          if(newStatus?.id_status_requisicao === 7 && !user.CODGERENTE){
-            throw new Error("Você não tem permissão para aprovar a requisição.");
+          if (newStatus?.id_status_requisicao === 7 && !user.CODGERENTE) {
+            throw new Error(
+              "Você não tem permissão para aprovar a requisição."
+            );
           }
-          if(newStatus?.id_status_requisicao === 8 && !user.PERM_DIRETOR){
-            throw new Error("Você não tem permissão para aprovar a requisição.");
+          if (newStatus?.id_status_requisicao === 8 && !user.PERM_DIRETOR) {
+            throw new Error(
+              "Você não tem permissão para aprovar a requisição."
+            );
           }
-          if(newStatus?.id_status_requisicao === 9 && !user.PERM_COMPRADOR){
-            throw new Error("Você não tem permissão para avançar para este status.");
+          if (newStatus?.id_status_requisicao === 9 && !user.PERM_COMPRADOR) {
+            throw new Error(
+              "Você não tem permissão para avançar para este status."
+            );
           }
           await updateRequisition(
             user.CODPESSOA,
@@ -95,7 +115,7 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
               id_status_requisicao: newStatus?.id_status_requisicao || 0,
             },
             justification,
-            requisitionData.id_status_requisicao, //id_status_anterior
+            requisitionData.id_status_requisicao //id_status_anterior
           );
           setActiveStep(newStatus?.etapa);
           toggleRefreshRequisition();
@@ -118,7 +138,6 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
 
   React.useEffect(() => {
     if (requisitionData) {
-      console.log("status: ", requisitionData.status);
       setActiveStep(requisitionData.status?.etapa);
     }
   }, []);
@@ -156,7 +175,14 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
           {steps.map((step) => (
             <Step key={step.id_status_requisicao}>
               <StepLabel sx={{ textAlign: "left" }}>
-                <Typography sx={typographyStyles.smallText}>
+                <Typography
+                  sx={{
+                    ...typographyStyles.smallText,
+                    color:
+                    activeStep === step.etapa ? green[500] : "black",
+                    fontWeight: activeStep === step.etapa ? "bold" : "normal"
+                  }}
+                >
                   {step.nome}
                 </Typography>
               </StepLabel>

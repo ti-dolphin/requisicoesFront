@@ -587,6 +587,7 @@ const QuoteDetail = () => {
             setIsEditing={setIsEditing}
             isEditing={isEditing}
             saveQuoteData={saveQuoteData}
+            quoteData={currentQuoteData}
             shippingPrice={currentQuoteData.valor_frete}
             setCurrentQuoteData={setCurrentQuoteData}
             originalQuoteData={originalQuoteData}

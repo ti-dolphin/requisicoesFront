@@ -13,11 +13,12 @@ import React, {
   Dispatch,
   SetStateAction,
 } from "react";
-import { AlertInterface, Item } from "../../../types";
+import { AlertInterface, Item, Quote, QuoteItem } from "../../../types";
 import {
   deleteRequisitionItems,
   fetchItems,
   getItemToSupplierMapByReqId,
+  getQuotesByRequisitionId,
   updateRequisitionItems,
 } from "../../../utils";
 import { ItemsContext } from "../../../context/ItemsContext";
@@ -32,7 +33,7 @@ const useRequisitionItems = (
 ) => {
   const { toggleCreating } = useContext(RequisitionContext);
   const [items, setItems] = useState<Item[]>([]);
-  const [visibleItems, setVisibleItems] = useState<Item[]>([]);
+  const [visibleItems, setVisibleItems] = useState<Item[]>();
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [toggleSave, setToggleSave] = useState<boolean>(false);
   const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>(
@@ -49,6 +50,8 @@ const useRequisitionItems = (
   const [dinamicColumns, setDinamicColumns] = useState<any>();
   const [selectingPrices, setSelectingPrices] = useState<boolean>(false);
   const [itemToSupplierMap, setItemToSupplierMap] = useState<any>([]); 
+  const [quotes, setQuotes] = useState<Quote[]>();
+  const [quoteItems, setQuoteItems] = useState<QuoteItem[]>();
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -176,23 +179,22 @@ const useRequisitionItems = (
   };
 
   const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
-    console.log("processRowUpdate");
-    if (isEditing) {
-      const updatedRow = { ...newRow } as Item;
-      setVisibleItems(
-        visibleItems.map((item) =>
-          item.ID === updatedRow.ID ? updatedRow : item
-        )
-      );
-      return updatedRow;
+    if(visibleItems){ 
+      if (isEditing) {
+        const updatedRow = { ...newRow } as Item;
+        setVisibleItems(
+          visibleItems.map((item) =>
+            item.ID === updatedRow.ID ? updatedRow : item
+          )
+        );
+        return updatedRow;
+      }
+      return oldRow as Item;
     }
-    return oldRow as Item;
   };
 
   const fetchReqItems = useCallback(async () => {
-  
     const { items, columns } = await fetchItems(requisitionId);
-    console.log('items: ', items)
     setDinamicColumns(columns);
     if (items) {
       if (isInsertingQuantity && addedItems?.length) {
@@ -204,6 +206,7 @@ const useRequisitionItems = (
         return;
       }
       setProductIdList(items.map((item: Item) => item.ID_PRODUTO));
+      console.log('items: ', items)
       setItems(items);
       setVisibleItems(items);
     }
@@ -232,29 +235,31 @@ const useRequisitionItems = (
 
 
   const saveItems = useCallback(async () => {
-    try {
-      validateItems(visibleItems);
-      const response = await updateRequisitionItems(
-        visibleItems,
-        requisitionId
-      );
-      if (response.status === 200) {
-        displayAlert("success", "Items atualizados com sucesso!");
-        if(location.pathname === `/requisitions`){ 
+    if(visibleItems) {
+      try {
+        validateItems(visibleItems);
+        const response = await updateRequisitionItems(
+          visibleItems,
+          requisitionId
+        );
+        if (response.status === 200) {
+          displayAlert("success", "Items atualizados com sucesso!");
+          if (location.pathname === `/requisitions`) {
             navigate(`requisitionDetail/${requisitionId}`);
+          }
+          if (setIsInsertingQuantity) {
+            setIsInsertingQuantity(false);
+          }
+          if (adding) {
+            toggleAdding();
+            toggleCreating()
+          }
+          return;
         }
-        if (setIsInsertingQuantity){ 
-          setIsInsertingQuantity(false);
-        }
-        if(adding){ 
-          toggleAdding();
-          toggleCreating()
-        }
-        return;
-      }
-    } catch (e: any) {
+      } catch (e: any) {
         handleCancelEdition();
         displayAlert("error", `Erro ao atualizar os itens: ${e.message}`);
+      }
     }
   }, [toggleSave]);
 
@@ -287,6 +292,21 @@ const useRequisitionItems = (
   useEffect(() => {
     fetchReqItems();
     fetchItemToSupplierMap();
+    const fetchQuotes = async () => {
+      console.log('FETCH QUOTES')
+      const quotes = await getQuotesByRequisitionId(Number(requisitionId));
+      const quoteItems : QuoteItem[] = [];
+      quotes?.forEach((quote : Quote) => {
+         quote.itens.forEach((item : QuoteItem) => {
+            quoteItems.push({...item});
+         });
+      });
+      setQuoteItems(quoteItems);
+      setQuotes(quotes);
+
+    }
+    fetchQuotes();
+
   }, [refresh, adding]);
 
   useEffect(() => {
@@ -297,15 +317,12 @@ const useRequisitionItems = (
   }, [reverseChanges]);
 
   useEffect(() => {
-    console.log("saveItems useEffect");
-    console.log(
-      "shouldExecuteSaveItems.current: ",
-      shouldExecuteSaveItems.current
-    );
+
     if (shouldExecuteSaveItems.current) {
       saveItems();
     }
   }, [toggleSave, saveItems]);
+
 
   return {
     items,
@@ -319,10 +336,13 @@ const useRequisitionItems = (
     selectingPrices, setSelectingPrices,
     itemToSupplierMap, setItemToSupplierMap,
     displayAlert,
-    
+    quotes, 
+    quoteItems,
+    setQuotes,
     handleRowModesModelChange,
     handleCancelEdition,
     processRowUpdate,
+    setVisibleItems,
     triggerSave,
     setIsEditing,
     handleChangeSelection,

@@ -29,6 +29,7 @@ interface props {
   isEditing: boolean | undefined;
   setIsEditing: React.Dispatch<React.SetStateAction<boolean | undefined>>;
   saveQuoteData: () => Promise<void>;
+  quoteData : Quote;
   shippingPrice: number;
   setCurrentQuoteData: (value: React.SetStateAction<Quote | undefined>) => void;
   originalQuoteData: Quote | undefined;
@@ -194,14 +195,13 @@ const QuoteItemsTable = ({
   isSupplier,
   isEditing,
   setIsEditing,
+  quoteData,
   saveQuoteData,
   shippingPrice,
   setCurrentQuoteData,
   originalQuoteData
 }: props) => {
   const [currentItems, setCurrentItems] = useState<QuoteItem[]>([...items]);
-  // const [, setIsSelecting] = useState<boolean>(false);
-  // const [selectionModel, setSelectionModel] = useState<number[]>();
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
   const [reverseChanges, setReverseChanges] = useState(false);
   const [saveItems, setSaveItems] = useState<boolean>(false);
@@ -225,16 +225,6 @@ const QuoteItemsTable = ({
       });
     displayAlert("success", "Link copiado para área de transferência");
   };
-
-  // const handleSelection = (newSelectionModel: GridRowSelectionModel) => {
-  //   setIsSelecting(true);
-  //   if (newSelectionModel.length) {
-  //     setIsSelecting(true);
-  //     setSelectionModel(newSelectionModel as number[]);
-  //     return;
-  //   }
-  //   setIsSelecting(false);
-  // };
 
   const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
     shouldExecuteSaveItems.current = true;
@@ -561,8 +551,9 @@ const QuoteItemsTable = ({
         <Typography sx={{ ...typographyStyles.heading2, color: green[500] }}>
           {currentItems && currencyFormatter.format(
             currentItems.reduce((acc, item) => acc + item.subtotal, 0) +
-              Number(shippingPrice)
-          )}
+            Number(shippingPrice) + Number(quoteData.valor_frete)
+          ) 
+          }
         </Typography>
       </Stack>
 

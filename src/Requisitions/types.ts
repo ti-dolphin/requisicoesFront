@@ -125,6 +125,8 @@ export interface QuoteItem {
   IPI: number;
   ST: number
   subtotal: number; // subtotal calculado
+  valor_frete?: number;
+  fornecedor?: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -181,17 +183,26 @@ export interface AlertInterface{
   message: string
 }
 export interface Item {
-  UNIDADE?: string;
-  OC?: number;
+
   ID: number;
   ATIVO? : number;
   QUANTIDADE: number;
-  quantidade_cotada? : number;
   nome_fantasia: string;
   codigo : string | undefined;
   ID_REQUISICAO: number;
   ID_PRODUTO: number;
   OBSERVACAO : string | undefined
+   
+  ICMS? : number;
+  IPI?: number;
+  ST?: number;
+  fornecedor? : string;
+  id_item_cotacao_selecionado?: number;
+  quantidade_cotada?: number;
+  valor_frete?: number;
+  UNIDADE?: string;
+  OC?: number;
+  item_cotacao_selecionado? : QuoteItem;
 }
 export interface ItemFile{ 
   id: number;

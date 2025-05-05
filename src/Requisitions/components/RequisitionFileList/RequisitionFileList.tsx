@@ -143,11 +143,11 @@ const RequisitionFileList: React.FC<RequisitionFileListProps> = ({
 
     const confirmDelete = async () => {
         if (!fileToDelete) return;
-
         setIsLoading(true);
-        closeConfirmDeleteModal();
-
         try {
+            if(user?.CODPESSOA !== fileToDelete.criado_por_pessoa?.CODPESSOA){ 
+                throw new Error("Você não tem permissão para excluir este arquivo.");
+            }
             const responseStatus = await deleteRequisitionFile(fileToDelete);
             if (responseStatus === 200) {
                 displayAlert("success", `Arquivo ${fileToDelete.nome_arquivo} excluído com sucesso.`);
@@ -161,6 +161,7 @@ const RequisitionFileList: React.FC<RequisitionFileListProps> = ({
             console.error("Error deleting file:", error);
             displayAlert("error", `Erro ao excluir o arquivo: ${error.message || 'Erro desconhecido'}`);
         } finally {
+            closeConfirmDeleteModal();
             setIsLoading(false);
         }
     };
@@ -318,11 +319,13 @@ const RequisitionFileList: React.FC<RequisitionFileListProps> = ({
             )}
 
          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Stack direction="column"
-                    gap={1} sx={{ width: '50%' }}>
-                    <Typography sx={{ fontStyle: 'italic', color: 'text.secondary' }}>
-                        * anexar documentos, planilhas, imagens ou links.
-                    </Typography>
+                <Stack direction="row"
+                    gap={1} sx={{ width: { 
+                        xs: '100%',
+                        sm: '90%',
+                        md: '80%',
+                        lg: '70%',
+                    } }}>
                     <Stack direction="row" gap={1}>
                         <Button
                             component="label"
@@ -347,9 +350,13 @@ const RequisitionFileList: React.FC<RequisitionFileListProps> = ({
                             disabled={isLoading}
                         >
                             Link
-                           
+
                         </Button>
                     </Stack>
+                    <Typography sx={{ fontStyle: 'italic', color: 'text.secondary' }}>
+                        * anexar documentos, planilhas, imagens ou links.
+                    </Typography>
+                   
                 </Stack>
                 {alert && (
                     <Alert
@@ -465,7 +472,7 @@ const RequisitionFileList: React.FC<RequisitionFileListProps> = ({
                         p: 3,
                         textAlign: "center",
                     }}
-                >
+                >   
                     <Typography id="confirm-delete-title" variant="h6" sx={{ mb: 2 }}>
                         Confirmar Exclusão
                     </Typography>
@@ -489,6 +496,7 @@ const RequisitionFileList: React.FC<RequisitionFileListProps> = ({
                             Cancelar
                         </Button>
                     </Box>
+                    {alert && <Alert severity={alert.severity as AlertColor}>{alert.message}</Alert>}
                 </Paper>
             </Modal>
 
