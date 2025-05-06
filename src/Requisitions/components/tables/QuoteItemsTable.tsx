@@ -198,6 +198,7 @@ const QuoteItemsTable = ({
   saveQuoteData,
   shippingPrice,
   setCurrentQuoteData,
+  quoteData,
   originalQuoteData
 }: props) => {
   const [currentItems, setCurrentItems] = useState<QuoteItem[]>([...items]);
@@ -212,6 +213,19 @@ const QuoteItemsTable = ({
   const { quoteId } = useParams();
 
   const handleGenerateSupplierUrl = () => {
+    if(!quoteData.id_classificacao_fiscal ){ 
+      displayAlert('error', 'Preencha classificação fiscal antes de gerar link do fornecedor');
+      return;
+    }
+    if(!quoteData.id_tipo_frete){
+      displayAlert('error', 'Preencha tipo de frete antes de gerar link do fornecedor');
+      return;
+    }
+    if(!quoteData.id_condicao_pagamento){
+      displayAlert('error', 'Preencha condição de pagamento antes de gerar link do fornecedor');
+      return;
+    }
+
     const url = new URL(window.location.href);
     url.searchParams.set("supplier", "1");
     navigator.clipboard
