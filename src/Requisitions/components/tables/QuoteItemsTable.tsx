@@ -551,7 +551,7 @@ const QuoteItemsTable = ({
         <Typography sx={{ ...typographyStyles.heading2, color: green[500] }}>
           {currentItems && currencyFormatter.format(
             currentItems.reduce((acc, item) => acc + item.subtotal, 0) +
-            Number(shippingPrice) + Number(quoteData.valor_frete)
+            Number(shippingPrice) 
           ) 
           }
         </Typography>
