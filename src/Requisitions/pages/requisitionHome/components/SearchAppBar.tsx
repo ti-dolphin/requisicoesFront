@@ -114,9 +114,12 @@ const SearchAppBar = ({ setFilteredRows, allRows }: Props) => {
     if (!kanbanFilter) return;
     const applyKanbanFilter = (rows: Requisition[]) => {
       if (kanbanFilter.statuses.length > 0) {
-        return rows.filter((row) =>
-          kanbanFilter.statuses.includes(row.status?.nome || "")
-        );
+        const rowsInCurrentKanbanFilter = rows.filter((row) => kanbanFilter.statuses.includes(row.status?.nome || ""))
+        if (kanbanFilter.label === 'Acompanhamento' && determineUserProfile() === "manager"){ 
+          const projectManagerRows = rowsInCurrentKanbanFilter.filter((row) => row.projeto_gerente?.gerente?.CODPESSOA === user?.CODPESSOA)
+          return projectManagerRows;
+        }
+        return rowsInCurrentKanbanFilter;
       }
       return rows;
     };
@@ -129,13 +132,13 @@ const SearchAppBar = ({ setFilteredRows, allRows }: Props) => {
               row.alterado_por_pessoa?.CODPESSOA === user.CODPESSOA ||
               row.responsavel_pessoa?.CODPESSOA === user.CODPESSOA
           );
-        } else {
-          return rows.filter(
-            (row) =>
-              row.alterado_por_pessoa?.CODPESSOA === user.CODPESSOA ||
-              row.responsavel_pessoa?.CODPESSOA === user.CODPESSOA
-          );
         }
+        return rows.filter(
+          (row) =>
+            row.alterado_por_pessoa?.CODPESSOA === user.CODPESSOA ||
+            row.responsavel_pessoa?.CODPESSOA === user.CODPESSOA
+        );
+
       }
       return rows;
     };
