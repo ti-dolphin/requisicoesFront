@@ -195,7 +195,6 @@ const QuoteItemsTable = ({
   isSupplier,
   isEditing,
   setIsEditing,
-  quoteData,
   saveQuoteData,
   shippingPrice,
   setCurrentQuoteData,
