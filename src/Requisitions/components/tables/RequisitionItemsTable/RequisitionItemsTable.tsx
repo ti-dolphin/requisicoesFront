@@ -198,7 +198,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
           }
         }
         return item;
-      })) 
+      }));
       return;
     }
     if (!isChecked && quoteItems && visibleItems) {

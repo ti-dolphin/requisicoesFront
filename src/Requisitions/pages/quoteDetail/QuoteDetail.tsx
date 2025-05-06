@@ -137,7 +137,7 @@ const QuoteDetail = () => {
         console.log('quote', quote)
         setOriginalQuoteData(quote);
         setCurrentQuoteData(quote);
-        setItems(quote.items);
+        setItems(quote.itens);
         fetchOptions(quote);
         return;
       }
