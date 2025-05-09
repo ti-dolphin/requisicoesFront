@@ -59,11 +59,7 @@ const OpportunitySale = ({
   const oppId = useRef<number>();
 
   const setDefaultResponsableWhenNotDefined = async () => {
-     console.log("guidesReference.current:", guidesReference.current);
-     console.log("oppId.current:", oppId.current);
-     console.log("sale:", sale);
-     console.log("responsableOptions:", responsableOptions);
-     console.log("projectId.current:", projectId.current);
+
     if (
       guidesReference.current &&
       oppId.current &&
@@ -136,16 +132,17 @@ const OpportunitySale = ({
   ) => {
     if (guidesReference.current && sale) {
       const value = event.target.value;
-      const numericValue = Number(value.replace(/\D/g, "")) / 100;
+
       const updatedSale = {
         ...sale,
-        [fieldReceived.dataKey as keyof OpportunitySaleFields]: numericValue,
+        [fieldReceived.dataKey as keyof OpportunitySaleFields]: value,
       };
       const { valorFatDireto, valorFatDolphin } = updatedSale;
       const totalValue = Number(valorFatDireto) + Number(valorFatDolphin);
       setSale({ ...updatedSale, valorTotal: totalValue });
       const fieldIndex = guide.fields.indexOf(fieldReceived);
-      fieldReceived.data = numericValue;
+
+      fieldReceived.data = value;
       guide.fields[fieldIndex] = fieldReceived;
       guide.fields[4].data = totalValue;
       guidesReference.current[3] = guide;
@@ -260,6 +257,7 @@ const OpportunitySale = ({
                 onChange={(e) =>
                   handleChangeTextField(field, e)
                 }
+                type={field.type}
                 InputLabelProps={{ shrink: true }}
                 key={field.dataKey}
                 label={field.label}

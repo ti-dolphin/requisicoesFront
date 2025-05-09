@@ -4,6 +4,8 @@ import { postItemFile, postRequisitionFile } from "../../utils";
 import { inputFileProps } from "../../types";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { BaseButtonStyles } from "../../../utilStyles";
+import { userContext } from "../../context/userContext";
+import { useContext } from "react";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -24,10 +26,10 @@ const InputFile = ({
   setIsLoading,
   refreshToggler,
 }: inputFileProps) => {
-
+   const {user} = useContext(userContext);
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log('handleChange Input File');
-    if (e.target.files) {
+    if (e.target.files && user) {
       setIsLoading(true);
       const file = e.target.files[0];
       const formData = new FormData();
@@ -39,8 +41,7 @@ const InputFile = ({
         if (response?.status === 200) setRefreshToggler(!refreshToggler);
         return;
       }
-
-      const response = await postRequisitionFile(id, formData);
+      const response = await postRequisitionFile(id, formData, user.CODPESSOA);
       if (response === 200) {
         console.log('response === 200')
         setRefreshToggler(!refreshToggler);

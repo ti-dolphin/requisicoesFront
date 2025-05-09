@@ -26,6 +26,7 @@ const RequisitionDetail: React.FC = () => {
   const navigate = useNavigate();
 
   const fetchRequisitionData = async () => {
+    console.log("fetchRequisitionData");
       try {
         if (id) {
           const requisition = await fetchRequsitionById(Number(id));
@@ -96,7 +97,10 @@ const RequisitionDetail: React.FC = () => {
           border: "1px solid lightgray",
         }}
       >
-        <Box sx={{ display: "flex", flexDirection: "row", gap: 1 }}>
+        <Box sx={{ display: "flex", flexDirection: { 
+          xs: 'column',
+          md: 'row'
+        }, gap: 1}}>
           <RequisitionFields />
           
           {requisitionData && (
@@ -111,6 +115,7 @@ const RequisitionDetail: React.FC = () => {
         >
           <RequisitionItemsTable
             requisitionStatus={requisitionData?.status}
+            requisitionData={requisitionData}
             requisitionId={Number(id)}
           />
         </Box>

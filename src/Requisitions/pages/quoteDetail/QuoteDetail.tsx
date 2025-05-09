@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Alert, AlertColor, Autocomplete, AutocompleteChangeDetails, AutocompleteChangeReason, Box,  IconButton, TextField, Typography } from "@mui/material";
+import { Alert, AlertColor, Autocomplete, AutocompleteChangeDetails, AutocompleteChangeReason, Box, IconButton, Stack, TextField, Typography } from "@mui/material";
 import typographyStyles, {
   boxDefaultStyles,
   quoteDetailPageStyles,
@@ -9,12 +9,12 @@ import { AlertInterface, FiscalCategoryType, Quote, QuoteItem, ShipmentType } fr
 import QuoteItemsTable from "../../components/tables/QuoteItemsTable";
 import { formatDate, Loader } from "../../../generalUtilities";
 import { useNavigate, useParams } from "react-router-dom";
-import { getQuoteById, getQuoteClassifications, getQuoteShipments, updateQuote } from "../../utils";
+import { getQuoteById, getQuoteClassifications, getQuotePaymentMethods, getQuoteShipments, updateQuote } from "../../utils";
 import ArrowCircleLeftIcon from "@mui/icons-material/ArrowCircleLeft";
 import QuoteFileList from "../../components/QuoteFileList/QuoteFileList";
 
 
-interface QuoteField{ 
+interface QuoteField {
   label: string;
   dataKey: string;
   type: string;
@@ -34,12 +34,6 @@ const quoteFields: QuoteField[] = [
     autoComplete: false,
   },
   {
-    label: "Observação",
-    dataKey: "observacao",
-    type: "string",
-    autoComplete: false,
-  },
-  {
     label: "Tipo de Frete",
     dataKey: "id_tipo_frete",
     type: "number",
@@ -50,6 +44,12 @@ const quoteFields: QuoteField[] = [
     dataKey: "id_classificacao_fiscal",
     type: "number",
     autoComplete: true,
+  },
+  {
+    label: 'Condição de pagamento',
+    dataKey: 'id_condicao_pagamento',
+    type: 'number',
+    autoComplete: true
   },
   {
     label: "Valor Frete",
@@ -69,14 +69,13 @@ const quoteFields: QuoteField[] = [
     type: "string",
     autoComplete: false,
   },
+
 ];
 
-interface Option{ 
+interface Option {
   label: string;
   id: number;
 }
-
-
 
 
 const QuoteDetail = () => {
@@ -88,17 +87,19 @@ const QuoteDetail = () => {
   const [isSupplier, setIsSupplier] = useState<boolean>(false);
   const [fiscalClassificationOps, setFiscalClassificationOps] = useState<Option[]>();
   const [shipmentOps, setShipmentOps] = useState<Option[]>();
+  const [paymentMethodOptions, setPaymentMethodOptions] = useState<Option[]>([]);
   const [selectedShipment, setSelectedShipment] = useState<Option>();
   const [selectedClassification, setSelectedClassification] = useState<Option>();
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<Option>();
   const [alert, setAlert] = useState<AlertInterface>();
   const navigate = useNavigate();
-   
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     field: QuoteField
   ) => {
     const { value } = e.target;
-    if(currentQuoteData){ 
+    if (currentQuoteData) {
       setCurrentQuoteData({
         ...currentQuoteData,
         [field.dataKey as keyof Quote]: field.type === "number" ? Number(value) : value
@@ -107,45 +108,52 @@ const QuoteDetail = () => {
   };
 
   const handleChangeAutoComplete = (field: QuoteField, value: Option | null) => {
-  if (!value || !currentQuoteData) return;
-  
-   setCurrentQuoteData({ 
-    ...currentQuoteData,
-    [field.dataKey as keyof Quote] : value.id
-   })
-  // Atualiza o estado do option selecionado
-  if (field.dataKey === "id_classificacao_fiscal") {
-    setSelectedClassification(value);
-  } else if (field.dataKey === "id_tipo_frete") {
-    setSelectedShipment(value);
-  }
-};
+    if (!value || !currentQuoteData) return;
+
+    setCurrentQuoteData({
+      ...currentQuoteData,
+      [field.dataKey as keyof Quote]: value.id
+    })
+    if (field.dataKey === "id_classificacao_fiscal") {
+      setSelectedClassification(value);
+      return;
+    }
+    if (field.dataKey === "id_tipo_frete") {
+      setSelectedShipment(value);
+    }
+    if (field.dataKey === 'condicao_pagamento') {
+      setSelectedPaymentMethod(value)
+    }
+  };
 
   const { quoteId } = useParams();
 
   const fetchQuoteData = async () => {
-    
+
     try {
       const response = await getQuoteById(Number(quoteId), verifySupplier());
       if (response.status === 200) {
-        const  quote  = response.data;
+        const quote = response.data;
+        console.log('quote', quote)
         setOriginalQuoteData(quote);
         setCurrentQuoteData(quote);
-        setItems(quote.items);
+        setItems(quote.itens);
         fetchOptions(quote);
         return;
       }
     } catch (e: any) {
       displayAlert('error', e.message);
-    }finally{ 
+    } finally {
       setIsLoading(false)
     }
   };
 
-  const fetchOptions = async (quote : Quote) => {
+  const fetchOptions = async (quote: Quote) => {
     try {
       const shipmentTypes = await getQuoteShipments(verifySupplier());
       const classifications = await getQuoteClassifications(verifySupplier());
+      const paymentMethods = await getQuotePaymentMethods(verifySupplier());
+      console.log("paymentMethods", paymentMethods)
 
       if (classifications && shipmentTypes) {
         const classificationOptions = classifications.map(
@@ -154,25 +162,34 @@ const QuoteDetail = () => {
             id: classification.id_classificao_fiscal,
           })
         );
-        setFiscalClassificationOps(classificationOptions);
         const shipmentOptions = shipmentTypes.map(
           (shipmentType: ShipmentType) => ({
             label: shipmentType.nome,
             id: shipmentType.id_tipo_frete,
           })
         );
+        const paymentMethodOptions = paymentMethods.map(
+          (paymentMethod: any) => ({
+            label: paymentMethod.nome,
+            id: paymentMethod.id_condicao_pagamento,
+          })
+        );
+        setPaymentMethodOptions(paymentMethodOptions);
+        setFiscalClassificationOps(classificationOptions);
         setShipmentOps(shipmentOptions);
-        setSelectedOptions(classificationOptions, shipmentOptions, quote);
+
+        setSelectedOptions(classificationOptions, shipmentOptions, paymentMethodOptions, quote);
       }
-      
+
     } catch (e: any) {
-      window.alert(e.message);
+      displayAlert('error', e.message);
     }
   };
 
   const setSelectedOptions = (
     fiscalClassificationOps: Option[],
     shipmentOps: Option[],
+    paymentMethodOptions: Option[],
     quote: Quote
   ) => {
     if (fiscalClassificationOps && shipmentOps) {
@@ -182,78 +199,153 @@ const QuoteDetail = () => {
       const selectedShipment = shipmentOps.find(
         (option) => option.id === quote.id_tipo_frete
       );
+      console.log('paymentMethodOptions', paymentMethodOptions);
+      const selectedPaymentMethod = paymentMethodOptions.find(
+        (option) => option.id === quote.id_condicao_pagamento);
+      console.log('selectedPaymentMethod', selectedPaymentMethod);
+      setSelectedPaymentMethod(selectedPaymentMethod);
       setSelectedClassification(selectedClassification);
       setSelectedShipment(selectedShipment);
     }
   };
 
-  const renderOptions = ( field: QuoteField) => { 
-      if(field.dataKey == 'id_tipo_frete'){ 
-        return shipmentOps;
-      }
-      if(field.dataKey === 'id_classificacao_fiscal'){ 
-       return fiscalClassificationOps;
-      }
+  const renderOptions = (field: QuoteField) => {
+    if (field.dataKey == 'id_tipo_frete') {
+      return shipmentOps;
+    }
+    if (field.dataKey === 'id_classificacao_fiscal') {
+      return fiscalClassificationOps;
+    }
+    if (field.dataKey === 'id_condicao_pagamento') {
+      return paymentMethodOptions;
+    }
   };
 
- const getValue = (field : QuoteField ) => { 
-   if (field.dataKey == "id_tipo_frete") {
+  const getValue = (field: QuoteField) => {
+    if (field.dataKey == "id_tipo_frete") {
 
-     return selectedShipment;
-   }
-   if (field.dataKey === "id_classificacao_fiscal") {
-     return selectedClassification;
-   }
- };
+      return selectedShipment;
+    }
+    if (field.dataKey === "id_classificacao_fiscal") {
+      return selectedClassification;
+    }
+    if (field.dataKey === 'id_condicao_pagamento') {
+      return selectedPaymentMethod;
+    }
 
-   const displayAlert = async (severity: string, message: string) => {
-     setTimeout(() => {
-       setAlert(undefined);
-     }, 8000);
-     setAlert({ severity, message });
-     return;
-   };
+  };
 
-   const validateRequiredFields = (quoteData: Quote) => {
-     const {
-       cnpj_faturamento,
-       cnpj_fornecedor,
-       id_tipo_frete,
-       id_classificacao_fiscal,
-     } = quoteData;
-     if (!id_tipo_frete) {
-       throw new Error("O tipo de frete é obrigatório");
-     }
-     if (!id_classificacao_fiscal) {
-       throw new Error("A classificação fiscal é obrigatória");
-     }
-     if (!cnpj_faturamento) {
-       throw new Error("CNPJ do faturamento é obrigatório");
-     }
-     if (isSupplier && !cnpj_fornecedor) {
-       throw new Error("CNPJ do fornecedor é obrigatório");
-     }
-   };
+  const displayAlert = async (severity: string, message: string) => {
+    setTimeout(() => {
+      setAlert(undefined);
+    }, 8000);
+    setAlert({ severity, message });
+    return;
+  };
+
+  function formatCNPJ(cnpj: string | undefined) {
+    if (!cnpj) return '';
+    cnpj = cnpj.replace(/[^\d]+/g, '');
+    if (cnpj.length !== 14) return '';
+    return cnpj.replace(
+      /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,
+      '$1.$2.$3/$4-$5'
+    );
+  }
+
+  function validCNPJ(cnpj: string) {
+    console.log('cnpj', cnpj)
+    cnpj = cnpj.replace(/[^\d]+/g, '')
+    // Remove caracteres não numéricos
+    cnpj = cnpj.replace(/[^\d]+/g, '');
+
+    // Verifica se tem 14 dígitos
+    console.log('cnpj.length: ', cnpj.length)
+    if (cnpj.length !== 14) return false;
+
+    // Verifica se todos os dígitos são iguais
+    if (/^(\d)\1+$/.test(cnpj)) return false;
+
+    // Calcula primeiro dígito verificador
+    let sum = 0;
+    let weight = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+
+    for (let i = 0; i < 12; i++) {
+      sum += parseInt(cnpj[i]) * weight[i];
+    }
+
+    let mod = sum % 11;
+    let digit1 = mod < 2 ? 0 : 11 - mod;
+
+    // Verifica primeiro dígito
+    if (parseInt(cnpj[12]) !== digit1) return false;
+
+    // Calcula segundo dígito verificador
+    sum = 0;
+    weight = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+
+    for (let i = 0; i < 13; i++) {
+      sum += parseInt(cnpj[i]) * weight[i];
+    }
+
+    mod = sum % 11;
+    let digit2 = mod < 2 ? 0 : 11 - mod;
+
+    // Verifica segundo dígito
+    return parseInt(cnpj[13]) === digit2;
+  }
+
+  const validateRequiredFields = (quoteData: Quote) => {
+    const {
+      cnpj_faturamento,
+      cnpj_fornecedor,
+      id_tipo_frete,
+      id_classificacao_fiscal,
+    } = quoteData;
+
+    if (!id_tipo_frete) {
+      throw new Error("O tipo de frete é obrigatório");
+    }
+    if (!id_classificacao_fiscal) {
+      throw new Error("A classificação fiscal é obrigatória");
+    }
+    if (!cnpj_faturamento) {
+      throw new Error("CNPJ do faturamento é obrigatório");
+    }
+    if (isSupplier && !cnpj_fornecedor) {
+      throw new Error("CNPJ do fornecedor é obrigatório");
+    }
+    console.log('validation cnpj fornecedor: ', validCNPJ(cnpj_fornecedor || ''))
+    if (!validCNPJ(cnpj_fornecedor || '')) {
+      throw new Error("CNPJ do fornecedor inválido");
+    }
+    console.log('validation cnpj faturamento: ', validCNPJ(cnpj_faturamento))
+    if (!validCNPJ(cnpj_faturamento)) {
+      throw new Error("CNPJ do faturamento inválido");
+    }
+  };
 
   const saveQuoteData = async () => {
-    console.log('SAVE QUOTE DATA')
     if (currentQuoteData) {
-          try{ 
-            validateRequiredFields(currentQuoteData);
-            const response = await updateQuote(currentQuoteData, verifySupplier());
-            if (response.status === 200) {
-              const newQuote = response.data;
-              console.log('newQuote', newQuote)
-              setCurrentQuoteData(newQuote);
-              setOriginalQuoteData(newQuote);
-              displayAlert('success', 'Cotação atualizada!')
-              return;
-          }
-        }catch(e: any){ 
-            displayAlert('error', e.message);
-          }
+      try {
+        validateRequiredFields(currentQuoteData);
+        const response = await updateQuote({
+          ...currentQuoteData,
+          cnpj_fornecedor: formatCNPJ(currentQuoteData.cnpj_fornecedor),
+          cnpj_faturamento: formatCNPJ(currentQuoteData.cnpj_faturamento),
+        }, verifySupplier());
+        if (response.status === 200) {
+          const newQuote = response.data;
+          setCurrentQuoteData(newQuote);
+          setOriginalQuoteData(newQuote);
+          displayAlert('success', 'Cotação atualizada!')
+          return;
+        }
+      } catch (e: any) {
+        displayAlert('error', e.message);
       }
     }
+  }
 
   const verifySupplier = () => {
     const url = new URL(window.location.href);
@@ -264,42 +356,41 @@ const QuoteDetail = () => {
     return false;
   };
 
-  const handleFocus = (_e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element | HTMLDivElement> , _field: QuoteField) => {
-
+  const handleFocus = (_e: React.FocusEvent<Element>, _field: QuoteField) => {
     if (!isEditing) {
       setIsEditing(true);
       return;
     }
   };
 
-  useEffect(( ) =>  { 
-    const pairOptions = ( ) => {
-        if(currentQuoteData){ 
-            const { id_tipo_frete, id_classificacao_fiscal } = currentQuoteData;
-            if (id_tipo_frete !== selectedShipment?.id) {
-              const option = shipmentOps?.find(
-                (opt) => opt.id === id_tipo_frete
-              );
-              setSelectedShipment(option);
-            }
-            if (id_classificacao_fiscal !== selectedClassification?.id) {
-              const option = fiscalClassificationOps?.find(
-                (opt) => opt.id === id_classificacao_fiscal
-              );
-              setSelectedClassification(option);
-            }
-            return;
+  useEffect(() => {
+    const pairOptions = () => {
+      if (currentQuoteData) {
+        const { id_tipo_frete, id_classificacao_fiscal } = currentQuoteData;
+        if (id_tipo_frete !== selectedShipment?.id) {
+          const option = shipmentOps?.find(
+            (opt) => opt.id === id_tipo_frete
+          );
+          setSelectedShipment(option);
         }
+        if (id_classificacao_fiscal !== selectedClassification?.id) {
+          const option = fiscalClassificationOps?.find(
+            (opt) => opt.id === id_classificacao_fiscal
+          );
+          setSelectedClassification(option);
+        }
+        return;
+      }
     }
     pairOptions();
- }, [currentQuoteData])
-
- useEffect(( ) =>  {
-   verifySupplier();
- }, [])
+  }, [currentQuoteData])
 
   useEffect(() => {
-   
+    verifySupplier();
+  }, [])
+
+  useEffect(() => {
+
     fetchQuoteData();
   }, []);
 
@@ -335,7 +426,10 @@ const QuoteDetail = () => {
           <Box
             sx={{
               height: "100%",
-              width: "100%",
+              width: {
+                xs: '100%',
+                sm: '50%'
+              },
               padding: 1,
               display: "flex",
               flexDirection: "column",
@@ -344,13 +438,11 @@ const QuoteDetail = () => {
             }}
           >
             <Typography sx={{ ...typographyStyles.heading2, color: "black" }}>
-              {`Cotação ${currentQuoteData.id_cotacao} | Requisição ${
-                currentQuoteData.id_requisicao
-              } | ${formatDate(currentQuoteData.data_cotacao)} ${
-                currentQuoteData.descricao
+              {`Cotação ${currentQuoteData.id_cotacao} | Requisição ${currentQuoteData.id_requisicao
+                } | ${formatDate(currentQuoteData.data_cotacao)} ${currentQuoteData.descricao
                   ? `| ${currentQuoteData.descricao}`
                   : ""
-              }`}
+                }`}
             </Typography>
             {alert && (
               <Alert severity={alert.severity as AlertColor}>
@@ -364,7 +456,7 @@ const QuoteDetail = () => {
                 gridTemplateColumns: {
                   xs: "1fr",
                   md: "1fr 1fr",
-                  xl: "1fr 1fr 1fr",
+                  xl: "1fr 1fr",
                 },
                 gap: 1,
                 rowGap: 1.5,
@@ -377,26 +469,61 @@ const QuoteDetail = () => {
                 quoteFields.map((field) => {
                   if (!field.autoComplete) {
                     return (
-                      <TextField
-                        key={field.dataKey}
-                        label={field.label}
-                        name={field.label}
-                        disabled={isSupplier && (field.dataKey !== "cnpj_fornecedor" && field.dataKey !== 'valor_frete')}
-
-                        onFocus={(e) => handleFocus(e, field)}
-                        sx={{ display: "flex", flexShrink: 1, margin: 0 }}
-                        type={field.type === "number" ? "number" : "text"}
-                        value={
-                          currentQuoteData[field.dataKey as keyof Quote] || ""
-                        }
-                        InputLabelProps={{
-                          shrink: true,
-                          sx: { color: "black" },
-                        }}
-                        onChange={(e) => handleChange(e, field)}
-                        fullWidth
-                        margin="normal"
-                      />
+                      <Stack gap={1}>
+                        <TextField
+                          key={field.dataKey}
+                          label={field.label}
+                          name={field.label}
+                          disabled={
+                            isSupplier &&
+                            field.dataKey !== "cnpj_fornecedor" &&
+                            field.dataKey !== "valor_frete"
+                          }
+                          onFocus={(e) => handleFocus(e, field)}
+                          sx={{ display: "flex", flexShrink: 1, margin: 0 }}
+                          type={field.type === "number" ? "number" : "text"}
+                          value={
+                            currentQuoteData[field.dataKey as keyof Quote] || ""
+                          }
+                          InputLabelProps={{
+                            shrink: true,
+                            sx: { color: "black" },
+                          }}
+                          onChange={(e) => handleChange(e, field)}
+                          fullWidth
+                          margin="normal"
+                        />
+                        {field.dataKey === "cnpj_fornecedor" &&
+                          currentQuoteData.nome_fornecedor && (
+                            <Typography
+                              sx={{
+                                ...typographyStyles.bodyText,
+                                fontStyle: "italic",
+                                color: 'gray',
+                                border: "1px solid lightgray",
+                                padding: 0.5,
+                                borderRadius: 1
+                              }}
+                            >
+                              ** {currentQuoteData.nome_fornecedor}
+                            </Typography>
+                          )}
+                        {field.dataKey === "cnpj_faturamento" &&
+                          currentQuoteData.nome_faturamento && (
+                            <Typography
+                              sx={{
+                                ...typographyStyles.bodyText,
+                                fontStyle: "italic",
+                                color: 'gray',
+                                padding: 0.5,
+                                border: "1px solid lightgray",
+                                borderRadius: 1
+                              }}
+                            >
+                              ** {currentQuoteData.nome_faturamento}
+                            </Typography>
+                          )}
+                      </Stack>
                     );
                   }
                   return (
@@ -404,6 +531,7 @@ const QuoteDetail = () => {
                       key={field.dataKey}
                       getOptionKey={(option: Option) => option.id}
                       disabled={isSupplier && (field.dataKey !== "cnpj_fornecedor" && field.dataKey !== 'valor_frete')}
+                      onFocus={(e) => handleFocus(e, field)}
                       sx={{
                         display: "flex",
                         flexDirection: "column",
@@ -459,6 +587,7 @@ const QuoteDetail = () => {
             setIsEditing={setIsEditing}
             isEditing={isEditing}
             saveQuoteData={saveQuoteData}
+            quoteData={currentQuoteData}
             shippingPrice={currentQuoteData.valor_frete}
             setCurrentQuoteData={setCurrentQuoteData}
             originalQuoteData={originalQuoteData}

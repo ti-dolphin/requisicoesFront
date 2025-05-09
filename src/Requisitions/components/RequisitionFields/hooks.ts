@@ -133,13 +133,19 @@ export const useRequisitionFields = () => {
     };
 
     const renderValue = (field: any) => {
-        if (field.type === 'date' && requisitionData) {
-            return dateTimeRenderer(requisitionData[field.key as keyof Requisition] as string);
-        }
-        if (field.autoComplete) {
-            return "autocomplete";
-        }
-        return requisitionData && requisitionData[field.key as keyof Requisition];
+      if(requisitionData) { 
+           if (field.type === "date" && requisitionData) {
+             return dateTimeRenderer(
+               requisitionData[field.key as keyof Requisition] as string
+             );
+           }
+           if (field.autoComplete) {
+             return "autocomplete";
+           }
+           const value = requisitionData[field.key as keyof Requisition];
+
+           return value === "null" ? '' : value;
+      }
     };
 
     const handleCancelEditing = () => {

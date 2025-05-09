@@ -1,6 +1,6 @@
-import { Alert, AlertColor, Button, Stack } from "@mui/material";
+import { Alert, AlertColor, Button, Stack, Typography } from "@mui/material";
 import ItemActions from "../ItemActions/ItemActions";
-import { AlertInterface, Item, RequisitionStatus } from "../../../types";
+import { AlertInterface, Item, QuoteItem, RequisitionStatus } from "../../../types";
 import { BaseButtonStyles } from "../../../../utilStyles";
 import { ItemsContext } from "../../../context/ItemsContext";
 import { useContext, useState } from "react";
@@ -9,6 +9,9 @@ import { useParams } from "react-router-dom";
 import CreateQuoteModal from "../../modals/CreateQuoteModal/CreateQuoteModal";
 import QuoteListModal from "../../modals/QuoteListModal/QuoteListModal";
 import { green } from "@mui/material/colors";
+import { updateItemToSupplier } from "../../../utils";
+import typographyStyles from "../../../utilStyles";
+import { GridColDef } from "@mui/x-data-grid";
 
 interface props {
   handleCancelItems: (items: Item[]) => Promise<void>;
@@ -21,6 +24,10 @@ interface props {
   setItemToSupplierMap: React.Dispatch<any>
   selectingPrices: boolean;
   itemToSupplierMap: any;
+  getColumns: () => GridColDef[];
+  findQuotedQuantity: (supplier: string, row: any) => any;
+  quoteItems?: QuoteItem[];
+  visibleRows?: Item[];
 }
 
 const ItemsToolBar = ({
@@ -31,15 +38,69 @@ const ItemsToolBar = ({
   selectedRows,
   requisitionStatus,
   setSelectingPrices,
-  selectingPrices
-}: props) => {
+  selectingPrices,
+  itemToSupplierMap,
+  setItemToSupplierMap,
+  visibleRows,
+  quoteItems,
+  getColumns}: props) => {
   const { toggleAdding } = useContext(ItemsContext);
   const { id } = useParams();
   const [alert, setAlert] = useState<AlertInterface>();
   const [creatingQuote, setCreatingQuote] = useState<boolean>(false);
   const [quoteListOpen, setQuoteListOpen] = useState<boolean>(false);
 
+  const quoteExists = getColumns().length > 6;
 
+  const getItemCost = (item: QuoteItem) => {
+      const price = Number(item.preco_unitario);
+      const ipiPercentage = Number(item.IPI || 0 ) / 100;
+      const stPercentage = Number(item.ST || 0) / 100;
+      const ipi = price * ipiPercentage;
+      const st = price * stPercentage;
+      return price  + ipi + st;
+    
+  };
+
+  const getItemsTotal = (items: Item[]) => { 0
+    const total =  items.reduce((acc : number, item : Item) => {
+         if(item.item_cotacao_selecionado){ 
+           acc += item?.item_cotacao_selecionado.quantidade_cotada * getItemCost(item.item_cotacao_selecionado);
+         }
+      return acc;
+      }, 0);
+      return total;
+  }
+
+  const getShippingCost = () => { 
+    const pricesBySupplier: { fornecedor: string; valor_frete: number }[] = [];
+    if (Array.isArray(itemToSupplierMap)) {
+      itemToSupplierMap.forEach((map: any) => {
+        const matchingQuoteItem = quoteItems?.find(
+          (quoteItem) => quoteItem.fornecedor === map.supplier
+        );
+        const isOnPricesBySupplier = pricesBySupplier.some(
+          (price: any) => price.fornecedor === map.supplier
+        );
+        if (matchingQuoteItem && !isOnPricesBySupplier) {
+          pricesBySupplier.push({
+            fornecedor: map.supplier,
+            valor_frete: Number(matchingQuoteItem.valor_frete),
+          });
+        }
+      });
+    }
+    console.log("pricesBySupplier: ", pricesBySupplier);
+    return pricesBySupplier.reduce((acc, price) => acc + price.valor_frete, 0);
+    
+  }
+
+  const calculateTotal = () => { 
+    if(visibleRows){ 
+      return getItemsTotal(visibleRows) + getShippingCost();
+    }
+
+  }
 
   const displayAlert = async (severity: string, message: string) => {
     setTimeout(() => {
@@ -49,9 +110,15 @@ const ItemsToolBar = ({
     return;
   };
 
-  const handleSavePrices = ( ) => { 
+  const handleSavePrices = async ( ) => { 
+    if(!itemToSupplierMap.length){ 
+      displayAlert('warning', 'Nenhum item selecionado');
+      return;
+    }
     try {
-      
+      const updatedItemToSupplier = await updateItemToSupplier(itemToSupplierMap, Number(id));
+      setItemToSupplierMap(updatedItemToSupplier);
+      setSelectingPrices(false);
     } catch (e) {
       displayAlert('error', 'Erro ao eleger preços da requisição');
     }
@@ -72,6 +139,7 @@ const ItemsToolBar = ({
     }
     setCreatingQuote(true);
   };
+  
   return (
     <Stack
       direction="row"
@@ -121,7 +189,7 @@ const ItemsToolBar = ({
           Gerar Cotação
         </Button>
       )}
-      {requisitionStatus?.etapa && requisitionStatus?.etapa >= 2 && (
+      {(quoteExists) && requisitionStatus && requisitionStatus?.etapa >= 2 && (
         <Button
           onClick={handleViewQuoteList}
           sx={{ ...BaseButtonStyles, height: 30, minWidth: 150 }}
@@ -130,16 +198,6 @@ const ItemsToolBar = ({
         </Button>
       )}
 
-      {  !selectingPrices && requisitionStatus?.etapa === 2 && (
-          <Button
-            onClick={() => {setSelectingPrices(true)}}
-          
-            sx={{ ...BaseButtonStyles, height: 30, minWidth: 150 }}
-          >
-            Selecionar Preços
-            </Button>
-        )
-      }
       { 
         selectingPrices && (
           <Button
@@ -163,7 +221,16 @@ const ItemsToolBar = ({
 
         )
       }
-
+      { 
+         <Stack direction="row" gap={1}>
+          <Typography sx={{ ...typographyStyles.heading2, color: 'black' }}>
+            {itemToSupplierMap.length === visibleRows?.length ? 'Total: ' : 'Total Parcial: '}
+          </Typography>
+          <Typography sx={{ ...typographyStyles.heading2, color: green[800] }}>
+            {calculateTotal()?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+          </Typography>
+         </Stack>
+      }
       <ProductsTableModal requisitionID={Number(id)} />
       {alert && (
         <Alert severity={alert.severity as AlertColor}>{alert.message}</Alert>

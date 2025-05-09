@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { FixedSizeList, ListChildComponentProps } from "react-window";
 import {
   Box,
@@ -10,13 +10,17 @@ import {
   AlertColor,
   Alert,
   CircularProgress,
+  TextField,
+  Stack,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CloseIcon from "@mui/icons-material/Close";
 import { BaseButtonStyles } from "../../../utilStyles";
 import { AlertInterface } from "../../types";
-import { createQuoteFile, deleteQuoteFile, getFilesByQuoteId } from "../../utils";
+import { createQuoteFile, createQuoteFileFromLink, deleteQuoteFile, getFilesByQuoteId } from "../../utils";
 import { useEffect } from "react";
+import { green } from "@mui/material/colors";
+import { userContext } from "../../context/userContext";
 
 // Interface para o tipo QuoteFile
 interface QuoteFile {
@@ -44,6 +48,7 @@ const QuoteFileList: React.FC<QuoteFileListProps> = ({
 itemSize = 60,
 }) => {
   // Estado para controlar o modal e o arquivo selecionado
+  const { user } = useContext(userContext);
   const [openModal, setOpenModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState<QuoteFile | null>(null);
   const [quoteFiles, setQuoteFiles] = useState<QuoteFile[]>();
@@ -51,6 +56,9 @@ itemSize = 60,
   const [isLoading, setIsLoading] = useState(false); // State to track loading
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // State for confirmation modal
   const [fileToDelete, setFileToDelete] = useState<QuoteFile | null>(null); // File to delete
+  const[isLinkModalOpen, setIsLinkModalOpen] = useState(false); // Estado para abrir/fechar o modal de link
+  const [linkName, setLinkName] = useState(""); // Nome do link
+  const [linkUrl, setLinkUrl] = useState(""); // URL do link
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
@@ -59,11 +67,9 @@ itemSize = 60,
       if (!file) {
         throw new Error("Nenhum arquivo selecionado.");
       }
-
       const formData = new FormData();
       formData.append("file", file);
       const createdFile = await createQuoteFile(quoteId, formData, isSupplier);
-      console.log("CREATE FILE: ", createdFile);
       if (createdFile && quoteFiles) {
         setQuoteFiles([...quoteFiles, createdFile]);
         displayAlert(
@@ -78,6 +84,44 @@ itemSize = 60,
     }
   };
 
+  const openLinkModal = () => {
+    setIsLinkModalOpen(true);
+  };
+
+  const closeLinkModal = () => {
+    setLinkName("");
+    setLinkUrl("");
+    setIsLinkModalOpen(false);
+  };
+
+  const handleAttachLink = async () => {
+    if (!linkName || !linkUrl) {
+      displayAlert("error", "Nome e URL do link são obrigatórios.");
+      return;
+    }
+
+    const newLink: QuoteFile = {
+      id_anexo_cotacao: Date.now(), // Gera um ID único temporário
+      id_cotacao: quoteId,
+      nome_arquivo: linkName,
+      url: linkUrl,
+    };
+    const createdLink = await createQuoteFileFromLink(
+      quoteId, 
+      newLink,
+      isSupplier
+    );
+    if(!createdLink) throw new Error('Erro ao criar link')
+    if(createdLink){ 
+        setQuoteFiles((prevFiles) =>
+          prevFiles ? [...prevFiles, newLink] : [newLink]
+        );
+         displayAlert("success", `Link "${linkName}" anexado com sucesso.`);
+         closeLinkModal();
+         return;
+    }
+  };
+
   const displayAlert = async (severity: string, message: string) => {
     setTimeout(() => {
       setAlert(undefined);
@@ -86,14 +130,14 @@ itemSize = 60,
     return;
   };
   // Função para abrir o modal com o arquivo selecionado
-  const handleViewFile = (file: QuoteFile) => {
-    if(isPDF(file.url) || isImage(file.url)){ 
-      setSelectedFile(file);
-      setOpenModal(true);
-      return;
-    }
-    window.open(file.url, "_blank");
-  };
+    const handleViewFile = (file: QuoteFile) => {
+      if (isPDF(file.url) || isImage(file.url)) {
+        setSelectedFile(file);
+        setOpenModal(true);
+        return;
+      }
+      window.open(file.url, "_blank"); // Abre o link em uma nova aba
+    };
 
   // Função para fechar o modal
   const handleCloseModal = () => {
@@ -184,23 +228,25 @@ itemSize = 60,
             >
               {file.nome_arquivo}
             </Typography>
-            <IconButton
-              aria-label="Excluir arquivo"
-              onClick={(
-                event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-              ) => {
-                event.stopPropagation(); // Prevent row click
-                openConfirmModal(file); // Open confirmation modal
-              }}
-              sx={{
-                color: "#d32f2f",
-                "&:hover": {
-                  color: "#b71c1c",
-                },
-              }}
-            >
-              <DeleteIcon />
-            </IconButton>
+            {user?.PERM_COMPRADOR && user?.PERM_COMPRADOR && (
+              <IconButton
+                aria-label="Excluir arquivo"
+                onClick={(
+                  event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+                ) => {
+                  event.stopPropagation(); // Prevent row click
+                  openConfirmModal(file); // Open confirmation modal
+                }}
+                sx={{
+                  color: "#d32f2f",
+                  "&:hover": {
+                    color: "#b71c1c",
+                  },
+                }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            )}
           </Box>
         )}
       </>
@@ -224,7 +270,10 @@ itemSize = 60,
   return (
     <Paper
       sx={{
-        width: "100%",
+        width: {
+          xs: "100%",
+          sm: "50%",
+        },
         maxWidth: "800px",
         mx: "auto",
         display: "flex",
@@ -376,7 +425,13 @@ itemSize = 60,
           >
             <Button
               onClick={confirmDelete}
-              sx={{ ...BaseButtonStyles, backgroundColor: "#d32f2f" }}
+              sx={{
+                ...BaseButtonStyles,
+                "&:hover": {
+                  backgroundColor: green[500],
+                },
+                backgroundColor: green[700],
+              }}
             >
               Confirmar
             </Button>
@@ -386,13 +441,81 @@ itemSize = 60,
           </Box>
         </Paper>
       </Modal>
+      <Modal
+        open={isLinkModalOpen}
+        onClose={closeLinkModal}
+        aria-labelledby="attach-link-modal-title"
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Paper
+          sx={{
+            width: { xs: "90%", md: "400px" },
+            p: 3,
+            borderRadius: "8px",
+            textAlign: "center",
+          }}
+        >
+          <Typography
+            id="attach-link-modal-title"
+            variant="h6"
+            sx={{ mb: 2, fontWeight: "bold" }}
+          >
+            Anexar Link
+          </Typography>
+          <TextField
+            fullWidth
+            label="Nome do Link"
+            value={linkName}
+            onChange={(e) => setLinkName(e.target.value)}
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            fullWidth
+            label="URL do Link"
+            value={linkUrl}
+            onChange={(e) => setLinkUrl(e.target.value)}
+            sx={{ mb: 3 }}
+          />
+          <Box
+            sx={{ display: "flex", justifyContent: "space-between", gap: 2 }}
+          >
+            <Button
+              onClick={handleAttachLink}
+              sx={{
+                ...BaseButtonStyles,
+                backgroundColor: green[700],
+                "&:hover": {
+                  backgroundColor: green[500],
+                },
+              }}
+            >
+              Confirmar
+            </Button>
+            <Button onClick={closeLinkModal} sx={BaseButtonStyles}>
+              Cancelar
+            </Button>
+          </Box>
+        </Paper>
+      </Modal>
       {alert && (
         <Alert severity={alert?.severity as AlertColor}>{alert?.message}</Alert>
       )}
-      <Button component="label" sx={{ ...BaseButtonStyles, width: 200 }}>
-        Anexar
-        <input type="file" hidden onChange={(e) => handleChange(e)} />
-      </Button>
+      <Stack direction="row" gap={1}>
+        <Button component="label" sx={{ ...BaseButtonStyles, width: 200 }}>
+          Anexar arquivo
+          <input type="file" hidden onChange={(e) => handleChange(e)} />
+        </Button>
+        <Button
+          onClick={openLinkModal}
+          sx={{ ...BaseButtonStyles, width: 200 }}
+        >
+          Anexar Link
+        </Button>
+      </Stack>
     </Paper>
   );
 };

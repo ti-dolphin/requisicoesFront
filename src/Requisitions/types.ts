@@ -32,6 +32,7 @@ export interface Requisition {
     NOME : string;
     CODPESSOA : number
   }
+  status_anterior? : RequisitionStatus;
   alterado_por_pessoa? : { 
     NOME: string;
     CODPESSOA: number
@@ -104,8 +105,11 @@ export interface Quote {
   nome_frete: string;
   id_tipo_frete: number;
   id_classificacao_fiscal: number;
+  id_condicao_pagamento : number;
   valor_frete: number;
   itens: QuoteItem[]; // Lista de itens vinculados
+  nome_fornecedor? : string;
+  nome_faturamento?: string;
 }
 
 // Interface para a tabela `web_items_cotacao`
@@ -122,6 +126,8 @@ export interface QuoteItem {
   IPI: number;
   ST: number
   subtotal: number; // subtotal calculado
+  valor_frete?: number;
+  fornecedor?: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -136,6 +142,13 @@ export interface RequisitionFile {
   nome_arquivo: string;
   arquivo: string;
   id_requisicao: number;
+  criado_por : number;
+  criado_por_pessoa?: {
+    CODPESSOA: number;
+    NOME: string;
+  };
+  criado_em? : Date | string;
+  
 }
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
@@ -171,8 +184,7 @@ export interface AlertInterface{
   message: string
 }
 export interface Item {
-  UNIDADE?: string;
-  OC?: number;
+
   ID: number;
   ATIVO? : number;
   QUANTIDADE: number;
@@ -181,6 +193,17 @@ export interface Item {
   ID_REQUISICAO: number;
   ID_PRODUTO: number;
   OBSERVACAO : string | undefined
+   
+  ICMS? : number;
+  IPI?: number;
+  ST?: number;
+  fornecedor? : string;
+  id_item_cotacao_selecionado?: number;
+  quantidade_cotada?: number;
+  valor_frete?: number;
+  UNIDADE?: string;
+  OC?: number;
+  item_cotacao_selecionado? : QuoteItem;
 }
 export interface ItemFile{ 
   id: number;

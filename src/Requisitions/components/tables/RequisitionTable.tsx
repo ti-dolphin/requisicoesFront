@@ -36,7 +36,7 @@ const columns: GridColDef[] = [
   {
     field: "status",
     headerName: "Status",
-    width: 100,
+    width: 250,
     valueGetter: (status: RequisitionStatus) => status?.nome || "",
     renderCell: (params) => (
       <Typography

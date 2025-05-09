@@ -71,6 +71,16 @@ const getFilesByQuoteId = async (quoteId: number, isSupplier?: boolean) => {
   }
 };
 
+const createQuoteFileFromLink = async (quoteId: number, link: QuoteFile, isSupplier?: boolean) => {
+  try {
+    const prefix = getPrefix(isSupplier);
+    const response = await api.post(`/${prefix}requisition/quote/file/link/${quoteId}`, { link: link });
+    return response.data as QuoteFile;
+  }catch(e){ 
+      throw new Error("Erro ao anexar link na cotação")
+  }
+};
+
 const createQuoteFile = async (quoteId: number, formData: FormData, isSupplier?: boolean) => { 
   try {
     const prefix = getPrefix(isSupplier);
@@ -83,7 +93,7 @@ const createQuoteFile = async (quoteId: number, formData: FormData, isSupplier?:
     return response.data as QuoteFile;
   } catch (e) {
     console.log(e);
-    throw new Error("Failed to create quote file");
+    throw new Error("Erro ao anexar arquivo na cotação");
   }
 };
 
@@ -125,9 +135,10 @@ const postItemLinkFile = async (id: number, link: string) => {
   }
 };
 
-const postRequisitionLinkFile = async (id: number, link: string) => {
+const postRequisitionLinkFile = async (id: number, link: string, codpessoa : number) => {
   try {
     const response = await api.post(`requisitionFiles/link/${id}`, {
+      codpessoa : codpessoa,
       link: link,
     });
     return response.status
@@ -157,13 +168,15 @@ const deleteRequisitionFile = async (file: ItemFile | RequisitionFile) => {
 
 const postRequisitionFile = async (
   requisitionID: number,
-  formData: FormData
+  formData: FormData,
+  codpessoa : number
 ) => {
   const config: AxiosRequestConfig = {
     headers: {
       "Content-Type": "multipart/form-data",
     },
     data: formData,
+    params: { codpessoa },
   };
   try {
     const response = await api.post(
@@ -189,6 +202,14 @@ const getRequisitionFiles = async (requisitionID: number) => {
   } catch (e) {
     console.log(e);
     return null;
+  }
+};
+const getPreviousStatusByReqId = async (requisitionId: number) => {
+  try {
+    const response = await api.get(`requisition/status/previous/${requisitionId}/`);
+    return response.data;
+  } catch (e) {
+    console.log(e);
   }
 };
 
@@ -311,6 +332,24 @@ const fetchItems = async (id: number) => {
   }
 };
 
+const getItemToSupplierMapByReqId = async (requisitionId : number) => { 
+  try{ 
+    const response = await api.get(`requisition/requisitionItems/itemToSupplier/${requisitionId}`);
+    return response.data;
+  }catch(e){ 
+    throw e;
+  }
+}
+
+const updateItemToSupplier = async (itemToSupplierMap : any, reqId: number ) => { 
+    try{ 
+      const response = await api.put(`requisition/requisitionItems/itemToSupplier/${reqId}`, itemToSupplierMap);
+      return response.data;
+    }catch(e){ 
+      throw e;
+    }
+}
+
 const deleteRequisitionItems = async (
   ids: number[],
   requisitionId: number
@@ -379,6 +418,16 @@ const getQuoteShipments = async (isSupplier?: boolean) => {
   try {
     const prefix = isSupplier ? 'supplier/' : '';
     const response = await api.get(`/${prefix}requisition/quote/shipment-type`);
+    return response.data;
+  } catch (e: any) {
+    throw e;
+  }
+};
+
+const getQuotePaymentMethods = async (isSupplier?: boolean) => {
+  try {
+    const prefix = isSupplier ? 'supplier/' : '';
+    const response = await api.get(`/${prefix}requisition/quote/payment-method`);
     return response.data;
   } catch (e: any) {
     throw e;
@@ -459,6 +508,7 @@ export {
   fetchTenThousandProducts,
   fetchPersons,
   fetchAllProjects,
+  getItemToSupplierMapByReqId,
   postRequisition,
   postRequistionItems,
   fetchRequsitionById,
@@ -469,6 +519,7 @@ export {
   updateRequisition,
   deleteRequisition,
   searchProducts,
+  getQuotePaymentMethods,
   fetchRequisitionFiles,
   postRequisitionFile,
   getRequisitionFiles,
@@ -478,9 +529,11 @@ export {
   deleteItemFile,
   postItemLinkFile,
   postRequisitionLinkFile,
+  updateItemToSupplier,
   fetchAllTypes,
   logIn,
   fetchProjectOptionsByUser,
+  getPreviousStatusByReqId,
   createQuote,
   getQuoteById,
   updateQuote,
@@ -492,7 +545,8 @@ export {
   createQuoteFile,
   getFilesByQuoteId,
   deleteQuoteFile,
-  getStatusHistory
+  getStatusHistory,
+  createQuoteFileFromLink,
 };
 export type {
   Requisition,
