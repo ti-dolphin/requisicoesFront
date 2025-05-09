@@ -71,6 +71,16 @@ const getFilesByQuoteId = async (quoteId: number, isSupplier?: boolean) => {
   }
 };
 
+const createQuoteFileFromLink = async (quoteId: number, link: QuoteFile, isSupplier?: boolean) => {
+  try {
+    const prefix = getPrefix(isSupplier);
+    const response = await api.post(`/${prefix}requisition/quote/file/link/${quoteId}`, { link: link });
+    return response.data as QuoteFile;
+  }catch(e){ 
+      throw new Error("Erro ao anexar link na cotação")
+  }
+};
+
 const createQuoteFile = async (quoteId: number, formData: FormData, isSupplier?: boolean) => { 
   try {
     const prefix = getPrefix(isSupplier);
@@ -83,7 +93,7 @@ const createQuoteFile = async (quoteId: number, formData: FormData, isSupplier?:
     return response.data as QuoteFile;
   } catch (e) {
     console.log(e);
-    throw new Error("Failed to create quote file");
+    throw new Error("Erro ao anexar arquivo na cotação");
   }
 };
 
@@ -535,7 +545,8 @@ export {
   createQuoteFile,
   getFilesByQuoteId,
   deleteQuoteFile,
-  getStatusHistory
+  getStatusHistory,
+  createQuoteFileFromLink,
 };
 export type {
   Requisition,
