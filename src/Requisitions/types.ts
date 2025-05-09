@@ -99,16 +99,17 @@ export interface Quote {
   fornecedor: string; // fornecedor
   data_cotacao: string; // data_cotacao
   observacao?: string; // observacao
-  total? : number;
-  cnpj_fornecedor? : string;
-  cnpj_faturamento? : string
+  total?: number;
+  cnpj_fornecedor?: string;
+  cnpj_faturamento?: string;
   nome_frete: string;
   id_tipo_frete: number;
   id_classificacao_fiscal: number;
-  id_condicao_pagamento : number;
+  id_condicao_pagamento: number;
   valor_frete: number;
   itens: QuoteItem[]; // Lista de itens vinculados
-  nome_fornecedor? : string;
+  nome_condicao_pagamento? : string;
+  nome_fornecedor?: string;
   nome_faturamento?: string;
 }
 

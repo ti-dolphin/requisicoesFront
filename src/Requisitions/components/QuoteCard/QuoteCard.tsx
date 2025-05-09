@@ -86,7 +86,7 @@ const QuoteCard = ({ index, style, data }: ListChildComponentProps) => {
           }}
           variant="body2"
         >
-          <strong>Condições de Pagamento:</strong> {quote.condicoes_pagamento}
+          <strong>Condições de Pagamento:</strong> {quote.nome_condicao_pagamento}
         </Typography>
         <Typography
           sx={{
