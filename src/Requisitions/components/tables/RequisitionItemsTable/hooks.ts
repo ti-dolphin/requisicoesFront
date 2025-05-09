@@ -31,6 +31,7 @@ const useRequisitionItems = (
   isInsertingQuantity?: boolean,
   addedItems?: Item[],
 ) => {
+  const { toggleRefreshRequisition} = useContext(RequisitionContext)
   const { toggleCreating } = useContext(RequisitionContext);
   const [items, setItems] = useState<Item[]>([]);
   const [visibleItems, setVisibleItems] = useState<Item[]>();
@@ -254,6 +255,7 @@ const useRequisitionItems = (
             toggleAdding();
             toggleCreating()
           }
+          toggleRefreshRequisition();
           return;
         }
       } catch (e: any) {

@@ -26,6 +26,7 @@ const RequisitionDetail: React.FC = () => {
   const navigate = useNavigate();
 
   const fetchRequisitionData = async () => {
+    console.log("fetchRequisitionData");
       try {
         if (id) {
           const requisition = await fetchRequsitionById(Number(id));
@@ -114,6 +115,7 @@ const RequisitionDetail: React.FC = () => {
         >
           <RequisitionItemsTable
             requisitionStatus={requisitionData?.status}
+            requisitionData={requisitionData}
             requisitionId={Number(id)}
           />
         </Box>

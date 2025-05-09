@@ -6,6 +6,7 @@ import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import {
+  fetchItems,
   getRequisitionStatusList,
   Requisition,
   updateRequisition,
@@ -13,7 +14,7 @@ import {
 import { useContext } from "react";
 import { useState } from "react";
 import { RequisitionContext } from "../../context/RequisitionContext";
-import { userContext } from "../../context/userContext";
+import { User, userContext } from "../../context/userContext";
 import {
   Alert,
   AlertColor,
@@ -23,10 +24,11 @@ import {
   TextField,
 } from "@mui/material";
 
-import { AlertInterface, RequisitionStatus } from "../../types";
+import { AlertInterface, Item, RequisitionStatus } from "../../types";
 import typographyStyles from "../../utilStyles";
 import { BaseButtonStyles } from "../../../utilStyles";
-import { green } from "@mui/material/colors";
+import { green, red } from "@mui/material/colors";
+
 
 interface props {
   requisitionData: Requisition;
@@ -36,13 +38,15 @@ interface props {
 const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
   const { user } = useContext(userContext);
   const { toggleRefreshRequisition } = useContext(RequisitionContext);
-
   const [alert, setAlert] = useState<AlertInterface>();
-  const [steps, setSteps] = useState<RequisitionStatus[]>();
   const [activeStep, setActiveStep] = useState<number>();
-  const [justifyBackModalOpen, setJustifyBackModalOpen] =
-    useState<boolean>(false);
+  const [justifyBackModalOpen, setJustifyBackModalOpen] = useState<boolean>(false);
   const [justification, setJustification] = useState<string>(""); // State for justification
+ 
+  //data
+  const [cancelled, setCancelled] = useState(false);
+  const [steps, setSteps] = useState<RequisitionStatus[]>();
+  const [items, setItems] = useState<any[]>([]);
 
   const displayAlert = async (severity: string, message: string) => {
     setTimeout(() => {
@@ -52,37 +56,26 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
     return;
   };
 
+  const verifyOCS = (newStatus : RequisitionStatus, items: Item[]) => {
+    console.log('items: ', items)
+    if (newStatus.etapa === 6) {
+      const invalidItem = items.find((item: Item) => !item.OC);
+      if (invalidItem) {
+        throw new Error("Preencha todas as OCS dos items antes de avançar");
+      }
+    } 
+  };
+
+
   const handleNext = async () => {
     if (user) {
       try {
         const { status } = requisitionData;
         if (status) {
           const newStatus = steps?.find((s) => s.etapa === status.etapa + 1);
-          if (newStatus?.id_status_requisicao === 3 && !user.PERM_COMPRADOR) {
-            throw new Error("Você não tem permissão para avançar.");
-          }
-          if (newStatus?.id_status_requisicao === 4 && !user.PERM_COMPRADOR) {
-            throw new Error(
-              "Você não tem permissão para aprovar a requisição."
-            );
-          }
-          if (newStatus?.id_status_requisicao === 6 && !user.PERM_COMPRADOR) {
-            throw new Error("Você não tem permissão para finalizar a cotação.");
-          }
-          if (newStatus?.id_status_requisicao === 7 && !user.CODGERENTE) {
-            throw new Error(
-              "Você não tem permissão para aprovar a requisição."
-            );
-          }
-          if (newStatus?.id_status_requisicao === 8 && !user.PERM_DIRETOR) {
-            throw new Error(
-              "Você não tem permissão para aprovar a requisição."
-            );
-          }
-          if (newStatus?.id_status_requisicao === 9 && !user.PERM_COMPRADOR) {
-            throw new Error(
-              "Você não tem permissão para avançar para este status."
-            );
+          if(newStatus){ 
+            verifyPermissionToChangeStatus(user, newStatus );
+            verifyOCS(newStatus, items);
           }
           await updateRequisition(
             user.CODPESSOA,
@@ -102,12 +95,44 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
     }
   };
 
+  const verifyPermissionToChangeStatus = ( user: User, status : RequisitionStatus) => {
+  const userRoles = {
+    isResponsable: user.CODPESSOA === requisitionData.responsavel_pessoa?.CODPESSOA,
+    isManager: user.CODPESSOA === requisitionData.projeto_gerente?.gerente?.CODPESSOA,
+    isDirector: user.PERM_DIRETOR,
+    isPurchaser: user.PERM_COMPRADOR,
+    isAdmin: user.PERM_ADMINISTRADOR,
+  };
+  console.log('userRoles: ', userRoles)
+  const roles = Object.keys(userRoles)
+    const availableStatusEtapaPerUserRole = {
+      isResponsable: [1],
+      isPurchaser: [0, 1, 2, 3, 6],
+      isManager: [4, 2],
+      isDirector: [5, 3],
+      isAdmin: [0, 1, 2, 3, 4, 5, 6],
+    };
+    roles.forEach((role) => { 
+        if (userRoles[role as keyof typeof userRoles]) {
+          const statusAllowed = availableStatusEtapaPerUserRole[
+            role as keyof typeof userRoles
+          ].includes(status.etapa);
+          if(!statusAllowed) {
+            throw new Error('Você não tem permissão para mudar o status para '+ status.nome)
+          }
+        }
+    });
+  }
+
   const handleBack = async () => {
     if (user) {
       try {
         const { status } = requisitionData;
         if (status) {
           const newStatus = steps?.find((s) => s.etapa === status.etapa - 1);
+          if (newStatus) {
+            verifyPermissionToChangeStatus(user, newStatus);
+          }
           await updateRequisition(
             user.CODPESSOA,
             {
@@ -136,19 +161,105 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
     setJustification(""); // Reset justification
   };
 
-  React.useEffect(() => {
-    if (requisitionData) {
-      setActiveStep(requisitionData.status?.etapa);
+   const handleCancel = async () => {
+     if (user) {
+       await updateRequisition(
+         user.CODPESSOA,
+         {
+           ...requisitionData,
+           id_status_requisicao: 99
+         },
+         justification,
+         requisitionData.id_status_requisicao 
+       );
+       toggleRefreshRequisition();
+     }
+   };
+
+   const handleReactivate = async ( ) =>  {
+    let previousStatus = requisitionData.status_anterior;
+    if (user) {
+         try {
+             if(previousStatus) {
+               await updateRequisition(
+                 user.CODPESSOA,
+                 {
+                   ...requisitionData,
+                   id_status_requisicao: previousStatus.id_status_requisicao,
+                 },
+                 justification,
+                 previousStatus.id_status_requisicao
+               );
+               toggleRefreshRequisition();
+               return
+             }
+               await updateRequisition(
+                 user.CODPESSOA,
+                 {
+                   ...requisitionData,
+                   id_status_requisicao: 1
+                 },
+                 justification,
+                 requisitionData.status?.id_status_requisicao
+               );
+               toggleRefreshRequisition();
+         } catch (e: any) {
+           displayAlert("error", e.message);
+         }
     }
-  }, []);
+   }
+
+  const shouldShowCancelButton = ( ) => { 
+    return user && user.PERM_COMPRADOR !== 0 && activeStep !== 6 && !cancelled
+  }
+
+  const shouldShowReactivateButton = ( ) => { 
+    return user && user.PERM_COMPRADOR !== 0 && activeStep !== 6 && cancelled
+  };
+  const renderStatusName = (step : RequisitionStatus ) => { 
+    if(!requisitionData) return;
+    const {status_anterior} = requisitionData;
+    if (step.etapa === status_anterior?.etapa && cancelled) {
+      return "Cancelado";
+    }
+    return step.nome;
+  }
+
+  const shouldShowNextButton = () => {
+    return !cancelled && requisitionData.status && requisitionData.status.acao_posterior !== '-'; 
+  }
+
+  const shouldShowBackButton = ( ) => { 
+    return !cancelled && requisitionData.status && requisitionData.status.acao_anterior !== "-" 
+  }
 
   React.useEffect(() => {
-    const fetchStatusList = async () => {
+    const notCancelled = !(requisitionData.status?.etapa === 99);
+    const cancelled = requisitionData.status?.etapa === 99;
+  
+    setCancelled(cancelled);
+    const fetchSteps = async () => {
       const statusList = await getRequisitionStatusList();
       setSteps(statusList);
     };
-    fetchStatusList();
-  }, []);
+    const fetchReqItems = async () => {
+      const items = await fetchItems(requisitionData.ID_REQUISICAO);
+      setItems(items);
+    };
+    fetchSteps();
+    fetchReqItems();  
+
+    if(cancelled && requisitionData.status_anterior){
+       setActiveStep(requisitionData.status_anterior.etapa);
+       return;
+    }
+    if(notCancelled){ 
+      setActiveStep(requisitionData.status?.etapa);
+      return;
+    }
+
+  }, [requisitionData]);
+
 
   return (
     <Box
@@ -172,22 +283,36 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
           activeStep={activeStep}
           alternativeLabel
         >
-          {steps.map((step) => (
-            <Step key={step.id_status_requisicao}>
-              <StepLabel sx={{ textAlign: "left" }}>
-                <Typography
-                  sx={{
-                    ...typographyStyles.smallText,
-                    color:
-                    activeStep === step.etapa ? green[500] : "black",
-                    fontWeight: activeStep === step.etapa ? "bold" : "normal"
+          {steps
+            .filter((step) => step.etapa !== 99)
+            .map((step) => (
+              <Step key={step.id_status_requisicao}>
+                <StepLabel
+                  StepIconProps={{
+                    sx: {
+                      "&.Mui-active": {
+                        color: green[600], // Cor do ícone quando o passo está ativo
+                      },
+                      "&.Mui-completed": {
+                        color: green[600], // Cor do ícone quando o passo está completo
+                      },
+                      color: "gray", // Cor padrão do ícone quando não está ativo
+                    },
                   }}
+                  sx={{ textAlign: "left" }}
                 >
-                  {step.nome}
-                </Typography>
-              </StepLabel>
-            </Step>
-          ))}
+                  <Typography
+                    sx={{
+                      ...typographyStyles.smallText,
+                      color: activeStep === step.etapa ? green[600] : "black",
+                      fontWeight: activeStep === step.etapa ? "bold" : "normal",
+                    }}
+                  >
+                    {renderStatusName(step)}
+                  </Typography>
+                </StepLabel>
+              </Step>
+            ))}
         </Stepper>
       )}
       {requisitionData.status && (
@@ -195,19 +320,43 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
           direction="row"
           sx={{ width: "100%", justifyContent: "center", gap: 2, padding: 1 }}
         >
-          {requisitionData.status.acao_anterior !== "-" ? (
+          {shouldShowBackButton() &&(
             <Button
               sx={BaseButtonStyles}
               onClick={() => setJustifyBackModalOpen(true)}
             >
               {requisitionData.status.acao_anterior}
             </Button>
-          ) : (
-            <Box></Box>
           )}
-          <Button onClick={handleNext} sx={BaseButtonStyles}>
-            {requisitionData.status.acao_posterior}
-          </Button>
+          { shouldShowNextButton() &&
+            <Button onClick={handleNext} sx={BaseButtonStyles}>
+              {requisitionData.status.acao_posterior}
+            </Button>
+          }
+          {shouldShowCancelButton() && (
+            <Button
+              onClick={handleCancel}
+              sx={{
+                ...BaseButtonStyles,
+                backgroundColor: red[700],
+                "&:hover": { backgroundColor: red[600] },
+              }}
+            >
+              Cancelar
+            </Button>
+          )}
+          {shouldShowReactivateButton() && (
+            <Button
+              onClick={handleReactivate}
+              sx={{
+                ...BaseButtonStyles,
+                backgroundColor: green[700],
+                "&:hover": { backgroundColor: green[500] },
+              }}
+            >
+              Reativar
+            </Button>
+          )}
         </Stack>
       )}
       {alert && (

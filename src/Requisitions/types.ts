@@ -32,6 +32,7 @@ export interface Requisition {
     NOME : string;
     CODPESSOA : number
   }
+  status_anterior? : RequisitionStatus;
   alterado_por_pessoa? : { 
     NOME: string;
     CODPESSOA: number

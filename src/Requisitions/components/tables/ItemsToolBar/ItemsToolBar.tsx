@@ -198,15 +198,6 @@ const ItemsToolBar = ({
         </Button>
       )}
 
-      {quoteExists && !selectingPrices && requisitionStatus?.etapa === 2 && (
-          <Button
-            onClick={() => {setSelectingPrices(true)}}
-            sx={{ ...BaseButtonStyles, height: 30, minWidth: 150 }}
-          >
-            Selecionar Preços
-            </Button>
-        )
-      }
       { 
         selectingPrices && (
           <Button
@@ -236,7 +227,7 @@ const ItemsToolBar = ({
             {itemToSupplierMap.length === visibleRows?.length ? 'Total: ' : 'Total Parcial: '}
           </Typography>
           <Typography sx={{ ...typographyStyles.heading2, color: green[800] }}>
-            {calculateTotal()}
+            {calculateTotal()?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
           </Typography>
          </Stack>
       }

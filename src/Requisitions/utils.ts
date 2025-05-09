@@ -194,6 +194,14 @@ const getRequisitionFiles = async (requisitionID: number) => {
     return null;
   }
 };
+const getPreviousStatusByReqId = async (requisitionId: number) => {
+  try {
+    const response = await api.get(`requisition/status/previous/${requisitionId}/`);
+    return response.data;
+  } catch (e) {
+    console.log(e);
+  }
+};
 
 const postRequistionItems = async (
 
@@ -515,6 +523,7 @@ export {
   fetchAllTypes,
   logIn,
   fetchProjectOptionsByUser,
+  getPreviousStatusByReqId,
   createQuote,
   getQuoteById,
   updateQuote,

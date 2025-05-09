@@ -27,6 +27,24 @@ import typographyStyles from "../../../utilStyles";
 import { Requisition } from "../../../types";
 
 const kanbanFiltersByProfile = {
+  director: [
+    { label: "Backlog", statuses: ["Em edição"] },
+    {
+      label: "Acompanhamento",
+      statuses: [
+        "Em cotação",
+        "Requisitado",
+        "Aprovação Gerente",
+        "Aprovação Diretoria",
+        "Gerar OC",
+      ],
+    },
+    {
+      label: "A Fazer",
+      statuses: ["Aprovação Diretoria"],
+    },
+    { label: "Tudo", statuses: [] },
+  ],
   manager: [
     { label: "Backlog", statuses: ["Em edição"] },
     {
@@ -35,7 +53,7 @@ const kanbanFiltersByProfile = {
         "Em cotação",
         "Requisitado",
         "Aprovação Diretoria",
-        "Gerar OC"
+        "Gerar OC",
       ],
     },
     {
@@ -50,7 +68,10 @@ const kanbanFiltersByProfile = {
       label: "Fazendo",
       statuses: ["Em cotação", "Gerar OC"],
     },
-    { label: 'Acompanhamento', statuses: ['Aprovação Gerente', 'Aprovação Diretoria']},
+    {
+      label: "Acompanhamento",
+      statuses: ["Aprovação Gerente", "Aprovação Diretoria"],
+    },
     { label: "Concluído", statuses: ["OC Gerada"] },
     { label: "Tudo", statuses: [] },
   ],
@@ -86,39 +107,54 @@ const SearchAppBar = ({ setFilteredRows, allRows }: Props) => {
     label: string;
     statuses: string[];
   } | null>(null);
-  const [availableKanbanFilters, setAvailableKanbanFilters] = useState<
-    { label: string; statuses: string[] }[]
-  >([]);
+  const [availableKanbanFilters, setAvailableKanbanFilters] = useState<{ label: string; statuses: string[] }[]>([]);
   const [subFilter, setSubFilter] = useState<string>("Todas");
 
   const filterMenuOpen = Boolean(filterMenu);
 
   const determineUserProfile = () => {
+    if (user?.PERM_DIRETOR && user.PERM_DIRETOR > 0) {
+      console.log("director");
+      return "director"; // Diretor
+    }
     if (user?.CODGERENTE) {
       return "manager"; // Gerente
-    } else if (user?.PERM_COMPRADOR && user.PERM_COMPRADOR > 0) {
-      return "purchaser"; // Comprador
-    } else {
-      return "responsible"; // Responsável
     }
+    if (user?.PERM_COMPRADOR && user.PERM_COMPRADOR > 0) {
+      return "purchaser"; // Comprador
+    }
+    return "responsible"; // Responsável
   };
 
   useEffect(() => {
     const profile = determineUserProfile();
     const filters = kanbanFiltersByProfile[profile];
     setAvailableKanbanFilters(filters);
-    setKanbanFilter(filters[0]); 
+    const defaulFilter = filters.find((filter) => filter.label === "A Fazer");
+    if (defaulFilter) {
+      setKanbanFilter(defaulFilter);
+      return;
+    }
+    setKanbanFilter(filters[0]);
   }, [user]);
- 
+
   useEffect(() => {
     if (!kanbanFilter) return;
     const applyKanbanFilter = (rows: Requisition[]) => {
       if (kanbanFilter.statuses.length > 0) {
-        const rowsInCurrentKanbanFilter = rows.filter((row) => kanbanFilter.statuses.includes(row.status?.nome || ""))
-        if (kanbanFilter.label === 'Acompanhamento' && determineUserProfile() === "manager"){ 
-          const projectManagerRows = rowsInCurrentKanbanFilter.filter((row) => row.projeto_gerente?.gerente?.CODPESSOA === user?.CODPESSOA)
+        const rowsInCurrentKanbanFilter = rows.filter((row) =>
+          kanbanFilter.statuses.includes(row.status?.nome || "")
+        );
+        if (
+          kanbanFilter.label === "Acompanhamento" &&
+          determineUserProfile() === "manager"
+        ) {
+          const projectManagerRows = rowsInCurrentKanbanFilter.filter(
+            (row) => row.projeto_gerente?.gerente?.CODPESSOA === user?.CODPESSOA
+          );
           return projectManagerRows;
         }
+        console.log("rowsInCurrentKanbanFilter", rowsInCurrentKanbanFilter);
         return rowsInCurrentKanbanFilter;
       }
       return rows;
@@ -138,7 +174,6 @@ const SearchAppBar = ({ setFilteredRows, allRows }: Props) => {
             row.alterado_por_pessoa?.CODPESSOA === user.CODPESSOA ||
             row.responsavel_pessoa?.CODPESSOA === user.CODPESSOA
         );
-
       }
       return rows;
     };
