@@ -149,12 +149,21 @@ const SearchAppBar = ({ setFilteredRows, allRows }: Props) => {
           kanbanFilter.label === "Acompanhamento" &&
           determineUserProfile() === "manager"
         ) {
-          const projectManagerRows = rowsInCurrentKanbanFilter.filter(
-            (row) => row.projeto_gerente?.gerente?.CODPESSOA === user?.CODPESSOA
+          //gerente acompanha as que ele é resopnsável ou gerente do projeto
+          const managerMonitoringRows = rowsInCurrentKanbanFilter.filter(
+            (row) => row.projeto_gerente?.gerente?.CODPESSOA === user?.CODPESSOA || 
+            row.responsavel_pessoa?.CODPESSOA === user?.CODPESSOA
           );
-          return projectManagerRows;
+          return managerMonitoringRows;
         }
-        console.log("rowsInCurrentKanbanFilter", rowsInCurrentKanbanFilter);
+        //backlog de todos é em edição, criada pelo usuário
+        if(kanbanFilter.label === "Backlog"){ 
+            const backlogRows = rowsInCurrentKanbanFilter.filter(
+              (row) => row.responsavel_pessoa?.CODPESSOA === user?.CODPESSOA
+            );
+            return backlogRows;
+        }
+        
         return rowsInCurrentKanbanFilter;
       }
       return rows;
