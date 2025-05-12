@@ -1,9 +1,7 @@
 import {
   Dispatch,
   SetStateAction,
-  useContext,
   useState,
-  useEffect,
 } from "react";
 import { useNavigate } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
@@ -19,216 +17,39 @@ import {
 } from "@mui/material";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import ArrowCircleLeftIcon from "@mui/icons-material/ArrowCircleLeft";
-import { userContext } from "../../../context/userContext";
 import AddRequisitionModal from "../../../components/modals/AddRequisitionModal";
 import { BaseButtonStyles, buttonStylesMobile } from "../../../../utilStyles";
 import { orange } from "@mui/material/colors";
 import typographyStyles from "../../../utilStyles";
-import { Requisition } from "../../../types";
+import { kanban_requisicao, Requisition } from "../../../types";
 
-const kanbanFiltersByProfile = {
-  director: [
-    { label: "Backlog", statuses: ["Em edição"] },
-    {
-      label: "Acompanhamento",
-      statuses: [
-        "Em cotação",
-        "Requisitado",
-        "Aprovação Gerente",
-        "Aprovação Diretoria",
-        "Gerar OC",
-      ],
-    },
-    {
-      label: "A Fazer",
-      statuses: ["Aprovação Diretoria"],
-    },
-    { label: "Tudo", statuses: [] },
-  ],
-  manager: [
-    { label: "Backlog", statuses: ["Em edição"] },
-    {
-      label: "Acompanhamento",
-      statuses: [
-        "Em cotação",
-        "Requisitado",
-        "Aprovação Diretoria",
-        "Gerar OC",
-      ],
-    },
-    {
-      label: "A Fazer",
-      statuses: ["Aprovação Gerente"],
-    },
-    { label: "Tudo", statuses: [] },
-  ],
-  purchaser: [
-    { label: "A Fazer", statuses: ["Requisitado", "Gerar OC"] },
-    {
-      label: "Fazendo",
-      statuses: ["Em cotação", "Gerar OC"],
-    },
-    {
-      label: "Acompanhamento",
-      statuses: ["Aprovação Gerente", "Aprovação Diretoria"],
-    },
-    { label: "Concluído", statuses: ["OC Gerada"] },
-    { label: "Tudo", statuses: [] },
-  ],
-  responsible: [
-    { label: "Backlog", statuses: ["Em edição"] },
-    {
-      label: "Acompanhamento",
-      statuses: [
-        "Em cotação",
-        "Requisitado",
-        "Aprovação Gerente",
-        "Aprovação Diretoria",
-        "Gerar OC",
-        "OC Gerada",
-      ],
-    },
-    { label: "Tudo", statuses: [] },
-  ],
-};
+
 
 interface Props {
   filteredRows: Requisition[];
   setFilteredRows: Dispatch<SetStateAction<Requisition[]>>;
   allRows: Requisition[]; // Adicionamos todas as requisições para filtragem
+  kanbans: kanban_requisicao[];
+  setKanban: Dispatch<SetStateAction<kanban_requisicao | undefined>>;
+  setSubFilter: Dispatch<SetStateAction<string>>;
+  subFilter: string;
 }
 
-const SearchAppBar = ({ setFilteredRows, allRows }: Props) => {
-  const { user } = useContext(userContext);
+
+const SearchAppBar = ({
+  kanbans,
+  setKanban,
+  setSubFilter,
+  subFilter
+}: Props) => {
   const navigate = useNavigate();
-  const subFilters = ["Minhas", "Todas"];
   const [filterMenu, setFilterMenu] = useState<null | HTMLElement>(null);
-  const [kanbanFilter, setKanbanFilter] = useState<{
-    label: string;
-    statuses: string[];
-  } | null>(null);
-  const [availableKanbanFilters, setAvailableKanbanFilters] = useState<{ label: string; statuses: string[] }[]>([]);
-  const [subFilter, setSubFilter] = useState<string>("Todas");
-
   const filterMenuOpen = Boolean(filterMenu);
-
-  const determineUserProfile = () => {
-    if (user?.PERM_DIRETOR && user.PERM_DIRETOR > 0) {
-      console.log("director");
-      return "director"; // Diretor
-    }
-    if (user?.CODGERENTE) {
-      return "manager"; // Gerente
-    }
-    if (user?.PERM_COMPRADOR && user.PERM_COMPRADOR > 0) {
-      return "purchaser"; // Comprador
-    }
-    return "responsible"; // Responsável
-  };
-
-  useEffect(() => {
-    const profile = determineUserProfile();
-    const filters = kanbanFiltersByProfile[profile];
-    setAvailableKanbanFilters(filters);
-    const defaulFilter = filters.find((filter) => filter.label === "A Fazer");
-    if (defaulFilter) {
-      setKanbanFilter(defaulFilter);
-      return;
-    }
-    setKanbanFilter(filters[0]);
-  }, [user]);
-
-  useEffect(() => {
-    if (!kanbanFilter) return;
-    const applyKanbanFilter = (rows: Requisition[]) => {
-      if (kanbanFilter.statuses.length > 0) {
-        const rowsInCurrentKanbanFilter = rows.filter((row) =>
-          kanbanFilter.statuses.includes(row.status?.nome || "")
-        );
-        if (
-          kanbanFilter.label === "Acompanhamento" &&
-          determineUserProfile() === "manager"
-        ) {
-          //gerente acompanha as que ele é resopnsável ou gerente do projeto
-          const managerMonitoringRows = rowsInCurrentKanbanFilter.filter(
-            (row) => row.projeto_gerente?.gerente?.CODPESSOA === user?.CODPESSOA || 
-            row.responsavel_pessoa?.CODPESSOA === user?.CODPESSOA
-          );
-          return managerMonitoringRows;
-        }
-        if (
-          kanbanFilter.label === "Acompanhamento" &&
-          determineUserProfile() === "responsible"
-        ) {
-          console.log('acompanhamneto responsável')
-          //gerente acompanha as que ele é resopnsável ou gerente do projeto
-          const managerMonitoringRows = rowsInCurrentKanbanFilter.filter(
-            (row) =>
-              row.responsavel_pessoa?.CODPESSOA === user?.CODPESSOA
-          );
-          return managerMonitoringRows;
-        }
-
-
-        if(kanbanFilter.label === "Backlog"){ 
-            const backlogRows = rowsInCurrentKanbanFilter.filter(
-              (row) => row.responsavel_pessoa?.CODPESSOA === user?.CODPESSOA
-            );
-            return backlogRows;
-        }
-        
-        return rowsInCurrentKanbanFilter;
-      }
-      return rows;
-    };
-    const applySubFilter = (rows: Requisition[]) => {
-      if (subFilter === "Minhas" && user) {
-        if (determineUserProfile() === "manager") {
-          return rows.filter(
-            (row) =>
-              row.projeto_gerente?.gerente?.CODPESSOA === user.CODPESSOA ||
-              row.alterado_por_pessoa?.CODPESSOA === user.CODPESSOA ||
-              row.responsavel_pessoa?.CODPESSOA === user.CODPESSOA
-          );
-        }
-        return rows.filter(
-          (row) =>
-            row.alterado_por_pessoa?.CODPESSOA === user.CODPESSOA ||
-            row.responsavel_pessoa?.CODPESSOA === user.CODPESSOA
-        );
-      }
-      return rows;
-    };
-
-    const filterRows = () => {
-      let filteredRows = allRows;
-      filteredRows = applyKanbanFilter(filteredRows);
-      filteredRows = applySubFilter(filteredRows);
-      setFilteredRows(filteredRows);
-    };
-
-    filterRows();
-  }, [kanbanFilter, subFilter, allRows, user]);
-
   const handleClickFilter = (event: React.MouseEvent<HTMLButtonElement>) => {
     setFilterMenu(event.currentTarget);
   };
-
   const handleCloseFilter = () => {
     setFilterMenu(null);
-  };
-
-  const handleSelectFilter = (filter: string) => {
-    localStorage.setItem("currentSubFilter", JSON.stringify({ label: filter }));
-    setSubFilter(filter);
-    handleCloseFilter();
-  };
-
-  const handleChangeKanbanFilter = (filter: {
-    label: string;
-    statuses: string[];
-  }) => {
-    setKanbanFilter(filter);
   };
 
   return (
@@ -272,29 +93,14 @@ const SearchAppBar = ({ setFilteredRows, allRows }: Props) => {
                 },
               }}
             >
-              {availableKanbanFilters.map((filter) => (
+              {" "}
+              {kanbans.map((kanban, index) => (
                 <Button
-                  key={filter.label}
-                  sx={{
-                    ...BaseButtonStyles,
-                    minWidth: 80,
-                    "&:hover": {
-                      backgroundColor: orange[200],
-                    },
-                    backgroundColor:
-                      kanbanFilter?.label === filter.label
-                        ? orange[200]
-                        : "orange",
-                  }}
-                  onClick={() => handleChangeKanbanFilter(filter)}
+                  key={index}
+                  sx={{ ...BaseButtonStyles }}
+                  onClick={() => setKanban(kanban)}
                 >
-                  <Typography
-                    color="white"
-                    sx={{ textTransform: "underline" }}
-                    fontSize="small"
-                  >
-                    {filter.label}
-                  </Typography>
+                  {kanban.nome}
                 </Button>
               ))}
               <IconButton
@@ -316,14 +122,14 @@ const SearchAppBar = ({ setFilteredRows, allRows }: Props) => {
                   "aria-labelledby": "basic-button",
                 }}
               >
-                {subFilters.map((filter) => (
+                {['Minhas', 'Todas'].map((filter) => (
                   <MenuItem
                     key={filter}
                     sx={{
                       backgroundColor:
-                        subFilter === filter ? "#e3e3e3" : "white",
+                        subFilter === filter ? orange[500] : "white",
                     }}
-                    onClick={() => handleSelectFilter(filter)}
+                    onClick={() => setSubFilter(filter)}
                   >
                     {filter}
                   </MenuItem>

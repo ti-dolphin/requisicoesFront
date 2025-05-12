@@ -12,7 +12,9 @@ import {
   Requisition,
   RequisitionItemPost,
   RequisitionFile,
+  kanban_requisicao,
 } from "./types";
+import { User } from "./context/userContext";
 const getPrefix = (isSupplier?: boolean) => (isSupplier ? 'supplier/' : '');
 
 const logIn = async (username: string, password: string) => {
@@ -35,6 +37,15 @@ const logIn = async (username: string, password: string) => {
     console.log(e);
     return { message: "login failed" };
   }
+};
+
+const getRequisitionKanban = async ( ) => {
+   try{ 
+      const respnse = await api.get('/requisition/kanban');
+      return respnse.data;
+   }catch(e){ 
+    throw new Error("Falha ao carregar etapas kanban")
+   }
 };
 
 const getStatusHistory = async (requisitionID: number) => {
@@ -303,9 +314,15 @@ const searchProducts = async (name: string, type : number) => {
 };
 
 const fecthRequisitions = async (
+  kanban: kanban_requisicao,
+  user : User,
 ) => {
   try {
-    const response = await api.get<Requisition[]>("/requisition");
+    const response = await api.get<Requisition[]>("/requisition", { 
+      params : { 
+        kanban, user
+      }
+    });
     return response.data;
   } catch (e) {
     throw e;
@@ -534,6 +551,7 @@ export {
   logIn,
   fetchProjectOptionsByUser,
   getPreviousStatusByReqId,
+  getRequisitionKanban,
   createQuote,
   getQuoteById,
   updateQuote,

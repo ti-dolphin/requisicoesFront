@@ -5,6 +5,11 @@ export interface Option {
   id: number;
 }
 
+export interface kanban_requisicao {
+  id_kanban_requisicao : number;
+  nome : string;
+}
+
 export interface RequisitionStatus {
   id_status_requisicao : number;
   nome : string;

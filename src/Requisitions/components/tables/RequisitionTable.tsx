@@ -9,14 +9,15 @@ import {
 } from "@mui/x-data-grid";
 import { Box, Typography, CircularProgress, Alert, AlertColor } from "@mui/material";
 import { RequisitionContext } from "../../context/RequisitionContext";
-import { deleteRequisition, fecthRequisitions } from "../../utils";
+import { deleteRequisition, fecthRequisitions, getRequisitionKanban } from "../../utils";
 import { Requisition } from "../../utils";
 import DeleteRequisitionModal from "../modals/warnings/DeleteRequisitionModal";
 import SearchAppBar from "../../pages/requisitionHome/components/SearchAppBar";
 import typographyStyles from "../../utilStyles";
-import { AlertInterface, RequisitionStatus } from "../../types";
+import { AlertInterface, kanban_requisicao, RequisitionStatus } from "../../types";
 import { Pessoa } from "../../../crm/types";
 import { useNavigate } from "react-router-dom";
+import { userContext } from "../../context/userContext";
 
 const columns: GridColDef[] = [
   {
@@ -175,25 +176,19 @@ export default function RequisitionsDataGrid() {
   const [loading, setLoading] = useState(false);
   const [tableHeight, setTableHeight] = useState<number>(600);
   const [alert, setAlert] = useState<AlertInterface>();
+  const [kanbans, setKabans] = useState<kanban_requisicao[]>([]);
+  const [kanban, setKanban] = useState<kanban_requisicao>();
+  const [subFilter, setSubFilter ] = useState<string>('Minhas');
   const  navigate  = useNavigate();
-  
+
+  const { user } = useContext(userContext);
+
+
+
   const containerRef = useRef<HTMLDivElement>(null);
   const {
     toggleRefreshRequisition,
   } = useContext(RequisitionContext);
-  const fetchRequisitionData = async ( ) => { 
-      try{ 
-        setLoading(true)
-        const requisitions = await fecthRequisitions();
-        console.log('requisitions: ', requisitions);
-        setFilteredRows(requisitions);
-        setAllRows(requisitions);
-      }catch(e){ 
-        displayAlert('error', 'Erro ao buscar requisições')
-      }finally{ 
-        setLoading(false);
-      }
-  }
   
   const displayAlert = async (severity: string, message: string) => {
     setTimeout(() => {
@@ -213,9 +208,70 @@ export default function RequisitionsDataGrid() {
        navigate(`/requisitions/requisitionDetail/${params.row.ID_REQUISICAO}`);
   };  
 
+  const setDefaultKanban = (kanbans : kanban_requisicao[]) => {
+    const defaultKanban = kanbans.find(
+      (kanban: kanban_requisicao) => kanban.id_kanban_requisicao === 1
+    );
+    setKanban(defaultKanban);
+  };
+
+  const filterBysubFilter = (requisitions: Requisition[]) => {
+    console.log("requisitions: ", requisitions)
+    if (subFilter === "Minhas") {
+      const rows = requisitions.filter(
+        (row: Requisition) =>
+          row.ID_RESPONSAVEL === user?.CODPESSOA ||
+          row.alterado_por_pessoa?.CODPESSOA === user?.CODPESSOA ||
+          row.projeto_gerente?.gerente.CODPESSOA === user?.CODPESSOA ||
+          user?.PERM_DIRETOR
+      );
+      console.log("filtered rows by subfilter: ", rows);
+      setFilteredRows(rows);
+      return;
+    }
+    setFilteredRows(allRows);
+  };
+
   useEffect(() => {
-    fetchRequisitionData();
-  }, []);
+    const fetchKanbans = async ( ) => { 
+        const kanbans = await getRequisitionKanban();
+        setKabans(kanbans);
+        setDefaultKanban(kanbans)
+    } 
+    const fetchRequisitionData = async () => {
+      try {
+        if(!user) throw new Error('Usuário não está logado');
+        if(!kanban) throw new Error('Kanban não selecionado');
+        setLoading(true);
+        const requisitions = await fecthRequisitions(kanban, user );
+        if(subFilter === 'Minhas'){ 
+          filterBysubFilter(requisitions);
+          setAllRows(requisitions);
+          return;
+        }
+        setAllRows(requisitions)
+        setFilteredRows(requisitions);
+        
+      } catch (e) {
+        console.log(e);
+        displayAlert("error", "Erro ao buscar requisições");
+      } finally {
+        setLoading(false);
+      }
+    };
+    if(!kanban) {
+      fetchKanbans();
+    }
+    if(kanban){ 
+      fetchRequisitionData();
+      
+    }
+  }, [kanban]);
+
+
+  useEffect(() => { 
+     filterBysubFilter(filteredRows);
+  }, [subFilter])
 
   useEffect(() => {
     if (containerRef.current) {
@@ -238,6 +294,10 @@ export default function RequisitionsDataGrid() {
     >
       <SearchAppBar
         allRows={allRows}
+        kanbans={kanbans}
+        setSubFilter={setSubFilter}
+        subFilter={subFilter}
+        setKanban={setKanban}
         filteredRows={filteredRows}
         setFilteredRows={setFilteredRows}
       />
@@ -247,59 +307,58 @@ export default function RequisitionsDataGrid() {
       {loading ? (
         <CircularProgress />
       ) : (
-          <DataGrid
-            rows={filteredRows}
-            getRowId={(row: Requisition) => row.ID_REQUISICAO}
-            columns={columns}
-            pageSizeOptions={[20, 50, 100]}
-            rowHeight={40}
-            showColumnVerticalBorder
-            showCellVerticalBorder
-            paginationModel={paginationModel}
-            onPaginationModelChange={setPaginationModel}
-            sortModel={sortModel}
-            onSortModelChange={setSortModel}
-            onRowClick={handleRowClick}
-            slots={{
-              toolbar: GridToolbar,
-            }}
-            slotProps={{
-              toolbar: {
-                showQuickFilter: true,
-                quickFilterProps: { debounceMs: 500, placeholder: "Pesquisar" },
-                sx: {
-                  display: "!important flex",
-                  flexDirection: "row-reverse",
-                  justifyContent: "center",
-                  border: "1px solid lightgray",
-                  padding: 1,
-                  "& .MuiButtonBase-root": {
-                    display: "none",
-                  },
-                },
-              },
-            }}
-            sx={{
-              width: "100%",
-              maxHeight: tableHeight,
-              padding: 2,
-              "& .MuiDataGrid-row": {
-                cursor: "pointer",
-                "&:hover": {
-                  backgroundColor: "rgba(0, 0, 0, 0.04)",
-                },
-              },
-              "& .MuiDataGrid-cell": {
-                display: "flex",
-                alignItems: "center",
+        <DataGrid
+          rows={filteredRows}
+          getRowId={(row: Requisition) => row.ID_REQUISICAO}
+          columns={columns}
+          pageSizeOptions={[20, 50, 100]}
+          rowHeight={40}
+          showColumnVerticalBorder
+          showCellVerticalBorder
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
+          sortModel={sortModel}
+          onSortModelChange={setSortModel}
+          onRowClick={handleRowClick}
+          slots={{
+            toolbar: GridToolbar,
+          }}
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true,
+              quickFilterProps: { debounceMs: 500, placeholder: "Pesquisar" },
+              sx: {
+                display: "!important flex",
+                flexDirection: "row-reverse",
+                justifyContent: "center",
+                border: "1px solid lightgray",
                 padding: 1,
-               
+                "& .MuiButtonBase-root": {
+                  display: "none",
+                },
               },
-              "& .MuiDataGrid-menuIcon": {
-                display: "none",
+            },
+          }}
+          sx={{
+            width: "100%",
+            maxHeight: tableHeight,
+            padding: 2,
+            "& .MuiDataGrid-row": {
+              cursor: "pointer",
+              "&:hover": {
+                backgroundColor: "rgba(0, 0, 0, 0.04)",
               },
-            }}
-          />
+            },
+            "& .MuiDataGrid-cell": {
+              display: "flex",
+              alignItems: "center",
+              padding: 1,
+            },
+            "& .MuiDataGrid-menuIcon": {
+              display: "none",
+            },
+          }}
+        />
       )}
       <DeleteRequisitionModal
         isDeleteRequisitionModalOpen={isDeleteRequisitionModalOpen}
