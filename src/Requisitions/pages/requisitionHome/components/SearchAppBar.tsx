@@ -33,6 +33,7 @@ interface Props {
   setKanban: Dispatch<SetStateAction<kanban_requisicao | undefined>>;
   setSubFilter: Dispatch<SetStateAction<string>>;
   subFilter: string;
+  currentKanban: kanban_requisicao | undefined;
 }
 
 
@@ -40,7 +41,8 @@ const SearchAppBar = ({
   kanbans,
   setKanban,
   setSubFilter,
-  subFilter
+  subFilter,
+  currentKanban
 }: Props) => {
   const navigate = useNavigate();
   const [filterMenu, setFilterMenu] = useState<null | HTMLElement>(null);
@@ -97,7 +99,12 @@ const SearchAppBar = ({
               {kanbans.map((kanban, index) => (
                 <Button
                   key={index}
-                  sx={{ ...BaseButtonStyles }}
+                  sx={{
+                    ...BaseButtonStyles,
+                    backgroundColor:
+                      kanban === currentKanban ? orange[200] : orange[500],
+                    "&:hover": { backgroundColor: orange[200] },
+                  }}
                   onClick={() => setKanban(kanban)}
                 >
                   {kanban.nome}
@@ -122,12 +129,12 @@ const SearchAppBar = ({
                   "aria-labelledby": "basic-button",
                 }}
               >
-                {['Minhas', 'Todas'].map((filter) => (
+                {["Minhas", "Todas"].map((filter) => (
                   <MenuItem
                     key={filter}
                     sx={{
                       backgroundColor:
-                        subFilter === filter ? orange[500] : "white",
+                        subFilter === filter ? orange[200] : "white",
                     }}
                     onClick={() => setSubFilter(filter)}
                   >

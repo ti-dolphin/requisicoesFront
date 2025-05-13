@@ -50,6 +50,14 @@ export interface Requisition {
       CODPESSOA: number
     }
   },
+  projeto_responsavel?: { 
+    ID_PROJETO: number;
+    DESCRICAO: string;
+    responsavel : { 
+      NOME: string;
+      CODPESSOA: number
+    }
+  },
   projeto_descricao? : { 
     ID_PROJETO: number;
     DESCRICAO: string;

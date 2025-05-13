@@ -102,8 +102,11 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
     isDirector: user.PERM_DIRETOR,
     isPurchaser: user.PERM_COMPRADOR,
     isAdmin: user.PERM_ADMINISTRADOR,
+    isProjectResponsable : user.CODPESSOA === requisitionData.projeto_responsavel?.responsavel.CODPESSOA
   };
-  console.log('userRoles: ', userRoles)
+  console.log("responsavel projeto: ", requisitionData.projeto_responsavel?.responsavel.CODPESSOA)
+  console.log('user roles: ', userRoles)
+ 
   const roles = Object.keys(userRoles)
     const availableStatusEtapaPerUserRole = {
       isResponsable: [1],
@@ -111,16 +114,21 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
       isManager: [4, 2],
       isDirector: [5, 3],
       isAdmin: [0, 1, 2, 3, 4, 5, 6],
+      isProjectResponsable : [0, 2]
     };
     roles.forEach((role) => { 
         if (userRoles[role as keyof typeof userRoles]) {
+          console.log("role encontrada: ", userRoles[role as keyof typeof userRoles])
           const statusAllowed = availableStatusEtapaPerUserRole[
             role as keyof typeof userRoles
-          ].includes(status.etapa);
+          ].includes(status.etapa) || user.PERM_ADMINISTRADOR;
           if(!statusAllowed) {
+            console.log('status não permitido: ', status.nome)
             throw new Error('Você não tem permissão para mudar o status para '+ status.nome)
           }
+          return;
         }
+        return;
     });
   }
 
@@ -243,7 +251,8 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
       setSteps(statusList);
     };
     const fetchReqItems = async () => {
-      const items = await fetchItems(requisitionData.ID_REQUISICAO);
+      const {items, columns} = await fetchItems(requisitionData.ID_REQUISICAO);
+      console.log('columns: ', columns)
       setItems(items);
     };
     fetchSteps();

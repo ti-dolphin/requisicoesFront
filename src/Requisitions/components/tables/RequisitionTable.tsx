@@ -21,9 +21,15 @@ import { userContext } from "../../context/userContext";
 
 const columns: GridColDef[] = [
   {
+    field: "ID_REQUISICAO",
+    headerName: "Nº",
+    flex: 0.3,
+    type: "number",
+    align: "center",
+  },
+  {
     field: "DESCRIPTION",
     headerName: "Descrição",
-    minWidth: 250,
     flex: 1,
     renderCell: (params) => (
       <Typography
@@ -37,11 +43,15 @@ const columns: GridColDef[] = [
   {
     field: "status",
     headerName: "Status",
-    width: 250,
+    flex: 1,
     valueGetter: (status: RequisitionStatus) => status?.nome || "",
     renderCell: (params) => (
       <Typography
-        sx={{ ...typographyStyles.smallText, color: 'black', fontWeight: 'semibold' }}
+        sx={{
+          ...typographyStyles.smallText,
+          color: "black",
+          fontWeight: "semibold",
+        }}
         textTransform="uppercase"
       >
         {String(params.value).toLowerCase()}
@@ -51,7 +61,6 @@ const columns: GridColDef[] = [
   {
     field: "projeto_descricao",
     headerName: "Projeto",
-    minWidth: 300,
     flex: 1,
     valueGetter: (projeto: {
       ID_PROJETO: number;
@@ -73,8 +82,7 @@ const columns: GridColDef[] = [
   {
     field: "projeto_gerente",
     headerName: "Gerente",
-    minWidth: 200,
-    flex: 0.8,
+    flex: 1,
     renderCell: (params) => (
       <Typography
         sx={{ ...typographyStyles.bodyText, color: "black" }}
@@ -93,10 +101,34 @@ const columns: GridColDef[] = [
     }) => projeto?.gerente.NOME || "",
   },
   {
+    field: "projeto_responsavel",
+    headerName: "Responsável Projeto",
+    flex: 1,
+    renderCell: (params) => (
+      <Typography
+        sx={{ ...typographyStyles.bodyText, color: "black" }}
+        textTransform="capitalize"
+      >
+        {String(params.value).toLowerCase()}
+      </Typography>
+    ),
+    valueGetter: (projeto: {
+      ID_PROJETO: number;
+      DESCRICAO: string;
+      gerente: {
+        NOME: string;
+        CODPESSOA: number;
+      };
+      responsavel: {
+        NOME: string;
+        CODPESSOA: number;
+      };
+    }) => projeto.responsavel.NOME || "",
+  },
+  {
     field: "responsavel_pessoa",
     headerName: "Responsável",
-    minWidth: 180,
-    flex: 0.5 ,
+    flex: 1,
     valueGetter: (responsavel_pessoa: Pessoa) => responsavel_pessoa?.NOME || "",
     renderCell: (params) => (
       <Typography
@@ -108,18 +140,9 @@ const columns: GridColDef[] = [
     ),
   },
   {
-    field: "ID_REQUISICAO",
-    headerName: "Nº",
-    width: 60,
-    
-    type: "number",
-    align: "center",
-  },
-  {
     field: "data_criacao",
     headerName: "Data de Criação",
-    width: 150,
-
+    flex: 1,
     valueFormatter: (value: string) => {
       if (typeof value === "string") {
         const date = value.substring(0, 10).replace(/-/g, "/");
@@ -132,8 +155,7 @@ const columns: GridColDef[] = [
   {
     field: "data_alteracao",
     headerName: "Última Alteração",
-    width: 150,
-
+    flex: 1,
     valueFormatter: (value: string) => {
       if (typeof value === "string") {
         const date = value.substring(0, 10).replace(/-/g, "/");
@@ -146,8 +168,7 @@ const columns: GridColDef[] = [
   {
     field: "alterado_por_pessoa",
     headerName: "Alterado Por",
-    width: 140,
-
+    flex: 1,
     valueGetter: (alterado_por_pessoa: Pessoa) =>
       alterado_por_pessoa?.NOME || "",
     renderCell: (params: GridRenderCellParams) => (
@@ -179,11 +200,11 @@ export default function RequisitionsDataGrid() {
   const [kanbans, setKabans] = useState<kanban_requisicao[]>([]);
   const [kanban, setKanban] = useState<kanban_requisicao>();
   const [subFilter, setSubFilter ] = useState<string>('Minhas');
+  const [refresh, setRefresh] = useState<boolean>(false);
+
   const  navigate  = useNavigate();
 
   const { user } = useContext(userContext);
-
-
 
   const containerRef = useRef<HTMLDivElement>(null);
   const {
@@ -232,6 +253,13 @@ export default function RequisitionsDataGrid() {
     setFilteredRows(allRows);
   };
 
+  const startAutoRefresh = ( ) =>  {
+    const twoMinutes = 2* 60 * 1000;
+    setTimeout(() => {
+      setRefresh(!refresh);
+    }, twoMinutes);
+  }
+
   useEffect(() => {
     const fetchKanbans = async ( ) => { 
         const kanbans = await getRequisitionKanban();
@@ -264,10 +292,9 @@ export default function RequisitionsDataGrid() {
     }
     if(kanban){ 
       fetchRequisitionData();
-      
     }
-  }, [kanban]);
-
+    startAutoRefresh();
+  }, [kanban, refresh]);
 
   useEffect(() => { 
      filterBysubFilter(filteredRows);
@@ -279,6 +306,8 @@ export default function RequisitionsDataGrid() {
       setTableHeight(containerRef.current.clientHeight);
     }
   }, [containerRef]);
+
+
 
   return (
     <Box
@@ -298,6 +327,7 @@ export default function RequisitionsDataGrid() {
         setSubFilter={setSubFilter}
         subFilter={subFilter}
         setKanban={setKanban}
+        currentKanban={kanban}
         filteredRows={filteredRows}
         setFilteredRows={setFilteredRows}
       />
