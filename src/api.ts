@@ -28,7 +28,6 @@ api.interceptors.response.use(
     return response;
   },
   function(error) {
-   console.log("error message: ", error.response.data.message);
     if (
       !window.localStorage.getItem("token") ||
       error.response.data.message === "Not authorized"
