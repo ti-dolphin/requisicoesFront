@@ -5,7 +5,7 @@ import axios from "axios";
 //http://localhost:3000
 
 export const api = axios.create({
-  baseURL: "https://apicontrolehomologacao.dse.com.br",
+  baseURL: "http://localhost:3001",
   headers: {
     "Content-Type": "application/json",
   },
@@ -28,7 +28,6 @@ api.interceptors.response.use(
     return response;
   },
   function(error) {
-   console.log("error message: ", error.response.data.message);
     if (
       !window.localStorage.getItem("token") ||
       error.response.data.message === "Not authorized"

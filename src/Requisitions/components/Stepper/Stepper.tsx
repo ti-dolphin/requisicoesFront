@@ -8,13 +8,14 @@ import Typography from "@mui/material/Typography";
 import {
   fetchItems,
   getRequisitionStatusList,
+  getStatusAction,
   Requisition,
   updateRequisition,
 } from "../../utils";
 import { useContext } from "react";
 import { useState } from "react";
 import { RequisitionContext } from "../../context/RequisitionContext";
-import { User, userContext } from "../../context/userContext";
+import {  userContext } from "../../context/userContext";
 import {
   Alert,
   AlertColor,
@@ -30,6 +31,7 @@ import { BaseButtonStyles } from "../../../utilStyles";
 import { green, red } from "@mui/material/colors";
 
 
+
 interface props {
   requisitionData: Requisition;
   setRequisitionData: (requisition: Requisition) => void;
@@ -42,7 +44,7 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
   const [activeStep, setActiveStep] = useState<number>();
   const [justifyBackModalOpen, setJustifyBackModalOpen] = useState<boolean>(false);
   const [justification, setJustification] = useState<string>(""); // State for justification
- 
+  const [permitionToChangeStatus, setPermitionToChangeStatus] = useState<boolean>();
   //data
   const [cancelled, setCancelled] = useState(false);
   const [steps, setSteps] = useState<RequisitionStatus[]>();
@@ -58,7 +60,7 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
 
   const verifyOCS = (newStatus : RequisitionStatus, items: Item[]) => {
     console.log('items: ', items)
-    if (newStatus.etapa === 6) {
+    if (newStatus.etapa === 7) {
       const invalidItem = items.find((item: Item) => !item.OC);
       if (invalidItem) {
         throw new Error("Preencha todas as OCS dos items antes de avançar");
@@ -70,11 +72,11 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
   const handleNext = async () => {
     if (user) {
       try {
+        if(!permitionToChangeStatus) throw new Error('Você não tem permissão para avançar o status')
         const { status } = requisitionData;
         if (status) {
           const newStatus = steps?.find((s) => s.etapa === status.etapa + 1);
           if(newStatus){ 
-            verifyPermissionToChangeStatus(user, newStatus );
             verifyOCS(newStatus, items);
           }
           await updateRequisition(
@@ -95,52 +97,14 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
     }
   };
 
-  const verifyPermissionToChangeStatus = ( user: User, status : RequisitionStatus) => {
-  const userRoles = {
-    isResponsable: user.CODPESSOA === requisitionData.responsavel_pessoa?.CODPESSOA,
-    isManager: user.CODPESSOA === requisitionData.projeto_gerente?.gerente?.CODPESSOA,
-    isDirector: user.PERM_DIRETOR,
-    isPurchaser: user.PERM_COMPRADOR,
-    isAdmin: user.PERM_ADMINISTRADOR,
-    isProjectResponsable : user.CODPESSOA === requisitionData.projeto_responsavel?.responsavel.CODPESSOA
-  };
-  console.log("responsavel projeto: ", requisitionData.projeto_responsavel?.responsavel.CODPESSOA)
-  console.log('user roles: ', userRoles)
- 
-  const roles = Object.keys(userRoles)
-    const availableStatusEtapaPerUserRole = {
-      isResponsable: [1],
-      isPurchaser: [0, 1, 2, 3, 6],
-      isManager: [4, 2],
-      isDirector: [5, 3],
-      isAdmin: [0, 1, 2, 3, 4, 5, 6],
-      isProjectResponsable : [0, 2]
-    };
-    roles.forEach((role) => { 
-        if (userRoles[role as keyof typeof userRoles]) {
-          console.log("role encontrada: ", userRoles[role as keyof typeof userRoles])
-          const statusAllowed = availableStatusEtapaPerUserRole[
-            role as keyof typeof userRoles
-          ].includes(status.etapa) || user.PERM_ADMINISTRADOR;
-          if(!statusAllowed) {
-            console.log('status não permitido: ', status.nome)
-            throw new Error('Você não tem permissão para mudar o status para '+ status.nome)
-          }
-          return;
-        }
-        return;
-    });
-  }
-
   const handleBack = async () => {
     if (user) {
       try {
         const { status } = requisitionData;
         if (status) {
+          if (!permitionToChangeStatus)
+            throw new Error("Você não tem permissão para retroceder o status");
           const newStatus = steps?.find((s) => s.etapa === status.etapa - 1);
-          if (newStatus) {
-            verifyPermissionToChangeStatus(user, newStatus);
-          }
           await updateRequisition(
             user.CODPESSOA,
             {
@@ -157,6 +121,14 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
         displayAlert("error", e.message);
       }
     }
+  };
+
+  const handleClickBack = ( ) => { 
+    if(!permitionToChangeStatus){ 
+      displayAlert("error", "Você não tem permissão para retroceder o status");
+      return;
+    }
+    setJustifyBackModalOpen(true);
   };
 
   const handleJustifyBack = async () => {
@@ -270,6 +242,18 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
   }, [requisitionData]);
 
 
+  React.useEffect(() => { 
+    const fetchStatusAction = async () => {
+     if(user){ 
+      const data = await getStatusAction(requisitionData, user);
+      console.log('permition: ', data.permissao.acao)
+       console.log("state: ", data.permissao.acao > 0 ? true : false);
+       setPermitionToChangeStatus(data.permissao.acao > 0 ? true : false);
+     }
+    }
+    fetchStatusAction();
+  }, [requisitionData]);
+
   return (
     <Box
       sx={{
@@ -332,7 +316,7 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
           {shouldShowBackButton() &&(
             <Button
               sx={BaseButtonStyles}
-              onClick={() => setJustifyBackModalOpen(true)}
+              onClick={handleClickBack}
             >
               {requisitionData.status.acao_anterior}
             </Button>

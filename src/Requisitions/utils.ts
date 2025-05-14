@@ -39,10 +39,36 @@ const logIn = async (username: string, password: string) => {
   }
 };
 
+const getStatusAction = async ( requisition : Requisition, user: User) => { 
+  const { id_status_requisicao, projeto_gerente, projeto_responsavel, ID_RESPONSAVEL }  = requisition;
+  const requisitionData = {
+    id_status_requisicao,
+    projeto_gerente,
+    projeto_responsavel,
+    ID_RESPONSAVEL
+  }; 
+  try{
+      const response = await api.get(
+        `/requisition/${requisition.ID_REQUISICAO}/acao`,
+        {
+          params: {
+            user,
+            requisition: requisitionData,
+          },
+        }
+      );
+      return response.data;
+  }catch(e){ 
+    console.log(e);
+  }
+};
+
+
+
 const getRequisitionKanban = async ( ) => {
    try{ 
-      const respnse = await api.get('/requisition/kanban');
-      return respnse.data;
+      const response = await api.get('/requisition/kanban');
+      return response.data;
    }catch(e){ 
     throw new Error("Falha ao carregar etapas kanban")
    }
@@ -548,6 +574,7 @@ export {
   postRequisitionLinkFile,
   updateItemToSupplier,
   fetchAllTypes,
+  getStatusAction,
   logIn,
   fetchProjectOptionsByUser,
   getPreviousStatusByReqId,
