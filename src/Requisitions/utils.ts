@@ -342,12 +342,16 @@ const searchProducts = async (name: string, type : number) => {
 const fecthRequisitions = async (
   kanban: kanban_requisicao,
   user : User,
+  subFilter : string
 ) => {
   try {
-    const response = await api.get<Requisition[]>("/requisition", { 
-      params : { 
-        kanban, user
-      }
+
+    const response = await api.get<Requisition[]>("/requisition", {
+      params: {
+        kanban,
+        user,
+        subFilter,
+      },
     });
     return response.data;
   } catch (e) {
