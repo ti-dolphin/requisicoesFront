@@ -236,23 +236,6 @@ export default function RequisitionsDataGrid() {
     setKanban(defaultKanban);
   };
 
-  const filterBysubFilter = (requisitions: Requisition[]) => {
-    console.log("requisitions: ", requisitions)
-    if (subFilter === "Minhas") {
-      const rows = requisitions.filter(
-        (row: Requisition) =>
-          row.ID_RESPONSAVEL === user?.CODPESSOA ||
-          row.alterado_por_pessoa?.CODPESSOA === user?.CODPESSOA ||
-          row.projeto_gerente?.gerente.CODPESSOA === user?.CODPESSOA ||
-          user?.PERM_DIRETOR
-      );
-      console.log("filtered rows by subfilter: ", rows);
-      setFilteredRows(rows);
-      return;
-    }
-    setFilteredRows(allRows);
-  };
-
   const startAutoRefresh = ( ) =>  {
     const twoMinutes = 2* 60 * 1000;
     setTimeout(() => {
@@ -271,12 +254,7 @@ export default function RequisitionsDataGrid() {
         if(!user) throw new Error('Usuário não está logado');
         if(!kanban) throw new Error('Kanban não selecionado');
         setLoading(true);
-        const requisitions = await fecthRequisitions(kanban, user );
-        if(subFilter === 'Minhas'){ 
-          filterBysubFilter(requisitions);
-          setAllRows(requisitions);
-          return;
-        }
+        const requisitions = await fecthRequisitions(kanban, user, subFilter);
         setAllRows(requisitions)
         setFilteredRows(requisitions);
         
@@ -294,11 +272,8 @@ export default function RequisitionsDataGrid() {
       fetchRequisitionData();
     }
     startAutoRefresh();
-  }, [kanban, refresh]);
+  }, [kanban, refresh, subFilter]);
 
-  useEffect(() => { 
-     filterBysubFilter(filteredRows);
-  }, [subFilter])
 
   useEffect(() => {
     if (containerRef.current) {
