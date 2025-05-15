@@ -181,7 +181,7 @@ const ItemsToolBar = ({
         Adicionar items
       </Button>
 
-      {requisitionStatus?.etapa === 2 && (
+      {requisitionStatus?.etapa === 3 && (
         <Button
           onClick={verifySelectedItems}
           sx={{ ...BaseButtonStyles, height: 30, minWidth: 150 }}
