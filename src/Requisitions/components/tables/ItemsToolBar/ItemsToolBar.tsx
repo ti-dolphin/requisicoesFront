@@ -133,7 +133,7 @@ const ItemsToolBar = ({
       displayAlert("warning", "Selecione os items para gerar a cotação");
       return;
     }
-    if(requisitionStatus?.etapa !==  2){ 
+    if(requisitionStatus?.etapa !==  3){ 
         displayAlert('warning', `Só é permitido gerar cotação no Status 'Em cotação'`)
         return;
     }
