@@ -350,10 +350,9 @@ const RequisitionFileList: React.FC<RequisitionFileListProps> = ({
                             disabled={isLoading}
                         >
                             Link
-
                         </Button>
                     </Stack>
-                    <Typography sx={{ fontStyle: 'italic', color: 'text.secondary' }}>
+                    <Typography sx={{ fontStyle: 'italic', color: 'text.secondary', fontSize: 'small' }}>
                         * anexar documentos, planilhas, imagens ou links.
                     </Typography>
                    

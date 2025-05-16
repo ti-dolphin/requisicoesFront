@@ -7,7 +7,7 @@ import {
   GridPaginationModel,
   GridRenderCellParams,
 } from "@mui/x-data-grid";
-import { Box, Typography, CircularProgress, Alert, AlertColor } from "@mui/material";
+import { Box, Typography, CircularProgress, Alert, AlertColor, Tooltip } from "@mui/material";
 import { RequisitionContext } from "../../context/RequisitionContext";
 import { deleteRequisition, fecthRequisitions, getRequisitionKanban } from "../../utils";
 import { Requisition } from "../../utils";
@@ -32,12 +32,18 @@ const columns: GridColDef[] = [
     headerName: "Descrição",
     flex: 1,
     renderCell: (params) => (
-      <Typography
-        textTransform="capitalize"
-        sx={{ ...typographyStyles.smallText, color: "black" }}
-      >
-        {String(params.value).toLowerCase()}
-      </Typography>
+      <>
+        <Tooltip title={params.value}>
+          <Box sx={{ height: '100%', width: '100%'}}>
+            <Typography
+              textTransform="capitalize"
+              sx={{ ...typographyStyles.smallText, color: "black" }}
+            >
+              {String(params.value).toLowerCase()}
+            </Typography>
+          </Box>
+        </Tooltip>
+      </>
     ),
   },
   {
@@ -52,9 +58,8 @@ const columns: GridColDef[] = [
           color: "black",
           fontWeight: "semibold",
         }}
-        textTransform="uppercase"
       >
-        {String(params.value).toLowerCase()}
+        {String(params.value)}
       </Typography>
     ),
   },
@@ -127,7 +132,7 @@ const columns: GridColDef[] = [
   },
   {
     field: "responsavel_pessoa",
-    headerName: "Responsável",
+    headerName: "Requisitante",
     flex: 1,
     valueGetter: (responsavel_pessoa: Pessoa) => responsavel_pessoa?.NOME || "",
     renderCell: (params) => (

@@ -22,7 +22,7 @@ const StatusChangeRow = ({ row }: props)  => {
             case "Requisitado":
               return row.status_anterior.etapa > row.status.etapa
                 ? `${row.alterado_por_pessoa.NOME} retornou para requisitado.`
-                : `${row.alterado_por_pessoa.NOME} requisitou.`;
+                : `${row.alterado_por_pessoa.NOME} validou a requisição.`;
             case "Em cotação":
               return row.status_anterior.etapa > row.status.etapa
                 ? `${row.alterado_por_pessoa.NOME} retornou para cotação.`
@@ -47,6 +47,10 @@ const StatusChangeRow = ({ row }: props)  => {
               return row.status_anterior.etapa > row.status.etapa
                 ? `${row.alterado_por_pessoa.NOME} retornou para edição.`
                 : `${row.alterado_por_pessoa.NOME} colocou a requisição em edição.`;
+            case "Validação": 
+              return row.status_anterior.etapa > row.status.etapa
+                ? `${row.alterado_por_pessoa.NOME} enviou para validação`
+                : `${row.alterado_por_pessoa.NOME} enviou para validação`;
             default:
               return row.status_anterior.etapa > row.status.etapa
                 ? `${row.alterado_por_pessoa.NOME} retornou para "${row.status?.nome}".`

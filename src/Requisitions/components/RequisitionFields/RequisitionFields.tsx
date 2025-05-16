@@ -11,14 +11,6 @@ import RequisitionFileList from '../RequisitionFileList/RequisitionFileList';
 import { formatDate } from '../../../generalUtilities';
 const fields = [
   { label: "Descrição", key: "DESCRIPTION", type: "text", autoComplete: false },
-  { label: "Observação", key: "OBSERVACAO", type: "text", autoComplete: false },
-  {
-    label: "Responsável",
-    key: "responsableOption",
-    optionName: "responsableOptions",
-    type: "text",
-    autoComplete: true,
-  },
   {
     label: "Projeto",
     key: "projectOption",
@@ -26,13 +18,7 @@ const fields = [
     type: "text",
     autoComplete: true,
   },
-  {
-    label: "Tipo",
-    key: "typeOption",
-    optionName: "typeOptions",
-    type: "text",
-    autoComplete: true,
-  },
+  
 ];
 
 const RequisitionFields = () => {
@@ -53,55 +39,82 @@ const RequisitionFields = () => {
 
   return (
     <Box sx={styles.fieldsGridContainer}>
-     
       <Stack direction="column" gap={2} alignItems="start">
-        
-       <Box sx={{display: 'flex', flexGrow: 1, gap: 1, width: '100%', flexDirection: { 
-        xs: 'column',
-        md: 'row'
-       }}}>
-          <Box sx={{ display: 'flex', minWidth: 300, flexGrow: 1, flexDirection: 'column', padding: 1, gap: 1, borderRadius: 2 }}>
-            <Typography sx={typographyStyles.bodyText}>
+        <Box
+          sx={{
+            display: "flex",
+            flexGrow: 1,
+            gap: 1,
+            width: "100%",
+            flexDirection: {
+              xs: "column",
+              md: "row",
+            },
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              minWidth: 300,
+              flexGrow: 1,
+              flexDirection: "column",
+              padding: 1,
+              gap: 1,
+              border: "1px solid #ccc",
+              borderRadius: 2,
+              backgroundColor: "#f9f9f9",
+              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <Typography
+              sx={{ ...typographyStyles.bodyText, fontWeight: "bold" }}
+            >
               Detalhes da requisição
             </Typography>
             {requisitionData && (
               <Typography sx={typographyStyles.bodyText}>
-                Ultima atualização:{" "}
-                {formatDate(requisitionData?.data_alteracao)}
+                Criada: {formatDate(requisitionData?.data_criacao)}
               </Typography>
             )}
             {requisitionData && (
               <Typography sx={typographyStyles.bodyText}>
-                Criada em:{" "}
-                {formatDate(requisitionData?.data_criacao)}
+                Atualizada : {formatDate(requisitionData?.data_alteracao)}
               </Typography>
             )}
-           </Box>
-          {requisitionData && <RequisitionFileList requisitionId={requisitionData.ID_REQUISICAO} />}
-       </Box>
+
+            {requisitionData && (
+              <Typography sx={typographyStyles.bodyText}>
+                Requisitante: {requisitionData?.responsavel_pessoa?.NOME}
+              </Typography>
+            )}
+          </Box>
+          {requisitionData && (
+            <RequisitionFileList
+              requisitionId={requisitionData.ID_REQUISICAO}
+            />
+          )}
+        </Box>
       </Stack>
       {requisitionData && optionsState && (
-        
         <Box sx={styles.fieldsGrid}>
-         
           {fields.map((field) => {
             if (field.autoComplete) {
               return (
                 <Autocomplete
                   onFocus={handleFocus}
                   key={field.key}
-                  getOptionLabel={(option: Option) => option.label} // Certifique-se de usar a propriedade 'label'
+                  getOptionLabel={(option: Option) => option.label}
                   isOptionEqualToValue={(option, value) =>
                     option.id === value.id
-                  } // Comparação correta
+                  }
                   onChange={(
                     event: React.SyntheticEvent,
                     value: Option | null
                   ) => handleChangeAutoComplete(event, value, field)}
                   disablePortal
                   sx={styles.autoComplete}
-                  options={renderOptions(field)} // Deve retornar um array de objetos 'Option'
-                  value={renderAutoCompleteValue(field)} // Deve ser um objeto 'Option' ou null
+                  options={renderOptions(field)}
+                  value={renderAutoCompleteValue(field)}
                   renderInput={(params) => (
                     <TextField {...params} label={field.label} />
                   )}
