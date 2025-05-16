@@ -206,11 +206,11 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
   }
 
   const shouldShowNextButton = () => {
-    return !cancelled && requisitionData.status && requisitionData.status.acao_posterior !== '-'; 
+    return !cancelled && requisitionData.status && requisitionData.status.acao_posterior !== '-' && permitionToChangeStatus; 
   }
 
   const shouldShowBackButton = ( ) => { 
-    return !cancelled && requisitionData.status && requisitionData.status.acao_anterior !== "-" 
+    return !cancelled && requisitionData.status && requisitionData.status.acao_anterior !== "-" && permitionToChangeStatus 
   }
 
   React.useEffect(() => {
@@ -269,6 +269,7 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
           sx={{
             width: "100%",
             overflow: "scroll",
+            padding: 1, 
             "&::-webkit-scrollbar": { display: "none" },
             "-ms-overflow-style": "none",
             "scrollbar-width": "none",
@@ -285,6 +286,7 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
                     sx: {
                       "&.Mui-active": {
                         color: green[600], // Cor do ícone quando o passo está ativo
+                        scale: 1.5
                       },
                       "&.Mui-completed": {
                         color: green[600], // Cor do ícone quando o passo está completo
@@ -297,7 +299,7 @@ const HorizontalLinearStepper: React.FC<props> = ({ requisitionData }) => {
                   <Typography
                     sx={{
                       ...typographyStyles.smallText,
-                      color: activeStep === step.etapa ? green[600] : "black",
+                      color: activeStep === step.etapa ? "black" : "black",
                       fontWeight: activeStep === step.etapa ? "bold" : "normal",
                     }}
                   >

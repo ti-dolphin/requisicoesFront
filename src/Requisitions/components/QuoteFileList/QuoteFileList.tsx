@@ -95,15 +95,17 @@ itemSize = 60,
   };
 
   const handleAttachLink = async () => {
-    if (!linkName || !linkUrl) {
+    if ( !linkUrl) {
       displayAlert("error", "Nome e URL do link são obrigatórios.");
       return;
     }
+    const linkDomain = new URL(linkUrl).hostname;
+
 
     const newLink: QuoteFile = {
       id_anexo_cotacao: Date.now(), // Gera um ID único temporário
       id_cotacao: quoteId,
-      nome_arquivo: linkName,
+      nome_arquivo: linkDomain,
       url: linkUrl,
     };
     const createdLink = await createQuoteFileFromLink(
@@ -466,13 +468,7 @@ itemSize = 60,
           >
             Anexar Link
           </Typography>
-          <TextField
-            fullWidth
-            label="Nome do Link"
-            value={linkName}
-            onChange={(e) => setLinkName(e.target.value)}
-            sx={{ mb: 2 }}
-          />
+        
           <TextField
             fullWidth
             label="URL do Link"
