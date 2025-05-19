@@ -69,12 +69,17 @@ const RequisitionDetail: React.FC = () => {
   };
 
   const handleOpenDescriptionModal = () => {
+    console.log("handleOpenDescriptionModal");
     if (requisitionData && user) {
       const isAdmin = user.PERM_ADMINISTRADOR && user.PERM_ADMINISTRADOR > 0;
       const isResponsible =
         user.CODPESSOA > 0 &&
         user.CODPESSOA === requisitionData.responsavel_pessoa?.CODPESSOA;
       const isInitialStep = requisitionData.status?.etapa === 0;
+      console.log("isAdmin", isAdmin);
+      console.log("isResponsible", isResponsible);
+      console.log("isInitialStep", isInitialStep);
+      console.log("requisitionData", requisitionData);
       if (isAdmin) {
         setDescriptionModal(true);
         return;
@@ -133,10 +138,11 @@ const RequisitionDetail: React.FC = () => {
     if (!requisitionData || !requisitionData.status || !user) return false;
     const isInitialStep = requisitionData.status.etapa === 0;
     const isAdmin = user.PERM_ADMINISTRADOR && user.PERM_ADMINISTRADOR > 0;
-    const isResponsible =
-      user.CODPESSOA > 0 &&
-      user.CODPESSOA === requisitionData.responsavel_pessoa?.CODPESSOA;
-    return !isInitialStep || !isAdmin || !isResponsible;
+    const isResponsible = user.CODPESSOA > 0 && user.CODPESSOA === requisitionData.responsavel_pessoa?.CODPESSOA; 
+    console.log("isInitialStep", isInitialStep);
+    console.log("isAdmin", isAdmin);
+    console.log("isResponsible", isResponsible);
+    return isAdmin || (isInitialStep && isResponsible);
   };
 
   useEffect(() => {
