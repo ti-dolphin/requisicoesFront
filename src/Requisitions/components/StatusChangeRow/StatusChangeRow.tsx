@@ -65,7 +65,7 @@ const StatusChangeRow = ({ row }: props)  => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        padding: 2,
+        padding: 0.5,
         marginBottom: 1,
         border: "1px solid #ccc",
         borderRadius: 2,
@@ -73,15 +73,15 @@ const StatusChangeRow = ({ row }: props)  => {
         boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
       }}
     >
-      <Typography sx={{ ...typographyStyles.bodyText }}>
+      <Typography sx={{ ...typographyStyles.bodyText, fontSize: "small" }}>
         {getChangeText(row)}
       </Typography>
       {row.justificativa && (
-        <Typography sx={{ ...typographyStyles.smallText }}>
+        <Typography sx={{ ...typographyStyles.smallText, fontSize: "small" }}>
           justificativa: {row.justificativa}
         </Typography>
       )}
-      <Typography sx={{ ...typographyStyles.smallText }}>
+      <Typography sx={{ ...typographyStyles.smallText, fontSize: "small" }}>
         {formatDate(row.data_alteracao.toString())}
       </Typography>
     </Box>

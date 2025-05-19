@@ -29,17 +29,18 @@ import {
   FormControl,
 } from "@mui/material";
 import { BaseButtonStyles } from "../../../utilStyles";
-import { red } from "@mui/material/colors";
+import { blue, red } from "@mui/material/colors";
 
 const RequisitionDetail: React.FC = () => {
   const { id } = useParams();
-  const [requisitionData, setRequisitionData] =
-    useState<Requisition>();
-  const { refreshRequisition, toggleRefreshRequisition } = useContext(RequisitionContext);
+  const [requisitionData, setRequisitionData] = useState<Requisition>();
+  const { refreshRequisition, toggleRefreshRequisition } =
+    useContext(RequisitionContext);
   const [alert, setAlert] = useState<AlertInterface>();
   const { logedIn } = useContext(userContext);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<number | null>(null);
+  const [descriptionModal, setDescriptionModal] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -61,16 +62,41 @@ const RequisitionDetail: React.FC = () => {
   };
 
   const handleOpenProjectModal = () => {
-    setSelectedProject(requisitionData?.ID_PROJETO || null);
-    setIsProjectModalOpen(true);
+    if (projectEditionEnabled()) {
+      setSelectedProject(requisitionData?.ID_PROJETO || null);
+      setIsProjectModalOpen(true);
+    }
   };
+
+  const handleOpenDescriptionModal = () => {
+    if (requisitionData && user) {
+      const isAdmin = user.PERM_ADMINISTRADOR && user.PERM_ADMINISTRADOR > 0;
+      const isResponsible =
+        user.CODPESSOA > 0 &&
+        user.CODPESSOA === requisitionData.responsavel_pessoa?.CODPESSOA;
+      const isInitialStep = requisitionData.status?.etapa === 0;
+      if (isAdmin) {
+        setDescriptionModal(true);
+        return;
+      }
+      if (isResponsible && isInitialStep) {
+        setDescriptionModal(true);
+        return;
+      }
+      displayAlert(
+        "warning",
+        "Não é permitido alterar descrição da requisição"
+      );
+    }
+  };
+
   const handleCloseProjectModal = () => {
     setIsProjectModalOpen(false);
   };
 
   const handleConfirmProject = () => {
     if (selectedProject && requisitionData) {
-       handleSave();
+      handleSave();
     }
     setIsProjectModalOpen(false);
   };
@@ -103,18 +129,14 @@ const RequisitionDetail: React.FC = () => {
     }
   };
 
-  const shouldProjectButtonBeDisabled = (): boolean => {
+  const projectEditionEnabled = (): boolean => {
     if (!requisitionData || !requisitionData.status || !user) return false;
     const isInitialStep = requisitionData.status.etapa === 0;
     const isAdmin = user.PERM_ADMINISTRADOR && user.PERM_ADMINISTRADOR > 0;
     const isResponsible =
       user.CODPESSOA > 0 &&
       user.CODPESSOA === requisitionData.responsavel_pessoa?.CODPESSOA;
-    console.log(
-      "aparecer botao do projeto: ",
-      isInitialStep && (isAdmin || isResponsible)
-    );
-    return !isInitialStep || (!isAdmin || !isResponsible);
+    return !isInitialStep || !isAdmin || !isResponsible;
   };
 
   useEffect(() => {
@@ -131,21 +153,10 @@ const RequisitionDetail: React.FC = () => {
         <IconButton onClick={() => handleNavigateHome()}>
           <ArrowCircleLeftIcon />
         </IconButton>
-        <Typography
-          sx={{
-            fontSize: {
-              xs: "12px",
-              md: "16px",
-            },
-          }}
-        >
+        <Button onClick={handleOpenDescriptionModal} sx={{ color: blue[500] }}>
           Nº {requisitionData?.ID_REQUISICAO} | {requisitionData?.DESCRIPTION} |
-        </Typography>
-        <Button 
-         onClick={handleOpenProjectModal}
-         disabled={shouldProjectButtonBeDisabled()}
-       
-         >
+        </Button>
+        <Button onClick={handleOpenProjectModal} sx={{ color: blue[500] }}>
           Projeto: {requisitionData?.projeto_descricao?.DESCRICAO}
         </Button>
       </Box>
@@ -199,6 +210,7 @@ const RequisitionDetail: React.FC = () => {
           />
         </Box>
       </Stack>
+      
       <Modal
         open={isProjectModalOpen}
         onClose={handleCloseProjectModal}
@@ -219,48 +231,107 @@ const RequisitionDetail: React.FC = () => {
               options={requisitionData?.projectOptions || []}
               getOptionLabel={(option: any) => option.label || ""}
               value={
-              requisitionData?.projectOptions?.find(
-                (proj: any) => proj.ID_PROJETO === selectedProject
-              ) || null
+                requisitionData?.projectOptions?.find(
+                  (proj: any) => proj.ID_PROJETO === selectedProject
+                ) || null
               }
               onChange={(_, newValue) => {
-              setSelectedProject(newValue ? newValue.id : null);
-              if (requisitionData) {
-                setRequisitionData({
-                  ...requisitionData,
-                  ID_PROJETO: newValue ? newValue.id || 0 : 0,
-                  ID_REQUISICAO: requisitionData.ID_REQUISICAO // ensure required field is present
-                });
-              }
+                setSelectedProject(newValue ? newValue.id : null);
+                if (requisitionData) {
+                  setRequisitionData({
+                    ...requisitionData,
+                    ID_PROJETO: newValue ? newValue.id || 0 : 0,
+                    ID_REQUISICAO: requisitionData.ID_REQUISICAO, // ensure required field is present
+                  });
+                }
               }}
               renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Projeto"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                variant="outlined"
-              />
+                <TextField
+                  {...params}
+                  label="Projeto"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  variant="outlined"
+                />
               )}
-              isOptionEqualToValue={(option, value) =>
-              option.id === value.id
-              }
+              isOptionEqualToValue={(option, value) => option.id === value.id}
             />
           </FormControl>
           <Stack direction="row" gap={2} justifyContent="center">
             <Button
-              sx={{...BaseButtonStyles}}
+              sx={{ ...BaseButtonStyles }}
               onClick={handleConfirmProject}
               disabled={!selectedProject}
             >
               Confirmar
             </Button>
-            <Button 
-             sx={{...BaseButtonStyles, backgroundColor: red[700], "&:hover": { 
-              backgroundColor: red[500], 
-             }}}
-             onClick={handleCloseProjectModal}>
+            <Button
+              sx={{
+                ...BaseButtonStyles,
+                backgroundColor: red[700],
+                "&:hover": {
+                  backgroundColor: red[500],
+                },
+              }}
+              onClick={handleCloseProjectModal}
+            >
+              Cancelar
+            </Button>
+          </Stack>
+        </Paper>
+      </Modal>
+      <Modal
+        open={descriptionModal}
+        onClose={() => setDescriptionModal(false)}
+        aria-labelledby="edit-description-modal-title"
+        sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+      >
+        <Paper sx={{ width: 400, p: 3, borderRadius: 2, textAlign: "center" }}>
+          <Typography
+            id="edit-description-modal-title"
+            variant="h6"
+            sx={{ mb: 2, fontWeight: "bold" }}
+          >
+            Editar Descrição da Requisição
+          </Typography>
+          <TextField
+            fullWidth
+            multiline
+            minRows={3}
+            label="Descrição"
+            value={requisitionData?.DESCRIPTION || ""}
+            onChange={(e) => {
+              if (requisitionData) {
+                setRequisitionData({
+                  ...requisitionData,
+                  DESCRIPTION: e.target.value,
+                });
+              }
+            }}
+            sx={{ mb: 3 }}
+          />
+          <Stack direction="row" gap={2} justifyContent="center">
+            <Button
+              sx={{ ...BaseButtonStyles }}
+              onClick={async () => {
+                setDescriptionModal(false);
+                await handleSave();
+              }}
+              disabled={!requisitionData?.DESCRIPTION}
+            >
+              Salvar
+            </Button>
+            <Button
+              sx={{
+                ...BaseButtonStyles,
+                backgroundColor: red[700],
+                "&:hover": {
+                  backgroundColor: red[500],
+                },
+              }}
+              onClick={() => setDescriptionModal(false)}
+            >
               Cancelar
             </Button>
           </Stack>

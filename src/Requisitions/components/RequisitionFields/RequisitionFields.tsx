@@ -10,7 +10,8 @@ import { useRequisitionFields } from "./hooks";
 import RequisitionFileList from '../RequisitionFileList/RequisitionFileList';
 import { formatDate } from '../../../generalUtilities';
 const fields = [
-  { label: "Descrição", key: "DESCRIPTION", type: "text", autoComplete: false }];
+  { label: "Observação", key: "OBSERVACAO" , type: 'text', autoComplete: false},
+];
 
 const RequisitionFields = () => {
   const {

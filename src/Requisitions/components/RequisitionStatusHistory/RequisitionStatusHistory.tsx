@@ -48,7 +48,7 @@ const RequisitionStatusHistory = ({ requisitionId }: props) => {
         flexGrow: 1,
         flexDirection: "column",
         gap: 1,
-        maxHeight: 300,
+        maxHeight: 240,
         overflowY: "scroll",
       }}
     >
