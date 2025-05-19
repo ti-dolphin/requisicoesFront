@@ -10,16 +10,7 @@ import { useRequisitionFields } from "./hooks";
 import RequisitionFileList from '../RequisitionFileList/RequisitionFileList';
 import { formatDate } from '../../../generalUtilities';
 const fields = [
-  { label: "Descrição", key: "DESCRIPTION", type: "text", autoComplete: false },
-  {
-    label: "Projeto",
-    key: "projectOption",
-    optionName: "projectOptions",
-    type: "text",
-    autoComplete: true,
-  },
-  
-];
+  { label: "Descrição", key: "DESCRIPTION", type: "text", autoComplete: false }];
 
 const RequisitionFields = () => {
   const {
@@ -72,20 +63,25 @@ const RequisitionFields = () => {
               Detalhes da requisição
             </Typography>
             {requisitionData && (
-              <Typography sx={typographyStyles.bodyText}>
-                Criada: {formatDate(requisitionData?.data_criacao)}
-              </Typography>
-            )}
-            {requisitionData && (
-              <Typography sx={typographyStyles.bodyText}>
-                Atualizada : {formatDate(requisitionData?.data_alteracao)}
-              </Typography>
-            )}
-
-            {requisitionData && (
-              <Typography sx={typographyStyles.bodyText}>
-                Requisitante: {requisitionData?.responsavel_pessoa?.NOME}
-              </Typography>
+              <Stack gap={0.5}>
+                <Typography sx={typographyStyles.bodyText}>
+                  <strong className="text-gray-500">Criada:</strong>{" "}
+                  {formatDate(requisitionData.data_criacao)}
+                </Typography>
+                <Typography sx={typographyStyles.bodyText}>
+                  <strong className="text-gray-500">Atualizada:</strong>{" "}
+                  {formatDate(requisitionData.data_alteracao)}
+                </Typography>
+                <Typography sx={typographyStyles.bodyText}>
+                  <strong className="text-gray-500">Requisitante:</strong>{" "}
+                  {requisitionData.responsavel_pessoa?.NOME}
+                </Typography>
+                <Typography sx={typographyStyles.bodyText}>
+                  <strong className="text-gray-500"
+                  >Tipo:</strong>{" "}
+                  {requisitionData.typeOption?.label}
+                </Typography>
+              </Stack>
             )}
           </Box>
           {requisitionData && (
@@ -128,7 +124,6 @@ const RequisitionFields = () => {
                 sx={{
                   gridColumn: {
                     xs: "span 2",
-                    md: "span 1",
                   },
                 }}
                 multiline

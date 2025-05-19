@@ -12,6 +12,7 @@ const styles = {
             border: '1px solid lightgray'
         },
         fieldsGrid : { 
+      
             display: 'grid',
             gridTemplateColumns : {
                 xs: '1fr',
