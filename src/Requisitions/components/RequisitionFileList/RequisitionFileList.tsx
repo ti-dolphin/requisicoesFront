@@ -286,6 +286,7 @@ const RequisitionFileList: React.FC<RequisitionFileListProps> = ({
                 p: 1,
                 display: "flex",
                 flexDirection: "column",
+                justifyContent: 'end',
                 gap: 2,
                 maxHeight: 200,
                 overflow: "auto",

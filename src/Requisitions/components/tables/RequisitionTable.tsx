@@ -34,7 +34,7 @@ const columns: GridColDef[] = [
     renderCell: (params) => (
       <>
         <Tooltip title={params.value}>
-          <Box sx={{ height: '100%', width: '100%'}}>
+          <Box sx={{ height: "100%", width: "100%" }}>
             <Typography
               textTransform="capitalize"
               sx={{ ...typographyStyles.smallText, color: "black" }}
@@ -76,12 +76,16 @@ const columns: GridColDef[] = [
       };
     }) => projeto?.DESCRICAO || "",
     renderCell: (params) => (
-      <Typography
-        sx={{ ...typographyStyles.smallText, color: "black" }}
-        textTransform="capitalize"
-      >
-        {params.value}
-      </Typography>
+      <Tooltip title={params.value}>
+        <Box sx={{ height: "100%", width: "100%" }}>
+          <Typography
+            textTransform="capitalize"
+            sx={{ ...typographyStyles.smallText, color: "black" }}
+          >
+            {String(params.value)}
+          </Typography>
+        </Box>
+      </Tooltip>
     ),
   },
   {
@@ -325,6 +329,7 @@ export default function RequisitionsDataGrid() {
           rowHeight={40}
           showColumnVerticalBorder
           showCellVerticalBorder
+          autosizeOnMount
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
           sortModel={sortModel}

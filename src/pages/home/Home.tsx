@@ -131,9 +131,6 @@ const Home = () => {
                   onClick={() => handleNavigateToModule(module.path)}
                 >
                   <CardMedia
-                    sx={{
-                      filter: index > 1 ? "grayscale(100%)" : "none",
-                    }}
                     component="img"
                     image={module.image}
                     alt="green iguana"
