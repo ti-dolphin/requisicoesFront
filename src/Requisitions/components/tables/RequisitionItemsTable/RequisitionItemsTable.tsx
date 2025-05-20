@@ -126,6 +126,26 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
         </Typography>
       ),
     },
+    { 
+      field : 'data_entrega',
+      headerName: 'Data de entrega',
+      width: 150, // Defina a largura desejada
+      editable: true,
+      renderCell: (params) => {
+        const date = new Date(params.value ||'');
+          return (
+            <Typography sx={{ ...typographyStyles.bodyText }}>
+              {String(date) !== "Invalid Date"
+                ? date.toLocaleDateString("pt-BR", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })
+                : "dd/mm/aaaa"}
+            </Typography>
+          );
+      }
+    },
     {
       field: "QUANTIDADE",
       headerName: "Quantidade",
@@ -351,20 +371,40 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
         isPurchaser: user.PERM_COMPRADOR,
         isAdmin: user.PERM_ADMINISTRADOR,
       };
+      console.log("userRoles: ", userRoles)
       if (
         !userRoles.isPurchaser &&
         !userRoles.isManager &&
         !userRoles.isDirector &&
-        !userRoles.isAdmin
+        !userRoles.isAdmin &&
+        !userRoles.isResponsable
       ) {
         throw new Error("Você não tem permissão para editar itens");
       }
     }
   };
 
-  const verifyStatusPermission = (status : RequisitionStatus ) => { 
-      if(status.etapa !== 0 && status.etapa !== 5){ 
-        throw new Error(`Não é permitido editar items no status '${status.nome}'`);
+  const verifyStatusPermission = (status : RequisitionStatus, params  : GridCellParams ) => { 
+    const permittedEditionEtapa = [0,6];
+    console.log("status: ", status)
+    console.log("params: ", params.colDef.field);
+
+      if(params.colDef.field === 'data_entrega'){ 
+        const permitedEtapasForDataEntrega = [0,6,7];
+        const permittedStatus = permitedEtapasForDataEntrega.includes(status.etapa)
+        if (!permittedStatus) {
+          console.log("status.etapa: ", status.etapa);
+          throw new Error(
+            `Não é permitido editar items no status '${status.nome}'`
+          );
+        }
+        return;
+      }
+      const permittedStatus = permittedEditionEtapa.includes(status.etapa)
+      if (!permittedStatus) {
+        throw new Error(
+          `Não é permitido editar items no status '${status.nome}'`
+        );
       }
   };
 
@@ -385,12 +425,12 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
    if(user && requisitionStatus){ 
       try {
         verifyPermissionToEditItem(user);
-        verifyStatusPermission(requisitionStatus);
+        verifyStatusPermission(requisitionStatus, params);
         startEditMode(params);
-      } catch (e) {
+      } catch (e : any) {
         displayAlert(
           "warning",
-          `Não é permitido editar items no status '${requisitionStatus?.nome}'`
+          `${e.message}`
         );
       }
    }

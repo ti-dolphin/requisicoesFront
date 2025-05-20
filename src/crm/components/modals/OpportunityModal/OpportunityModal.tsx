@@ -5,6 +5,8 @@ import {
 import { OpportunityInfoContext } from "../../../context/OpportunityInfoContext";
 import Box from "@mui/material/Box";
 import {
+  Alert,
+  AlertColor,
   Button,
   Dialog,
   DialogActions,
@@ -58,6 +60,7 @@ export const OpportunityModal = () => {
     isLoading,
     changeWasMade,
     setChangeWasMade,
+    alert 
   } = useOpportunityModal(opportunityDefault, context);
 
   const verifyChangeWasMade = ( ) => { 
@@ -89,7 +92,7 @@ export const OpportunityModal = () => {
         <Stack>
           <Typography sx={typographyStyles.heading2}>
             {currentOppIdSelected > 0
-              ? `${opportunity.codOs} - ${opportunity.nome} `
+              ? `${opportunity.codOs} - ${opportunity.nome}`
               : "Nova proposta"}
           </Typography>
         </Stack>
@@ -100,30 +103,29 @@ export const OpportunityModal = () => {
             handleChangeGuide={handleChangeGuide} // Função para lidar com a troca de guia
           />
         )}
-       
-          <Stack
-            sx={{
-              ...styles.sliderContainer,
-              paddingBottom: 10,
-            }}
-            direction="column"
-            width="100%"
-            position="relative"
-          >
-            <Slider ref={sliderRef} {...settings}>
-              {guidesReference.current &&
-                guidesReference.current.map((guide) => (
-                  <OpportunityGuide
-                    formDataFilesRef={formDataFilesRef}
-                    guidesReference={guidesReference}
-                    guide={guide}
-                    isLoading={isLoading}
-                    setChangeWasMade={setChangeWasMade}
-                  />
-                ))}
-            </Slider>
-          </Stack>
-      
+        <Stack
+          sx={{
+            ...styles.sliderContainer,
+            paddingBottom: 10,
+          }}
+          direction="column"
+          width="100%"
+          position="relative"
+        >
+          {alert && <Alert severity={alert.severity as AlertColor}>{alert.message}</Alert>}
+          <Slider ref={sliderRef} {...settings}>
+            {guidesReference.current &&
+              guidesReference.current.map((guide) => (
+                <OpportunityGuide
+                  formDataFilesRef={formDataFilesRef}
+                  guidesReference={guidesReference}
+                  guide={guide}
+                  isLoading={isLoading}
+                  setChangeWasMade={setChangeWasMade}
+                />
+              ))}
+          </Slider>
+        </Stack>
         <Box ref={saveButtonContainerRef} sx={styles.saveButtonContainer}>
           <Button sx={BaseButtonStyles} onClick={handleSaveOpportunity}>
             <Typography>Salvar</Typography>

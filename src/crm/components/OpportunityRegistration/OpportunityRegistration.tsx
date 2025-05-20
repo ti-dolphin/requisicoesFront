@@ -67,9 +67,7 @@ const OpportunityRegistration = ({
     if (column.dataKey === "idProjeto") return projectOptions;
     if (column.dataKey === "codStatus") return statusOptions;
     if (column.dataKey === "fkCodCliente") return clientOptions;
-  };
-
-
+  }
 
   const handleChangeTextField = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,

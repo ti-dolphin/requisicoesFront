@@ -23,6 +23,7 @@ import {
 } from "../../../types";
 import Slider from "react-slick";
 import { userContext } from "../../../../Requisitions/context/userContext";
+import { AlertInterface } from "../../../../Requisitions/types";
 
 
 const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
@@ -48,6 +49,9 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
     const [changeWasMade, setChangeWasMade] = useState<boolean>(false);
     const saveButtonContainerRef = useRef<HTMLDivElement>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [alert, setAlert] = useState<AlertInterface>();
+
+    
     const {user} = useContext(userContext);
     const settings = {
         swipe: true,
@@ -77,6 +81,15 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
         setAdicional(false);
         setIsAdicionalChoiceOpen(false);
     };
+
+    const displayAlert = async (severity: string, message: string) => {
+      setTimeout(() => {
+        setAlert(undefined);
+      }, 3000);
+      setAlert({ severity, message });
+      return;
+    };
+    
 
     const setGuidesReference = () => {
         guidesReference.current = [
@@ -234,6 +247,7 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
         const updatedOpportunity = getUpdatedOpportunity();
         if (!updatedOpportunity) return;
         try {
+            validateFields(updatedOpportunity);
             const createOppResponse = await createOpportunity(updatedOpportunity);
             if (createOppResponse?.status === 200) {
                 setCurrentOpportunity(updatedOpportunity);
@@ -241,14 +255,23 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
                 setCurrentOppIdSelected(createOppResponse.data.codOs);
                 setCreatingOpportunity(false);
             }
-        } catch (e) {
-            console.log(e);
-        } finally {
             resetFormData();
             setRefreshOpportunityFields(!refreshOpportunityFields);
             setIsLoading(false);
             toggleRefreshOpportunityInfo();            
+        } catch (e : any) {
+            displayAlert('error', e.message);
         }
+    };
+
+    const validateFields = (updatedOpportunity  : Opportunity) => {
+      const dataEntregaNonFilled = updatedOpportunity.codStatus && [11, 12, 13].includes(updatedOpportunity.codStatus) && !updatedOpportunity.dataEntrega;
+      console.log("dataEntrega: ", updatedOpportunity.dataEntrega);
+      console.log("codStatus: ", updatedOpportunity.codStatus);
+      console.log("dataEntregaNonFilled: ", dataEntregaNonFilled)
+      if(dataEntregaNonFilled){ 
+        throw new Error('A data de fechamento é obrigatória para status finalizado');
+      }
     };
 
     const updateExistingOpportunity = async () => {
@@ -256,20 +279,21 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
         const updatedOpportunity = getUpdatedOpportunity();
         if (!updatedOpportunity) return;
         try {
+            validateFields(updatedOpportunity);
             const response = await updateOpportunity(updatedOpportunity, user);
-            if (response?.status === 200) {
+              if (response?.status === 200) {
                 setCurrentOpportunity(updatedOpportunity);
                 await handleFileUpload(opportunity.codOs || 0);
-            }
-        } catch (e) {
-            console.log(e);
-        } finally {
-            setIsLoading(false);
-            resetFormData();
-            setRefreshOpportunityFields(!refreshOpportunityFields);  
-            setChangeWasMade(false);
-            toggleRefreshOpportunityInfo();
-        }
+              }
+              setIsLoading(false);
+              resetFormData();
+              setRefreshOpportunityFields(!refreshOpportunityFields);
+              setChangeWasMade(false);
+              toggleRefreshOpportunityInfo();
+        } catch (e : any) {
+           setIsLoading(false);
+           displayAlert('error', e.message);
+        } 
     };
 
     const handleSaveOpportunity = useCallback(async () => {
@@ -338,7 +362,8 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
         isLoading,
         setIsLoading,
         changeWasMade,
-        setChangeWasMade
+        setChangeWasMade,
+        alert
     };
 };
 

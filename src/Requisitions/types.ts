@@ -218,6 +218,7 @@ export interface Item {
   UNIDADE?: string;
   OC?: number;
   item_cotacao_selecionado? : QuoteItem;
+  data_entrega? : string;
 }
 export interface ItemFile{ 
   id: number;

@@ -1,11 +1,10 @@
 import axios from "axios";
-//PROD: https://apicontrole.dse.com.br
-//HOMOLOG: https://apicontrolehomologacao.dse.com.br
-//http://localhost:3001
-//http://localhost:3000
 
 export const api = axios.create({
   baseURL: "https://apicontrolehomologacao.dse.com.br",
+  // baseURL: "https://apicontrole.dse.com.br",
+  // baseURL: "http://localhost:3001",
+  // baseURL: "http://localhost:3000",
   headers: {
     "Content-Type": "application/json",
   },
