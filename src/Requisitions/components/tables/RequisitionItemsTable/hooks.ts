@@ -180,6 +180,7 @@ const useRequisitionItems = (
   };
 
   const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
+    console.log('processRowUpdate')
     if(visibleItems){ 
       if (isEditing) {
         const updatedRow = { ...newRow } as Item;
@@ -196,6 +197,7 @@ const useRequisitionItems = (
 
   const fetchReqItems = useCallback(async () => {
     const { items, columns } = await fetchItems(requisitionId);
+    console.log("items: ", items)
     setDinamicColumns(columns);
     if (items) {
       if (isInsertingQuantity && addedItems?.length) {

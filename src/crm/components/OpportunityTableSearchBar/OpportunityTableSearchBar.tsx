@@ -49,7 +49,6 @@ const OpportunityTableSearchBar = memo(
     } = useContext(OpportunityInfoContext);
     const [dateFiltersActive, setDateFiltersActive] = useState(false);
    
-
     const dateParams = [
       {
         dataKey: "data_inicio",

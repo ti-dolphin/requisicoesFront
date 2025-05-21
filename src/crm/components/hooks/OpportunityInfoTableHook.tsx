@@ -193,7 +193,7 @@ const UseOpportunityInfoTable = () => {
       {
         field: "numeroOs",
         headerName: "Nº OS",
-      },
+      }
     ],
     []
   );

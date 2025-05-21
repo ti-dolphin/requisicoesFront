@@ -205,13 +205,35 @@ const OpportunityFilters = ({
   };
 
   const filterRows = (currentFilters: any, valueReceived?: string) => {
-    console.log("filterRows");
+    //filtrar pelos filtros compostos
     const composedFilteredRow: OpportunityInfo[] = [];
     const filterKeys = Object.keys(currentFilters);
+
     allRows.forEach((opportunity) => {
-      let shouldInclude = true; // Assume que a linha deve ser incluída inicialmente
-      for (let dataKey of filterKeys) {
+      let shouldInclude = true; // Assume que a linha deve ser incluída 
+
+      for (let dataKey of filterKeys) { 
         const filterValues = currentFilters[dataKey].values;
+        const isFiltered = filterValues.length > 0;
+        if (dataKey === "situacao" && isFiltered) { // se estiver filtrado pela situação
+          const oppIncludesSituation = filterValues.some((filterValue: any) => {
+            if (filterValue === "Vencida") {
+              return opportunity.dataInteracao_vencida === 1;
+            }
+            if (filterValue === "A vencer") {
+              return opportunity.dataInteracao_a_vencer === 1;
+            }
+            if (filterValue === "Em dia") {
+              return opportunity.dataInteracao_em_dia === 1;
+            }
+          });
+          console.log("oppIncludesSituation: ", oppIncludesSituation);
+          if (!oppIncludesSituation) {
+            shouldInclude = false;
+            break;
+          }
+          continue;
+        }
         if (filterValues.length > 0) {
           const oppIncludesValue = filterValues.some((filterValue: any) => {
             const searchTerm = String(filterValue).toUpperCase();
@@ -226,11 +248,12 @@ const OpportunityFilters = ({
           }
         }
       }
+      //se ao final da verificação  a oportunidade incluir os filtros, adicionar ela as linhas filtradas
       if (shouldInclude) {
         composedFilteredRow.push(opportunity);
       }
     });
-
+ //filtrar pelo termo de buscar geral 
     if (valueReceived) {
       const filteredRows = composedFilteredRow.filter((row: OpportunityInfo) =>
         columns.some((column) => {

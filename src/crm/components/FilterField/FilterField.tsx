@@ -24,22 +24,27 @@ const FilterField = ({
   filters
 }: props) => {
   const { dataKey, label } = filter;
+  const selectFilters = [
+    "nomeCliente",
+    "nomeVendedor",
+    "nomeStatus",
+    "nomeGerente",
+    "situacao"
+  ];
 
-  // Campos com opções (Autocomplete com Checkboxes)
-  if (
-    dataKey === "nomeCliente" ||
-    dataKey === "nomeVendedor" ||
-    dataKey === "nomeStatus" ||
-    dataKey === "nomeGerente"
-  ) {
-    const options =
-      dataKey === "nomeCliente"
-        ? clientOptions
-        : dataKey === "nomeVendedor"
-        ? responsableOptions
-        : dataKey === "nomeStatus"
-        ? statusOptions
-        : managerOptions;
+  if (selectFilters.includes(dataKey)) {
+    const optionSources: { [key: string]: OpportunityOptionField[] | any } = {
+      nomeCliente: clientOptions,
+      nomeVendedor: responsableOptions,
+      nomeStatus: statusOptions,
+      nomeGerente: managerOptions, // Corresponds to the last case in the ternary
+      situacao: [
+        { id: 1, label: "Vencida" },
+        { id: 2, label: "A vencer" },
+        { id: 3, label: "Em dia" },
+      ],
+    };
+    const options = optionSources[dataKey];
     if (options) {
       return (
         <Autocomplete

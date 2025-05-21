@@ -20,6 +20,7 @@ export interface OpportunityInfo {
   dataInteracao_vencida? : number;
   dataInteracao_a_vencer? : number;
   dataInteracao_em_dia? : number;
+  situacao? : number;
 }
 
 export interface Opportunity {
