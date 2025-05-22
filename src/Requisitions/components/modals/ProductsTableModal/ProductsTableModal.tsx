@@ -10,7 +10,7 @@ import { DataGrid, GridCallbackDetails, GridColDef, GridRowSelectionModel, useGr
 import {  postRequistionItems } from "../../../utils";
 import typographyStyles from "../../../utilStyles";
 import { CloseModalButton } from "../../../../generalUtilities";
-import { useProductsTableModal } from "./hooks";
+import { useProductsTableModal } from "../../../hooks/useProductsTableModal";
 import { alertAnimation, BaseButtonStyles } from "../../../../utilStyles";
 import { motion } from "framer-motion";
 import InsertQuantitiesModal from "../InsertQuantitiesModal/InsertQuantitiesModal";
