@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect } from "react";
-import { ItemsContext } from "../../../context/ItemsContext";
-import { Requisition, Product, AlertInterface, Item } from "../../../types";
-import { searchProducts, fetchRequsitionById } from "../../../utils";
+import { ItemsContext } from "../context/ItemsContext";
+import { Requisition, Product, AlertInterface, Item } from "../types";
+import { searchProducts, fetchRequsitionById } from "../utils";
 import { GridCallbackDetails, GridRowSelectionModel } from "@mui/x-data-grid";
 
 
@@ -61,9 +61,7 @@ export const useProductsTableModal = (requisitionID: number) => {
     const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
         const { value } = e.target as any;
         if (e.key === "Enter") {
-            console.log('setting new searchTerm')
             const newSearchTerm = value.toUpperCase();
-            console.log('newSearchTerm', newSearchTerm)
             setSearchTerm(newSearchTerm);
         }
     }
@@ -76,9 +74,7 @@ export const useProductsTableModal = (requisitionID: number) => {
     }
 
     useEffect(() => {
-        console.log('useEffect search term');
         if (searchTerm !== '') {
-            console.log('fetching products')
             fetchProducts();
             return;
         };

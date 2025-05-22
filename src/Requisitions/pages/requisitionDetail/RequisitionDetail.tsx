@@ -47,11 +47,9 @@ const RequisitionDetail: React.FC = () => {
   const { user } = useContext(userContext);
 
   const fetchRequisitionData = async () => {
-    console.log("fetchRequisitionData");
     try {
       if (id) {
         const requisition = await fetchRequsitionById(Number(id));
-        console.log("requisition", requisition);
         setRequisitionData(requisition);
         setSelectedProject(requisition?.ID_PROJETO || null);
       }
@@ -69,17 +67,13 @@ const RequisitionDetail: React.FC = () => {
   };
 
   const handleOpenDescriptionModal = () => {
-    console.log("handleOpenDescriptionModal");
     if (requisitionData && user) {
       const isAdmin = user.PERM_ADMINISTRADOR && user.PERM_ADMINISTRADOR > 0;
       const isResponsible =
         user.CODPESSOA > 0 &&
         user.CODPESSOA === requisitionData.responsavel_pessoa?.CODPESSOA;
       const isInitialStep = requisitionData.status?.etapa === 0;
-      console.log("isAdmin", isAdmin);
-      console.log("isResponsible", isResponsible);
-      console.log("isInitialStep", isInitialStep);
-      console.log("requisitionData", requisitionData);
+
       if (isAdmin) {
         setDescriptionModal(true);
         return;
@@ -139,9 +133,6 @@ const RequisitionDetail: React.FC = () => {
     const isInitialStep = requisitionData.status.etapa === 0;
     const isAdmin = user.PERM_ADMINISTRADOR && user.PERM_ADMINISTRADOR > 0;
     const isResponsible = user.CODPESSOA > 0 && user.CODPESSOA === requisitionData.responsavel_pessoa?.CODPESSOA; 
-    console.log("isInitialStep", isInitialStep);
-    console.log("isAdmin", isAdmin);
-    console.log("isResponsible", isResponsible);
     return isAdmin || (isInitialStep && isResponsible);
   };
 

@@ -30,11 +30,11 @@ import {
 } from "../../../../utilStyles";
 import { motion, AnimatePresence } from "framer-motion";
 import typographyStyles from "../../../utilStyles";
-import useRequisitionItems from "./hooks";
+import useRequisitionItems from "../../../hooks/useRequisitionItems";
 import ItemsToolBar from "../ItemsToolBar/ItemsToolBar";
 import { green } from "@mui/material/colors";
 import { QuoteItem, Requisition, RequisitionStatus } from "../../../types";
-import ErrorIcon from '@mui/icons-material/Error';
+import ErrorIcon from "@mui/icons-material/Error";
 import { User, userContext } from "../../../context/userContext";
 
 interface RequisitionItemsTableProps {
@@ -43,10 +43,8 @@ interface RequisitionItemsTableProps {
   isInsertingQuantity?: boolean;
   setIsInsertingQuantity?: Dispatch<SetStateAction<boolean>>;
   requisitionStatus?: RequisitionStatus;
-  requisitionData? : Requisition;
+  requisitionData?: Requisition;
 }
-
-
 
 const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
   requisitionId,
@@ -54,9 +52,8 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
   isInsertingQuantity,
   setIsInsertingQuantity,
   requisitionStatus,
-  requisitionData
+  requisitionData,
 }) => {
-
   const {
     visibleItems,
     isEditing,
@@ -88,7 +85,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     addedItems
   );
 
-  const {user} = useContext(userContext);
+  const { user } = useContext(userContext);
 
   const staticColumns: GridColDef[] = [
     {
@@ -126,25 +123,15 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
         </Typography>
       ),
     },
-    { 
-      field : 'data_entrega',
-      headerName: 'Data de entrega',
+    {
+      field: "data_entrega",
+      headerName: "Data de entrega",
       width: 150, // Defina a largura desejada
       editable: true,
-      renderCell: (params) => {
-        const date = new Date(params.value ||'');
-          return (
-            <Typography sx={{ ...typographyStyles.bodyText }}>
-              {String(date) !== "Invalid Date"
-                ? date.toLocaleDateString("pt-BR", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                  })
-                : "dd/mm/aaaa"}
-            </Typography>
-          );
-      }
+      type: "date",
+      valueGetter: (value) => {
+        return value ? new Date(value) : null;
+      },
     },
     {
       field: "QUANTIDADE",
@@ -359,8 +346,8 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
       column.field === "UNIDADE"
   );
 
-  const verifyPermissionToEditItem = ( user: User) => {
-    if(requisitionData){ 
+  const verifyPermissionToEditItem = (user: User) => {
+    if (requisitionData) {
       const userRoles = {
         isResponsable:
           user.CODPESSOA === requisitionData.responsavel_pessoa?.CODPESSOA,
@@ -371,7 +358,6 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
         isPurchaser: user.PERM_COMPRADOR,
         isAdmin: user.PERM_ADMINISTRADOR,
       };
-      console.log("userRoles: ", userRoles)
       if (
         !userRoles.isPurchaser &&
         !userRoles.isManager &&
@@ -384,28 +370,30 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     }
   };
 
-  const verifyStatusPermission = (status : RequisitionStatus, params  : GridCellParams ) => { 
-    const permittedEditionEtapa = [0,6];
-    console.log("status: ", status)
-    console.log("params: ", params.colDef.field);
-
-      if(params.colDef.field === 'data_entrega'){ 
-        const permitedEtapasForDataEntrega = [0,6,7];
-        const permittedStatus = permitedEtapasForDataEntrega.includes(status.etapa)
-        if (!permittedStatus) {
-          console.log("status.etapa: ", status.etapa);
-          throw new Error(
-            `Não é permitido editar items no status '${status.nome}'`
-          );
-        }
-        return;
-      }
-      const permittedStatus = permittedEditionEtapa.includes(status.etapa)
+  const verifyStatusPermission = (
+    status: RequisitionStatus,
+    params: GridCellParams
+  ) => {
+    const permittedEditionEtapa = [0, 6];
+    if (params.colDef.field === "data_entrega") {
+      const permitedEtapasForDataEntrega = [0, 6, 7];
+      const permittedStatus = permitedEtapasForDataEntrega.includes(
+        status.etapa
+      );
       if (!permittedStatus) {
+        console.log("status.etapa: ", status.etapa);
         throw new Error(
           `Não é permitido editar items no status '${status.nome}'`
         );
       }
+      return;
+    }
+    const permittedStatus = permittedEditionEtapa.includes(status.etapa);
+    if (!permittedStatus) {
+      throw new Error(
+        `Não é permitido editar items no status '${status.nome}'`
+      );
+    }
   };
 
   const startEditMode = (params: GridCellParams) => {
@@ -421,19 +409,19 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
   };
 
   const handleCellClick = (params: GridCellParams) => {
-   if (selectingPrices) return;
-   if(user && requisitionStatus){ 
+    if (selectingPrices) return;
+    if (user && requisitionStatus) {
       try {
+        console.log('verificou permissão do usuario')
         verifyPermissionToEditItem(user);
+        console.log("verificou permissão do status")
         verifyStatusPermission(requisitionStatus, params);
+        console.log("começou edição")
         startEditMode(params);
-      } catch (e : any) {
-        displayAlert(
-          "warning",
-          `${e.message}`
-        );
+      } catch (e: any) {
+        displayAlert("warning", `${e.message}`);
       }
-   }
+    }
   };
 
   return (

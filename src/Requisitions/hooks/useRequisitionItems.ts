@@ -13,17 +13,17 @@ import React, {
   Dispatch,
   SetStateAction,
 } from "react";
-import { AlertInterface, Item, Quote, QuoteItem } from "../../../types";
+import { AlertInterface, Item, Quote, QuoteItem } from "../types";
 import {
   deleteRequisitionItems,
   fetchItems,
   getItemToSupplierMapByReqId,
   getQuotesByRequisitionId,
   updateRequisitionItems,
-} from "../../../utils";
-import { ItemsContext } from "../../../context/ItemsContext";
+} from "../utils";
+import { ItemsContext } from "../context/ItemsContext";
 import { useLocation, useNavigate } from "react-router-dom";
-import { RequisitionContext } from "../../../context/RequisitionContext";
+import { RequisitionContext } from "../context/RequisitionContext";
 
 const useRequisitionItems = (
   requisitionId: number,
@@ -184,6 +184,7 @@ const useRequisitionItems = (
     if(visibleItems){ 
       if (isEditing) {
         const updatedRow = { ...newRow } as Item;
+        console.log("updatedRow: ", updatedRow);
         setVisibleItems(
           visibleItems.map((item) =>
             item.ID === updatedRow.ID ? updatedRow : item
@@ -209,7 +210,6 @@ const useRequisitionItems = (
         return;
       }
       setProductIdList(items.map((item: Item) => item.ID_PRODUTO));
-      console.log('items: ', items)
       setItems(items);
       setVisibleItems(items);
     }
@@ -297,7 +297,6 @@ const useRequisitionItems = (
     fetchReqItems();
     fetchItemToSupplierMap();
     const fetchQuotes = async () => {
-      console.log('FETCH QUOTES')
       const quotes = await getQuotesByRequisitionId(Number(requisitionId));
       const quoteItems : QuoteItem[] = [];
       quotes?.forEach((quote : Quote) => {

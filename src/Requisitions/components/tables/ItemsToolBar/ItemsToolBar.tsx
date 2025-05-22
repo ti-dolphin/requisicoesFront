@@ -90,7 +90,6 @@ const ItemsToolBar = ({
         }
       });
     }
-    console.log("pricesBySupplier: ", pricesBySupplier);
     return pricesBySupplier.reduce((acc, price) => acc + price.valor_frete, 0);
     
   }
