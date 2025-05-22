@@ -130,7 +130,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
       editable: true,
       type: "date",
       valueGetter: (value) => {
-        return value ? new Date(value) : null;
+        return value && value !== 'null' ? new Date(value) : null;
       },
     },
     {
@@ -397,10 +397,14 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
   };
 
   const startEditMode = (params: GridCellParams) => {
+    
+  const rowMode = gridApiRef.current.getRowMode(params.row.ID);
+  if (rowMode === "edit") return;
+
     gridApiRef.current.startRowEditMode({
       id: params.row.ID,
       fieldToFocus: params.colDef.field,
-      deleteValue: true,
+      deleteValue: false,
     });
     if (!isEditing) {
       setIsEditing(true);
@@ -419,7 +423,8 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
         console.log("começou edição")
         startEditMode(params);
       } catch (e: any) {
-        displayAlert("warning", `${e.message}`);
+        console.log(e)
+        displayAlert(e.message, "error");
       }
     }
   };
