@@ -65,7 +65,6 @@ const useRequisitionItems = (
   };
 
   const handleDelete = async (requisitionItems: Item[]) => {
-    console.log("os items deletados serão: ", requisitionItems);
     try {
       const ids = requisitionItems.map((item) => item.ID);
       const response = await deleteRequisitionItems(ids, requisitionId);
@@ -198,7 +197,6 @@ const useRequisitionItems = (
 
   const fetchReqItems = useCallback(async () => {
     const { items, columns } = await fetchItems(requisitionId);
-    console.log("items: ", items)
     setDinamicColumns(columns);
     if (items) {
       if (isInsertingQuantity && addedItems?.length) {
@@ -241,6 +239,7 @@ const useRequisitionItems = (
     if(visibleItems) {
       try {
         validateItems(visibleItems);
+        console.log('visibleItems', visibleItems)
         const response = await updateRequisitionItems(
           visibleItems,
           requisitionId
