@@ -1,6 +1,6 @@
 import React, { Dispatch, MutableRefObject, SetStateAction, useCallback, useContext, useEffect, useState } from 'react'
 import { Client, Field, Guide, OpportunityOptionField, Status } from '../../types'
-import { Autocomplete, AutocompleteChangeDetails, AutocompleteChangeReason, Box, TextField } from '@mui/material'
+import { Autocomplete, AutocompleteChangeDetails, AutocompleteChangeReason, Box, Grid, TextField } from '@mui/material'
 import { Project } from '../../../Requisitions/types'
 import { fetchProjectOptionsByUser } from '../../../Requisitions/utils'
 import { fetchAllClients, fetchClientFromFirstProjectOption, fetchStatusList } from '../../utils'
@@ -18,7 +18,6 @@ interface OpportunityRegistrationFields {
   numeroAdicional: number;
   nome: string;
   codStatus: number;
-  descricaoVenda: string;
   fkCodCliente: number;
   fkCodColigada: number;
   dataSolicitacao: Date;
@@ -51,12 +50,11 @@ const OpportunityRegistration = ({
       numeroAdicional: guide.fields[1].data,
       nome: guide.fields[2].data,
       codStatus: guide.fields[3].data,
-      descricaoVenda: guide.fields[4].data,
-      fkCodCliente: guide.fields[5].data,
-      fkCodColigada  :guide.fields[6].data,
-      dataSolicitacao: guide.fields[7].data,
-      dataInicio: guide.fields[8].data,
-      dataEntrega: guide.fields[9].data,
+      fkCodCliente: guide.fields[4].data,
+      fkCodColigada  :guide.fields[5].data,
+      dataSolicitacao: guide.fields[6].data,
+      dataInicio: guide.fields[7].data,
+      dataEntrega: guide.fields[8].data,
     });
 
   const renderOptions = (column: {
@@ -219,15 +217,18 @@ const OpportunityRegistration = ({
         numeroAdicional: guide.fields[1].data,
         nome: guide.fields[2].data,
         codStatus: guide.fields[3].data,
-        descricaoVenda: guide.fields[4].data,
-        fkCodCliente: guide.fields[5].data,
-        fkCodColigada: guide.fields[6].data,
-        dataSolicitacao: guide.fields[7].data,
-        dataInicio: guide.fields[8].data,
-        dataEntrega: guide.fields[9].data,
+        fkCodCliente: guide.fields[4].data,
+        fkCodColigada: guide.fields[5].data,
+        dataSolicitacao: guide.fields[6].data,
+        dataInicio: guide.fields[7].data,
+        dataEntrega: guide.fields[8].data,
       });
     }
   }, [guide]);
+  const gridFieldKeys = ["dataSolicitacao", "dataInicio", "dataEntrega"]
+  const gridFields = guide.fields.filter((field) =>
+    gridFieldKeys.includes(field.dataKey)
+  );
 
   useEffect(() => {
     if (clientOptions && opportunityRegistration) {
@@ -240,11 +241,13 @@ const OpportunityRegistration = ({
       {opportunityRegistration && (
         <Box sx={styles.formGrid}>
           {guide.fields.map((field, index) => {
+            const ocultFields = ["codOs", "fkCodColigada"];
+
             if (
               editableField(field) &&
               !field.autoComplete &&
-              field.dataKey !== "codOs" &&
-              field.dataKey !== 'fkCodColigada'
+              !ocultFields.includes(field.dataKey) &&
+              !gridFieldKeys.includes(field.dataKey)
             ) {
               return (
                 <TextField
@@ -307,6 +310,34 @@ const OpportunityRegistration = ({
               );
             }
           })}
+
+          <Grid container gap={1}  rowSpacing={2} sx={{
+             gridColumn: "span 2",
+              display: 'flex',
+              flexWrap : 'nowrap'
+             }}>
+            {gridFields.map((field, index) => (
+              <Grid item xs={12} sm={4} key={index}>
+                <TextField
+                fullWidth
+                  key={index}
+                  type={field.type}
+                  label={field.label}
+                  onChange={(e) => handleChangeTextField(e, field)}
+                  value={
+                    opportunityRegistration[
+                      field.dataKey as keyof OpportunityRegistrationFields
+                    ]
+                  }
+                  required={opportunityRegistration.codStatus === 11}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  onFocus={() => setIseEditing(true)}
+                ></TextField>
+              </Grid>
+            ))}
+          </Grid>
         </Box>
       )}
     </Box>

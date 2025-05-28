@@ -416,15 +416,16 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     if (selectingPrices) return;
     if (user && requisitionStatus) {
       try {
-        console.log('verificou permissão do usuario')
         verifyPermissionToEditItem(user);
-        console.log("verificou permissão do status")
+        if(user?.PERM_COMPRADOR || user.PERM_ADMINISTRADOR){ 
+          startEditMode(params);
+          return;
+        }
         verifyStatusPermission(requisitionStatus, params);
-        console.log("começou edição")
         startEditMode(params);
       } catch (e: any) {
         console.log(e)
-        displayAlert(e.message, "error");
+        displayAlert('error', e.message);
       }
     }
   };

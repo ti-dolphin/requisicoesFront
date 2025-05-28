@@ -100,7 +100,7 @@ const useOpportunityModal = (initialOpportunity: Opportunity, context: any) => {
                     { label: "Nº Adicional", dataKey: "numeroAdicional", type: "number", data: opportunity["numeroAdicional"] },
                     { label: "Descrição da Proposta", dataKey: "nome", type: "text", data: opportunity["nome"] },
                     { label: "Status", dataKey: "codStatus", autoComplete: true, type: "number", data: opportunity["codStatus"] },
-                    { label: 'Descrição da Venda', dataKey: 'descricaoVenda', autoComplete: false, type: 'text', data: opportunity['descricaoVenda']},
+             
                     { label: "Cliente", dataKey: "fkCodCliente", autoComplete: true, type: "number", data: opportunity["fkCodCliente"] },
                     { label: 'Codigo Coligada', dataKey: 'fkCodColigada', autoComplete: false, type: 'number', data: opportunity['fkCodColigada']},
                     { label: "Data de Solicitação", dataKey: "dataSolicitacao", type: "date", data: opportunity["dataSolicitacao"] },
