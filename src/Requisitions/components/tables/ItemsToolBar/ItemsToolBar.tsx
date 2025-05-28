@@ -12,6 +12,7 @@ import { green } from "@mui/material/colors";
 import { updateItemToSupplier } from "../../../utils";
 import typographyStyles from "../../../utilStyles";
 import { GridColDef } from "@mui/x-data-grid";
+import { userContext } from "../../../context/userContext";
 
 interface props {
   handleCancelItems: (items: Item[]) => Promise<void>;
@@ -46,6 +47,7 @@ const ItemsToolBar = ({
   getColumns}: props) => {
   const { toggleAdding } = useContext(ItemsContext);
   const { id } = useParams();
+  const {user} = useContext(userContext);
   const [alert, setAlert] = useState<AlertInterface>();
   const [creatingQuote, setCreatingQuote] = useState<boolean>(false);
   const [quoteListOpen, setQuoteListOpen] = useState<boolean>(false);
@@ -164,21 +166,23 @@ const ItemsToolBar = ({
           selectedItems={selectedRows}
         />
       }
-      <Button
-        onClick={() => {
-          if (requisitionStatus?.etapa === 0) {
-            toggleAdding();
-            return;
-          }
-          displayAlert(
-            "warning",
-            `Não é permitido adicionar items no status '${requisitionStatus?.nome}'`
-          );
-        }}
-        sx={{ ...BaseButtonStyles, height: 30, minWidth: 150 }}
-      >
-        Adicionar items
-      </Button>
+      {user && (
+        <Button
+          onClick={() => {
+            if (requisitionStatus?.etapa === 0 || user.PERM_COMPRADOR) {
+              toggleAdding();
+              return;
+            }
+            displayAlert(
+              "warning",
+              `Não é permitido adicionar items no status '${requisitionStatus?.nome}'`
+            );
+          }}
+          sx={{ ...BaseButtonStyles, height: 30, minWidth: 150 }}
+        >
+          Adicionar items
+        </Button>
+      )}
 
       {requisitionStatus?.etapa === 3 && (
         <Button
@@ -188,7 +192,7 @@ const ItemsToolBar = ({
           Gerar Cotação
         </Button>
       )}
-      {(quoteExists) && requisitionStatus && requisitionStatus?.etapa >= 2 && (
+      {quoteExists && requisitionStatus && requisitionStatus?.etapa >= 2 && (
         <Button
           onClick={handleViewQuoteList}
           sx={{ ...BaseButtonStyles, height: 30, minWidth: 150 }}
@@ -197,38 +201,45 @@ const ItemsToolBar = ({
         </Button>
       )}
 
-      { 
-        selectingPrices && (
-          <Button
-            onClick={() => {setSelectingPrices(false)}}
-            sx={{ ...BaseButtonStyles, height: 30, minWidth: 150 }}>
-            Cancelar Seleção de preços
-            </Button>
-
-        )
-      }
+      {selectingPrices && (
+        <Button
+          onClick={() => {
+            setSelectingPrices(false);
+          }}
+          sx={{ ...BaseButtonStyles, height: 30, minWidth: 150 }}
+        >
+          Cancelar Seleção de preços
+        </Button>
+      )}
+      {selectingPrices && (
+        <Button
+          onClick={() => handleSavePrices()}
+          sx={{
+            ...BaseButtonStyles,
+            height: 30,
+            minWidth: 150,
+            backgroundColor: green[800],
+            "&:hover": { backgroundColor: green[500] },
+            color: "white",
+          }}
+        >
+          Salvar seleção de preços
+        </Button>
+      )}
       {
-        selectingPrices && (
-          <Button
-            onClick={() => handleSavePrices()}
-            sx={{
-              ...BaseButtonStyles, height: 30, minWidth: 150, backgroundColor: green[800], "&:hover": { backgroundColor: green[500] },
-              color: 'white'
-            }}>
-              Salvar seleção de preços
-          </Button>
-
-        )
-      }
-      { 
-         <Stack direction="row" gap={1}>
-          <Typography sx={{ ...typographyStyles.heading2, color: 'black' }}>
-            {itemToSupplierMap.length === visibleRows?.length ? 'Total: ' : 'Total Parcial: '}
+        <Stack direction="row" gap={1}>
+          <Typography sx={{ ...typographyStyles.heading2, color: "black" }}>
+            {itemToSupplierMap.length === visibleRows?.length
+              ? "Total: "
+              : "Total Parcial: "}
           </Typography>
           <Typography sx={{ ...typographyStyles.heading2, color: green[800] }}>
-            {calculateTotal()?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+            {calculateTotal()?.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })}
           </Typography>
-         </Stack>
+        </Stack>
       }
       <ProductsTableModal requisitionID={Number(id)} />
       {alert && (

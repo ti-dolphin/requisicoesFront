@@ -113,7 +113,8 @@ const QuoteDetail = () => {
     setCurrentQuoteData({
       ...currentQuoteData,
       [field.dataKey as keyof Quote]: value.id
-    })
+    });
+    
     if (field.dataKey === "id_classificacao_fiscal") {
       setSelectedClassification(value);
       return;
@@ -302,7 +303,7 @@ const QuoteDetail = () => {
       id_tipo_frete,
       id_classificacao_fiscal,
     } = quoteData;
-
+    //validação para todos os perfis
     if (!id_tipo_frete) {
       throw new Error("O tipo de frete é obrigatório");
     }
@@ -312,22 +313,24 @@ const QuoteDetail = () => {
     if (!cnpj_faturamento) {
       throw new Error("CNPJ do faturamento é obrigatório");
     }
-    if (isSupplier && !cnpj_fornecedor) {
-      throw new Error("CNPJ do fornecedor é obrigatório");
-    }
-    console.log('validation cnpj fornecedor: ', validCNPJ(cnpj_fornecedor || ''))
-    if (!validCNPJ(cnpj_fornecedor || '')) {
-      throw new Error("CNPJ do fornecedor inválido");
-    }
-    console.log('validation cnpj faturamento: ', validCNPJ(cnpj_faturamento))
     if (!validCNPJ(cnpj_faturamento)) {
       throw new Error("CNPJ do faturamento inválido");
+    }
+    //validação para fornecedor
+    if (isSupplier) {
+      if (!cnpj_fornecedor) {
+        throw new Error("CNPJ do fornecedor é obrigatório");
+      }
+      if (!validCNPJ(cnpj_fornecedor)) {
+        throw new Error("CNPJ do fornecedor inválido");
+      }
     }
   };
 
   const saveQuoteData = async () => {
     if (currentQuoteData) {
       try {
+        console.log("currentQuoteData: ", currentQuoteData)
         validateRequiredFields(currentQuoteData);
         const response = await updateQuote({
           ...currentQuoteData,

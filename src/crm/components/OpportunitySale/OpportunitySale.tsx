@@ -158,7 +158,7 @@ const OpportunitySale = ({
   useEffect(() => {
     if (guidesReference.current) {
       projectId.current = guidesReference.current[0].fields[0].data;
-      oppId.current = guidesReference.current[0].fields[10].data;
+      oppId.current = guidesReference.current[0].fields[9].data;
     }
     const firstsSaleState = {
       responsavel: guide.fields[0].data,
