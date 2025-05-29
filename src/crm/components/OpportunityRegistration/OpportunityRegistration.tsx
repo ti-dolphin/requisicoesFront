@@ -117,6 +117,7 @@ const OpportunityRegistration = ({
   };
 
   const setDefaultClientWhenNotDefined = async () => {
+    console.log("setDefaultClientWhenNotDefined");
     const clientNotDefined =
       (opportunityRegistration.fkCodCliente as any) == "-";
   
@@ -130,11 +131,10 @@ const OpportunityRegistration = ({
         fkCodColigada: clientFromFirstProject.fkCodColigada,
       });
       if (guidesReference.current) {
-        guide.fields[5].data = clientFromFirstProject.id;
-        guide.fields[6].data = clientFromFirstProject.fkCodColigada;
+        guide.fields[4].data = clientFromFirstProject.id;
+        guide.fields[5].data = clientFromFirstProject.fkCodColigada;
         guidesReference.current[0] = guide;
       }
-
       return;
     }
   };
@@ -211,7 +211,17 @@ const OpportunityRegistration = ({
 
   useEffect(() => {
     if (!isEditing) {
-  
+       console.log({
+         idProjeto: guide.fields[0].data,
+         numeroAdicional: guide.fields[1].data,
+         nome: guide.fields[2].data,
+         codStatus: guide.fields[3].data,
+         fkCodCliente: guide.fields[4].data,
+         fkCodColigada: guide.fields[5].data,
+         dataSolicitacao: guide.fields[6].data,
+         dataInicio: guide.fields[7].data,
+         dataEntrega: guide.fields[8].data,
+       });
       setOpportunityRegistration({
         idProjeto: guide.fields[0].data,
         numeroAdicional: guide.fields[1].data,
