@@ -10,6 +10,8 @@ interface ItemsContextType {
   selection: {
     items: Item[];
   };
+  changingProduct: [boolean, Item?];
+  setChangingProduct: React.Dispatch<React.SetStateAction<[boolean, Item?]>>;
   refreshItems: boolean;
   toggleEditingObservation: (item?: Item) => void;
   toggleEditing: (item?: Item) => void;
@@ -33,6 +35,8 @@ export const ItemsContext = createContext<ItemsContextType>({
   deleting: [false],
   editingObservation: [false],
   selection: { items: [] },
+  changingProduct: [false],
+  setChangingProduct: () => {},
   toggleEditing: () => {},
   toggleChanging: () => {},
   toggleAdding: () => {},
@@ -42,7 +46,7 @@ export const ItemsContext = createContext<ItemsContextType>({
   setEditingObservation: () => {},
   toggleRefreshItems: () => {},
   changeSelection: () => {},
-  setProductIdList: () =>{}
+  setProductIdList: () => {},
 });
 interface ItemsContextProviderProps {
   children: React.ReactNode;
@@ -60,6 +64,9 @@ export const ItemsContextProvider = ({
   >([false]);
   const [refreshItems, setRefresh] = useState<boolean>(false);
   const [productIdList, setProductIdList] = useState<number[]>([]);
+  const [changingProduct, setChangingProduct] = useState<[boolean, Item?]>([
+    false,
+  ]);
 
   const changeSelection = (items?: Item[]) => {
     if (items) {
@@ -117,7 +124,9 @@ export const ItemsContextProvider = ({
         toggleRefreshItems,
         changeSelection,
         productIdList,
-        setProductIdList
+        setProductIdList,
+        changingProduct,
+        setChangingProduct,
       }}
     >
       {children}

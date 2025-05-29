@@ -5,8 +5,10 @@ import { styled } from "@mui/system";
 import { CssTransition } from "@mui/base/Transitions";
 import { PopupContext } from "@mui/base/Unstable_Popup";
 import { buttonStylesMobile } from "../../../../utilStyles";
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { blue, grey } from "@mui/material/colors";
+import { ItemsContext } from "../../../context/ItemsContext";
+import { AlertInterface } from "../../../types";
 
 export const useItemActions = (
   handleCopyContent: any,
@@ -14,14 +16,25 @@ export const useItemActions = (
   handleActivateItems: any,
   selectedItems: any,
   handleDelete: any
+  
 ) => {
   const [deleteItemModal, setDeleteItemModal] = React.useState<boolean>(false);
   const [executeSelectedAction, setExecuteSelectedAction] = React.useState<string>("");
   const [open, setOpen] = React.useState(false);
+  const {setChangingProduct } = useContext(ItemsContext);
+  const [alert, setAlert] = React.useState<AlertInterface>();
 
   const handleOpenChange = (isOpen: boolean) => {
     console.log("open change: ", isOpen);
     setOpen(isOpen);
+  };
+
+  const displayAlert = async (severity: string, message: string) => {
+    setTimeout(() => {
+      setAlert(undefined);
+    }, 3000);
+    setAlert({ severity, message });
+    return;
   };
 
   const menuActions = [
@@ -30,6 +43,16 @@ export const useItemActions = (
       onClick: () => {
         setDeleteItemModal(true);
       },
+    },
+    { 
+      label: 'Substituir',
+      onClick: () => {
+        if(selectedItems.length > 1) { 
+          displayAlert('error', 'Selecione apenas um item para substituir por vez');
+          return;
+        }
+        setChangingProduct([true, selectedItems[0]]);
+      }
     },
     {
       label: "Copiar",
@@ -164,6 +187,7 @@ export const useItemActions = (
     setExecuteSelectedAction,
     menuActions,
     AnimatedListbox,
+    alert,
     MenuItem,
     MenuButton,
     open,

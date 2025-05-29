@@ -1,13 +1,14 @@
 import { Alert, AlertColor, Box, Button, Modal, Stack, styled, TextField, Typography } from "@mui/material";
 import {
 
+  Item,
   Product,
   ProductsTableModalProps,
   RequisitionItemPost,
 
 } from "../../../types";
 import { DataGrid, GridCallbackDetails, GridColDef, GridRowSelectionModel, useGridApiRef } from "@mui/x-data-grid";
-import {  postRequistionItems } from "../../../utils";
+import {  postRequistionItems, updateRequisitionItems } from "../../../utils";
 import typographyStyles from "../../../utilStyles";
 import { CloseModalButton } from "../../../../generalUtilities";
 import { useProductsTableModal } from "../../../hooks/useProductsTableModal";
@@ -64,7 +65,10 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
      setAddedItems,
      isInsertingQuantity,
      setIsInsertingQuantity,
-     productIdList
+     productIdList,
+     changingProduct,
+     setChangingProduct,
+     toggleRefreshItems,
    } = useProductsTableModal(requisitionID);
 
    const gridApiRef = useGridApiRef();
@@ -109,10 +113,31 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
     }
    }
 
+   const handleSaveChangeItemProduct = async ( ) =>  {
+        let updatingItem = changingProduct[1];
+        const selectedProduct = selectedProducts[0];
+        if(updatingItem){ 
+          updatingItem.ID_PRODUTO = selectedProduct.ID;
+        }
+        const arrayFromSingleItem: Item[] = updatingItem ? [updatingItem] : [];
+
+        console.log('arrayFromSingleItem', arrayFromSingleItem)
+
+        const response = await updateRequisitionItems(
+          arrayFromSingleItem,
+          requisitionID
+        );
+        if(response.status === 200){ 
+          setChangingProduct([false, undefined]);
+          toggleRefreshItems();
+        }
+
+   };
+
   return (
     <>
       <Modal
-        open={adding}
+        open={adding || changingProduct[0]}
         aria-labelledby="child-modal-title"
         aria-describedby="child-modal-description"
       >
@@ -143,7 +168,8 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
             >
               {requisition && (
                 <Typography sx={typographyStyles.heading2}>
-                  {requisition.projeto_descricao?.DESCRICAO} | {requisition.DESCRIPTION}
+                  {requisition.projeto_descricao?.DESCRICAO} |{" "}
+                  {requisition.DESCRIPTION}
                 </Typography>
               )}
               <TextField
@@ -189,6 +215,7 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
                     </Box>
                   ),
                 }}
+                rowSelectionModel={selectedProducts.map((product) => product.ID)}
                 onRowSelectionModelChange={(
                   rowSelectionModel: GridRowSelectionModel,
                   details: GridCallbackDetails
@@ -209,9 +236,16 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
                   alignItems={"center"}
                   padding={1}
                 >
-                  <Button sx={BaseButtonStyles} onClick={handleSaveAddItems}>
-                    Adicionar items
-                  </Button>
+                  {adding && (
+                    <Button sx={BaseButtonStyles} onClick={handleSaveAddItems}>
+                      Adicionar items
+                    </Button>
+                  )}
+                  {changingProduct[0] && (
+                    <Button sx={BaseButtonStyles} onClick={handleSaveChangeItemProduct}>
+                      Substituir o item selecionado
+                    </Button>
+                  )}
                   <Button onClick={handleCancelSelecting} sx={BaseButtonStyles}>
                     Cancelar
                   </Button>
