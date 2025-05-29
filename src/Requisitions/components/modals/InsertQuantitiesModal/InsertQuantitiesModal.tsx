@@ -23,7 +23,6 @@ const InsertQuantitiesModal = ({
   setSelectedProducts,
   reqID,
 }: props) => {
-  console.log("addedItems: ", addedItems);
   const { id } = useParams();
   const { toggleAdding } = useContext(ItemsContext);
 

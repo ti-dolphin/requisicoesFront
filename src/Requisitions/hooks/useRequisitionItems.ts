@@ -33,6 +33,8 @@ const useRequisitionItems = (
 ) => {
   const { toggleRefreshRequisition} = useContext(RequisitionContext)
   const { toggleCreating } = useContext(RequisitionContext);
+
+  const { refreshItems} = useContext(ItemsContext); 
   const [items, setItems] = useState<Item[]>([]);
   const [visibleItems, setVisibleItems] = useState<Item[]>();
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -204,6 +206,7 @@ const useRequisitionItems = (
         const itemsToBeSet = items.filter((item: Item) =>
           addedItems.find((addedItem) => addedItem.ID === item.ID)
         );
+        console.log("itemsToBeSet: ", itemsToBeSet)
         setItems(itemsToBeSet);
         setVisibleItems(itemsToBeSet);
         return;
@@ -298,19 +301,17 @@ const useRequisitionItems = (
     fetchItemToSupplierMap();
     const fetchQuotes = async () => {
       const quotes = await getQuotesByRequisitionId(Number(requisitionId));
-      const quoteItems : QuoteItem[] = [];
-      quotes?.forEach((quote : Quote) => {
-         quote.itens.forEach((item : QuoteItem) => {
-            quoteItems.push({...item});
-         });
+      const quoteItems: QuoteItem[] = [];
+      quotes?.forEach((quote: Quote) => {
+        quote.itens.forEach((item: QuoteItem) => {
+          quoteItems.push({ ...item });
+        });
       });
       setQuoteItems(quoteItems);
       setQuotes(quotes);
-
-    }
+    };
     fetchQuotes();
-
-  }, [refresh, adding]);
+  }, [refresh, adding, refreshItems]);
 
   useEffect(() => {
     if (shouldExecuteResetItems.current) {

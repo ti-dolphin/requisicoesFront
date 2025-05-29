@@ -6,7 +6,8 @@ import { GridCallbackDetails, GridRowSelectionModel } from "@mui/x-data-grid";
 
 
 export const useProductsTableModal = (requisitionID: number) => {
-    const { adding, toggleAdding, productIdList } = useContext(ItemsContext);
+    const { adding, toggleAdding, productIdList, changingProduct, setChangingProduct, toggleRefreshItems} = useContext(ItemsContext);
+    
     const [requisition, setRequisition] = useState<Requisition>();
     const [products, setProducts] = useState<Product[]>([]);
     const [alert, setAlert] = useState<AlertInterface>();
@@ -25,12 +26,18 @@ export const useProductsTableModal = (requisitionID: number) => {
 
     const handleSelectionChange = (rowSelectionModel: GridRowSelectionModel,
         _details: GridCallbackDetails) => {
-        if (rowSelectionModel.length > 0) {
-            setIsSelecting(true);
-            const localSelectedProducts = products.filter((product, _index) => rowSelectionModel.find((id) => product.ID === id));
-            setSelectedProducts(localSelectedProducts);
+        if (changingProduct[0] && rowSelectionModel.length > 1){ 
+            displayAlert('Warning', 'Selecione apenas um produto para substituir o item da requisição');
             return;
         }
+          if (rowSelectionModel.length > 0) {
+            setIsSelecting(true);
+            const localSelectedProducts = products.filter((product, _index) =>
+              rowSelectionModel.find((id) => product.ID === id)
+            );
+            setSelectedProducts(localSelectedProducts);
+            return;
+          }
         setIsSelecting(false);
     }
 
@@ -84,20 +91,28 @@ export const useProductsTableModal = (requisitionID: number) => {
     useEffect(() => {
         fetchRequisition();
     }, [adding]);
+
     return {
-        products,
-        requisition,
-        alert,
-        handleSearch,
-        adding,
-        handleClose,
-        searchTerm,
-        selectedProducts, setSelectedProducts,
-        isSelecting, setIsSelecting,
-        handleSelectionChange,
-        displayAlert,
-        addedItems, setAddedItems,
-        isInsertingQuantity, setIsInsertingQuantity,
-        productIdList
-    }
+      products,
+      requisition,
+      alert,
+      handleSearch,
+      adding,
+      changingProduct,
+      handleClose,
+      searchTerm,
+      selectedProducts,
+      setSelectedProducts,
+      isSelecting,
+      setIsSelecting,
+      handleSelectionChange,
+      displayAlert,
+      addedItems,
+      setAddedItems,
+      isInsertingQuantity,
+      setIsInsertingQuantity,
+      productIdList,
+      toggleRefreshItems,
+      setChangingProduct,
+    };
 }

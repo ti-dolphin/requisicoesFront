@@ -250,59 +250,55 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     }
   };
 
-  const getColumns = () => {
-    let supllierColumns: GridColDef[] = [];
-    if (dinamicColumns) {
-      const supplierSelected = (ID: number, supplier: string) => {
-        return itemToSupplierMap.some((item: any) => {
-          return item.ID === ID && item.supplier === supplier;
-        });
-      };
+  // Função para gerar as colunas da tabela dinamicamente, incluindo colunas de fornecedores
+  const getColumns = (): GridColDef[] => {
+    // Função auxiliar para verificar se o fornecedor está selecionado para o item
+    const isSupplierSelected = (ID: number, supplier: string): boolean =>
+      itemToSupplierMap.some((item: any) => item.ID === ID && item.supplier === supplier);
 
-      dinamicColumns.forEach((c: string) => {
-        supllierColumns.push({
-          field: c,
-          headerName: c,
-          width: 150, // Defina a largura desejada
-          editable: false,
-          renderCell: (params: GridRenderCellParams) => {
-            const quotedQuantity = findQuotedQuantity(c, params.row);
-            const quotedQuantityEqual =
-              quotedQuantity === params.row.QUANTIDADE;
-            return (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                }}
-              >
-                {!quotedQuantityEqual && (
-                  <Tooltip title={`Quantidade cotada: ${quotedQuantity}`}>
-                    <ErrorIcon sx={{ color: "gray" }} />
-                  </Tooltip>
-                )}
-                <Typography
-                  sx={{ ...typographyStyles.bodyText, color: green[600] }}
-                >
-                  {params.value ? currencyFormatter.format(params.value) : ""}
-                </Typography>
-                {
-                  <Checkbox
-                    checked={supplierSelected(params.row.ID, params.field)}
-                    sx={{ zIndex: 40 }}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      handleChangeSupplierSelected(e, params)
-                    }
-                  />
-                }
-              </Box>
-            );
-          },
-        });
-      });
-    }
-    return [...staticColumns, ...supllierColumns];
+    // Se não houver colunas dinâmicas, retorna apenas as colunas estáticas
+    if (!dinamicColumns) return staticColumns;
+
+    // Mapeia as colunas dinâmicas (fornecedores) para GridColDef
+    const supplierColumns: GridColDef[] = dinamicColumns.map((supplier: string) => ({
+      field: supplier,
+      headerName: supplier,
+      width: 150,
+      editable: false,
+      renderCell: (params: GridRenderCellParams) => {
+        // Busca a quantidade cotada para o fornecedor
+        const quotedQuantity = findQuotedQuantity(supplier, params.row);
+        const isQuantityEqual = quotedQuantity === params.row.QUANTIDADE;
+
+        return (
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            {/* Exibe um ícone de alerta se a quantidade cotada for diferente da quantidade do item */}
+            {params.value  &&  !isQuantityEqual && (
+              <Tooltip title={`Quantidade cotada: ${quotedQuantity}`}>
+              <ErrorIcon sx={{ color: "gray" }} />
+              </Tooltip>
+            )}
+            {/* Valor formatado em moeda */}
+            <Typography sx={{ ...typographyStyles.bodyText, color: green[600] }}>
+              {params.value ? currencyFormatter.format(params.value) : ""}
+            </Typography>
+            {/* Checkbox para seleção do fornecedor, só exibe se houver valor */}
+            {params.value  && (
+              <Checkbox
+              checked={isSupplierSelected(params.row.ID, params.field)}
+              sx={{ zIndex: 40 }}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleChangeSupplierSelected(e, params)
+              }
+              />
+            )}
+            </Box>
+        );
+      },
+    }));
+
+    // Retorna as colunas estáticas seguidas das colunas de fornecedores
+    return [...staticColumns, ...supplierColumns];
   };
 
   const ReqItemsFooter = (props: GridFooterContainerProps) => {

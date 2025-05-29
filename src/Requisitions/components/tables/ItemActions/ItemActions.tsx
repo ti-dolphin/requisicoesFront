@@ -5,7 +5,8 @@ import { Menu } from "@mui/base/Menu";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { Item } from "../../../types";
 import DeleteRequisitionItemModal from "../../modals/warnings/DeleteRequisitionFileModal";
-import { useItemActions } from "./hooks";
+import { useItemActions } from "./useItemActions";
+import { Alert, AlertColor } from "@mui/material";
 
 
 interface ItemActionsProps {
@@ -33,12 +34,14 @@ const ItemActions = ({
    MenuItem,
    setOpen,
    open,
+   alert,
    handleOpenChange,
  } = useItemActions(
    handleCopyContent,
    handleCancelItems,
    handleActivateItems,
    selectedItems,
+
    handleDelete
  );
   return (
@@ -49,7 +52,9 @@ const ItemActions = ({
         setExecuteSelectedAction={setExecuteSelectedAction}
         setIsMenuActionsOpen={setOpen}
       />
-
+      {alert && (
+        <Alert severity={alert?.severity as AlertColor}>{alert?.message}</Alert>
+      )}
       <Dropdown
         display={open ? "block" : "none"}
         sx={{
