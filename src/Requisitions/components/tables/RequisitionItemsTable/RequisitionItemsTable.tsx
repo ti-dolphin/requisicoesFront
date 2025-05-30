@@ -7,7 +7,7 @@ import {
   Alert,
   AlertColor,
   Box,
-  Button,
+ 
   Checkbox,
   Tooltip,
   Typography,
@@ -25,8 +25,7 @@ import {
 } from "@mui/x-data-grid";
 import styles from "./RequisitionItemsTable.styles";
 import {
-  alertAnimation,
-  BaseButtonStyles,
+  alertAnimation
 } from "../../../../utilStyles";
 import { motion, AnimatePresence } from "framer-motion";
 import typographyStyles from "../../../utilStyles";
@@ -318,19 +317,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
         </AnimatePresence>
 
         <GridFooter />
-        {isEditing && (
-          <Button onClick={triggerSave} sx={BaseButtonStyles}>
-            Salvar
-          </Button>
-        )}
-        {isEditing && (
-          <Button
-            onClick={handleCancelEdition}
-            sx={{ ...BaseButtonStyles, height: 40 }}
-          >
-            Cancelar edição
-          </Button>
-        )}
+     
       </GridFooterContainer>
     );
   };
@@ -430,6 +417,9 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     <Box sx={{ ...styles.container }}>
       {!isInsertingQuantity && (
         <ItemsToolBar
+          isEditing={isEditing}
+          handleCancelEdition={handleCancelEdition}
+          triggerSave={triggerSave}
           handleCancelItems={handleCancelItems}
           handleActivateItems={handleActivateItems}
           handleCopyContent={handleCopyContent}
