@@ -318,19 +318,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
         </AnimatePresence>
 
         <GridFooter />
-        {isEditing && (
-          <Button onClick={triggerSave} sx={BaseButtonStyles}>
-            Salvar
-          </Button>
-        )}
-        {isEditing && (
-          <Button
-            onClick={handleCancelEdition}
-            sx={{ ...BaseButtonStyles, height: 40 }}
-          >
-            Cancelar edição
-          </Button>
-        )}
+     
       </GridFooterContainer>
     );
   };
@@ -430,6 +418,9 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     <Box sx={{ ...styles.container }}>
       {!isInsertingQuantity && (
         <ItemsToolBar
+          isEditing={isEditing}
+          handleCancelEdition={handleCancelEdition}
+          triggerSave={triggerSave}
           handleCancelItems={handleCancelItems}
           handleActivateItems={handleActivateItems}
           handleCopyContent={handleCopyContent}
