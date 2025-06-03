@@ -15,6 +15,9 @@ import { useProductsTableModal } from "../../../hooks/useProductsTableModal";
 import { alertAnimation, BaseButtonStyles } from "../../../../utilStyles";
 import { motion } from "framer-motion";
 import InsertQuantitiesModal from "../InsertQuantitiesModal/InsertQuantitiesModal";
+import { updatePatrimony } from "../../../../Patrimony/utils";
+import { useContext } from "react";
+import { PatrimonyInfoContext } from "../../../../Patrimony/context/patrimonyInfoContext";
 
 const FullScreenModalBox = styled(Box)(({ theme }) => ({
   position: "absolute",
@@ -47,6 +50,9 @@ const columns: GridColDef[] = [
 
 export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
   requisitionID,
+  patrimony,
+  choosingProductForPatrimony,
+  setChoosingProductForPatrimony
 }) => {
    const {
      products,
@@ -67,9 +73,11 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
      setIsInsertingQuantity,
      productIdList,
      changingProduct,
-     setChangingProduct,
      toggleRefreshItems,
-   } = useProductsTableModal(requisitionID);
+   } = useProductsTableModal(requisitionID, patrimony, choosingProductForPatrimony, setChoosingProductForPatrimony);
+   
+   const { toggleRefreshPatrimonyInfo } = useContext(PatrimonyInfoContext)
+  
 
    const gridApiRef = useGridApiRef();
 
@@ -100,6 +108,10 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
      console.log({newProductItems})
     if(newProductItems.length) {
         try {
+          if (requisitionID === undefined) {
+            displayAlert("error", "ID da requisição não definido.");
+            return;
+          }
           const data = await postRequistionItems(
             requisitionID,
             newProductItems
@@ -107,6 +119,7 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
           );
           setAddedItems(data.insertedItems);
           setIsInsertingQuantity(true);
+          handleClose();
         } catch (e: any) {
           displayAlert("error", e.message);
         }
@@ -120,24 +133,48 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
           updatingItem.ID_PRODUTO = selectedProduct.ID;
         }
         const arrayFromSingleItem: Item[] = updatingItem ? [updatingItem] : [];
-
-        console.log('arrayFromSingleItem', arrayFromSingleItem)
-
+        if (requisitionID === undefined) {
+          displayAlert("error", "ID da requisição não definido.");
+          return;
+        }
         const response = await updateRequisitionItems(
           arrayFromSingleItem,
           requisitionID
         );
         if(response.status === 200){ 
-          setChangingProduct([false, undefined]);
-          toggleRefreshItems();
-        }
 
+          toggleRefreshItems();
+          handleClose();
+        }
    };
+
+   const handleSaveProductForPatrimony = async ( ) => { 
+    console.log('handleSaveProductForPatrimony');
+    const selectedProduct = selectedProducts[0];
+    console.log("selectedProduct", selectedProduct)
+    console.log("patrimony", patrimony)
+      if(patrimony && selectedProduct){ 
+      await updatePatrimony({ 
+        ...patrimony,
+        id_produto: selectedProduct.ID,
+      });
+      console.log("updatedPatrimony: ", {
+        ...patrimony,
+        id_produto: selectedProduct.ID,
+      });
+      toggleRefreshPatrimonyInfo();
+      setIsSelecting(false);
+      setSelectedProducts([]);
+      gridApiRef.current.setRowSelectionModel([]);
+      handleClose();
+    }
+  }
+   
 
   return (
     <>
       <Modal
-        open={adding || changingProduct[0]}
+        open={adding || changingProduct[0] || Boolean(choosingProductForPatrimony)}
         aria-labelledby="child-modal-title"
         aria-describedby="child-modal-description"
       >
@@ -246,6 +283,13 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
                       Substituir o item selecionado
                     </Button>
                   )}
+                  { 
+                    choosingProductForPatrimony && (
+                      <Button sx={BaseButtonStyles} onClick={handleSaveProductForPatrimony}>
+                        Definir produto
+                      </Button>
+                    )
+                  }
                   <Button onClick={handleCancelSelecting} sx={BaseButtonStyles}>
                     Cancelar
                   </Button>

@@ -324,12 +324,12 @@ const fetchTenThousandProducts = async () => {
   return data;
 };
 
-const searchProducts = async (name: string, type : number) => {
+const searchProducts = async (name: string, type? : number) => {
   try {
     const response = await api.get<Product[]>("/products", {
       params: {
         search: name,
-        typeId : type
+        typeId : type || 0
       },
     });
     return response.data;

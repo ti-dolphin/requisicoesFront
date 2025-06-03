@@ -21,7 +21,7 @@ import { PatrimonyInfoContext } from "../../context/patrimonyInfoContext";
 import {
   getResponsableForPatrimony,
   getSinglePatrimony,
-  upatePatrimony,
+  updatePatrimony,
 } from "../../utils";
 import { useNavigate, useParams } from "react-router-dom";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -33,6 +33,29 @@ import { ArrowLeftIcon } from "@mui/x-date-pickers/icons";
 import PatrimonyAccessoryModal from "../../components/modals/PatrimonyAccessoriesModal/PatrimonyAccessoriesModal";
 // import { userContext } from "../../Requisitions/context/userContext";
 import ChecklistIcon from "@mui/icons-material/Checklist";
+import ProductsTableModal from "../../../Requisitions/components/modals/ProductsTableModal/ProductsTableModal";
+import { BaseButtonStyles } from "../../../utilStyles";
+
+interface PatrimonyField {
+  label: string;
+  dataKey: keyof Patrimony;
+  type?: "date" | "switch" | "text";
+  disabled?: boolean;
+}
+
+const fields: PatrimonyField[] = [
+  { label: "Nº Patrimônio", dataKey: "id_patrimonio", disabled: true },
+  { label: "Nome", dataKey: "nome" },
+  { label: "Produto", dataKey: "nome_produto" },
+  { label: "Data de Compra", dataKey: "data_compra", type: "date" },
+  { label: "Nº de série", dataKey: "nserie" },
+  { label: "Descrição", dataKey: "descricao" },
+  { label: "Código Patrimônio", dataKey: "pat_legado" },
+  { label: "Tipo", dataKey: "nome_tipo", disabled: true },
+  { label: "Fabricante", dataKey: "fabricante" },
+  { label: "Valor de Compra", dataKey: "valor_compra" },
+  { label: "Ativo", dataKey: "ativo", type: "switch" },
+];
 
 const PatrimonyDetails = () => {
   const { id_patrimonio } = useParams();
@@ -43,6 +66,8 @@ const PatrimonyDetails = () => {
   const [patrimonyData, setPatrimonyData] = useState<Patrimony>();
   const [editing, setEditing] = useState<[boolean, string?]>([false]);
   const [responsable, setResponsable] = useState<number>();
+  const [choosingProductForPatrimony, setChoosingProductForPatrimony] =
+    useState<boolean>(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
@@ -50,7 +75,6 @@ const PatrimonyDetails = () => {
   ) => {
     setEditing([true, key]);
     const { value } = e.currentTarget;
-    console.log(value);
     if (patrimonyData) {
       if (key === "id_patrimonio") {
         window.alert("Não é permitido editar o número do Patrimônio");
@@ -87,14 +111,14 @@ const PatrimonyDetails = () => {
     if (patrimonyData) {
       const formattedValorCompra = patrimonyData.valor_compra
         ? parseFloat(
-          patrimonyData.valor_compra.toString().replace(",", ".")
-        ).toFixed(2)
+            patrimonyData.valor_compra.toString().replace(",", ".")
+          ).toFixed(2)
         : null;
       const updatedData = {
         ...patrimonyData,
         valor_compra: formattedValorCompra ? Number(formattedValorCompra) : 0,
       };
-      const response = await upatePatrimony(updatedData);
+      const response = await updatePatrimony(updatedData);
       console.log("response update patrimonio: \n", response);
       if (response && response.status === 200) {
         toggleRefreshPatrimonyInfo();
@@ -104,48 +128,28 @@ const PatrimonyDetails = () => {
     setEditing([false]);
   };
 
-  const renderLabel = (key: string) => {
-    switch (key) {
-      case "id_patrimonio":
-        return "Nº Patrimônio";
-      case "nome":
-        return "Nome";
-      case "data_compra":
-        return "Data de Compra";
-      case "nserie":
-        return "Nº de série";
-      case "descricao":
-        return "Descrição";
-      case "pat_legado":
-        return "Código Patrimônio";
-      case "nome_tipo":
-        return "Tipo";
-      case "fabricante":
-        return "Fabricante";
-      case "valor_compra":
-        return "Valor de Compra";
-    }
-  };
+  const renderFieldValue = (field: PatrimonyField) => {
+    if (!patrimonyData) return "";
 
-  const renderLabelValue = (key: string) => {
+    const value = patrimonyData[field.dataKey];
+
     if (editing[0]) {
-      return patrimonyData && `${patrimonyData[key as keyof Patrimony]}`;
+      return value?.toString() || "";
     }
 
-    if (key === "id_patrimonio") {
-      return patrimonyData && `000${patrimonyData[key as keyof Patrimony]}`;
+    if (field.dataKey === "id_patrimonio") {
+      return `000${value}`;
     }
-    if (key === "valor_compra") {
-      return (
-        patrimonyData &&
-        new Intl.NumberFormat("pt-BR", {
-          style: "decimal",
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }).format(Number(patrimonyData[key as keyof Patrimony]))
-      );
+
+    if (field.dataKey === "valor_compra") {
+      return new Intl.NumberFormat("pt-BR", {
+        style: "decimal",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(Number(value));
     }
-    return patrimonyData && `${patrimonyData[key as keyof Patrimony]}`;
+
+    return value?.toString() || "";
   };
 
   const handleChangeDate = (day: Dayjs | null) => {
@@ -169,14 +173,14 @@ const PatrimonyDetails = () => {
     console.log(event);
     if (patrimonyData) {
       if (checked) {
-        await upatePatrimony({
+        await updatePatrimony({
           ...patrimonyData,
           ["ativo"]: 1,
         });
         toggleRefreshPatrimonyInfo();
         return;
       } else {
-        await upatePatrimony({
+        await updatePatrimony({
           ...patrimonyData,
           ["ativo"]: 0,
         });
@@ -205,22 +209,7 @@ const PatrimonyDetails = () => {
         <IconButton onClick={handleBack}>
           <ArrowLeftIcon />
         </IconButton>
-        <Typography
-          textTransform="capitalize"
-          className="text-gray-[#2B3990]"
-          sx={{
-            fontSize: {
-              xs: "16px",
-              sm: "16px",
-              md: "18px",
-              lg: "20px",
-              xl: "22px",
-            },
-          }}
-          fontFamily="Roboto"
-        >
-          {patrimonyData?.nome}
-        </Typography>
+   
       </Box>
 
       <Stack direction="row" gap={1} height="90%" flexWrap="wrap">
@@ -261,53 +250,60 @@ const PatrimonyDetails = () => {
                 </IconButton>
               </Tooltip>
             </Stack>
+            <Button
+              sx={BaseButtonStyles}
+              onClick={() => setChoosingProductForPatrimony(true)}
+            >
+              Definir produto
+            </Button>
+
             {patrimonyData &&
-              Object.keys(patrimonyData).map((key) => (
-                <Box display="flex" flexDirection="column" gap="0.5rem">
-                  <Typography
-                    className="text-gray-600"
-                    textTransform="capitalize"
-                  >
-                    {renderLabel(key)}
-                  </Typography>
-                  {key === "data_compra" ? (
+              fields.map((field) => (
+                <Box
+                  key={field.dataKey}
+                  display="flex"
+                  flexDirection="column"
+                  gap="0.5rem"
+                >
+                  {field.type === "date" ? (
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DemoContainer components={["DateField"]}>
                         <DateField
                           format="DD/MM/YYYY"
                           onChange={(e) => handleChangeDate(e)}
-                          defaultValue={dayjs.utc(patrimonyData[key])}
+                          defaultValue={dayjs.utc(patrimonyData[field.dataKey])}
                           label="Data de Compra"
                         />
                       </DemoContainer>
                     </LocalizationProvider>
-                  ) : key === "ativo" ? (
+                  ) : field.type === "switch" ? (
                     <FormControlLabel
                       control={
                         <Switch
                           onChange={handleActiveChange}
-                          defaultChecked={patrimonyData[key] > 0}
+                          defaultChecked={
+                            Number(patrimonyData[field.dataKey]) > 0
+                          }
                         />
                       }
                       label="Ativo"
                     />
                   ) : (
                     <TextField
-                      onChange={(e) => handleChange(e, key)}
-                      // onClick={() => handleClickTextField(key)}
-                      disabled={key === "nome_tipo"}
+                      label={field.label}
+                      InputLabelProps={{
+                        shrink: true
+                      }}
+                      onChange={(e) => handleChange(e, field.dataKey)}
+                      disabled={field.disabled}
                       fullWidth
                       id="outlined-basic"
                       multiline
-                      value={
-                        renderLabelValue(key) === "null"
-                          ? ""
-                          : renderLabelValue(key)
-                      }
+                      value={renderFieldValue(field)}
                       variant="outlined"
                     />
                   )}
-                  {editing[0] && editing[1] === key && (
+                  {editing[0] && editing[1] === field.dataKey && (
                     <Stack direction="row" spacing={1}>
                       <Button
                         variant="outlined"
@@ -318,7 +314,7 @@ const PatrimonyDetails = () => {
                       </Button>
                       <Button
                         variant="outlined"
-                        onClick={handleCancelEdition} //refresh to get the default values back
+                        onClick={handleCancelEdition}
                         sx={{
                           width: "1rem",
                           marginX: "1rem",
@@ -372,6 +368,11 @@ const PatrimonyDetails = () => {
           </Stack>
         </Box>
       </Stack>
+      <ProductsTableModal
+        patrimony={patrimonyData}
+        choosingProductForPatrimony={choosingProductForPatrimony}
+        setChoosingProductForPatrimony={setChoosingProductForPatrimony}
+      />
     </Box>
   );
 };

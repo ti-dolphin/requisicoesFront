@@ -3,116 +3,172 @@ import { ItemsContext } from "../context/ItemsContext";
 import { Requisition, Product, AlertInterface, Item } from "../types";
 import { searchProducts, fetchRequsitionById } from "../utils";
 import { GridCallbackDetails, GridRowSelectionModel } from "@mui/x-data-grid";
+import { Patrimony } from "../../Patrimony/types";
 
 
-export const useProductsTableModal = (requisitionID: number) => {
-    const { adding, toggleAdding, productIdList, changingProduct, setChangingProduct, toggleRefreshItems} = useContext(ItemsContext);
-    
-    const [requisition, setRequisition] = useState<Requisition>();
-    const [products, setProducts] = useState<Product[]>([]);
-    const [alert, setAlert] = useState<AlertInterface>();
-    const [searchTerm, setSearchTerm] = useState<string>("");
-    const [isSelecting, setIsSelecting] = useState<boolean>(false);
-    const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
-    const [addedItems, setAddedItems] = useState<Item[]>([]);
-    const [isInsertingQuantity, setIsInsertingQuantity] = useState<boolean>(false);
-    const displayAlert = async (severity: string, message: string) => {
-        setTimeout(() => {
-            setAlert(undefined);
-        }, 3000);
-        setAlert({ severity, message });
-        return;
-    };
+export const useProductsTableModal = (
+  requisitionID?: number,
+  patrimony?: Patrimony,
+  choosingProductForPatrimony?: boolean,
+  setChoosingProductForPatrimony?: React.Dispatch<React.SetStateAction<boolean>>
+) => {
+  const {
+    adding,
+    toggleAdding,
+    productIdList,
+    changingProduct,
+    setChangingProduct,
+    toggleRefreshItems,
+  } = useContext(ItemsContext);
 
-    const handleSelectionChange = (rowSelectionModel: GridRowSelectionModel,
-        _details: GridCallbackDetails) => {
-        if (changingProduct[0] && rowSelectionModel.length > 1){ 
-            displayAlert('Warning', 'Selecione apenas um produto para substituir o item da requisição');
-            return;
-        }
-          if (rowSelectionModel.length > 0) {
-            setIsSelecting(true);
-            const localSelectedProducts = products.filter((product, _index) =>
-              rowSelectionModel.find((id) => product.ID === id)
-            );
-            setSelectedProducts(localSelectedProducts);
-            return;
-          }
-        setIsSelecting(false);
+  const [requisition, setRequisition] = useState<Requisition>();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [alert, setAlert] = useState<AlertInterface>();
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [isSelecting, setIsSelecting] = useState<boolean>(false);
+  const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
+  const [addedItems, setAddedItems] = useState<Item[]>([]);
+  const [isInsertingQuantity, setIsInsertingQuantity] =
+    useState<boolean>(false);
+
+  const displayAlert = async (severity: string, message: string) => {
+    setTimeout(() => {
+      setAlert(undefined);
+    }, 3000);
+    setAlert({ severity, message });
+    return;
+  };
+
+  const handleSelectionChange = (
+    rowSelectionModel: GridRowSelectionModel,
+    _details: GridCallbackDetails
+  ) => {
+    if (changingProduct[0] && rowSelectionModel.length > 1) {
+      displayAlert(
+        "Warning",
+        "Selecione apenas um produto para substituir o item da requisição"
+      );
+      return;
     }
-
-    const fetchProducts = async () => {
-        if (requisition) {
-            try {
-                const products = await searchProducts(searchTerm, requisition.TIPO);
-                setProducts(products);
-            } catch (e: any) {
-                displayAlert("error", e.message);
-            }
-        }
-    };
-
-    const fetchRequisition = async () => {
-        try {
-            const requisition = await fetchRequsitionById(requisitionID);
-            setRequisition(requisition);
-            if (requisition) {
-                setRequisition(requisition);
-            }
-        } catch (e: any) {
-            displayAlert("error", e.message);
-        }
-
-    };
-
-    const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        const { value } = e.target as any;
-        if (e.key === "Enter") {
-            const newSearchTerm = value.toUpperCase();
-            setSearchTerm(newSearchTerm);
-        }
+    if (choosingProductForPatrimony && rowSelectionModel.length > 1) {
+      displayAlert(
+        "Warning",
+        "Selecione apenas um produto para ser o produto do patrimônio"
+      );
+      return;
     }
-
-    const handleClose = () => {
-        toggleAdding();
-        setProducts([]);
-        setSearchTerm('');
-        setSelectedProducts([]);
+    if (rowSelectionModel.length > 0) {
+      setIsSelecting(true);
+      const localSelectedProducts = products.filter((product, _index) =>
+        rowSelectionModel.find((id) => product.ID === id)
+      );
+      setSelectedProducts(localSelectedProducts);
+      return;
     }
+    setIsSelecting(false);
+  };
 
-    useEffect(() => {
-        if (searchTerm !== '') {
-            fetchProducts();
-            return;
-        };
+  const fetchProductsByReqType = async () => {
+    if (requisition) {
+      try {
+        const products = await searchProducts(searchTerm, requisition.TIPO);
+        setProducts(products);
+      } catch (e: any) {
+        displayAlert("error", e.message);
+      }
+    }
+  };
 
-    }, [searchTerm, adding]);
+  const fetchProductBySearchTerm = async () => {
+    if (patrimony) {
+      try {
+        const products = await searchProducts(searchTerm);
+        setProducts(products);
+      } catch (e: any) {
+        displayAlert("error", e.message);
+      }
+    }
+  };
 
-    useEffect(() => {
-        fetchRequisition();
-    }, [adding]);
+  const fetchRequisition = async () => {
+    try {
+      const requisition = await fetchRequsitionById(Number(requisitionID));
+      setRequisition(requisition);
+      if (requisition) {
+        setRequisition(requisition);
+      }
+    } catch (e: any) {
+      displayAlert("error", e.message);
+    }
+  };
 
-    return {
-      products,
-      requisition,
-      alert,
-      handleSearch,
-      adding,
-      changingProduct,
-      handleClose,
-      searchTerm,
-      selectedProducts,
-      setSelectedProducts,
-      isSelecting,
-      setIsSelecting,
-      handleSelectionChange,
-      displayAlert,
-      addedItems,
-      setAddedItems,
-      isInsertingQuantity,
-      setIsInsertingQuantity,
-      productIdList,
-      toggleRefreshItems,
-      setChangingProduct,
-    };
-}
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const { value } = e.target as any;
+    if (e.key === "Enter") {
+      const newSearchTerm = value.toUpperCase();
+      setSearchTerm(newSearchTerm);
+    }
+  };
+
+  const handleClose = () => {
+    toggleAdding?.();
+    setChangingProduct([false]);
+    setChoosingProductForPatrimony?.(false);
+    setProducts([]);
+    setSearchTerm("");
+    setSelectedProducts([]);
+    setIsSelecting(false);
+  };
+
+  useEffect(() => {
+    if (patrimony && setChoosingProductForPatrimony) {
+      setChoosingProductForPatrimony(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log({searchTerm, requisitionID, patrimony})
+    if (searchTerm !== "" && requisitionID) {
+      fetchProductsByReqType();
+      return;
+    }
+    if (searchTerm !== "" && patrimony) {
+      console.log("fetchProductBySearchTerm")
+      fetchProductBySearchTerm();
+      return;
+    }
+  }, [searchTerm, adding]);
+
+  useEffect(() => {
+    if (requisitionID) {
+      fetchRequisition();
+      return;
+    }
+  }, [adding, changingProduct]);
+
+  return {
+    products,
+    requisition,
+    alert,
+    handleSearch,
+    adding,
+    changingProduct,
+    handleClose,
+    searchTerm,
+    selectedProducts,
+    setSelectedProducts,
+    isSelecting,
+    setIsSelecting,
+    handleSelectionChange,
+    displayAlert,
+    addedItems,
+    setAddedItems,
+    isInsertingQuantity,
+    setIsInsertingQuantity,
+    productIdList,
+    toggleRefreshItems,
+    setChangingProduct,
+    choosingProductForPatrimony,
+    setChoosingProductForPatrimony,
+  };
+};

@@ -599,13 +599,12 @@ export const acceptMovementation = async (movementationId: number) => {
   }
 };
 
-export const upatePatrimony = async (patrimony: Patrimony) => {
+export const updatePatrimony = async (patrimony: Patrimony) => {
   try {
     const response = await api.put(
       `patrimony/${patrimony.id_patrimonio}`,
       patrimony
     );
-    console.log("reponse upatePatrimony: \n", response);
     return response;
   } catch (e) {
     console.log(e);

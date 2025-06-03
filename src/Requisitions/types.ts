@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
+import { Patrimony } from "../Patrimony/types";
 
 export interface Option {
   label: string;
@@ -273,8 +274,13 @@ export interface ItemObservationModalProps {
  setRefreshToggler : (value : boolean ) => void;
 }
 export interface ProductsTableModalProps {
-  requisitionID: number;
-  info? : string;
+  requisitionID?: number;
+  patrimony?: Patrimony;
+  info?: string;
+  choosingProductForPatrimony?: boolean;
+  setChoosingProductForPatrimony?: React.Dispatch<
+    React.SetStateAction<boolean>
+  >;
 }
 
 export interface RequisitionTableProps { 
