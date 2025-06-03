@@ -9,6 +9,7 @@ import Alert, { AlertColor } from "@mui/material/Alert";
 import { useRequisitionFields } from "./hooks";
 import RequisitionFileList from '../RequisitionFileList/RequisitionFileList';
 import { formatDate } from '../../../generalUtilities';
+import { green, red } from '@mui/material/colors';
 const fields = [
   { label: "Observação", key: "OBSERVACAO" , type: 'text', autoComplete: false},
 ];
@@ -78,8 +79,7 @@ const RequisitionFields = () => {
                   {requisitionData.responsavel_pessoa?.NOME}
                 </Typography>
                 <Typography sx={typographyStyles.bodyText}>
-                  <strong className="text-gray-500"
-                  >Tipo:</strong>{" "}
+                  <strong className="text-gray-500">Tipo:</strong>{" "}
                   {requisitionData.typeOption?.label}
                 </Typography>
               </Stack>
@@ -142,14 +142,23 @@ const RequisitionFields = () => {
             <Stack direction="row" sx={styles.actionsStack}>
               <Button
                 onClick={handleSave}
-                sx={BaseButtonStyles}
+                sx={{ 
+                  ...BaseButtonStyles,
+                  backgroundColor: green[700],
+                  "&:hover": { backgroundColor: green[500] },
+                }}
                 className="shadow-md"
               >
                 Salvar Alterações
               </Button>
+         
               <Button
                 onClick={handleCancelEditing}
-                sx={BaseButtonStyles}
+                sx={{
+                  ...BaseButtonStyles,
+                  backgroundColor: red[700],
+                  "&:hover": { backgroundColor: red[600] },
+                }}
                 className="shadow-md"
               >
                 Cancelar edição

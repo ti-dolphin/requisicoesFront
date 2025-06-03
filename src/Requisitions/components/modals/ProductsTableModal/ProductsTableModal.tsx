@@ -16,8 +16,7 @@ import { alertAnimation, BaseButtonStyles } from "../../../../utilStyles";
 import { motion } from "framer-motion";
 import InsertQuantitiesModal from "../InsertQuantitiesModal/InsertQuantitiesModal";
 import { updatePatrimony } from "../../../../Patrimony/utils";
-import { useContext } from "react";
-import { PatrimonyInfoContext } from "../../../../Patrimony/context/patrimonyInfoContext";
+
 
 const FullScreenModalBox = styled(Box)(({ theme }) => ({
   position: "absolute",
@@ -73,12 +72,14 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
      setIsInsertingQuantity,
      productIdList,
      changingProduct,
-     toggleRefreshItems,
-   } = useProductsTableModal(requisitionID, patrimony, choosingProductForPatrimony, setChoosingProductForPatrimony);
-   
-   const { toggleRefreshPatrimonyInfo } = useContext(PatrimonyInfoContext)
-  
-
+     setProducts,
+     setSearchTerm,
+   } = useProductsTableModal(
+     requisitionID,
+     patrimony,
+     choosingProductForPatrimony,
+     setChoosingProductForPatrimony
+   );  
    const gridApiRef = useGridApiRef();
 
    const handleCancelSelecting = ( ) =>  {
@@ -86,6 +87,9 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
       setSelectedProducts([]);
       gridApiRef.current.setRowSelectionModel([]);
    };
+
+   console.log("setChoosingProductForPatrimony", setChoosingProductForPatrimony);
+   console.log("choosingProductForPatrimony", choosingProductForPatrimony);
    
    const filterNonRepeatedProducts = ( ) => { 
     return selectedProducts.map((product) => {
@@ -105,8 +109,7 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
 
    const handleSaveAddItems = async () => {
      const newProductItems: RequisitionItemPost[] = filterNonRepeatedProducts();
-     console.log({newProductItems})
-    if(newProductItems.length) {
+      if(newProductItems.length) {
         try {
           if (requisitionID === undefined) {
             displayAlert("error", "ID da requisição não definido.");
@@ -115,11 +118,10 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
           const data = await postRequistionItems(
             requisitionID,
             newProductItems
-      
           );
+          setSearchTerm("");
           setAddedItems(data.insertedItems);
           setIsInsertingQuantity(true);
-          handleClose();
         } catch (e: any) {
           displayAlert("error", e.message);
         }
@@ -127,6 +129,7 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
    }
 
    const handleSaveChangeItemProduct = async ( ) =>  {
+    console.log('handleSaveChangeItemProduct');
         let updatingItem = changingProduct[1];
         const selectedProduct = selectedProducts[0];
         if(updatingItem){ 
@@ -142,30 +145,17 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
           requisitionID
         );
         if(response.status === 200){ 
-
-          toggleRefreshItems();
-          handleClose();
+            handleClose(); 
         }
    };
 
    const handleSaveProductForPatrimony = async ( ) => { 
-    console.log('handleSaveProductForPatrimony');
     const selectedProduct = selectedProducts[0];
-    console.log("selectedProduct", selectedProduct)
-    console.log("patrimony", patrimony)
       if(patrimony && selectedProduct){ 
       await updatePatrimony({ 
         ...patrimony,
         id_produto: selectedProduct.ID,
       });
-      console.log("updatedPatrimony: ", {
-        ...patrimony,
-        id_produto: selectedProduct.ID,
-      });
-      toggleRefreshPatrimonyInfo();
-      setIsSelecting(false);
-      setSelectedProducts([]);
-      gridApiRef.current.setRowSelectionModel([]);
       handleClose();
     }
   }
@@ -174,7 +164,9 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
   return (
     <>
       <Modal
-        open={adding || changingProduct[0] || Boolean(choosingProductForPatrimony)}
+        open={
+          adding || changingProduct[0] || Boolean(choosingProductForPatrimony)
+        }
         aria-labelledby="child-modal-title"
         aria-describedby="child-modal-description"
       >
@@ -252,7 +244,9 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
                     </Box>
                   ),
                 }}
-                rowSelectionModel={selectedProducts.map((product) => product.ID)}
+                rowSelectionModel={selectedProducts.map(
+                  (product) => product.ID
+                )}
                 onRowSelectionModelChange={(
                   rowSelectionModel: GridRowSelectionModel,
                   details: GridCallbackDetails
@@ -279,17 +273,21 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
                     </Button>
                   )}
                   {changingProduct[0] && (
-                    <Button sx={BaseButtonStyles} onClick={handleSaveChangeItemProduct}>
+                    <Button
+                      sx={BaseButtonStyles}
+                      onClick={handleSaveChangeItemProduct}
+                    >
                       Substituir o item selecionado
                     </Button>
                   )}
-                  { 
-                    choosingProductForPatrimony && (
-                      <Button sx={BaseButtonStyles} onClick={handleSaveProductForPatrimony}>
-                        Definir produto
-                      </Button>
-                    )
-                  }
+                  {choosingProductForPatrimony && (
+                    <Button
+                      sx={BaseButtonStyles}
+                      onClick={handleSaveProductForPatrimony}
+                    >
+                      Definir produto
+                    </Button>
+                  )}
                   <Button onClick={handleCancelSelecting} sx={BaseButtonStyles}>
                     Cancelar
                   </Button>
@@ -300,6 +298,7 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
 
           <InsertQuantitiesModal
             setAddedItems={setAddedItems}
+            setProducts={setProducts}
             addedItems={addedItems}
             isInsertingQuantity={isInsertingQuantity}
             setIsInsertingQuantity={setIsInsertingQuantity}

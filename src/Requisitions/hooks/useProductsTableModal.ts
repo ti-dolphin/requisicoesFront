@@ -69,6 +69,7 @@ export const useProductsTableModal = (
   };
 
   const fetchProductsByReqType = async () => {
+    console.log('fetchProductsByReqType')
     if (requisition) {
       try {
         const products = await searchProducts(searchTerm, requisition.TIPO);
@@ -111,40 +112,48 @@ export const useProductsTableModal = (
   };
 
   const handleClose = () => {
-    toggleAdding?.();
+    if(adding){ 
+      toggleAdding?.();
+    }
     setChangingProduct([false]);
     setChoosingProductForPatrimony?.(false);
     setProducts([]);
     setSearchTerm("");
     setSelectedProducts([]);
     setIsSelecting(false);
+    setProducts([]);
+    toggleRefreshItems();
   };
 
   useEffect(() => {
-    if (patrimony && setChoosingProductForPatrimony) {
-      setChoosingProductForPatrimony(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    console.log({searchTerm, requisitionID, patrimony})
+    //useEffect que busca produtos por tipo de requisição ou por patrimônio
     if (searchTerm !== "" && requisitionID) {
       fetchProductsByReqType();
       return;
     }
     if (searchTerm !== "" && patrimony) {
-      console.log("fetchProductBySearchTerm")
       fetchProductBySearchTerm();
       return;
     }
-  }, [searchTerm, adding]);
+    if(searchTerm === ""){ 
+      setProducts([]);
+      setSelectedProducts([]);
+      setIsSelecting(false);
+
+    }
+  }, [searchTerm]);
 
   useEffect(() => {
-    if (requisitionID) {
+    //useEffect que busca requisição para adicionar items na requisição ou para escolher produto para patrimônio
+    if (requisitionID && adding || changingProduct[0]) { //adicionando items na requisição ou alterando produto de um item da requisição
       fetchRequisition();
       return;
     }
   }, [adding, changingProduct]);
+
+
+
+
 
   return {
     products,
@@ -165,10 +174,12 @@ export const useProductsTableModal = (
     setAddedItems,
     isInsertingQuantity,
     setIsInsertingQuantity,
+    setSearchTerm,
     productIdList,
     toggleRefreshItems,
     setChangingProduct,
     choosingProductForPatrimony,
     setChoosingProductForPatrimony,
+    setProducts,
   };
 };

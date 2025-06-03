@@ -8,6 +8,8 @@ import {
   AlertColor,
   Box,
  
+  Button,
+ 
   Checkbox,
   Tooltip,
   Typography,
@@ -25,14 +27,15 @@ import {
 } from "@mui/x-data-grid";
 import styles from "./RequisitionItemsTable.styles";
 import {
-  alertAnimation
+  alertAnimation,
+  BaseButtonStyles
 } from "../../../../utilStyles";
 import { motion, AnimatePresence } from "framer-motion";
 import typographyStyles from "../../../utilStyles";
 import useRequisitionItems from "../../../hooks/useRequisitionItems";
 import ItemsToolBar from "../ItemsToolBar/ItemsToolBar";
 import { green } from "@mui/material/colors";
-import { QuoteItem, Requisition, RequisitionStatus } from "../../../types";
+import { Product, QuoteItem, Requisition, RequisitionStatus } from "../../../types";
 import ErrorIcon from "@mui/icons-material/Error";
 import { User, userContext } from "../../../context/userContext";
 
@@ -43,6 +46,7 @@ interface RequisitionItemsTableProps {
   setIsInsertingQuantity?: Dispatch<SetStateAction<boolean>>;
   requisitionStatus?: RequisitionStatus;
   requisitionData?: Requisition;
+  setProducts?: Dispatch<SetStateAction<Product[]>>;
 }
 
 const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
@@ -52,6 +56,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
   setIsInsertingQuantity,
   requisitionStatus,
   requisitionData,
+
 }) => {
   const {
     visibleItems,
@@ -77,6 +82,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     itemToSupplierMap,
     setItemToSupplierMap,
     quoteItems,
+    selectingRows,
   } = useRequisitionItems(
     requisitionId,
     setIsInsertingQuantity,
@@ -395,8 +401,16 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
     }
   };
 
+  const handleSaveAddedItems = () => {
+    if(setIsInsertingQuantity){ 
+       console.log("handleSaveAddedItems");
+       triggerSave();
+    }
+  }
+
   const handleCellClick = (params: GridCellParams) => {
     if (selectingPrices) return;
+    if(selectingRows) return;
     if (user && requisitionStatus) {
       try {
         verifyPermissionToEditItem(user);
@@ -487,6 +501,11 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
             handleRowModesModelChange(rowModesModel)
           }
         />
+      )}
+      {isInsertingQuantity && (
+        <Button onClick={handleSaveAddedItems} sx={{ ...BaseButtonStyles, maxWidth: 200}}>
+          Salvar
+        </Button>
       )}
     </Box>
   );

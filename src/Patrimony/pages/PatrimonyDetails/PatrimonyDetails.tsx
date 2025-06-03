@@ -102,7 +102,6 @@ const PatrimonyDetails = () => {
     const responsable = await getResponsableForPatrimony(Number(id_patrimonio));
     if (data) {
       setResponsable(responsable[0].id_responsavel);
-      console.log("patrimonyData: ", data[0]);
       setPatrimonyData(data[0]);
     }
   }, [id_patrimonio]);
@@ -119,7 +118,6 @@ const PatrimonyDetails = () => {
         valor_compra: formattedValorCompra ? Number(formattedValorCompra) : 0,
       };
       const response = await updatePatrimony(updatedData);
-      console.log("response update patrimonio: \n", response);
       if (response && response.status === 200) {
         toggleRefreshPatrimonyInfo();
         setEditing([false]);
@@ -191,9 +189,9 @@ const PatrimonyDetails = () => {
   };
 
   useEffect(() => {
-    console.log("USE EFFECT");
+
     fetchPatrimonyData();
-  }, [refreshPatrimonyInfo, fetchPatrimonyData]);
+  }, [refreshPatrimonyInfo, fetchPatrimonyData, choosingProductForPatrimony]);
 
   return (
     <Box sx={{ height: "98vh", overflow: "auto", padding: 2 }}>

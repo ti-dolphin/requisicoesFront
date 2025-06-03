@@ -8,7 +8,7 @@ import { ProductsTableModal } from "../../modals/ProductsTableModal/ProductsTabl
 import { useParams } from "react-router-dom";
 import CreateQuoteModal from "../../modals/CreateQuoteModal/CreateQuoteModal";
 import QuoteListModal from "../../modals/QuoteListModal/QuoteListModal";
-import { green } from "@mui/material/colors";
+import { green, red } from "@mui/material/colors";
 import { updateItemToSupplier } from "../../../utils";
 import typographyStyles from "../../../utilStyles";
 import { GridColDef } from "@mui/x-data-grid";
@@ -213,19 +213,26 @@ const ItemsToolBar = ({
           Ver Cotações
         </Button>
       )}
+      {isEditing  && (
+        <Button  onClick={triggerSave} sx={{...BaseButtonStyles, width: 200, backgroundColor: green[700], "&:hover": { backgroundColor: green[500] }}}>
+          Salvar
+        </Button>
+      )}
       {isEditing && (
-                <Button onClick={triggerSave} sx={BaseButtonStyles}>
-                  Salvar
-                </Button>
-              )}
-              {isEditing && (
-                <Button
-                  onClick={handleCancelEdition}
-                  sx={{ ...BaseButtonStyles, height: 40 }}
-                >
-                  Cancelar edição
-                </Button>
-              )}
+        <Button
+          onClick={handleCancelEdition}
+          sx={{
+            ...BaseButtonStyles,
+            width: 200,
+            backgroundColor: red[700],
+            "&:hover": {
+              backgroundColor: red[500],
+            },
+          }}
+        >
+          Cancelar edição
+        </Button>
+      )}
 
       {selectingPrices && (
         <Button
@@ -244,7 +251,7 @@ const ItemsToolBar = ({
             ...BaseButtonStyles,
             height: 30,
             minWidth: 150,
-            backgroundColor: green[800],
+            backgroundColor: green[700],
             "&:hover": { backgroundColor: green[500] },
             color: "white",
           }}

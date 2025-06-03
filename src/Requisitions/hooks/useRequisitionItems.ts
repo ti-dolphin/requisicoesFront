@@ -55,7 +55,7 @@ const useRequisitionItems = (
   const [itemToSupplierMap, setItemToSupplierMap] = useState<any>([]); 
   const [quotes, setQuotes] = useState<Quote[]>();
   const [quoteItems, setQuoteItems] = useState<QuoteItem[]>();
-
+  const [selectingRows, setSelectingRows] = useState<boolean>(false);
   const location = useLocation();
   const navigate = useNavigate();
   const displayAlert = async (severity: string, message: string) => {
@@ -65,6 +65,8 @@ const useRequisitionItems = (
     setAlert({ severity, message });
     return;
   };
+
+  
 
   const handleDelete = async (requisitionItems: Item[]) => {
     try {
@@ -155,6 +157,7 @@ const useRequisitionItems = (
   };
 
   const handleChangeSelection = (rowSelectionModel: GridRowSelectionModel) => {
+    setSelectingRows(true);
     setSelectedRows(
       items.filter((item) => rowSelectionModel.includes(item.ID))
     );
@@ -167,7 +170,6 @@ const useRequisitionItems = (
   };
 
   const handleCancelEdition = () => {
-    console.log("handleCancelEdition");
     try{ 
         const row = Object.keys(rowModesModel)[0];
         const { fieldToFocus } = rowModesModel[row] as any;
@@ -238,12 +240,22 @@ const useRequisitionItems = (
         }
     }
 
+  const closeModal = () => {
+    if (setIsInsertingQuantity) {
+      setIsInsertingQuantity(false);
+    }
+    if (adding) {
+      toggleAdding();
+      toggleCreating()
+    }
+    toggleRefreshRequisition();
+  }
 
   const saveItems = useCallback(async () => {
     if(visibleItems) {
+       console.log("visibleItems", visibleItems);
       try {
         validateItems(visibleItems);
-        console.log('visibleItems', visibleItems)
         const response = await updateRequisitionItems(
           visibleItems,
           requisitionId
@@ -253,14 +265,7 @@ const useRequisitionItems = (
           if (location.pathname === `/requisitions`) {
             navigate(`requisitionDetail/${requisitionId}`);
           }
-          if (setIsInsertingQuantity) {
-            setIsInsertingQuantity(false);
-          }
-          if (adding) {
-            toggleAdding();
-            toggleCreating()
-          }
-          toggleRefreshRequisition();
+          closeModal();
           return;
         }
       } catch (e: any) {
@@ -321,7 +326,6 @@ const useRequisitionItems = (
   }, [reverseChanges]);
 
   useEffect(() => {
-
     if (shouldExecuteSaveItems.current) {
       saveItems();
     }
@@ -337,10 +341,12 @@ const useRequisitionItems = (
     gridApiRef,
     selectedRows,
     dinamicColumns,
-    selectingPrices, setSelectingPrices,
-    itemToSupplierMap, setItemToSupplierMap,
+    selectingPrices,
+    setSelectingPrices,
+    itemToSupplierMap,
+    setItemToSupplierMap,
     displayAlert,
-    quotes, 
+    quotes,
     quoteItems,
     setQuotes,
     handleRowModesModelChange,
@@ -354,6 +360,7 @@ const useRequisitionItems = (
     handleCancelItems,
     handleActivateItems,
     handleCopyContent,
+    selectingRows,
   };
 };
 export default useRequisitionItems;

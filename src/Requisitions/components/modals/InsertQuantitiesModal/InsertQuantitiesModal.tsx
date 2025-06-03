@@ -12,7 +12,8 @@ interface props {
   setIsInsertingQuantity: Dispatch<SetStateAction<boolean>>;
   setAddedItems: Dispatch<SetStateAction<Item[]>>;
   setSelectedProducts: Dispatch<SetStateAction<Product[]>>;
-  reqID?: number
+  reqID?: number;
+  setProducts: Dispatch<SetStateAction<Product[]>>;
 }
 
 const InsertQuantitiesModal = ({
@@ -22,6 +23,8 @@ const InsertQuantitiesModal = ({
   setAddedItems,
   setSelectedProducts,
   reqID,
+  setProducts,
+
 }: props) => {
   const { id } = useParams();
   const { toggleAdding } = useContext(ItemsContext);
@@ -31,6 +34,7 @@ const InsertQuantitiesModal = ({
     setAddedItems([]);
     setSelectedProducts([]);
     toggleAdding();
+    setProducts([]);
   };
   return (
     <Modal open={isInsertingQuantity}>
@@ -54,6 +58,7 @@ const InsertQuantitiesModal = ({
           </Typography>
           <Box sx={{ height: "80%" }}>
             <RequisitionItemsTable
+              setProducts={setProducts}
               requisitionId={id ? Number(id) : reqID || 0}
               isInsertingQuantity={isInsertingQuantity}
               setIsInsertingQuantity={setIsInsertingQuantity}
