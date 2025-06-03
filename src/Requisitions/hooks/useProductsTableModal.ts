@@ -30,6 +30,7 @@ export const useProductsTableModal = (
   const [addedItems, setAddedItems] = useState<Item[]>([]);
   const [isInsertingQuantity, setIsInsertingQuantity] =
     useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const displayAlert = async (severity: string, message: string) => {
     setTimeout(() => {
@@ -69,13 +70,15 @@ export const useProductsTableModal = (
   };
 
   const fetchProductsByReqType = async () => {
-    console.log('fetchProductsByReqType')
     if (requisition) {
       try {
+        setIsLoading(true);
         const products = await searchProducts(searchTerm, requisition.TIPO);
         setProducts(products);
       } catch (e: any) {
         displayAlert("error", e.message);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -83,16 +86,20 @@ export const useProductsTableModal = (
   const fetchProductBySearchTerm = async () => {
     if (patrimony) {
       try {
+        setIsLoading(true);
         const products = await searchProducts(searchTerm);
         setProducts(products);
       } catch (e: any) {
         displayAlert("error", e.message);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
 
   const fetchRequisition = async () => {
     try {
+      setIsLoading(true);
       const requisition = await fetchRequsitionById(Number(requisitionID));
       setRequisition(requisition);
       if (requisition) {
@@ -100,6 +107,8 @@ export const useProductsTableModal = (
       }
     } catch (e: any) {
       displayAlert("error", e.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -112,7 +121,7 @@ export const useProductsTableModal = (
   };
 
   const handleClose = () => {
-    if(adding){ 
+    if (adding) {
       toggleAdding?.();
     }
     setChangingProduct([false]);
@@ -135,25 +144,21 @@ export const useProductsTableModal = (
       fetchProductBySearchTerm();
       return;
     }
-    if(searchTerm === ""){ 
+    if (searchTerm === "") {
       setProducts([]);
       setSelectedProducts([]);
       setIsSelecting(false);
-
     }
   }, [searchTerm]);
 
   useEffect(() => {
     //useEffect que busca requisição para adicionar items na requisição ou para escolher produto para patrimônio
-    if (requisitionID && adding || changingProduct[0]) { //adicionando items na requisição ou alterando produto de um item da requisição
+    if ((requisitionID && adding) || changingProduct[0]) {
+      //adicionando items na requisição ou alterando produto de um item da requisição
       fetchRequisition();
       return;
     }
   }, [adding, changingProduct]);
-
-
-
-
 
   return {
     products,
@@ -174,12 +179,14 @@ export const useProductsTableModal = (
     setAddedItems,
     isInsertingQuantity,
     setIsInsertingQuantity,
-    setSearchTerm,
     productIdList,
     toggleRefreshItems,
     setChangingProduct,
     choosingProductForPatrimony,
     setChoosingProductForPatrimony,
     setProducts,
+    setSearchTerm,
+    isLoading,
+    setIsLoading,
   };
 };

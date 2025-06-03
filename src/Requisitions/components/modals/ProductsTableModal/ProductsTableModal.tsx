@@ -1,14 +1,29 @@
-import { Alert, AlertColor, Box, Button, Modal, Stack, styled, TextField, Typography } from "@mui/material";
 import {
-
+  Alert,
+  AlertColor,
+  Box,
+  Button,
+  CircularProgress,
+  Modal,
+  Stack,
+  styled,
+  TextField,
+  Typography,
+} from "@mui/material";
+import {
   Item,
   Product,
   ProductsTableModalProps,
   RequisitionItemPost,
-
 } from "../../../types";
-import { DataGrid, GridCallbackDetails, GridColDef, GridRowSelectionModel, useGridApiRef } from "@mui/x-data-grid";
-import {  postRequistionItems, updateRequisitionItems } from "../../../utils";
+import {
+  DataGrid,
+  GridCallbackDetails,
+  GridColDef,
+  GridRowSelectionModel,
+  useGridApiRef,
+} from "@mui/x-data-grid";
+import { postRequistionItems, updateRequisitionItems } from "../../../utils";
 import typographyStyles from "../../../utilStyles";
 import { CloseModalButton } from "../../../../generalUtilities";
 import { useProductsTableModal } from "../../../hooks/useProductsTableModal";
@@ -16,7 +31,6 @@ import { alertAnimation, BaseButtonStyles } from "../../../../utilStyles";
 import { motion } from "framer-motion";
 import InsertQuantitiesModal from "../InsertQuantitiesModal/InsertQuantitiesModal";
 import { updatePatrimony } from "../../../../Patrimony/utils";
-
 
 const FullScreenModalBox = styled(Box)(({ theme }) => ({
   position: "absolute",
@@ -38,7 +52,6 @@ const columns: GridColDef[] = [
     field: "nome_fantasia",
     flex: 1,
     width: 250,
-    
   },
   {
     headerName: "Codigo TOTVS",
@@ -51,115 +64,132 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
   requisitionID,
   patrimony,
   choosingProductForPatrimony,
-  setChoosingProductForPatrimony
+  setChoosingProductForPatrimony,
 }) => {
-   const {
-     products,
-     requisition,
-     alert,
-     handleSearch,
-     adding,
-     handleClose,
-     isSelecting,
-     setIsSelecting,
-     selectedProducts,
-     setSelectedProducts,
-     handleSelectionChange,
-     displayAlert,
-     addedItems,
-     setAddedItems,
-     isInsertingQuantity,
-     setIsInsertingQuantity,
-     productIdList,
-     changingProduct,
-     setProducts,
-     setSearchTerm,
-   } = useProductsTableModal(
-     requisitionID,
-     patrimony,
-     choosingProductForPatrimony,
-     setChoosingProductForPatrimony
-   );  
-   const gridApiRef = useGridApiRef();
+  const {
+    products,
+    requisition,
+    alert,
+    handleSearch,
+    adding,
+    handleClose,
+    isSelecting,
+    setIsSelecting,
+    selectedProducts,
+    setSelectedProducts,
+    handleSelectionChange,
+    displayAlert,
+    addedItems,
+    setAddedItems,
+    isInsertingQuantity,
+    setIsInsertingQuantity,
+    productIdList,
+    changingProduct,
+    setProducts,
+    setSearchTerm,
+    isLoading,
+    setIsLoading,
+  } = useProductsTableModal(
+    requisitionID,
+    patrimony,
+    choosingProductForPatrimony,
+    setChoosingProductForPatrimony
+  );
+  const gridApiRef = useGridApiRef();
 
-   const handleCancelSelecting = ( ) =>  {
-      setIsSelecting(false);
-      setSelectedProducts([]);
-      gridApiRef.current.setRowSelectionModel([]);
-   };
+  const handleCancelSelecting = () => {
+    setIsSelecting(false);
+    setSelectedProducts([]);
+    gridApiRef.current.setRowSelectionModel([]);
+  };
 
-   console.log("setChoosingProductForPatrimony", setChoosingProductForPatrimony);
-   console.log("choosingProductForPatrimony", choosingProductForPatrimony);
-   
-   const filterNonRepeatedProducts = ( ) => { 
-    return selectedProducts.map((product) => {
-     if(!productIdList.includes(product.ID)){ 
-            return {
-              ID: 0,
-              QUANTIDADE: 0,
-              ID_REQUISICAO: requisitionID,
-              ID_PRODUTO: product.ID,
-              OBSERVACAO: null,
-              ATIVO: 1,
-              OC: null,
-            };
-     }
-    }).filter((item) => item !== undefined) as RequisitionItemPost[];
-   }
+  console.log("setChoosingProductForPatrimony", setChoosingProductForPatrimony);
+  console.log("choosingProductForPatrimony", choosingProductForPatrimony);
 
-   const handleSaveAddItems = async () => {
-     const newProductItems: RequisitionItemPost[] = filterNonRepeatedProducts();
-      if(newProductItems.length) {
-        try {
-          if (requisitionID === undefined) {
-            displayAlert("error", "ID da requisição não definido.");
-            return;
-          }
-          const data = await postRequistionItems(
-            requisitionID,
-            newProductItems
-          );
-          setSearchTerm("");
-          setAddedItems(data.insertedItems);
-          setIsInsertingQuantity(true);
-        } catch (e: any) {
-          displayAlert("error", e.message);
+  const filterNonRepeatedProducts = () => {
+    return selectedProducts
+      .map((product) => {
+        if (!productIdList.includes(product.ID)) {
+          return {
+            ID: 0,
+            QUANTIDADE: 0,
+            ID_REQUISICAO: requisitionID,
+            ID_PRODUTO: product.ID,
+            OBSERVACAO: null,
+            ATIVO: 1,
+            OC: null,
+          };
         }
-    }
-   }
+      })
+      .filter((item) => item !== undefined) as RequisitionItemPost[];
+  };
 
-   const handleSaveChangeItemProduct = async ( ) =>  {
-    console.log('handleSaveChangeItemProduct');
-        let updatingItem = changingProduct[1];
-        const selectedProduct = selectedProducts[0];
-        if(updatingItem){ 
-          updatingItem.ID_PRODUTO = selectedProduct.ID;
-        }
-        const arrayFromSingleItem: Item[] = updatingItem ? [updatingItem] : [];
+  const handleSaveAddItems = async () => {
+    const newProductItems: RequisitionItemPost[] = filterNonRepeatedProducts();
+    if (newProductItems.length) {
+      try {
+        setIsLoading(true);
         if (requisitionID === undefined) {
           displayAlert("error", "ID da requisição não definido.");
           return;
         }
-        const response = await updateRequisitionItems(
-          arrayFromSingleItem,
-          requisitionID
-        );
-        if(response.status === 200){ 
-            handleClose(); 
-        }
-   };
-
-   const handleSaveProductForPatrimony = async ( ) => { 
-    const selectedProduct = selectedProducts[0];
-      if(patrimony && selectedProduct){ 
-      await updatePatrimony({ 
-        ...patrimony,
-        id_produto: selectedProduct.ID,
-      });
-      handleClose();
+        const data = await postRequistionItems(requisitionID, newProductItems);
+        setSearchTerm("");
+        setAddedItems(data.insertedItems);
+        setIsInsertingQuantity(true);
+      } catch (e: any) {
+        displayAlert("error", e.message);
+      } finally {
+        setIsLoading(false);
+      }
     }
-  }
-   
+  };
+
+  const handleSaveChangeItemProduct = async () => {
+    console.log("handleSaveChangeItemProduct");
+    let updatingItem = changingProduct[1];
+    const selectedProduct = selectedProducts[0];
+    if (updatingItem) {
+      updatingItem.ID_PRODUTO = selectedProduct.ID;
+    }
+    const arrayFromSingleItem: Item[] = updatingItem ? [updatingItem] : [];
+    if (requisitionID === undefined) {
+      displayAlert("error", "ID da requisição não definido.");
+      return;
+    }
+    try {
+      setIsLoading(true);
+      const response = await updateRequisitionItems(
+        arrayFromSingleItem,
+        requisitionID
+      );
+      if (response.status === 200) {
+        handleClose();
+      }
+    } catch (e: any) {
+      displayAlert("error", e.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSaveProductForPatrimony = async () => {
+    const selectedProduct = selectedProducts[0];
+    if (patrimony && selectedProduct) {
+      try {
+        setIsLoading(true);
+        await updatePatrimony({
+          ...patrimony,
+          id_produto: selectedProduct.ID,
+        });
+        handleClose();
+      } catch (e: any) {
+        displayAlert("error", e.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
 
   return (
     <>
@@ -178,6 +208,24 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
             </Alert>
           )}
           <Stack sx={{ height: "100%", gap: 1, padding: 0.5 }}>
+            {isLoading && (
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "rgba(255, 255, 255, 0.7)",
+                  zIndex: 9999,
+                }}
+              >
+                <CircularProgress />
+              </Box>
+            )}
             <Box
               sx={{
                 width: "100%",
