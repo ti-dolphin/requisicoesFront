@@ -72,7 +72,7 @@ export const useProductsTableModal = (
   const fetchProductsByReqType = async () => {
     if (requisition) {
       try {
-        setIsLoading(true);
+         setIsLoading(true);
         const products = await searchProducts(searchTerm, requisition.TIPO);
         setProducts(products);
       } catch (e: any) {
