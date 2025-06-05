@@ -44,21 +44,22 @@ export const useProductsTableModal = (
     rowSelectionModel: GridRowSelectionModel,
     _details: GridCallbackDetails
   ) => {
-    if (changingProduct[0] && rowSelectionModel.length > 1) {
+
+    if (changingProduct[0] && rowSelectionModel.length > 1) { //se estiver substituindo item da requisição
       displayAlert(
         "Warning",
         "Selecione apenas um produto para substituir o item da requisição"
       );
       return;
     }
-    if (choosingProductForPatrimony && rowSelectionModel.length > 1) {
+    if (choosingProductForPatrimony && rowSelectionModel.length > 1) {// se estiver escolhendo um produto para o patrimonio e selecionar mais de um
       displayAlert(
         "Warning",
         "Selecione apenas um produto para ser o produto do patrimônio"
       );
       return;
     }
-    if (rowSelectionModel.length > 0) {
+    if (rowSelectionModel.length > 0) {// adicionando items na requisição
       setIsSelecting(true);
       const localSelectedProducts = products.filter((product, _index) =>
         rowSelectionModel.find((id) => product.ID === id)
@@ -66,6 +67,7 @@ export const useProductsTableModal = (
       setSelectedProducts(localSelectedProducts);
       return;
     }
+    setSelectedProducts([])
     setIsSelecting(false);
   };
 

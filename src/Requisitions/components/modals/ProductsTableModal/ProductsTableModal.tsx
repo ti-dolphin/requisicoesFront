@@ -103,9 +103,6 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
     gridApiRef.current.setRowSelectionModel([]);
   };
 
-  console.log("setChoosingProductForPatrimony", setChoosingProductForPatrimony);
-  console.log("choosingProductForPatrimony", choosingProductForPatrimony);
-
   const filterNonRepeatedProducts = () => {
     return selectedProducts
       .map((product) => {
