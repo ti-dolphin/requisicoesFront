@@ -1,6 +1,7 @@
 import {
   Dispatch,
   SetStateAction,
+  useContext,
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
@@ -22,6 +23,8 @@ import { BaseButtonStyles, buttonStylesMobile } from "../../../../utilStyles";
 import { orange } from "@mui/material/colors";
 import typographyStyles from "../../../utilStyles";
 import { kanban_requisicao, Requisition } from "../../../types";
+import { userContext } from "../../../context/userContext";
+import ProductsTableModal from "../../../components/modals/ProductsTableModal/ProductsTableModal";
 
 
 
@@ -45,11 +48,16 @@ const SearchAppBar = ({
   currentKanban
 }: Props) => {
   const navigate = useNavigate();
+  const {user} = useContext(userContext);
   const [filterMenu, setFilterMenu] = useState<null | HTMLElement>(null);
+  const [viewingProducts, setViewingProducts] = useState<boolean>(false);
+  
+
   const filterMenuOpen = Boolean(filterMenu);
   const handleClickFilter = (event: React.MouseEvent<HTMLButtonElement>) => {
     setFilterMenu(event.currentTarget);
   };
+
   const handleCloseFilter = () => {
     setFilterMenu(null);
   };
@@ -110,6 +118,14 @@ const SearchAppBar = ({
                   {kanban.nome}
                 </Button>
               ))}
+              {user?.PERM_EDITAR_PRODUTOS && (
+                <Button
+                  sx={{ ...BaseButtonStyles }}
+                  onClick={() => setViewingProducts(true)}
+                >
+                  Produtos
+                </Button>
+              )}
               <IconButton
                 id="basic-button"
                 aria-controls={filterMenuOpen ? "basic-menu" : undefined}
@@ -144,6 +160,10 @@ const SearchAppBar = ({
               </Menu>
             </Stack>
             <AddRequisitionModal />
+            <ProductsTableModal
+              viewingProducts={viewingProducts}
+              setViewingProducts={setViewingProducts}
+            />
           </Stack>
         </Toolbar>
       </AppBar>

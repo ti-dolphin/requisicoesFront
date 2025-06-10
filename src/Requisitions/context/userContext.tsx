@@ -11,6 +11,7 @@ export interface User {
   PERM_DIRETOR?: number;
   NOME? : string;
   responsavel_tipo?: number;
+  PERM_EDITAR_PRODUTOS? : number;
 }
 interface userContextType {
   logedIn: boolean;

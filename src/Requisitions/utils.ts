@@ -15,6 +15,7 @@ import {
   kanban_requisicao,
 } from "./types";
 import { User } from "./context/userContext";
+
 const getPrefix = (isSupplier?: boolean) => (isSupplier ? 'supplier/' : '');
 
 const logIn = async (username: string, password: string) => {
@@ -324,6 +325,16 @@ const fetchTenThousandProducts = async () => {
   return data;
 };
 
+const updateManyProducts = async (products: Product[]) => { 
+  try{ 
+    console.log("products: ", products)
+    const response = await api.put("/products/updateMany", products);
+    return response;
+  }catch(e: any) { 
+    throw new Error(e)
+  }
+};
+
 const searchProducts = async (name: string, type? : number) => {
   try {
     const response = await api.get<Product[]>("/products", {
@@ -556,7 +567,7 @@ export {
   fetchPersons,
   fetchAllProjects,
   getItemToSupplierMapByReqId,
-  postRequisition,
+  postRequisition,updateManyProducts,
   postRequistionItems,
   fetchRequsitionById,
   fetchPersonById,
