@@ -170,6 +170,7 @@ export interface RequisitionFile {
 export interface Product {
   ID: number;
   codigo: string;
+  quantidade_estoque? : number;
   nome_fantasia: string;
 }
 export interface Person {
@@ -281,6 +282,8 @@ export interface ProductsTableModalProps {
   setChoosingProductForPatrimony?: React.Dispatch<
     React.SetStateAction<boolean>
   >;
+  viewingProducts?: boolean;
+  setViewingProducts?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface RequisitionTableProps { 

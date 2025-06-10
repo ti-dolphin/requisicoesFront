@@ -46,7 +46,7 @@ interface PatrimonyField {
 const fields: PatrimonyField[] = [
   { label: "Nº Patrimônio", dataKey: "id_patrimonio", disabled: true },
   { label: "Nome", dataKey: "nome" },
-  { label: "Produto", dataKey: "nome_produto" },
+  { label: "Produto", dataKey: "nome_produto", disabled: true },
   { label: "Data de Compra", dataKey: "data_compra", type: "date" },
   { label: "Nº de série", dataKey: "nserie" },
   { label: "Descrição", dataKey: "descricao" },
@@ -59,9 +59,7 @@ const fields: PatrimonyField[] = [
 
 const PatrimonyDetails = () => {
   const { id_patrimonio } = useParams();
-  const { refreshPatrimonyInfo, toggleRefreshPatrimonyInfo } =
-    useContext(PatrimonyInfoContext);
-  // const { user  } = useContext(userContext);
+  const { refreshPatrimonyInfo, toggleRefreshPatrimonyInfo } = useContext(PatrimonyInfoContext);
   const navigate = useNavigate();
   const [patrimonyData, setPatrimonyData] = useState<Patrimony>();
   const [editing, setEditing] = useState<[boolean, string?]>([false]);

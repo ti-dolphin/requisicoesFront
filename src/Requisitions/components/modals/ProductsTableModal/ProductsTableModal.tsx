@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import {
-  Item,
+
   Product,
   ProductsTableModalProps,
   RequisitionItemPost,
@@ -20,17 +20,20 @@ import {
   DataGrid,
   GridCallbackDetails,
   GridColDef,
+  GridRowModel,
+  GridRowModesModel,
   GridRowSelectionModel,
-  useGridApiRef,
+
 } from "@mui/x-data-grid";
-import { postRequistionItems, updateRequisitionItems } from "../../../utils";
+import { postRequistionItems } from "../../../utils";
 import typographyStyles from "../../../utilStyles";
 import { CloseModalButton } from "../../../../generalUtilities";
 import { useProductsTableModal } from "../../../hooks/useProductsTableModal";
 import { alertAnimation, BaseButtonStyles } from "../../../../utilStyles";
 import { motion } from "framer-motion";
 import InsertQuantitiesModal from "../InsertQuantitiesModal/InsertQuantitiesModal";
-import { updatePatrimony } from "../../../../Patrimony/utils";
+import { useContext } from "react";
+import { userContext } from "../../../context/userContext";
 
 const FullScreenModalBox = styled(Box)(({ theme }) => ({
   position: "absolute",
@@ -46,25 +49,14 @@ const FullScreenModalBox = styled(Box)(({ theme }) => ({
   outline: "none", // Remove a borda padrão
 }));
 
-const columns: GridColDef[] = [
-  {
-    headerName: "Nome",
-    field: "nome_fantasia",
-    flex: 1,
-    width: 250,
-  },
-  {
-    headerName: "Codigo TOTVS",
-    field: "codigo",
-    width: 180,
-  },
-];
 
 export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
   requisitionID,
   patrimony,
   choosingProductForPatrimony,
   setChoosingProductForPatrimony,
+  setViewingProducts,
+  viewingProducts,
 }) => {
   const {
     products,
@@ -89,22 +81,52 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
     setSearchTerm,
     isLoading,
     setIsLoading,
+    editingProducts,
+    setEditingProducts,
+    processRowUpdate,
+    handleRowModesModelChange,
+    handleSaveChangeItemProduct,
+    handleSaveProductForPatrimony,
+    gridApiRef,
+    triggerSave
   } = useProductsTableModal(
     requisitionID,
     patrimony,
     choosingProductForPatrimony,
-    setChoosingProductForPatrimony
+    setChoosingProductForPatrimony,
+    setViewingProducts,
+    viewingProducts
   );
-  const gridApiRef = useGridApiRef();
+  const {user } = useContext(userContext);
+  console.log("PERM_EDITAR_PRODUTOS: ", Boolean(user?.PERM_EDITAR_PRODUTOS));
+
+  const columns: GridColDef[] = [
+    {
+      headerName: "Nome",
+      field: "nome_fantasia",
+      flex: 1,
+      width: 250,
+    },
+    {
+      headerName: "Quantidade em estoque",
+      field: "quantidade_estoque",
+      flex: 1,
+      width: 250,
+      editable: Boolean(user?.PERM_ADMINISTRADOR) && viewingProducts,
+    },
+    {
+      headerName: "Codigo TOTVS",
+      field: "codigo",
+      width: 180,
+    },
+  ];
+  
 
   const handleCancelSelecting = () => {
     setIsSelecting(false);
     setSelectedProducts([]);
     gridApiRef.current.setRowSelectionModel([]);
   };
-
-  console.log("setChoosingProductForPatrimony", setChoosingProductForPatrimony);
-  console.log("choosingProductForPatrimony", choosingProductForPatrimony);
 
   const filterNonRepeatedProducts = () => {
     return selectedProducts
@@ -125,6 +147,7 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
   };
 
   const handleSaveAddItems = async () => {
+    //salva os items adicionados a requisição
     const newProductItems: RequisitionItemPost[] = filterNonRepeatedProducts();
     if (newProductItems.length) {
       try {
@@ -145,57 +168,16 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
     }
   };
 
-  const handleSaveChangeItemProduct = async () => {
-    console.log("handleSaveChangeItemProduct");
-    let updatingItem = changingProduct[1];
-    const selectedProduct = selectedProducts[0];
-    if (updatingItem) {
-      updatingItem.ID_PRODUTO = selectedProduct.ID;
-    }
-    const arrayFromSingleItem: Item[] = updatingItem ? [updatingItem] : [];
-    if (requisitionID === undefined) {
-      displayAlert("error", "ID da requisição não definido.");
-      return;
-    }
-    try {
-      setIsLoading(true);
-      const response = await updateRequisitionItems(
-        arrayFromSingleItem,
-        requisitionID
-      );
-      if (response.status === 200) {
-        handleClose();
-      }
-    } catch (e: any) {
-      displayAlert("error", e.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSaveProductForPatrimony = async () => {
-    const selectedProduct = selectedProducts[0];
-    if (patrimony && selectedProduct) {
-      try {
-        setIsLoading(true);
-        await updatePatrimony({
-          ...patrimony,
-          id_produto: selectedProduct.ID,
-        });
-        handleClose();
-      } catch (e: any) {
-        displayAlert("error", e.message);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
+  
 
   return (
     <>
       <Modal
         open={
-          adding || changingProduct[0] || Boolean(choosingProductForPatrimony)
+          adding ||
+          changingProduct[0] ||
+          Boolean(choosingProductForPatrimony) ||
+          Boolean(viewingProducts)
         }
         aria-labelledby="child-modal-title"
         aria-describedby="child-modal-description"
@@ -268,7 +250,9 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
               }}
             >
               <DataGrid
+                apiRef={gridApiRef}
                 checkboxSelection
+                disableRowSelectionOnClick
                 sx={{
                   "& .MuiDataGrid-menuIconButton": {
                     display: "none",
@@ -295,53 +279,71 @@ export const ProductsTableModal: React.FC<ProductsTableModalProps> = ({
                 rowSelectionModel={selectedProducts.map(
                   (product) => product.ID
                 )}
+                editMode="row"
+                onRowEditStart={() => setEditingProducts(true)}
+                onRowModesModelChange={(rowModesModel: GridRowModesModel) => handleRowModesModelChange(rowModesModel)}
                 onRowSelectionModelChange={(
                   rowSelectionModel: GridRowSelectionModel,
                   details: GridCallbackDetails
                 ) => handleSelectionChange(rowSelectionModel, details)}
+                processRowUpdate={(
+                  newRow: GridRowModel,
+                  oldRow: GridRowModel
+                ) => {
+                  const updatedRow = processRowUpdate(newRow, oldRow);
+                  if (!updatedRow) {
+                    throw new Error(
+                      "Row update failed: processRowUpdate returned undefined."
+                    );
+                  }
+                  return updatedRow;
+                }}
                 density="compact"
                 getRowId={(row: Product) => row.ID}
                 rows={products}
                 columns={columns}
-                apiRef={gridApiRef}
                 pageSizeOptions={[100]}
               />
             </Box>
-            {isSelecting && (
-              <motion.div {...alertAnimation}>
-                <Stack
-                  direction="row"
-                  gap={2}
-                  alignItems={"center"}
-                  padding={1}
-                >
-                  {adding && (
-                    <Button sx={BaseButtonStyles} onClick={handleSaveAddItems}>
-                      Adicionar items
-                    </Button>
-                  )}
-                  {changingProduct[0] && (
-                    <Button
-                      sx={BaseButtonStyles}
-                      onClick={handleSaveChangeItemProduct}
-                    >
-                      Substituir o item selecionado
-                    </Button>
-                  )}
-                  {choosingProductForPatrimony && (
-                    <Button
-                      sx={BaseButtonStyles}
-                      onClick={handleSaveProductForPatrimony}
-                    >
-                      Definir produto
-                    </Button>
-                  )}
+
+            <motion.div {...alertAnimation}>
+              <Stack direction="row" gap={2} alignItems={"center"} padding={1}>
+                {adding && (
+                  <Button sx={BaseButtonStyles} onClick={handleSaveAddItems}>
+                    Adicionar items
+                  </Button>
+                )}
+                {changingProduct[0] && (
+                  <Button
+                    sx={BaseButtonStyles}
+                    onClick={handleSaveChangeItemProduct}
+                  >
+                    Substituir o item selecionado
+                  </Button>
+                )}
+                {choosingProductForPatrimony && (
+                  <Button
+                    sx={BaseButtonStyles}
+                    onClick={handleSaveProductForPatrimony}
+                  >
+                    Definir produto
+                  </Button>
+                )}
+                {editingProducts && (
+                  <Button
+                    onClick={triggerSave}
+                    sx={BaseButtonStyles}
+                  >
+                    Salvar
+                  </Button>
+                )}
+                {isSelecting && (
                   <Button onClick={handleCancelSelecting} sx={BaseButtonStyles}>
                     Cancelar
                   </Button>
-                </Stack>
-              </motion.div>
-            )}
+                )}
+              </Stack>
+            </motion.div>
           </Stack>
 
           <InsertQuantitiesModal

@@ -473,9 +473,7 @@ const RequisitionItemsTable: React.FC<RequisitionItemsTableProps> = ({
           disableRowSelectionOnClick
           onRowSelectionModelChange={handleChangeSelection}
           onRowEditStart={() => setIsEditing(true)}
-          // processRowUpdate={(newRow: GridRowModel, oldRow: GridRowModel) =>
-          //   processRowUpdate(newRow, oldRow)
-          // }
+     
           processRowUpdate={(newRow: GridRowModel, oldRow: GridRowModel) => {
             const updatedRow = processRowUpdate(newRow, oldRow);
             if (!updatedRow) {
