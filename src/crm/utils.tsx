@@ -134,58 +134,6 @@ export const createAdicional = async (opportunity : Opportunity ) =>  {
 };
 
 
-export const patrimonyInfoColumns: PatrimonyInfoColumnData[] = [
-  {
-    width: 90, // Reduzi um pouco para economizar espaço
-    label: "Patrimônio",
-    dataKey: "id_patrimonio",
-  },
-  {
-    width: 90, // Mantive um tamanho razoável para a visualização do nome
-    label: "Nome",
-    dataKey: "nome",
-  },
-  {
-    width: 80,
-    label: "Valor de Compra",
-    dataKey: "valor_compra",
-  },
-  {
-    width: 170,
-    label: "Tipo",
-    dataKey: "nome_tipo",
-  },
-  {
-    width: 150, // Reduzi para economizar espaço, mantendo a descrição legível
-    label: "Descrição",
-    dataKey: "descricao",
-  },
-  {
-    width: 100, // Mantido similar ao nome
-    label: "Responsável",
-    dataKey: "responsavel",
-  },
-  {
-    width: 100, // Mantido igual ao responsável
-    label: "Gerente",
-    dataKey: "gerente",
-  },
-  {
-    width: 150, // Projeto precisa de um pouco mais de espaço
-    label: "Projeto",
-    dataKey: "projeto",
-  },
-  {
-    width: 80, // Reduzido um pouco para última movimentação
-    label: "Ultima Movimentação",
-    dataKey: "dataMovimentacao",
-  },
-  {
-    width: 70, // Coluna vazia para possíveis ações, mantive um valor baixo
-    label: "",
-    dataKey: "",
-  },
-];
 export interface PatrimonyInfoColumnData {
   dataKey: string;
   label: string;
