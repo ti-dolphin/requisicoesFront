@@ -53,6 +53,9 @@ export const PatrimonyInfoContext = createContext<PatrimonyInfoContextType>({
   filteredRows : [],
   columnFilter: [
     { dataKey: "id_patrimonio", filterValue: "" },
+    { 
+      dataKey: 'nserie', filterValue: ''
+    },
     { dataKey: "nome", filterValue: "" },
     { dataKey: "nome_tipo", filterValue: "" },
     { dataKey: "descricao", filterValue: "" },
@@ -101,6 +104,10 @@ export const PatrimonyInfoContextProvider = ({
     { dataKey: string; filterValue: string }[]
   >([
     { dataKey: "id_patrimonio", filterValue: "" },
+    {
+      dataKey: "nserie",
+      filterValue: "",
+    },
     { dataKey: "nome", filterValue: "" },
     { dataKey: "nome_tipo", filterValue: "" },
     { dataKey: "descricao", filterValue: "" },
@@ -108,7 +115,6 @@ export const PatrimonyInfoContextProvider = ({
     { dataKey: "gerente", filterValue: "" },
     { dataKey: "projeto", filterValue: "" },
     { dataKey: "dataMovimentacao", filterValue: "" },
-
   ]);
   const [filteredRows, setFilteredRows] = useState<PatrimonyInfo[]>();
 
