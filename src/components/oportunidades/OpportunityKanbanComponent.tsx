@@ -44,7 +44,10 @@ const kanbanGlobalStyles = (
         minHeight: 0,
         padding: '16px',
         boxSizing: 'border-box',
-        justifyContent: 'center',
+        // "safe center": centraliza quando cabe tudo, mas evita o bug de
+        // justify-content:center cortar a primeira coluna e deixá-la inacessível
+        // via scroll quando as colunas não cabem na largura da tela.
+        justifyContent: 'safe center',
       },
       // O wrapper do Droppable (@hello-pangea/dnd) não tem classe própria, só esse
       // data-attribute fixo da lib. Ele precisa de altura explícita porque a coluna
@@ -54,6 +57,13 @@ const kanbanGlobalStyles = (
         height: '100%',
         minHeight: 0,
       },
+      // O cabeçalho "sticky" não funciona de forma confiável dentro de uma coluna que
+      // rola inteira (a coluna usa o layout inline-block/nowrap legado da lib). Em vez
+      // disso, só a lista de cards rola: a coluna vira flex-column, o cabeçalho fica
+      // fora da área de scroll (não precisa de sticky) e só o Droppable dos cards cresce
+      // e rola. O seletor abaixo pega o Droppable de cards (droppableId = id da coluna,
+      // ex: "1", "2") como descendente de .react-kanban-column — diferente do Droppable
+      // do board inteiro (droppableId fixo "board-droppable"), que é ancestral dela.
       '.react-kanban-column': {
         width: COLUMN_WIDTH,
         minWidth: COLUMN_WIDTH,
@@ -66,7 +76,16 @@ const kanbanGlobalStyles = (
         borderTop: '4px solid #2B3990',
         boxShadow: '0 2px 8px rgba(43, 57, 144, 0.15)',
         boxSizing: 'border-box',
+        overflow: 'hidden',
+        display: 'inline-flex !important',
+        flexDirection: 'column !important',
+        verticalAlign: 'top',
+      },
+      '.react-kanban-column [data-rfd-droppable-id]': {
+        flex: '1 1 0',
+        minHeight: 0,
         overflowY: 'auto',
+        overflowX: 'hidden',
         paddingBottom: 8,
       },
     }}
@@ -241,9 +260,7 @@ const OpportunityKanbanComponent = () => {
           renderColumnHeader={(column) => (
             <Box
               sx={{
-                position: 'sticky',
-                top: 0,
-                zIndex: 1,
+                flexShrink: 0,
                 backgroundColor: '#ffffff',
                 borderRadius: '8px 8px 0 0',
                 padding: '8px 8px 8px 16px',
