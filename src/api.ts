@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-    // baseURL: 'http://localhost:3001',  
-    baseURL: 'https://apicontrolehomologacao.dse.com.br',
+    baseURL: 'http://localhost:3001',  
+    // baseURL: 'https://apicontrolehomologacao.dse.com.br',
     // baseURL: 'https://apicontrole.dse.com.br',
     headers: {
         'Content-Type': 'application/json',
@@ -11,10 +11,10 @@ const api = axios.create({
 
 api.interceptors.request.use(
     async config => {
-    const token =  window.localStorage.getItem('token');
-    
-    config.headers.Authorization = token;
-        return config;
+        const token =  window.localStorage.getItem('token');
+        
+        config.headers.Authorization = token;
+            return config;
     },
     error => {
         return Promise.reject(error);

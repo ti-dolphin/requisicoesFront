@@ -48,12 +48,22 @@ export class RequisitionItemService {
   }
 
   static async updateQuoteItemsSelected(
-    id_requisicao: number,
-    data: any
-  ): Promise<any> {
-    const response = await api.put<RequisitionItem[]>(
+    id_item_requisicao: number,
+    id_item_cotacao: number | null
+  ): Promise<{ updated: boolean }> {
+    const response = await api.put(
       `${API_ENDPOINT}/itens_cotacao_selecionados/update`,
-      data,
+      { id_item_requisicao, id_item_cotacao }
+    );
+    return response.data;
+  }
+
+  static async recalculateQuoteItemsTotals(
+    id_requisicao: number
+  ): Promise<{ custo_total_itens: number; custo_total_frete: number }> {
+    const response = await api.put(
+      `${API_ENDPOINT}/itens_cotacao_selecionados/totais`,
+      {},
       {
         params: { id_requisicao },
       }

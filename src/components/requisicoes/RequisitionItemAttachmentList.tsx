@@ -32,7 +32,7 @@ const RequisitionItemAttachmentList = () => {
     useState<RequisitionItemAttachment | null>(null);
   const [linkDialogOpen, setLinkDialogOpen] = useState(false);
   const [linkInput, setLinkInput] = useState<string>("");
-  const { viewingItemAttachment, refresh } = useSelector(
+  const { viewingItemAttachment, viewingItemAttachmentType, refresh } = useSelector(
     (state: RootState) => state.requisitionItem
   );
   const { permissionToAdd } = useReqItemAttachmentPermissions();
@@ -56,6 +56,7 @@ const RequisitionItemAttachmentList = () => {
       arquivo: "",
       id_item_requisicao: viewingItemAttachment,
       nome_arquivo: file.name,
+      tipo: viewingItemAttachmentType,
     };
     setLoading(true);
     try {
@@ -99,7 +100,8 @@ const RequisitionItemAttachmentList = () => {
     try {
       const attachments =
         await RequisitionItemAttachmentService.getByRequisitionItem(
-          viewingItemAttachment
+          viewingItemAttachment,
+          viewingItemAttachmentType
         );
 
       setAttachments(attachments);
@@ -147,6 +149,7 @@ const RequisitionItemAttachmentList = () => {
         id_item_requisicao: viewingItemAttachment,
         nome_arquivo: '',
         arquivo: linkInput.substring(0, 255),
+        tipo: viewingItemAttachmentType,
       });
       setAttachments([...attachments, newAttachment]);
       setLinkDialogOpen(false);
@@ -158,7 +161,7 @@ const RequisitionItemAttachmentList = () => {
     if (viewingItemAttachment !== null) {
       fetchAttachments();
     }
-  }, [viewingItemAttachment]);
+  }, [viewingItemAttachment, viewingItemAttachmentType]);
 
   return (
     <Box>

@@ -94,7 +94,12 @@ const ChecklistTable = () => {
       headerName: "Data da realização",
       flex: 0.4,
       type: "date",
-      valueGetter: (date: string) => (date ? getDateFromISOstring(date) : ""),
+      // Quando o checklist foi aprovado sem ter data de realização registrada,
+      // usamos a data de aprovação para que a coluna nunca fique vazia.
+      valueGetter: (date: string, row: any) => {
+        const value = date || row?.data_aprovado;
+        return value ? getDateFromISOstring(value) : "";
+      },
       minWidth: 150
     },
     {

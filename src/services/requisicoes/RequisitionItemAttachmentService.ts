@@ -3,8 +3,8 @@ import { RequisitionItemAttachment } from '../../models/requisicoes/RequisitionI
 
 const API_ENDPOINT = `/anexo_item_requisicao`;
 export class RequisitionItemAttachmentService {
-  static async getByRequisitionItem(id_item_requisicao: number): Promise<RequisitionItemAttachment[]> {
-    const response = await api.get<RequisitionItemAttachment[]>(`${API_ENDPOINT}/${id_item_requisicao}`);
+  static async getByRequisitionItem(id_item_requisicao: number, tipo?: number): Promise<RequisitionItemAttachment[]> {
+    const response = await api.get<RequisitionItemAttachment[]>(`${API_ENDPOINT}/${id_item_requisicao}`, { params: { tipo } });
     return response.data;
   }
 

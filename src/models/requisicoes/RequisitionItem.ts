@@ -8,6 +8,7 @@ export interface RequisitionItem {
     quantidade_solicitada?: number | null;
     quantidade_estoque?: number | null;
     target_price: number | null;
+    quantidade_alterada?: number;
     id_requisicao: number;
     id_produto: number;
     observacao: string | null;

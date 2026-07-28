@@ -23,6 +23,7 @@ import { setRows } from "../../redux/slices/requisicoes/requisitionTableSlice";
 import { setAddingProducts } from "../../redux/slices/requisicoes/requisitionItemSlice";
 import ElegantInput from "../shared/ui/Input";
 import OptionsField from "../shared/ui/OptionsField";
+import { normalizeText } from "../../utils";
 
 
 
@@ -42,12 +43,6 @@ const RequisitionForm: React.FC = () => {
     { id: number; nome_faturamento: string; escopo: number; descricao?: string }[]
   >([]);
   const [tipoFaturamentoSelecionado, setTipoFaturamentoSelecionado] = useState<number | null>(null);
-
-  const normalizeText = (value: string) =>
-    value
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase();
 
   // Buscar tipos de faturamento ao montar
   useEffect(() => {

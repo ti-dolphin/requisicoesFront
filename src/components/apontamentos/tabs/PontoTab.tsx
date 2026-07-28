@@ -108,7 +108,8 @@ const PontoTab: React.FC = () => {
   const { columns: rawColumns } = usePontoColumns(
     handleChangePontoFilters,
     handleTogglePontoField,
-    !!(user?.PERM_APONTAMENTO_PONTO || user?.PERM_ADMINISTRADOR)
+    !!(user?.PERM_APONTAMENTO_PONTO || user?.PERM_ADMINISTRADOR),
+    !!(user?.PERM_APONTAMENTO_PONTO_JUSTIFICATIVA || user?.PERM_ADMINISTRADOR)
   );
 
   const { orderedColumns: columns, columnVisibilityModel, saveColumnOrder, removeColumnOrder } = usePersistedColumnOrder(
@@ -147,27 +148,57 @@ const PontoTab: React.FC = () => {
 
   const handleProcessRowUpdate = useCallback(
     async (newRow: Ponto, oldRow: Ponto): Promise<Ponto> => {
-      if (newRow.MOTIVO_PROBLEMA === oldRow.MOTIVO_PROBLEMA) return newRow;
-      try {
-        const result = await NotesService.updatePontoField(newRow.CODAPONT, "MOTIVO_PROBLEMA", newRow.MOTIVO_PROBLEMA || "");
-        const updatedRow = { ...newRow, DATA_HORA_MOTIVO: result.DATA_HORA_MOTIVO ?? newRow.DATA_HORA_MOTIVO };
-        dispatch(
-          setPontoRows(
-            pontoRows.map((row) =>
-              row.CODAPONT === newRow.CODAPONT ? updatedRow : row
+      if (newRow.MOTIVO_PROBLEMA !== oldRow.MOTIVO_PROBLEMA) {
+        try {
+          const result = await NotesService.updatePontoField(newRow.CODAPONT, "MOTIVO_PROBLEMA", newRow.MOTIVO_PROBLEMA || "");
+          const updatedRow = { ...newRow, DATA_HORA_MOTIVO: result.DATA_HORA_MOTIVO ?? newRow.DATA_HORA_MOTIVO };
+          dispatch(
+            setPontoRows(
+              pontoRows.map((row) =>
+                row.CODAPONT === newRow.CODAPONT ? updatedRow : row
+              )
             )
-          )
-        );
-        return updatedRow;
-      } catch (e: any) {
-        dispatch(
-          setFeedback({
-            message: e.message || "Erro ao atualizar motivo",
-            type: "error",
-          })
-        );
-        return oldRow;
+          );
+          return updatedRow;
+        } catch (e: any) {
+          dispatch(
+            setFeedback({
+              message: e.message || "Erro ao atualizar motivo",
+              type: "error",
+            })
+          );
+          return oldRow;
+        }
       }
+
+      if (newRow.JUSTIFICATIVA !== oldRow.JUSTIFICATIVA) {
+        try {
+          const result = await NotesService.updatePontoField(newRow.CODAPONT, "JUSTIFICATIVA", newRow.JUSTIFICATIVA || "");
+          const updatedRow = {
+            ...newRow,
+            DATA_HORA_JUSTIFICATIVA: result.DATA_HORA_JUSTIFICATIVA ?? newRow.DATA_HORA_JUSTIFICATIVA,
+            JUSTIFICADO_POR: result.JUSTIFICADO_POR ?? newRow.JUSTIFICADO_POR,
+          };
+          dispatch(
+            setPontoRows(
+              pontoRows.map((row) =>
+                row.CODAPONT === newRow.CODAPONT ? updatedRow : row
+              )
+            )
+          );
+          return updatedRow;
+        } catch (e: any) {
+          dispatch(
+            setFeedback({
+              message: e.message || "Erro ao atualizar justificativa",
+              type: "error",
+            })
+          );
+          return oldRow;
+        }
+      }
+
+      return newRow;
     },
     [dispatch, pontoRows]
   );

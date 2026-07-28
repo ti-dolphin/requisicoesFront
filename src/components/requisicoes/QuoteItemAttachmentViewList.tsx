@@ -31,7 +31,8 @@ const QuoteItemAttachmentViewList = ({ id_item_requisicao }: QuoteItemAttachment
     if (!id_item_requisicao) return;
     setLoading(true);
     try {
-      const attachments = await RequisitionItemAttachmentService.getByRequisitionItem(id_item_requisicao);
+      // Na cotação só interessam os anexos comuns (tipo 1); NFs ficam de fora
+      const attachments = await RequisitionItemAttachmentService.getByRequisitionItem(id_item_requisicao, 1);
       setAttachments(attachments);
     } catch (error: any) {
       setError("Erro ao buscar anexos.");

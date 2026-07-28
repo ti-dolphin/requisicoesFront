@@ -13,7 +13,7 @@ interface BaseViewFileDialogProps {
 const SUPPORTED_EXTENSIONS = {
   pdf: ["pdf"],
   image: ["png", "jpg", "jpeg", "gif", "bmp", "webp", "svg", ],
-  xlsx: ["xlsx", "xls"],
+  xlsx: ["xlsx", "xls", "xlsm", "xlsb", "xltx", "xltm"],
 };
 
 const BaseViewFileDialog: React.FC<BaseViewFileDialogProps> = ({
@@ -81,15 +81,6 @@ const BaseViewFileDialog: React.FC<BaseViewFileDialogProps> = ({
               Arquivos Excel não podem ser visualizados diretamente no
               navegador.
             </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              href={fileUrl}
-              download
-              aria-label="Baixar arquivo Excel"
-            >
-              Baixar Arquivo
-            </Button>
           </Box>
         );
       case "unsupported":
@@ -141,8 +132,8 @@ const BaseViewFileDialog: React.FC<BaseViewFileDialogProps> = ({
         {/* File Content */}
         <Box sx={{ flex: 1, overflow: "auto" }}>{renderFileContent()}</Box>
 
-        {/* Close Button */}
-        <Box sx={{ display: "flex", justifyContent: "center" }}>
+        {/* Action Buttons */}
+        <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
           <Button
             onClick={onClose}
             variant="contained"
@@ -152,6 +143,18 @@ const BaseViewFileDialog: React.FC<BaseViewFileDialogProps> = ({
           >
             Fechar
           </Button>
+          {fileType === "xlsx" && (
+            <Button
+              variant="contained"
+              color="primary"
+              href={fileUrl}
+              download
+              sx={{ minWidth: "100px" }}
+              aria-label="Baixar arquivo Excel"
+            >
+              Baixar Arquivo
+            </Button>
+          )}
         </Box>
       </Box>
     </Dialog>

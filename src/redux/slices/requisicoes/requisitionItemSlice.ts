@@ -17,6 +17,8 @@ interface RequisitionItemState {
   selectedQuote: Partial<Quote> | null;
   updatingChildReqItems: boolean;
   viewingItemAttachment: number | null;
+  // 1 = anexo comum, 2 = nota fiscal
+  viewingItemAttachmentType: number;
 }
 const initialState: RequisitionItemState = {
   addingProducts: false,
@@ -33,6 +35,7 @@ const initialState: RequisitionItemState = {
   selectedQuote: null,
   updatingChildReqItems: false,
   viewingItemAttachment: null,
+  viewingItemAttachmentType: 1,
 };
 
 const requisitionItemSlice = createSlice({
@@ -107,6 +110,9 @@ const requisitionItemSlice = createSlice({
     },
     setViewingItemAttachment(state, action: PayloadAction<number | null>) {
       state.viewingItemAttachment = action.payload;
+    },
+    setViewingItemAttachmentType(state, action: PayloadAction<number>) {
+      state.viewingItemAttachmentType = action.payload;
     }
   },
 });
@@ -128,6 +134,7 @@ export const {
   setSelectedQuote,
   setUpdatingChildReqItems,
   setViewingItemAttachment,
+  setViewingItemAttachmentType,
   replaceItem,
   setItems,
   removeItem,

@@ -43,7 +43,8 @@ const formatDateTime = (value: string | null) => {
 export const usePontoColumns = (
   handleChangeFilters: (event: React.ChangeEvent<HTMLInputElement>, field: string) => void,
   onToggleField?: (codapont: number, field: string, nextValue: boolean) => void,
-  hasPermission?: boolean
+  hasPermission?: boolean,
+  hasJustificativaPermission?: boolean
 ) => {
   const { filters, rows } = useSelector((state: RootState) => state.pontoTable);
 
@@ -256,9 +257,11 @@ export const usePontoColumns = (
         headerName: "Justificativa",
         width: columnWidths.JUSTIFICATIVA,
         sortable: true,
+        editable: hasJustificativaPermission,
+        valueGetter: (value: string) => value || "",
       },
     ],
-    [filters, handleChangeFilters, onToggleField, hasPermission, columnWidths]
+    [filters, handleChangeFilters, onToggleField, hasPermission, hasJustificativaPermission, columnWidths]
   );
 
   return { columns };

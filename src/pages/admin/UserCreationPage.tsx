@@ -39,7 +39,7 @@ const UserCreationPage = () => {
   );
 
   const handleBack = () => {
-    navigate("/");
+    navigate("/admin/usuarios");
   };
 
   const handleChange =

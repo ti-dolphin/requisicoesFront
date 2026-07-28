@@ -36,6 +36,7 @@ const RequisitionCommentList = ({ fullScreen = false }: RequisitionCommentListPr
   const dispatch = useDispatch();
   const { id_requisicao } = useParams<{ id_requisicao: string }>();
   const  refreshRequisition  = useSelector((state: RootState) => state.requisition.refreshRequisition);
+  const refreshReqComments = useSelector((state: RootState) => state.requisitionComment.refreshReqComments);
   const user = useSelector((state: RootState) => state.user.user);
   const [newComment, setNewComment] = useState("");
   const [editingComment, setEditingComment] = useState<RequisitionComment | null>(null);
@@ -55,7 +56,7 @@ const RequisitionCommentList = ({ fullScreen = false }: RequisitionCommentListPr
         setFeedback({ type: "error", message: "Falha ao carregar comentários" })
       );
     }
-  }, [dispatch, id_requisicao, refreshRequisition]);
+  }, [dispatch, id_requisicao, refreshRequisition, refreshReqComments]);
 
   useEffect(() => {
     fetchData();

@@ -49,7 +49,7 @@ const RequisitionTimeline = ({ fullScreen = false }: RequisitionTimelineProps) =
     if (requisition?.ID_REQUISICAO) {
       fetchData();
     }
-  }, [requisition]);
+  }, [requisition?.ID_REQUISICAO, requisition?.id_status_requisicao, requisition?.comprador?.CODPESSOA]);
 
   const getBuyerChangeData = (alteration: RequisitionStatusAlteration) => {
     if (alteration.transicao?.nome_transicao === "alterou comprador") {

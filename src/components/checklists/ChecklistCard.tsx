@@ -79,7 +79,9 @@ const ChecklistCard = ({ checklist, styles, openChecklistView }: Props) => {
           sx={{ fontSize: "0.8rem" }}
         >
           <strong>Data da Realização:</strong>{" "}
-          {getDateStringFromISOstring(checklist.data_realizado || "") || "-"}
+          {getDateStringFromISOstring(
+            checklist.data_realizado || checklist.data_aprovado || ""
+          ) || "-"}
         </Typography>
         <Typography
           variant="body2"

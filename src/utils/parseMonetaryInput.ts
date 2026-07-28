@@ -30,11 +30,35 @@ const parseIntegerWithThousandSeparator = (unsigned: string, sign: number): numb
   return roundToScale(sign * Number(integerDigits));
 };
 
-// Padrão BR aceito:
-// - ponto como separador de milhar
-// - vírgula como separador decimal (até 3 casas)
-// Se a DataGrid devolver valor com ponto decimal técnico (ex: "1.123")
-// e ele for equivalente ao valor anterior, preservamos o valor anterior.
+const parseDotAmbiguous = (
+  unsigned: string,
+  sign: number,
+  previousValue?: number
+): number => {
+  const groups = unsigned.split(".").filter(Boolean);
+  if (groups.length === 0) return 0;
+
+  const lastGroup = groups[groups.length - 1];
+
+  if (groups.length === 2 && lastGroup.length <= 2) {
+    const integerDigits = groups[0].replace(/\D/g, "") || "0";
+    return roundToScale(sign * Number(`${integerDigits}.${lastGroup}`));
+  }
+
+  if (lastGroup.length === 3 && previousValue !== undefined) {
+    const integerDigits = groups.slice(0, -1).join("").replace(/\D/g, "") || "0";
+    const decimalCandidate = sign * Number(`${integerDigits}.${lastGroup}`);
+    if (
+      Number.isFinite(decimalCandidate) &&
+      Math.abs(decimalCandidate - Number(previousValue)) < REEDIT_EPSILON
+    ) {
+      return roundToScale(decimalCandidate);
+    }
+  }
+
+  return parseIntegerWithThousandSeparator(unsigned, sign);
+};
+
 export const normalizeMonetaryInput = (
   value: unknown,
   previousValue?: number
@@ -60,16 +84,7 @@ export const normalizeMonetaryInput = (
   }
 
   if (unsigned.includes(".")) {
-    const dotDecimalCandidate = Number(unsigned);
-    if (
-      previousValue !== undefined &&
-      Number.isFinite(dotDecimalCandidate) &&
-      Math.abs(dotDecimalCandidate - Number(previousValue)) < REEDIT_EPSILON
-    ) {
-      return roundToScale(Number(previousValue));
-    }
-
-    return parseIntegerWithThousandSeparator(unsigned, sign);
+    return parseDotAmbiguous(unsigned, sign, previousValue);
   }
 
   return roundToScale(sign * Number(unsigned));

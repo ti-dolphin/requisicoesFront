@@ -1,5 +1,6 @@
 import { Autocomplete, Box, Button, TextField } from "@mui/material";
 import React from "react";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 import { useUserOptions } from "../../hooks/useUserOptions";
 import { useProjectOptions } from "../../hooks/projectOptionsHook";
 import { setFeedback } from "../../redux/slices/feedBackSlice";
@@ -12,6 +13,7 @@ import { Patrimony } from "../../models/patrimonios/Patrimony";
 import { usePatrimonyFormPermissions } from "../../hooks/patrimonios/usePatrimonyFormPermissions";
 import ElegantInput from "../shared/ui/Input";
 import OptionsField from "../shared/ui/OptionsField";
+import PatrimonyCalibrationAttachmentList from "./PatrimonyCalibrationAttachmentList";
 
 interface FormData {
   nome: string;
@@ -47,6 +49,8 @@ const PatrimonyForm = () => {
     calibracao: 0,
     data_proxima_calibracao: "",
   });
+  const [calibrationAttachmentDialogOpen, setCalibrationAttachmentDialogOpen] =
+    React.useState(false);
 
   //mode
   const [mode, setMode] = React.useState<"create" | "edit">("create");
@@ -188,7 +192,8 @@ const PatrimonyForm = () => {
   }, [dispatch, id_patrimonio]);
 
   return (
-    <Box
+    <>
+      <Box
       component="form"
       onSubmit={handleSubmit}
       sx={{
@@ -270,7 +275,7 @@ const PatrimonyForm = () => {
         </>
       )}
 
-      <div className="flex w-full items-center gap-2">
+      <div className="mt-2 flex w-full items-center gap-2">
         <input
           id="calibracao"
           type="checkbox"
@@ -294,27 +299,46 @@ const PatrimonyForm = () => {
       </div>
 
       {formData.calibracao === 1 && (
-        <ElegantInput
-          label="Data da próxima calibração"
-          type="date"
-          fullWidth
-          required
-          value={formData.data_proxima_calibracao}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              data_proxima_calibracao: e.target.value,
-            })
-          }
-          onFocus={handleFocus}
-          disabled={!permissionToEdit}
-        />
+        <>
+          <ElegantInput
+            label="Data da próxima calibração"
+            type="date"
+            fullWidth
+            required
+            value={formData.data_proxima_calibracao}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                data_proxima_calibracao: e.target.value,
+              })
+            }
+            onFocus={handleFocus}
+            disabled={!permissionToEdit}
+          />
+
+          <Button
+            variant="outlined"
+            size="small"
+            startIcon={<AttachFileIcon />}
+            onClick={() => setCalibrationAttachmentDialogOpen(true)}
+            disabled={!id_patrimonio}
+            sx={{ alignSelf: "flex-start", px: 1.5 }}
+          >
+            Anexo de calibração
+          </Button>
+        </>
       )}
 
       <Button type="submit" variant="contained">
         {mode === "create" ? "Criar" : "Salvar"}
       </Button>
-    </Box>
+      </Box>
+
+      <PatrimonyCalibrationAttachmentList
+        open={calibrationAttachmentDialogOpen}
+        onClose={() => setCalibrationAttachmentDialogOpen(false)}
+      />
+    </>
   );
 };
 

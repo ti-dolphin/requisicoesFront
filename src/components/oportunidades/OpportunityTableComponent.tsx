@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Box, Button, Checkbox, IconButton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
-import UpperNavigation from "../../components/shared/UpperNavigation";
+import { Box, Button, Checkbox, IconButton, Stack, Tooltip, Typography, useTheme,} from "@mui/material";
 import BaseTableToolBar from "../../components/shared/BaseTableToolBar";
 import BaseDataTable from "../../components/shared/BaseDataTable";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,7 +26,7 @@ import { ColumnReorderDialog } from "../../components/shared/ColumnReorderDialog
 import { usePersistedColumnOrder, ColumnPreference } from "../../hooks/table/usePersistedColumnOrder";
 const OPPORTUNITY_TABLE_KEY='opportunity-list'
 
-const OpportunityListPage = () => {
+const OpportunityTableComponent = () => {
 const dispatch = useDispatch();
 const user = useSelector((state: RootState) => state.user.user);
 const navigate = useNavigate();
@@ -119,6 +118,7 @@ useEffect(()=> {
   }
    //log heihgts
 }, [toolbarRef.current, columnFiltersRef.current]);
+
   return (
     <Box
       sx={{
@@ -126,7 +126,6 @@ useEffect(()=> {
         width: "100%",
       }}
     >
-      <UpperNavigation handleBack={() => navigate("/")} />
       <Box
         sx={{
           height: "calc(100% - 50px)",
@@ -241,4 +240,4 @@ useEffect(()=> {
   );
 };
 
-export default OpportunityListPage;
+export default OpportunityTableComponent;

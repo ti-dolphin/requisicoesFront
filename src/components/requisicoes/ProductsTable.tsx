@@ -8,7 +8,7 @@ import {
 } from "@mui/x-data-grid";
 import React, { useCallback, useEffect, useState } from "react";
 import { Product, ProductPatrimonyType } from "../../models/Product";
-import { Backdrop, Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Stack, TextField, Typography, useTheme } from "@mui/material";
+import { Backdrop, Box, Button, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Stack, TextField, Typography, useTheme } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import BaseDataTable from "../shared/BaseDataTable";
@@ -17,7 +17,7 @@ import { debounce } from "lodash";
 import { setFeedback } from "../../redux/slices/feedBackSlice";
 import { useProductPermissions } from "../../hooks/productPermissionsHook";
 import { ProductService } from "../../services/ProductService";
-import { setProductSelected, setRecentAddedProducts } from "../../redux/slices/requisicoes/requisitionItemSlice";
+import { setProductSelected, setRecentAddedProducts, removeRecentProduct } from "../../redux/slices/requisicoes/requisitionItemSlice";
 import EditIcon from "@mui/icons-material/Edit";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { useProductColumns } from "../../hooks/productColumnsHook";
@@ -51,6 +51,20 @@ const ProductsTable = ({ tipoFaturamento, fromReq }: ProductsTableProps) => {
   const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
   const { isMobile } = useIsMobile();
   const [patrimonyTypes, setPatrimonyTypes] = useState<ProductPatrimonyType[]>([]);
+  // guarda os dados (código/descrição) dos produtos já adicionados nesta sessão do diálogo,
+  // já que uma nova busca substitui "products" e o item selecionado pode sair da lista
+  const [selectedProductsInfo, setSelectedProductsInfo] = useState<Product[]>([]);
+
+  useEffect(() => {
+    setSelectedProductsInfo((prev) => {
+      const previouslyKnown = new Map(prev.map((product) => [product.ID, product]));
+      return recentProductsAdded.map(
+        (id) =>
+          products.find((product) => product.ID === id) ??
+          previouslyKnown.get(id) ?? { ID: id, codigo: "", descricao: `Produto ${id}` } as Product
+      );
+    });
+  }, [recentProductsAdded, products]);
 
   const refreshProducts = useCallback(async () => {
     const params: any = { searchTerm };
@@ -211,14 +225,20 @@ const ProductsTable = ({ tipoFaturamento, fromReq }: ProductsTableProps) => {
       return;
     }
 
-    const selectedProductId = Number(newRowSelectionModel[0]);
-    
+    const newIds = newRowSelectionModel as number[];
+    // apenas os ids recém-marcados nesta mudança (os demais já estavam selecionados em buscas anteriores)
+    const addedIds = newIds.filter((id) => !recentProductsAdded.includes(id));
+
     // Allow product 138331 to be added multiple times
-    if (selectedProductId !== 138331 && productsAdded.includes(selectedProductId)){ 
+    const alreadyAddedId = addedIds.find(
+      (id) => id !== 138331 && productsAdded.includes(id)
+    );
+    if (alreadyAddedId !== undefined) {
       dispatch(setFeedback({ message: 'O produto ja foi adicionado a requisição', type: 'error' }));
       return;
     }
-      dispatch(setRecentAddedProducts(newRowSelectionModel as number[]));
+
+    dispatch(setRecentAddedProducts(newIds));
   };
   
   //Processa mudança de modo, edição ou visualização
@@ -349,6 +369,30 @@ const ProductsTable = ({ tipoFaturamento, fromReq }: ProductsTableProps) => {
       <BaseTableToolBar
         handleChangeSearchTerm={debouncedHandleChangeSearchTerm}
       />
+      {addingProducts && selectedProductsInfo.length > 0 && (
+        <Box sx={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 1, px: 1, py: 1 }}>
+          {selectedProductsInfo.map((product) => (
+            <Chip
+              key={product.ID}
+              size="small"
+              color="primary"
+              variant="outlined"
+              label={product.descricao}
+              title={product.descricao}
+              onDelete={() => dispatch(removeRecentProduct(product.ID))}
+              sx={{
+                minWidth: 0,
+                maxWidth: "100%",
+                "& .MuiChip-label": {
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                },
+              }}
+            />
+          ))}
+        </Box>
+      )}
       <Box sx={{ position: "relative", flexGrow: 1 }}>
       {isMobile ? (
         <Box
@@ -389,6 +433,7 @@ const ProductsTable = ({ tipoFaturamento, fromReq }: ProductsTableProps) => {
           rowSelection
           rowSelectionModel={getRowSelectionModelForContext()}
           disableRowSelectionOnClick
+          keepNonExistentRowsSelected
           disableColumnMenu
           sx={{
             "& .MuiDataGrid-columnHeaders": {

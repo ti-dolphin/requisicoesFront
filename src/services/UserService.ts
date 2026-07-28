@@ -44,6 +44,21 @@ export class UserService {
     return data;
   }
 
+  static async getAllForAdmin(): Promise<User[]> {
+    const { data } = await api.get<User[]>(`${API_URL}/admin/all`);
+    return data;
+  }
+
+  static async updateByAdmin(CODPESSOA: number, payload: Partial<User>): Promise<User> {
+    const { data } = await api.put<User>(`${API_URL}/admin/${CODPESSOA}`, payload);
+    return data;
+  }
+
+  static async setActive(CODPESSOA: number, ATIVO: boolean): Promise<User> {
+    const { data } = await api.patch<User>(`${API_URL}/admin/${CODPESSOA}/active`, { ATIVO });
+    return data;
+  }
+
   static async update(CODPESSOA: number, payload: Partial<User>): Promise<User> {
     const { data } = await api.put<User>(`${API_URL}/${CODPESSOA}`, payload);
     return data;

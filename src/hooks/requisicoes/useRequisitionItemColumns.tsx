@@ -1,9 +1,14 @@
 import React, { ChangeEvent, useCallback, useEffect, useState, useMemo } from "react";
-import { GridColDef } from "@mui/x-data-grid";
+import {
+  GridColDef,
+  GridEditInputCell,
+  GridRenderEditCellParams,
+} from "@mui/x-data-grid";
 import {
   calculateQuoteSubtotal,
   calculateUnitPriceWithTaxes,
   formatCurrency2To3,
+  formatDecimalPtBr,
   getDateFromISOstring,
 } from "../../utils";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,6 +21,7 @@ import {
   setItemBeingReplaced,
   setReplacingItemProduct,
   setViewingItemAttachment,
+  setViewingItemAttachmentType,
 } from "../../redux/slices/requisicoes/requisitionItemSlice";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import { setFeedback } from "../../redux/slices/feedBackSlice";
@@ -28,7 +34,23 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import FileIcon from '@mui/icons-material/FilePresent';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import { calculateColumnWidth } from "../../utils/calculateColumnWidth";
+
+const StyledBadge = styled(Badge)<BadgeProps>(() => ({
+  "& .MuiBadge-badge": {
+    right: -3,
+    top: 13,
+    padding: "0 4px",
+  },
+}));
+
+// O editor padrão do grid aplica o valor digitado com debounce (~200ms);
+// trocando de célula rapidamente o commit acontecia antes do valor pendente
+// ser aplicado e o PUT ia sem a alteração. debounceMs={0} aplica a cada tecla.
+const renderInstantEditCell = (params: GridRenderEditCellParams) => (
+  <GridEditInputCell {...params} debounceMs={0} />
+);
 
 export const useRequisitionItemColumns = (
   addingReqItems: boolean,
@@ -51,7 +73,7 @@ export const useRequisitionItemColumns = (
   const [ocValue, setOcValue] = useState<number | null>(null);
   const [fillingShippingDate, setFillingShippingDate] = useState(false);
   const [shippingDate, setShippingDate] = useState<string>("");
-  const [dinamicColumns, setDinamicColumns] = useState<GridColDef[]>([]);
+  const [rawDinamicColumns, setRawDinamicColumns] = useState<GridColDef[]>([]);
 
   const user = useSelector((state: RootState) => state.user.user);
 
@@ -70,17 +92,27 @@ export const useRequisitionItemColumns = (
     [items]
   );
 
-  const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
-    "& .MuiBadge-badge": {
-      right: -3,
-      top: 13,
-      padding: "0 4px",
-    },
-  }));
+  // O anexo de NF só deve ficar disponível a partir da etapa "Lançar NF"
+  // (a etapa seguinte/final é "Concluído").
+  const canViewNfAttachment = useMemo(() => {
+    const statusName = (requisition.status?.nome ?? "").toLowerCase().trim();
+    return statusName === "lançar nf" || statusName === "concluído";
+  }, [requisition.status?.nome]);
 
   // Calcula a largura dinâmica da coluna de descrição
-  const descriptionColumnWidth = useMemo(() => 
+  const descriptionColumnWidth = useMemo(() =>
     calculateColumnWidth(items, 'produto_descricao', 'Descrição', undefined, undefined, 200, 600),
+    [items]
+  );
+
+  // Largura dinâmica da observação, no mesmo padrão da descrição. A célula
+  // renderiza o texto em negrito (~13px), então medimos com a mesma fonte —
+  // medir com a fonte normal/menor subestimava a largura e cortava o texto.
+  // O espaço extra cobre o botão de copiar + gap que dividem a célula.
+  const OBSERVACAO_ICON_ALLOWANCE = 30;
+  const observacaoColumnWidth = useMemo(() =>
+    calculateColumnWidth(items, 'observacao', 'Observação', undefined, 'bold 13px Roboto', 100, 600) +
+    OBSERVACAO_ICON_ALLOWANCE,
     [items]
   );
 
@@ -93,7 +125,7 @@ export const useRequisitionItemColumns = (
     dispatch(setCurrentQuoteIdSelected(null));
   };
 
-  const concludeFillingOC = async () => {
+  const concludeFillingOC = useCallback(async () => {
     if (!ocValue) {
       dispatch(
         setFeedback({
@@ -106,9 +138,9 @@ export const useRequisitionItemColumns = (
     await handleFillOCS(ocValue);
     setOcValue(null);
     setFillingOC(false);
-  };
+  }, [dispatch, handleFillOCS, ocValue]);
 
-  const concludeFillingShippingDate = async () => {
+  const concludeFillingShippingDate = useCallback(async () => {
     if (!shippingDate) {
       dispatch(
         setFeedback({
@@ -121,13 +153,16 @@ export const useRequisitionItemColumns = (
     await handleFillShippingDate(shippingDate);
     setShippingDate("");
     setFillingShippingDate(false);
-  };
+  }, [dispatch, handleFillShippingDate, shippingDate]);
 
-  const handleChangeshippingDate = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setShippingDate(e.target.value);
-  };
+  const handleChangeshippingDate = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setShippingDate(e.target.value);
+    },
+    []
+  );
 
-  const openOCDialog = () => {
+  const openOCDialog = useCallback(() => {
     if (!selectionModel.length) {
       dispatch(
         setFeedback({
@@ -138,9 +173,9 @@ export const useRequisitionItemColumns = (
       return;
     }
     setFillingOC(true);
-  };
+  }, [dispatch, selectionModel]);
 
-  const openShippingDateDialog = () => {
+  const openShippingDateDialog = useCallback(() => {
     if (!selectionModel.length) {
       dispatch(
         setFeedback({
@@ -151,9 +186,9 @@ export const useRequisitionItemColumns = (
       return;
     }
     setFillingShippingDate(true);
-  };
+  }, [dispatch, selectionModel]);
 
-  const columns: GridColDef[] = [
+  const columns: GridColDef[] = useMemo(() => [
     {
       field: "id_item_requisicao",
       headerName: "ID",
@@ -173,8 +208,20 @@ export const useRequisitionItemColumns = (
       width: descriptionColumnWidth,
       flex: 0,
       renderCell: (params: any) => (
-        <Box sx={{ display: "flex", alignItems: "center", height: "100%" }}>
-          <Typography fontSize="12px" fontWeight="bold">
+        <Box 
+          sx={{ 
+            display: "flex", 
+            alignItems: "center", 
+            height: "100%" 
+          }}
+        >
+          <Typography 
+            fontSize="11px" 
+            fontWeight="bold"
+            sx={{
+              whiteSpace: 'normal'
+            }}
+          >
             {params.value}
           </Typography>
         </Box>
@@ -186,6 +233,7 @@ export const useRequisitionItemColumns = (
       type: "number",
       width: 100,
       editable: true,
+      renderEditCell: renderInstantEditCell,
     },
     {
       field: "quantidade",
@@ -196,6 +244,7 @@ export const useRequisitionItemColumns = (
           : "QTD",
       type: "number",
       editable: attendingItems ? false : true,
+      renderEditCell: renderInstantEditCell,
       width: attendingItems ? 200 : 100,
       renderCell: (params: any) => (
         <Box
@@ -213,12 +262,23 @@ export const useRequisitionItemColumns = (
       ),
     },
     {
+      // Sem type "number" de propósito: o editor numérico do DataGrid rejeita
+      // vírgula como separador decimal (padrão pt-BR). A conversão para número
+      // acontece só no commit (processRowUpdate), senão o separador some
+      // enquanto o usuário digita.
       field: "target_price",
       headerName: "Valor alvo unitário",
-      type: "number",
       width: 120,
       editable: attendingItems ? false : true,
-    },  
+      align: "right",
+      headerAlign: "right",
+      sortComparator: (a: any, b: any) => Number(a || 0) - Number(b || 0),
+      renderEditCell: renderInstantEditCell,
+      renderCell: (params: any) =>
+        params.value !== null && params.value !== undefined && params.value !== ""
+          ? formatDecimalPtBr(Number(params.value))
+          : "",
+    },
     {
       field: "data_necessidade",
       headerName: "Data de necessidade",
@@ -363,6 +423,7 @@ export const useRequisitionItemColumns = (
       headerName: "Unidade",
       type: "string",
       editable: true,
+      renderEditCell: renderInstantEditCell,
       sortable: false,
       minWidth: 70,
     },
@@ -370,8 +431,14 @@ export const useRequisitionItemColumns = (
       field: "oc",
       headerName: "OC",
       editable: true,
+      renderEditCell: renderInstantEditCell,
       type: "string",
-      valueGetter: (oc: string) => oc || "",
+      // 0 é o default do banco e significa "sem OC": exibe e edita como vazio.
+      // O guard de no-op da tabela também trata 0 e "" como equivalentes.
+      valueGetter: (oc: string) => {
+        const value = String(oc ?? "").trim();
+        return value === "0" ? "" : value;
+      },
       minWidth: 100,
       renderHeader: () => (
         <Box
@@ -415,7 +482,12 @@ export const useRequisitionItemColumns = (
       headerName: "Observação",
       type: "string",
       editable: true,
-      valueGetter: (observacao: string) => observacao || "N/A",
+      renderEditCell: renderInstantEditCell,
+      // O "N/A" é só exibição (renderCell); no valueGetter ele contaminava o
+      // valor de edição e clicar/sair da célula gravava "N/A" no banco.
+      valueGetter: (observacao: string) => observacao ?? "",
+      width: observacaoColumnWidth,
+      flex: 0,
       minWidth: 100,
       renderCell: (params) => (
         <Box
@@ -431,11 +503,16 @@ export const useRequisitionItemColumns = (
               onClick={() => navigator.clipboard.writeText(params.value)}
               sx={{ padding: 0, flexShrink: 0 }}
             >
-              <ContentCopyIcon sx={{ fontSize: 14 }} />
+              <ContentCopyIcon sx={{ fontSize: 11 }} />
             </IconButton>
           </Tooltip>
-          <Typography fontSize="small" fontWeight="bold">
-            {params.value}
+          <Typography 
+            sx={{
+              whiteSpace: 'normal',
+              fontSize: '12px'
+            }}
+          >
+            {String(params?.value ?? '')}
           </Typography>
         </Box>
       ),
@@ -527,12 +604,16 @@ export const useRequisitionItemColumns = (
       field: "actions",
       headerName: "Ações",
       type: "actions",
-      minWidth: 110,
+      minWidth: 140,
       renderCell: (row) => {
         const { id } = row;
-        function setItemBeingViewed(arg0: number): any {
-          throw new Error("Function not implemented.");
-        }
+        const anexos = row.row.anexos ?? [];
+        const normalAttachmentsCount = anexos.filter(
+          (anexo: any) => (anexo.tipo ?? 1) !== 2
+        ).length;
+        const nfAttachmentsCount = anexos.filter(
+          (anexo: any) => anexo.tipo === 2
+        ).length;
 
         return (
           <Box
@@ -567,90 +648,146 @@ export const useRequisitionItemColumns = (
                 </IconButton>
               </Tooltip>
             )}
-            <IconButton
-              onClick={() => {
-                dispatch(setViewingItemAttachment(Number(id)));
-              }}
-              sx={{ height: 24, width: 24 }}
-            >
-              {row.row.anexos.length > 0 ? (
-                <StyledBadge
-                  variant="standard"
-                  badgeContent={row.row.anexos.length}
-                  color="primary"
-                >
+            <Tooltip title="Anexos">
+              <IconButton
+                onClick={() => {
+                  dispatch(setViewingItemAttachmentType(1));
+                  dispatch(setViewingItemAttachment(Number(id)));
+                }}
+                sx={{ height: 24, width: 24 }}
+              >
+                {normalAttachmentsCount > 0 ? (
+                  <StyledBadge
+                    variant="standard"
+                    badgeContent={normalAttachmentsCount}
+                    color="primary"
+                  >
+                    <FileIcon sx={{ fontSize: 14 }} />
+                  </StyledBadge>
+                ) : (
                   <FileIcon sx={{ fontSize: 14 }} />
-                </StyledBadge>
-              ) : (
-                <FileIcon sx={{ fontSize: 14 }} />
-              )}
-            </IconButton>
+                )}
+              </IconButton>
+            </Tooltip>
+            {canViewNfAttachment && (
+              <Tooltip title="Anexo NF">
+                <IconButton
+                  onClick={() => {
+                    dispatch(setViewingItemAttachmentType(2));
+                    dispatch(setViewingItemAttachment(Number(id)));
+                  }}
+                  sx={{ height: 24, width: 24 }}
+                >
+                  {nfAttachmentsCount > 0 ? (
+                    <StyledBadge
+                      variant="standard"
+                      badgeContent={nfAttachmentsCount}
+                      color="secondary"
+                    >
+                      <ReceiptLongIcon sx={{ fontSize: 14 }} />
+                    </StyledBadge>
+                  ) : (
+                    <ReceiptLongIcon sx={{ fontSize: 14 }} />
+                  )}
+                </IconButton>
+              </Tooltip>
+            )}
           </Box>
         );
       },
     },
-  ];
+  ], [
+    descriptionColumnWidth,
+    observacaoColumnWidth,
+    attendingItems,
+    hasStockToPurchaseSplit,
+    canViewNfAttachment,
+    editItemFieldsPermitted,
+    user?.PERM_COMPRADOR,
+    blockFields,
+    fillingOC,
+    ocValue,
+    fillingShippingDate,
+    shippingDate,
+    openOCDialog,
+    openShippingDateDialog,
+    concludeFillingOC,
+    concludeFillingShippingDate,
+    handleChangeshippingDate,
+    handleDeleteItem,
+    dispatch,
+  ]);
 
   // Definindo filteredColumns para sempre executar hooks depois
-  const nonDefaultColumns = [
-    "produto_quantidade_disponivel",
-    "quantidade_atendida",
-    "quantidade_disponivel",
-    "quantidade_solicitada",
-    "quantidade_estoque",
-  ];
-  let filteredColumns = columns.filter((col) => !nonDefaultColumns.includes(col.field));
-
-  if (hasStockToPurchaseSplit && !updatingRecentProductsQuantity && !addingReqItems && !attendingItems) {
-    const fieldsToShow = ["quantidade_solicitada", "quantidade_estoque"];
-    const stockFlowColumns = columns.filter((col) => fieldsToShow.includes(col.field));
-    filteredColumns = [...filteredColumns, ...stockFlowColumns];
-
-    const quantityFlowOrder = ["quantidade_solicitada", "quantidade", "quantidade_estoque"];
-    const quantityFlowColumns = quantityFlowOrder
-      .map((field) => filteredColumns.find((col) => col.field === field))
-      .filter(Boolean) as GridColDef[];
-    const remainingColumns = filteredColumns.filter(
-      (col) => !quantityFlowOrder.includes(col.field)
-    );
-    filteredColumns = [...quantityFlowColumns, ...remainingColumns];
-  }
-
-  // Se a requisição está no escopo de estoque (id_escopo_requisicao = 1), incluir coluna de estoque
-  const isStockScope = requisition?.id_escopo_requisicao === 1;
-  if (isStockScope && !updatingRecentProductsQuantity && !addingReqItems && !attendingItems) {
-    // Incluir a coluna quantidade_disponivel
-    const stockColumn = columns.find(col => col.field === "quantidade_disponivel");
-    if (stockColumn && !filteredColumns.includes(stockColumn)) {
-      filteredColumns = [...filteredColumns, stockColumn];
-    }
-  }
-
-  if (updatingRecentProductsQuantity) {
-    const selectedColumns = [
-      "produto_descricao",
-      "quantidade",
+  const filteredColumns = useMemo(() => {
+    const nonDefaultColumns = [
       "produto_quantidade_disponivel",
+      "quantidade_atendida",
+      "quantidade_disponivel",
+      "quantidade_solicitada",
+      "quantidade_estoque",
     ];
-    filteredColumns = columns.filter((col) =>
-      selectedColumns.includes(col.field)
-    );
-  }
-  if (addingReqItems) {
-    filteredColumns = columns.filter((col) =>
-      ["produto_descricao"].includes(col.field)
-    );
-  }
-  if (attendingItems) {
-    filteredColumns = columns.filter((col) =>
-      [
+    let filtered = columns.filter((col) => !nonDefaultColumns.includes(col.field));
+
+    if (hasStockToPurchaseSplit && !updatingRecentProductsQuantity && !addingReqItems && !attendingItems) {
+      const fieldsToShow = ["quantidade_solicitada", "quantidade_estoque"];
+      const stockFlowColumns = columns.filter((col) => fieldsToShow.includes(col.field));
+      filtered = [...filtered, ...stockFlowColumns];
+
+      const quantityFlowOrder = ["quantidade_solicitada", "quantidade", "quantidade_estoque"];
+      const quantityFlowColumns = quantityFlowOrder
+        .map((field) => filtered.find((col) => col.field === field))
+        .filter(Boolean) as GridColDef[];
+      const remainingColumns = filtered.filter(
+        (col) => !quantityFlowOrder.includes(col.field)
+      );
+      filtered = [...quantityFlowColumns, ...remainingColumns];
+    }
+
+    // Se a requisição está no escopo de estoque (id_escopo_requisicao = 1), incluir coluna de estoque
+    const isStockScope = requisition?.id_escopo_requisicao === 1;
+    if (isStockScope && !updatingRecentProductsQuantity && !addingReqItems && !attendingItems) {
+      // Incluir a coluna quantidade_disponivel
+      const stockColumn = columns.find(col => col.field === "quantidade_disponivel");
+      if (stockColumn && !filtered.includes(stockColumn)) {
+        filtered = [...filtered, stockColumn];
+      }
+    }
+
+    if (updatingRecentProductsQuantity) {
+      const selectedColumns = [
         "produto_descricao",
-        "quantidade_atendida",
         "quantidade",
-        "quantidade_disponivel",
-      ].includes(col.field)
-    );
-  }
+        "produto_quantidade_disponivel",
+      ];
+      filtered = columns.filter((col) =>
+        selectedColumns.includes(col.field)
+      );
+    }
+    if (addingReqItems) {
+      filtered = columns.filter((col) =>
+        ["produto_descricao"].includes(col.field)
+      );
+    }
+    if (attendingItems) {
+      filtered = columns.filter((col) =>
+        [
+          "produto_descricao",
+          "quantidade_atendida",
+          "quantidade",
+          "quantidade_disponivel",
+        ].includes(col.field)
+      );
+    }
+    return filtered;
+  }, [
+    columns,
+    hasStockToPurchaseSplit,
+    updatingRecentProductsQuantity,
+    addingReqItems,
+    attendingItems,
+    requisition?.id_escopo_requisicao,
+  ]);
 
 
   const fetchDinamicColumns = useCallback(async () => {
@@ -658,101 +795,7 @@ export const useRequisitionItemColumns = (
       const rawCols = await RequisitionItemService.getDinamicColumns(
         Number(id_requisicao)
       );
-      const colsWithRenderCell = rawCols.map((col: GridColDef) => ({
-        ...col,
-        editable: true,
-        // Permite ordenação correta pelo valor numérico do preço cotado
-        valueGetter: (value: any, row: any) => {
-          if (!row) return null;
-          const quoteItem = row.items_cotacao?.find(
-            (item: QuoteItem) => Number(item.id_cotacao) === Number(col.field)
-          );
-          return quoteItem && !quoteItem.indisponivel
-            ? calculateUnitPriceWithTaxes(
-                Number(quoteItem.preco_unitario || 0),
-                Number(quoteItem.IPI || 0),
-                Number(quoteItem.ST || 0)
-              )
-            : null;
-        },
-        renderCell: (params: any) => {
-          const { id_item_requisicao } = params.row;
-          const quoteItem = params.row.items_cotacao.find(
-            (item: QuoteItem) =>
-              Number(item.id_cotacao) === Number(params.field)
-          );
-          const hasquoteItem = quoteItem && !quoteItem.indisponivel;
-          const parciallyQuoted = hasquoteItem
-            ? Number(quoteItem.quantidade_cotada) <
-              Number(quoteItem.quantidade_solicitada)
-            : false;
-          const priceWithTaxes = hasquoteItem
-            ? calculateUnitPriceWithTaxes(
-                Number(quoteItem?.preco_unitario || 0),
-                Number(quoteItem?.IPI || 0),
-                Number(quoteItem?.ST || 0)
-              )
-            : null;
-
-          return (
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              {hasquoteItem && priceWithTaxes !== null &&
-                formatCurrency2To3(Number(priceWithTaxes) || 0)}
-              {hasquoteItem && (
-                <Checkbox
-                  disabled={blockFields || !editItemFieldsPermitted}
-                  onChange={(e) =>
-                    handleChangeQuoteItemsSelected(
-                      e,
-                      Number(quoteItem?.id_item_cotacao),
-                      Number(id_item_requisicao)
-                    )
-                  }
-                  checked={
-                    quoteItemsSelected.get(Number(id_item_requisicao)) ===
-                    Number(quoteItem?.id_item_cotacao)
-                      ? true
-                      : false
-                  }
-                  icon={<RadioButtonUncheckedIcon sx={{ fontSize: 14 }} />}
-                  checkedIcon={<CheckCircleIcon sx={{ fontSize: 14 }} />}
-                  sx={{ color: "primary.main" }}
-                />
-              )}
-              {quoteItem?.indisponivel > 0 && (
-                <Tooltip
-                  title={`Indisponível no fornecedor: ${col.headerName}`}
-                >
-                  <ErrorIcon color="error" sx={{ fontSize: 14 }} />
-                </Tooltip>
-              )}
-              {parciallyQuoted && (
-                <Tooltip
-                  title={`Quantidade cotada: ${quoteItem?.quantidade_cotada}`}
-                > 
-                  <ErrorIcon color="secondary" sx={{ fontSize: 14 }} />
-                </Tooltip>
-              )}
-            </Box>
-          );
-        },
-        minWidth: 200,
-        sortable: true,
-        renderHeader: (params: any) => {
-          return (
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Typography
-                fontSize="0.7rem"
-                fontWeight="bold"
-                color="primary"
-              >
-                {params.colDef.headerName}
-              </Typography>
-            </Box>
-          );
-        },
-      }));
-      setDinamicColumns(colsWithRenderCell);
+      setRawDinamicColumns(rawCols);
     } catch (e) {
       console.error('[useRequisitionItemColumns] Erro ao buscar colunas dinâmicas', e);
       dispatch(
@@ -762,13 +805,109 @@ export const useRequisitionItemColumns = (
         })
       );
     }
+  }, [dispatch, id_requisicao]);
+
+  const dinamicColumns = useMemo(() => {
+    return rawDinamicColumns.map((col: GridColDef) => ({
+      ...col,
+      editable: true,
+      // Permite ordenação correta pelo valor numérico do preço cotado
+      valueGetter: (value: any, row: any) => {
+        if (!row) return null;
+        const quoteItem = row.items_cotacao?.find(
+          (item: QuoteItem) => Number(item.id_cotacao) === Number(col.field)
+        );
+        return quoteItem && !quoteItem.indisponivel
+          ? calculateUnitPriceWithTaxes(
+              Number(quoteItem.preco_unitario || 0),
+              Number(quoteItem.IPI || 0),
+              Number(quoteItem.ST || 0)
+            )
+          : null;
+      },
+      renderCell: (params: any) => {
+        const { id_item_requisicao } = params.row;
+        const quoteItem = params.row.items_cotacao.find(
+          (item: QuoteItem) =>
+            Number(item.id_cotacao) === Number(params.field)
+        );
+        const hasquoteItem = quoteItem && !quoteItem.indisponivel;
+        const parciallyQuoted = hasquoteItem
+          ? Number(quoteItem.quantidade_cotada) <
+            Number(quoteItem.quantidade_solicitada)
+          : false;
+        const priceWithTaxes = hasquoteItem
+          ? calculateUnitPriceWithTaxes(
+              Number(quoteItem?.preco_unitario || 0),
+              Number(quoteItem?.IPI || 0),
+              Number(quoteItem?.ST || 0)
+            )
+          : null;
+
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            {hasquoteItem && priceWithTaxes !== null &&
+              formatCurrency2To3(Number(priceWithTaxes) || 0)}
+            {hasquoteItem && (
+              <Checkbox
+                disabled={blockFields || !editItemFieldsPermitted}
+                onChange={(e) =>
+                  handleChangeQuoteItemsSelected(
+                    e,
+                    Number(quoteItem?.id_item_cotacao),
+                    Number(id_item_requisicao)
+                  )
+                }
+                checked={
+                  quoteItemsSelected.get(Number(id_item_requisicao)) ===
+                  Number(quoteItem?.id_item_cotacao)
+                    ? true
+                    : false
+                }
+                icon={<RadioButtonUncheckedIcon sx={{ fontSize: 14 }} />}
+                checkedIcon={<CheckCircleIcon sx={{ fontSize: 14 }} />}
+                sx={{ color: "primary.main" }}
+              />
+            )}
+            {quoteItem?.indisponivel > 0 && (
+              <Tooltip
+                title={`Indisponível no fornecedor: ${col.headerName}`}
+              >
+                <ErrorIcon color="error" sx={{ fontSize: 14 }} />
+              </Tooltip>
+            )}
+            {parciallyQuoted && (
+              <Tooltip
+                title={`Quantidade cotada: ${quoteItem?.quantidade_cotada}`}
+              >
+                <ErrorIcon color="secondary" sx={{ fontSize: 14 }} />
+              </Tooltip>
+            )}
+          </Box>
+        );
+      },
+      minWidth: 200,
+      sortable: true,
+      renderHeader: (params: any) => {
+        return (
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Typography
+              fontSize="0.7rem"
+              fontWeight="bold"
+              color="primary"
+            >
+              {params.colDef.headerName}
+            </Typography>
+          </Box>
+        );
+      },
+    }));
   }, [
-    dispatch,
+    rawDinamicColumns,
     handleChangeQuoteItemsSelected,
-    id_requisicao,
     quoteItemsSelected,
     blockFields,
-    editItemFieldsPermitted
+    editItemFieldsPermitted,
   ]);
 
   const isDinamicField = useCallback(
@@ -783,8 +922,19 @@ export const useRequisitionItemColumns = (
     items.length > 0 &&
     items.every((item: any) => Array.isArray(item.items_cotacao));
 
+  const selectedQuoteItemsKey = useMemo(
+    () =>
+      items
+        .map(
+          (item: any) =>
+            `${item.id_item_requisicao}:${item.id_item_cotacao ?? 0}:${item.quantidade ?? 0}`
+        )
+        .join("|"),
+    [items]
+  );
+
   useEffect(() => {
-    setDinamicColumns([]);
+    setRawDinamicColumns([]);
   }, [id_requisicao]);
 
   useEffect(() => {
@@ -806,7 +956,8 @@ export const useRequisitionItemColumns = (
     addingReqItems,
     updatingRecentProductsQuantity,
     id_requisicao,
-    allItemsHaveCotacao
+    allItemsHaveCotacao,
+    selectedQuoteItemsKey,
   ]);
 
   return useMemo(() => {
@@ -830,7 +981,5 @@ export const useRequisitionItemColumns = (
     fillingShippingDate,
     shippingDate,
     isDinamicField,
-    editItemFieldsPermitted,
-    requisition?.id_escopo_requisicao
   ]);
 };

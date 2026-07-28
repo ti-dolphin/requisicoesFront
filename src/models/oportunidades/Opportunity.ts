@@ -51,6 +51,7 @@ export interface Opportunity {
     observacoes: string;
     DESCRICAO_VENDA: string;
     EMAIL_VENDA_ENVIADO: boolean;
+    kanban_column_id: number;
     responsavel: ReducedUser;
     adicional: ProjectAdicional;
     status: OpportunityStatus;

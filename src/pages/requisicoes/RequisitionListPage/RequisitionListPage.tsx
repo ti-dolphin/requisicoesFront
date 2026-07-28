@@ -144,7 +144,7 @@ const RequisitionListPage = () => {
       return 'requisition-warning';
     }
 
-    return '';  
+    return '';
   },[selectedKanban]);
 
   const handleDeleteRequisition = async () => {
@@ -202,11 +202,13 @@ const RequisitionListPage = () => {
 
   const goToRequisitionDetails = React.useCallback(
     (id: number) => {
-      debouncedHandleChangeSearchTerm.cancel();
-      dispatch(setSearchTerm(""));
+      // Mantém a pesquisa global salva ao abrir uma requisição: ao voltar,
+      // a lista reexibe o mesmo texto e o mesmo resultado (igual aos filtros).
+      // flush() grava no Redux o termo digitado que ainda esteja pendente no debounce.
+      debouncedHandleChangeSearchTerm.flush();
       navigate(`/requisicoes/${id}`);
     },
-    [debouncedHandleChangeSearchTerm, dispatch, navigate]
+    [debouncedHandleChangeSearchTerm, navigate]
   );
 
   const navigateToRequisitionDetails = (params: any) => {
@@ -356,6 +358,8 @@ const RequisitionListPage = () => {
         </BaseToolBar>
         <BaseTableToolBar
           handleChangeSearchTerm={debouncedHandleChangeSearchTerm}
+          searchValue={searchTerm}
+          searchInputStyles={{ width: 400 }}
         >
           {!isMobile && selectedKanban?.id_kanban_requisicao === 5 && (
             <>

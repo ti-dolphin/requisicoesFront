@@ -150,7 +150,7 @@ const PatrimonyListPage = () => {
       dispatch(setIsLoading(false));
       dispatch(
         setFeedback({
-          message: "Houve um erro ao buscar requisições",
+          message: "Houve um erro ao buscar patrimônios",
           type: "error",
         })
       );

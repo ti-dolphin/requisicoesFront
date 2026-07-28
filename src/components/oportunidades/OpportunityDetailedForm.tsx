@@ -31,6 +31,7 @@ import {
 } from "../../utils";
 import BaseDeleteDialog from "../shared/BaseDeleteDialog";
 import CurrencyInput from "../shared/ui/CurrencyInput";
+import EmailIcon from "@mui/icons-material/Email";
 
 const OpportunityDetailedForm = () => {
   const dispatch = useDispatch();
@@ -44,6 +45,7 @@ const OpportunityDetailedForm = () => {
     null
   );
   const [finalizeConfirmOpen, setFinalizeConfirmOpen] = useState(false);
+  const [resendingEmail, setResendingEmail] = useState(false);
 
   const getNumericValue = (value: unknown) => {
     const numericValue = Number(value);
@@ -126,6 +128,33 @@ const OpportunityDetailedForm = () => {
       setFeedback({ message: "Erro ao salvar oportunidade", type: "error" });
     }
   }
+
+  const handleResendSoldEmail = async () => {
+    if (!CODOS) return;
+    setResendingEmail(true);
+    try {
+      await OpportunityService.sendSoldOpportunityEmail(
+        Number(CODOS),
+        formData,
+        user ? user : undefined
+      );
+      dispatch(
+        setFeedback({
+          message: "E-mail de ganho reenviado com sucesso",
+          type: "success",
+        })
+      );
+    } catch (e) {
+      dispatch(
+        setFeedback({
+          message: "Erro ao reenviar e-mail de ganho",
+          type: "error",
+        })
+      );
+    } finally {
+      setResendingEmail(false);
+    }
+  };
 
   const handleTextFieldChange = (
     field: FieldConfig,
@@ -503,13 +532,31 @@ const OpportunityDetailedForm = () => {
                 </Grid>
               );
             })}
-            <Stack direction="row" alignItems="center" gap={2}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              gap={2}
+              sx={{ width: "100%" }}
+            >
               <Typography color="text.primary" fontWeight="bold" fontSize={16}>
                 Valor Total:
               </Typography>
               <Typography color="green" fontWeight="bold" fontSize={16}>
                 {formatCurrency(liveTotalValue)}
               </Typography>
+              {user?.PERM_ADMINISTRADOR === 1 &&
+                opportunity.status?.CODSTATUS === 11 && (
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    startIcon={<EmailIcon />}
+                    onClick={handleResendSoldEmail}
+                    disabled={resendingEmail}
+                    sx={{ ml: "auto" }}
+                  >
+                    {resendingEmail ? "Enviando..." : "Reenviar e-mail"}
+                  </Button>
+                )}
             </Stack>
           </Grid>
         </Paper>

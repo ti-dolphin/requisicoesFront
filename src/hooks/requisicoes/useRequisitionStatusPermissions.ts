@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Requisition } from "../../models/requisicoes/Requisition";
 import { User } from "../../models/User";
 import RequisitionStatusService from "../../services/requisicoes/RequisitionStatusService";
@@ -18,7 +18,13 @@ export const useRequisitionStatusPermissions = (user: User | null, requisition: 
     const [permissionToActivate, setPermissionToActivate] = useState<boolean>(false);
     const [permissionToRevertStatus, setPermissionToRevertStatus] = useState<boolean>(false);
 
-    const fetchPermission = useCallback(async () => { 
+    const requisitionRef = useRef(requisition);
+    useEffect(() => {
+      requisitionRef.current = requisition;
+    }, [requisition]);
+
+    const fetchPermission = useCallback(async () => {
+      const requisition = requisitionRef.current;
       setPermissionToCancel(false);
       setPermissionToActivate(false);
       setPermissionToChangeStatus(false);
@@ -61,7 +67,16 @@ export const useRequisitionStatusPermissions = (user: User | null, requisition: 
           );
         }
       }
-    }, [user, requisition]);
+    }, [
+      user,
+      requisition.ID_REQUISICAO,
+      requisition.id_status_requisicao,
+      requisition.status?.nome,
+      requisition.id_escopo_requisicao,
+      requisition.gerente?.CODPESSOA,
+      requisition.responsavel?.CODPESSOA,
+      requisition.projeto?.ID_RESPONSAVEL,
+    ]);
 
     //useEffect
     useEffect(() => { 

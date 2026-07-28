@@ -49,9 +49,7 @@ const QuoteAttachmentList: React.FC<QuoteAttachmentListProps> = ({
 
   const sortAttachments = (files: QuoteFile[]) => {
     return [...files].sort((a, b) => {
-      const left = (a.url || a.nome_arquivo || "").toLowerCase();
-      const right = (b.url || b.nome_arquivo || "").toLowerCase();
-      return left.localeCompare(right, "pt-BR", { numeric: true });
+      return Number(a.id_anexo_cotacao) - Number(b.id_anexo_cotacao);
     });
   };
 

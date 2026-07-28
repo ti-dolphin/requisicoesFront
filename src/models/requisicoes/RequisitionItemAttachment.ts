@@ -5,4 +5,6 @@ export interface RequisitionItemAttachment {
     arquivo: string;
     id_item_requisicao: number;
     nome_arquivo: string;
+    // 1 = anexo comum, 2 = nota fiscal
+    tipo?: number;
 }

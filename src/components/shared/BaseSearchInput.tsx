@@ -48,6 +48,7 @@ const BaseSearchInput = ({ onChange, value, showIcon, label, placeholder, styles
           outline: "none",
           width: "200px",
           height: 26,
+          ...styles,
         }}
       />
     </Box>
