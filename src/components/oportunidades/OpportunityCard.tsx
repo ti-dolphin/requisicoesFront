@@ -37,44 +37,10 @@ const OpportunityCard: React.FC<OpportunityCardProps> = ({
           fontSize: "0.8rem",
         }}
       >
-        <Typography variant="h6" color="primary">
-          {row.NOME || "Sem descrição"}
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Projeto: {row.projeto?.DESCRICAO || "Não informado"}
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Cliente: {row.cliente?.NOMEFANTASIA || "Não informado"}
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Responsável: {row.responsavel?.NOME || "Não informado"}
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Status: {row.status?.NOME || "Não informado"}
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Valor Total: {row.VALORTOTAL_FORMATTED || "R$ 0,00"}
+        <Typography color="primary">
+          {`${row?.projeto.ID}.${row?.adicional.NUMERO} - ${row?.cliente.NOMEFANTASIA}`}
         </Typography>
       </CardContent>
-      <CardActions sx={{ padding: "8px" }}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-start",
-            width: "100%",
-          }}
-        >
-          <Button
-            size="small"
-            variant="contained"
-            color="primary"
-            onClick={onClick}
-            sx={{ fontSize: "0.75rem", padding: "4px 12px" }}
-          >
-            Ver Detalhes
-          </Button>
-        </Box>
-      </CardActions>
     </Card>
   );
 };

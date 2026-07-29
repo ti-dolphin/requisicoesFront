@@ -1,11 +1,11 @@
-import { Box, Chip, CircularProgress, GlobalStyles, IconButton, TextField, Tooltip, Typography } from "@mui/material"
+import { Box, Chip, CircularProgress, GlobalStyles, IconButton, TextField, Tooltip, Typography, Button, } from "@mui/material"
+import Grid from '@mui/material/Grid';
 import AddIcon from "@mui/icons-material/Add"
 import CheckIcon from "@mui/icons-material/Check"
 import CloseIcon from "@mui/icons-material/Close"
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline"
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined"
 import { useCallback, useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
 import { ControlledBoard, Column as KanbanColumn, KanbanBoard, OnDragEndNotification, Card as KanbanCard, moveCard } from '@caldwell619/react-kanban'
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../redux/store"
@@ -15,6 +15,7 @@ import OpportunityKanbanService from "../../services/oportunidades/OpportunityKa
 import { Opportunity } from "../../models/oportunidades/Opportunity"
 import OpportunityCard from "./OpportunityCard"
 import BaseDeleteDialog from "../shared/BaseDeleteDialog"
+import OpportunityKanbanCardDialog from "./OpportunityKanbanCardDialog"
 
 interface OpportunityKanbanCardData extends KanbanCard {
   id: number
@@ -94,10 +95,10 @@ const kanbanGlobalStyles = (
 
 const OpportunityKanbanComponent = () => {
   const dispatch = useDispatch()
-  const navigate = useNavigate()
   const user = useSelector((state: RootState) => state.user.user)
   const [board, setBoard] = useState<KanbanBoard<OpportunityKanbanCardData>>({ columns: [] })
   const [loading, setLoading] = useState(false)
+  const [selectedOpportunity, setSelectedOpportunity] = useState<Opportunity | null>(null)
   const [dateFrom, setDateFrom] = useState(getDefaultDateFrom())
   const [dateTo, setDateTo] = useState(getDefaultDateTo())
   const [isAddingColumn, setIsAddingColumn] = useState(false)
@@ -226,24 +227,28 @@ const OpportunityKanbanComponent = () => {
           borderBottom: '1px solid rgba(0,0,0,0.1)',
         }}
       >
-        <TextField
-          size="small"
-          label="De"
-          type="date"
-          value={dateFrom}
-          onChange={(e) => setDateFrom(e.target.value)}
-          InputLabelProps={{ shrink: true }}
-          sx={{ width: 160, '& .MuiOutlinedInput-root': { height: 32, fontSize: 12 }, '& .MuiInputLabel-root': { fontSize: 12 } }}
-        />
-        <TextField
-          size="small"
-          label="Até"
-          type="date"
-          value={dateTo}
-          onChange={(e) => setDateTo(e.target.value)}
-          InputLabelProps={{ shrink: true }}
-          sx={{ width: 160, '& .MuiOutlinedInput-root': { height: 32, fontSize: 12 }, '& .MuiInputLabel-root': { fontSize: 12 } }}
-        />
+        <Grid container >
+          <Grid xs={11}>
+            <TextField
+              size="small"
+              label="De"
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+              sx={{ width: 160, '& .MuiOutlinedInput-root': { height: 32, fontSize: 12 }, '& .MuiInputLabel-root': { fontSize: 12 } }}
+            />
+            <TextField
+              size="small"
+              label="Até"
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+              sx={{ width: 160, '& .MuiOutlinedInput-root': { height: 32, fontSize: 12 }, '& .MuiInputLabel-root': { fontSize: 12 } }}
+            />
+          </Grid>
+        </Grid>
       </Box>
       <Box sx={{ flex: '1 1 0', minHeight: 0 }}>
       {loading ? (
@@ -396,7 +401,7 @@ const OpportunityKanbanComponent = () => {
           renderCard={(card) => (
             <OpportunityCard
               row={card.opportunity}
-              onClick={() => navigate(`/oportunidades/${card.opportunity.CODOS}`)}
+              onClick={() => setSelectedOpportunity(card.opportunity)}
               styles={{ width: COLUMN_WIDTH - 24, minHeight: 'auto', maxHeight: 'none', margin: '0 12px 12px 12px' }}
             />
           )}
@@ -411,6 +416,11 @@ const OpportunityKanbanComponent = () => {
         onCancel={() => setColumnToDelete(null)}
         title="Remover coluna"
         message={`Tem certeza de que deseja remover a coluna "${columnToDelete?.title}"?`}
+      />
+      <OpportunityKanbanCardDialog
+        open={!!selectedOpportunity}
+        opportunity={selectedOpportunity}
+        onClose={() => setSelectedOpportunity(null)}
       />
     </Box>
   )
