@@ -228,6 +228,44 @@ export const useRequisitionItemColumns = (
       ),
     },
     {
+      field: "observacao",
+      headerName: "Observação",
+      type: "string",
+      editable: true,
+      renderEditCell: renderInstantEditCell,
+      valueGetter: (observacao: string) => observacao ?? "",
+      width: observacaoColumnWidth,
+      flex: 0,
+      minWidth: 100,
+      renderCell: (params) => (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 0.5,
+            height: "100%",
+          }}
+        >
+          <Tooltip title="Copiar observação">
+            <IconButton
+              onClick={() => navigator.clipboard.writeText(params.value)}
+              sx={{ padding: 0, flexShrink: 0 }}
+            >
+              <ContentCopyIcon sx={{ fontSize: 11 }} />
+            </IconButton>
+          </Tooltip>
+          <Typography 
+            sx={{
+              whiteSpace: 'normal',
+              fontSize: '12px'
+            }}
+          >
+            {String(params?.value ?? '')}
+          </Typography>
+        </Box>
+      ),
+    },
+    {
       field: "quantidade_atendida",
       headerName: "Atender",
       type: "number",
@@ -262,10 +300,15 @@ export const useRequisitionItemColumns = (
       ),
     },
     {
-      // Sem type "number" de propósito: o editor numérico do DataGrid rejeita
-      // vírgula como separador decimal (padrão pt-BR). A conversão para número
-      // acontece só no commit (processRowUpdate), senão o separador some
-      // enquanto o usuário digita.
+      field: "produto_unidade",
+      headerName: "Unidade",
+      type: "string",
+      editable: true,
+      renderEditCell: renderInstantEditCell,
+      sortable: false,
+      minWidth: 70,
+    },
+    {
       field: "target_price",
       headerName: "Valor alvo unitário",
       width: 120,
@@ -419,15 +462,6 @@ export const useRequisitionItemColumns = (
       ),
     },
     {
-      field: "produto_unidade",
-      headerName: "Unidade",
-      type: "string",
-      editable: true,
-      renderEditCell: renderInstantEditCell,
-      sortable: false,
-      minWidth: 70,
-    },
-    {
       field: "oc",
       headerName: "OC",
       editable: true,
@@ -474,46 +508,6 @@ export const useRequisitionItemColumns = (
               title="Digite o valor desejado para preencher todos os itens"
             />
           )}
-        </Box>
-      ),
-    },
-    {
-      field: "observacao",
-      headerName: "Observação",
-      type: "string",
-      editable: true,
-      renderEditCell: renderInstantEditCell,
-      // O "N/A" é só exibição (renderCell); no valueGetter ele contaminava o
-      // valor de edição e clicar/sair da célula gravava "N/A" no banco.
-      valueGetter: (observacao: string) => observacao ?? "",
-      width: observacaoColumnWidth,
-      flex: 0,
-      minWidth: 100,
-      renderCell: (params) => (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 0.5,
-            height: "100%",
-          }}
-        >
-          <Tooltip title="Copiar observação">
-            <IconButton
-              onClick={() => navigator.clipboard.writeText(params.value)}
-              sx={{ padding: 0, flexShrink: 0 }}
-            >
-              <ContentCopyIcon sx={{ fontSize: 11 }} />
-            </IconButton>
-          </Tooltip>
-          <Typography 
-            sx={{
-              whiteSpace: 'normal',
-              fontSize: '12px'
-            }}
-          >
-            {String(params?.value ?? '')}
-          </Typography>
         </Box>
       ),
     },
