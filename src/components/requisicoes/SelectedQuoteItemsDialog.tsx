@@ -26,7 +26,11 @@ import QuoteService from "../../services/requisicoes/QuoteService";
 import { QuoteItemService } from "../../services/requisicoes/QuoteItemService";
 import { Quote } from "../../models/requisicoes/Quote";
 import { QuoteItem } from "../../models/requisicoes/QuoteItem";
-import { calculateQuoteSubtotal, formatCurrency2To3 } from "../../utils";
+import {
+  calculateQuoteSubtotal,
+  formatCurrency2To3,
+  getQuoteItemObservation,
+} from "../../utils";
 import BaseDataTable from "../shared/BaseDataTable";
 import { useSelectedQuoteItemColumns } from "../../hooks/requisicoes/useSelectedQuoteItemColumns";
 
@@ -266,9 +270,13 @@ const SelectedQuoteItemsDialog: React.FC<SelectedQuoteItemsDialogProps> = ({
                 Number(item.ST || 0)
               );
 
+              const observacao = getQuoteItemObservation(item);
+              const descricao =
+                item.produto_descricao || item.descricao_item || "-";
+
               return [
                 item.produto_codigo || "-",
-                item.produto_descricao || item.descricao_item || "-",
+                observacao ? `${descricao}\nObs.: ${observacao}` : descricao,
                 item.produto_unidade || "-",
                 requestedQuantity.toString(),
                 formatCurrency2To3(unitPrice),
@@ -558,7 +566,15 @@ const SelectedQuoteItemsDialog: React.FC<SelectedQuoteItemsDialogProps> = ({
                   {/* Items table */}
                   <Box
                     sx={{
-                      height: Math.min(60 + selectedItems.length * 52, 400),
+                      height: Math.min(
+                        60 +
+                          selectedItems.reduce(
+                            (acc, item) =>
+                              acc + (getQuoteItemObservation(item) ? 72 : 52),
+                            0
+                          ),
+                        400
+                      ),
                       width: "100%",
                       overflowX: "hidden",
                     }}
@@ -567,6 +583,7 @@ const SelectedQuoteItemsDialog: React.FC<SelectedQuoteItemsDialogProps> = ({
                       rows={selectedItems}
                       columns={columns}
                       getRowId={(row) => row.id_item_cotacao}
+                      getRowHeight={() => "auto"}
                       hideFooter={selectedItems.length < 25}
                       disableRowSelectionOnClick
                       isCellEditable={() => false}

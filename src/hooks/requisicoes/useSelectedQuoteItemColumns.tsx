@@ -1,6 +1,10 @@
 import { Box, Typography } from "@mui/material";
 import { GridColDef } from "@mui/x-data-grid";
-import { calculateQuoteSubtotal, formatCurrency2To3 } from "../../utils";
+import {
+  calculateQuoteSubtotal,
+  formatCurrency2To3,
+  getQuoteItemObservation,
+} from "../../utils";
 
 export const useSelectedQuoteItemColumns = (): GridColDef[] => {
   const columns: GridColDef[] = [
@@ -24,13 +28,41 @@ export const useSelectedQuoteItemColumns = (): GridColDef[] => {
       flex: 2.6,
       minWidth: 200,
       editable: false,
-      renderCell: (params) => (
-        <Box sx={{ display: "flex", alignItems: "center", height: "100%" }}>
-          <Typography fontSize="12px" fontWeight="bold" color="black">
-            {params.value || "-"}
-          </Typography>
-        </Box>
-      ),
+      renderCell: (params) => {
+        const observacao = getQuoteItemObservation(params.row);
+
+        return (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              gap: 0.25,
+              height: "100%",
+              py: 0.5,
+            }}
+          >
+            <Typography
+              fontSize="12px"
+              fontWeight="bold"
+              color="black"
+              sx={{ whiteSpace: "normal", lineHeight: 1.3 }}
+            >
+              {params.value || "-"}
+            </Typography>
+            {observacao && (
+              <Typography
+                fontSize="11px"
+                fontStyle="italic"
+                color="text.secondary"
+                sx={{ whiteSpace: "normal", lineHeight: 1.3 }}
+              >
+                {observacao}
+              </Typography>
+            )}
+          </Box>
+        );
+      },
     },
     {
       field: "produto_unidade",

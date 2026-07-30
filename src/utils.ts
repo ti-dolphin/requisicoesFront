@@ -188,6 +188,37 @@ export function getDateInputValue(dateStr?: string | null): string {
   return match ? match[1] : "";
 }
 
+export const NON_REGISTERED_PRODUCT_CODE = "06.001.04.0002";
+
+/**
+ * Observação a ser exibida junto da descrição do produto em telas de cotação.
+ * Itens do produto genérico "não cadastrado" já usam a observação como
+ * descrição, então repeti-la ao lado só duplicaria o texto.
+ */
+export function getQuoteItemObservation(item: {
+  observacao?: string | null;
+  produto_codigo?: string | null;
+  produto_descricao?: string | null;
+}): string {
+  const observacao = String(item?.observacao ?? "").trim();
+
+  if (!observacao) {
+    return "";
+  }
+
+  const productCode = String(item?.produto_codigo ?? "").trim();
+  if (productCode === NON_REGISTERED_PRODUCT_CODE) {
+    return "";
+  }
+
+  const descricao = String(item?.produto_descricao ?? "").trim();
+  if (descricao.toUpperCase() === observacao.toUpperCase()) {
+    return "";
+  }
+
+  return observacao;
+}
+
 /**
  * Verifica o nível de urgência da requisição com base no tempo no status.
  * Retorna:

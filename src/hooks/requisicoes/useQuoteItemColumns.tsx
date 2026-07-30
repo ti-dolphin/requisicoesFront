@@ -46,6 +46,35 @@ export const useQuoteItemColumns = (
       ),
     },
     {
+      field: "observacao",
+      headerName: "Observação",
+      flex: 1,
+      editable: true,
+      valueGetter: (observacao: string) => observacao || "N/A",
+      renderCell: (params: any) => (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 0.5,
+            height: "100%",
+          }}
+        >
+          <Tooltip title="Copiar observação">
+            <IconButton
+              onClick={() => navigator.clipboard.writeText(String(params.value || ""))}
+              sx={{ padding: 0, flexShrink: 0 }}
+            >
+              <ContentCopyIcon sx={{ fontSize: 14 }} />
+            </IconButton>
+          </Tooltip>
+          <Typography fontSize="small" fontWeight="bold">
+            {params.value}
+          </Typography>
+        </Box>
+      ),
+    },
+    {
       field: "produto_unidade",
       headerName: "Unidade",
       flex: 0.5,
@@ -166,35 +195,6 @@ export const useQuoteItemColumns = (
           </Box>
         );
       },
-    },
-    {
-      field: "observacao",
-      headerName: "Observação",
-      flex: 1,
-      editable: true,
-      valueGetter: (observacao: string) => observacao || "N/A",
-      renderCell: (params: any) => (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 0.5,
-            height: "100%",
-          }}
-        >
-          <Tooltip title="Copiar observação">
-            <IconButton
-              onClick={() => navigator.clipboard.writeText(String(params.value || ""))}
-              sx={{ padding: 0, flexShrink: 0 }}
-            >
-              <ContentCopyIcon sx={{ fontSize: 14 }} />
-            </IconButton>
-          </Tooltip>
-          <Typography fontSize="small" fontWeight="bold">
-            {params.value}
-          </Typography>
-        </Box>
-      ),
     },
     {
       field: "indisponivel",
