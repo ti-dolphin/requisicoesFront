@@ -39,14 +39,60 @@ interface SelectedQuoteItemsDialogProps {
   open: boolean;
   onClose: () => void;
   idRequisicao: number;
-  requisitionTitle?: string;
+  requisitionDescription?: string;
+  requisitionProject?: string;
 }
+
+const PDF_MARGIN = 14;
+const PDF_LINE_HEIGHT = 4.6;
+const PDF_WRAP_TOLERANCE = 2;
+const PDF_PRIMARY: [number, number, number] = [25, 118, 210];
+const PDF_MUTED: [number, number, number] = [117, 117, 117];
+const PDF_SUCCESS: [number, number, number] = [46, 125, 50];
+const PDF_TEXT: [number, number, number] = [33, 33, 33];
+const PDF_BORDER: [number, number, number] = [224, 224, 224];
+
+const QUOTE_HEADER_WEIGHTS = [0.55, 1.5, 1, 1.2, 0.7, 1.25];
+const ITEM_COLUMN_WEIGHTS = [0.7, 2.6, 0.45, 0.7, 0.8, 0.45, 0.45, 0.45, 0.85, 0.85];
+
+type PdfColumnStyle = {
+  cellWidth: number;
+  halign?: "left" | "center" | "right";
+  fontStyle?: "normal" | "bold";
+  textColor?: [number, number, number];
+};
+
+const buildColumnStyles = (
+  weights: number[],
+  availableWidth: number,
+  overrides: Record<number, Omit<PdfColumnStyle, "cellWidth">> = {}
+): Record<number, PdfColumnStyle> => {
+  const totalWeight = weights.reduce((acc, weight) => acc + weight, 0);
+
+  return weights.reduce<Record<number, PdfColumnStyle>>((styles, weight, index) => {
+    styles[index] = {
+      cellWidth: (weight * availableWidth) / totalWeight,
+      ...overrides[index],
+    };
+    return styles;
+  }, {});
+};
+
+const requisitionHeaderTextSx = {
+  fontSize: {
+    xs: "0.8rem",
+    sm: "1.2rem",
+  },
+  fontWeight: 600,
+  color: "primary.main",
+} as const;
 
 const SelectedQuoteItemsDialog: React.FC<SelectedQuoteItemsDialogProps> = ({
   open,
   onClose,
   idRequisicao,
-  requisitionTitle,
+  requisitionDescription,
+  requisitionProject,
 }) => {
   const [loading, setLoading] = useState(false);
   const [quoteGroups, setQuoteGroups] = useState<SelectedQuoteGroup[]>([]);
@@ -58,133 +104,240 @@ const SelectedQuoteItemsDialog: React.FC<SelectedQuoteItemsDialogProps> = ({
   const items = useSelector((state: RootState) => state.requisitionItem.items);
   const columns = useSelectedQuoteItemColumns();
 
-  const exportPdf = useCallback(async (groupsToExport: SelectedQuoteGroup[]) => {
-    if (groupsToExport.length === 0) return;
+  const exportPdf = useCallback(
+    async (groupsToExport: SelectedQuoteGroup[]) => {
+      if (groupsToExport.length === 0) return;
 
-    setIsExportingPdf(true);
-    try {
-      const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+      setIsExportingPdf(true);
+      try {
+        const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+        const contentWidth = doc.internal.pageSize.getWidth() - PDF_MARGIN * 2;
 
-      groupsToExport.forEach(({ quote, selectedItems }, groupIndex) => {
-        if (groupIndex > 0) {
-          doc.addPage();
-        }
-
-        const selectedTotal = selectedItems.reduce(
-          (acc, item) =>
-            acc +
-            calculateQuoteSubtotal(
-              Number(item.preco_unitario || 0),
-              Number(item.quantidade_solicitada || 0),
-              Number(item.IPI || 0),
-              Number(item.ST || 0)
-            ),
-          0
-        );
-
-        doc.setFontSize(14);
-        doc.setTextColor(25, 118, 210);
-        doc.text("Itens Cotados Selecionados", 14, 12);
-
+        doc.setFont("helvetica", "bold");
         doc.setFontSize(10);
-        doc.setTextColor(80, 80, 80);
-        doc.text(requisitionTitle || `Requisição ${idRequisicao}`, 14, 18);
-
-        doc.setFontSize(10);
-        doc.setTextColor(0, 0, 0);
-        doc.text(`Cotação #${quote.id_cotacao}`, 14, 25);
-        doc.text(`Fornecedor: ${quote.fornecedor || "-"}`, 14, 30);
-        doc.text(`CNPJ: ${quote.cnpj_fornecedor || "-"}`, 14, 35);
-        doc.text(
-          `Condição de pagamento: ${quote.condicao_pagamento?.nome || "-"}`,
-          14,
-          40
-        );
-        doc.text(
-          `Frete: ${formatCurrency2To3(Number(quote.valor_frete || 0))}`,
-          14,
-          45
-        );
-        doc.text(
-          `Total dos itens selecionados: ${formatCurrency2To3(selectedTotal)}`,
-          14,
-          50
+        const requisitionLines: string[] = doc.splitTextToSize(
+          [
+            idRequisicao ?? "-",
+            requisitionDescription || "-",
+            requisitionProject || "-",
+          ].join(" | "),
+          contentWidth - PDF_WRAP_TOLERANCE
         );
 
-        autoTable(doc, {
-          startY: 56,
-          head: [
-            [
-              "Código",
-              "Descrição do Produto",
-              "Unidade",
-              "Qtd. Solicitada",
-              "Preço Unitário",
-              "ICMS %",
-              "IPI %",
-              "ST %",
-              "Subtotal",
-              "Total",
+        const documentHeaderHeight = 10 + requisitionLines.length * PDF_LINE_HEIGHT;
+
+        const splitSubtitle = (subtitle: string): string[] => {
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(9);
+          return doc.splitTextToSize(subtitle, contentWidth - PDF_WRAP_TOLERANCE);
+        };
+
+        const drawDocumentHeader = (subtitleLines: string[] = []) => {
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(13);
+          doc.setTextColor(...PDF_PRIMARY);
+          doc.text("Itens Cotados Selecionados", PDF_MARGIN, PDF_MARGIN + 4);
+
+          doc.setFontSize(10);
+          requisitionLines.forEach((line, index) => {
+            doc.text(line, PDF_MARGIN, PDF_MARGIN + 10 + index * PDF_LINE_HEIGHT);
+          });
+
+          const nextY = PDF_MARGIN + documentHeaderHeight;
+
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(9);
+          doc.setTextColor(...PDF_MUTED);
+          subtitleLines.forEach((line, index) => {
+            doc.text(line, PDF_MARGIN, nextY + 2 + index * PDF_LINE_HEIGHT);
+          });
+
+          doc.setTextColor(0, 0, 0);
+          return nextY + subtitleLines.length * PDF_LINE_HEIGHT + 4;
+        };
+
+        const getLastTableBottom = () =>
+          (doc as unknown as { lastAutoTable?: { finalY?: number } }).lastAutoTable
+            ?.finalY ?? PDF_MARGIN;
+
+        groupsToExport.forEach(({ quote, selectedItems }, groupIndex) => {
+          if (groupIndex > 0) {
+            doc.addPage();
+          }
+
+          const selectedTotal = selectedItems.reduce(
+            (acc, item) =>
+              acc +
+              calculateQuoteSubtotal(
+                Number(item.preco_unitario || 0),
+                Number(item.quantidade_solicitada || 0),
+                Number(item.IPI || 0),
+                Number(item.ST || 0)
+              ),
+            0
+          );
+
+          const continuationLines = splitSubtitle(
+            `Cotação #${quote.id_cotacao} | ${quote.fornecedor || "-"} (continuação)`
+          );
+          const continuationTop =
+            PDF_MARGIN +
+            documentHeaderHeight +
+            continuationLines.length * PDF_LINE_HEIGHT +
+            4;
+
+          autoTable(doc, {
+            startY: drawDocumentHeader(),
+            head: [
+              [
+                "Cotação",
+                "Fornecedor",
+                "CNPJ Fornecedor",
+                "Condição de pagamento",
+                "Frete",
+                "Total dos itens selecionados",
+              ],
             ],
-          ],
-          body: selectedItems.map((item) => {
-            const unitPrice = Number(item.preco_unitario || 0);
-            const requestedQuantity = Number(item.quantidade_solicitada || 0);
-            const ipiPercent = Number(item.IPI || 0);
-            const subtotal = unitPrice * requestedQuantity;
-            const totalWithTaxes = calculateQuoteSubtotal(
-              unitPrice,
-              requestedQuantity,
-              ipiPercent,
-              Number(item.ST || 0)
-            );
+            body: [
+              [
+                `#${quote.id_cotacao}`,
+                quote.fornecedor || "-",
+                quote.cnpj_fornecedor || "-",
+                quote.condicao_pagamento?.nome || "-",
+                formatCurrency2To3(Number(quote.valor_frete || 0)),
+                formatCurrency2To3(selectedTotal),
+              ],
+            ],
+            theme: "plain",
+            styles: {
+              fontSize: 9,
+              cellPadding: { top: 0.6, right: 3, bottom: 0.6, left: 0 },
+              valign: "top",
+              overflow: "linebreak",
+            },
+            headStyles: {
+              fontSize: 7.5,
+              fontStyle: "normal",
+              textColor: PDF_MUTED,
+            },
+            bodyStyles: {
+              fontStyle: "bold",
+              textColor: PDF_TEXT,
+            },
+            columnStyles: buildColumnStyles(QUOTE_HEADER_WEIGHTS, contentWidth),
+            didParseCell: (data) => {
+              if (data.section === "body" && data.column.index === 5) {
+                data.cell.styles.textColor = PDF_SUCCESS;
+              }
+            },
+            margin: {
+              left: PDF_MARGIN,
+              right: PDF_MARGIN,
+              top: continuationTop,
+              bottom: PDF_MARGIN,
+            },
+          });
 
-            return [
-              item.produto_codigo || "-",
-              item.produto_descricao || item.descricao_item || "-",
-              item.produto_unidade || "-",
-              requestedQuantity.toString(),
-              formatCurrency2To3(unitPrice),
-              `${Number(item.ICMS || 0)}%`,
-              `${ipiPercent}%`,
-              `${Number(item.ST || 0)}%`,
-              formatCurrency2To3(subtotal),
-              formatCurrency2To3(totalWithTaxes),
-            ];
-          }),
-          theme: "grid",
-          styles: {
-            fontSize: 8,
-            cellPadding: 1.6,
-            valign: "middle",
-            overflow: "linebreak",
-          },
-          headStyles: {
-            fillColor: [25, 118, 210],
-            textColor: 255,
-            fontStyle: "bold",
-          },
-          columnStyles: {
-            0: { cellWidth: 18, halign: "left" },
-            1: { cellWidth: 58 },
-            2: { cellWidth: 14, halign: "center" },
-            3: { cellWidth: 18, halign: "right" },
-            4: { cellWidth: 22, halign: "right" },
-            5: { cellWidth: 12, halign: "right" },
-            6: { cellWidth: 12, halign: "right" },
-            7: { cellWidth: 12, halign: "right" },
-            8: { cellWidth: 22, halign: "right" },
-            9: { cellWidth: 22, halign: "right" },
-          },
-          margin: { left: 14, right: 14 },
+          autoTable(doc, {
+            startY: getLastTableBottom() + 4,
+            head: [
+              [
+                "Código",
+                "Descrição do Produto",
+                "Unidade",
+                "Qtd. Solicitada",
+                "Preço Unitário",
+                "ICMS %",
+                "IPI %",
+                "ST %",
+                "Subtotal",
+                "Total",
+              ],
+            ],
+            body: selectedItems.map((item) => {
+              const unitPrice = Number(item.preco_unitario || 0);
+              const requestedQuantity = Number(item.quantidade_solicitada || 0);
+              const ipiPercent = Number(item.IPI || 0);
+              const subtotal = unitPrice * requestedQuantity;
+              const totalWithTaxes = calculateQuoteSubtotal(
+                unitPrice,
+                requestedQuantity,
+                ipiPercent,
+                Number(item.ST || 0)
+              );
+
+              return [
+                item.produto_codigo || "-",
+                item.produto_descricao || item.descricao_item || "-",
+                item.produto_unidade || "-",
+                requestedQuantity.toString(),
+                formatCurrency2To3(unitPrice),
+                `${Number(item.ICMS || 0)}%`,
+                `${ipiPercent}%`,
+                `${Number(item.ST || 0)}%`,
+                formatCurrency2To3(subtotal),
+                formatCurrency2To3(totalWithTaxes),
+              ];
+            }),
+            theme: "grid",
+            styles: {
+              fontSize: 8,
+              cellPadding: 1.5,
+              valign: "middle",
+              overflow: "linebreak",
+              lineColor: PDF_BORDER,
+              lineWidth: 0.1,
+              textColor: PDF_TEXT,
+            },
+            headStyles: {
+              fillColor: PDF_PRIMARY,
+              textColor: 255,
+              fontStyle: "bold",
+              halign: "left",
+            },
+            columnStyles: buildColumnStyles(ITEM_COLUMN_WEIGHTS, contentWidth, {
+              3: { halign: "right" },
+            }),
+            didParseCell: (data) => {
+              if (data.section !== "body") return;
+
+              if (data.column.index === 0) {
+                data.cell.styles.fontStyle = "bold";
+                data.cell.styles.textColor = PDF_MUTED;
+              }
+
+              if (data.column.index === 1) {
+                data.cell.styles.fontStyle = "bold";
+                data.cell.styles.textColor = [0, 0, 0];
+              }
+
+              if (data.column.index === 8 || data.column.index === 9) {
+                data.cell.styles.fontStyle = "bold";
+                data.cell.styles.textColor = PDF_SUCCESS;
+              }
+            },
+            rowPageBreak: "auto",
+            margin: {
+              left: PDF_MARGIN,
+              right: PDF_MARGIN,
+              top: continuationTop,
+              bottom: PDF_MARGIN,
+            },
+            willDrawPage: (data) => {
+              if (data.pageNumber > 1) {
+                drawDocumentHeader(continuationLines);
+              }
+            },
+          });
         });
-      });
 
-      doc.save(`itens-cotados-req-${idRequisicao}.pdf`);
-    } finally {
-      setIsExportingPdf(false);
-    }
-  }, [idRequisicao]);
+        doc.save(`itens-cotados-req-${idRequisicao}.pdf`);
+      } finally {
+        setIsExportingPdf(false);
+      }
+    },
+    [idRequisicao, requisitionDescription, requisitionProject]
+  );
 
   const handleOpenSupplierDialog = useCallback(() => {
     if (quoteGroups.length === 0) return;
@@ -260,10 +413,42 @@ const SelectedQuoteItemsDialog: React.FC<SelectedQuoteItemsDialogProps> = ({
     <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
       <Box>
         <DialogTitle sx={{ pb: 1 }}>
-          <Stack direction="row" alignItems="center" justifyContent="space-between">
-            <Typography variant="h6" color="primary.main" fontWeight={600}>
-              Itens Cotados Selecionados
-            </Typography>
+          <Stack
+            direction="row"
+            alignItems="flex-start"
+            justifyContent="space-between"
+            spacing={1}
+          >
+            <Box>
+              <Typography variant="h6" color="primary.main" fontWeight={600}>
+                Itens Cotados Selecionados
+              </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  gap: 0.75,
+                  mt: 0.5,
+                }}
+              >
+                <Typography component="span" sx={requisitionHeaderTextSx}>
+                  {idRequisicao ?? "-"}
+                </Typography>
+                <Typography component="span" sx={requisitionHeaderTextSx}>
+                  |
+                </Typography>
+                <Typography component="span" sx={requisitionHeaderTextSx}>
+                  {requisitionDescription || "-"}
+                </Typography>
+                <Typography component="span" sx={requisitionHeaderTextSx}>
+                  |
+                </Typography>
+                <Typography component="span" sx={requisitionHeaderTextSx}>
+                  {requisitionProject || "-"}
+                </Typography>
+              </Box>
+            </Box>
             <Stack data-html2pdf-hide direction="row" spacing={1} alignItems="center">
               {quoteGroups.length > 0 && (
                 <Button

@@ -736,7 +736,8 @@ const RequisitionDetailPage = () => {
         open={selectedItemsDialogOpen}
         onClose={() => setSelectedItemsDialogOpen(false)}
         idRequisicao={requisition?.ID_REQUISICAO}
-        requisitionTitle={`${requisition?.ID_REQUISICAO || ""} | ${requisition?.DESCRIPTION || ""} | ${requisition?.projeto?.DESCRICAO || ""}`}
+        requisitionDescription={requisition?.DESCRIPTION}
+        requisitionProject={requisition?.projeto?.DESCRICAO}
       />
 
       {/* Dialog da lista de cotações */}
