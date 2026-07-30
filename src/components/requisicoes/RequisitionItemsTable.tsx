@@ -963,11 +963,12 @@ const RequisitionItemsTable = ({
         })
       );
       handleClosePatrimonyDialog();
-    } catch (_error) {
+    } catch (error: any) {
       dispatch(
         setFeedback({
           type: "error",
-          message: "Erro ao criar patrimônio.",
+          message:
+            error?.response?.data?.mensagem ?? "Erro ao criar patrimônio.",
         })
       );
     } finally {
