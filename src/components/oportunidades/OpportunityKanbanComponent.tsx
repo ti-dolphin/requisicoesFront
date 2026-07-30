@@ -1,4 +1,5 @@
-import { Box, Chip, CircularProgress, GlobalStyles, IconButton, TextField, Tooltip, Typography } from "@mui/material"
+import { Box, Chip, CircularProgress, GlobalStyles, IconButton, TextField, Tooltip, Typography, Button, } from "@mui/material"
+import Grid from '@mui/material/Grid';
 import AddIcon from "@mui/icons-material/Add"
 import CheckIcon from "@mui/icons-material/Check"
 import CloseIcon from "@mui/icons-material/Close"
@@ -226,24 +227,28 @@ const OpportunityKanbanComponent = () => {
           borderBottom: '1px solid rgba(0,0,0,0.1)',
         }}
       >
-        <TextField
-          size="small"
-          label="De"
-          type="date"
-          value={dateFrom}
-          onChange={(e) => setDateFrom(e.target.value)}
-          InputLabelProps={{ shrink: true }}
-          sx={{ width: 160, '& .MuiOutlinedInput-root': { height: 32, fontSize: 12 }, '& .MuiInputLabel-root': { fontSize: 12 } }}
-        />
-        <TextField
-          size="small"
-          label="Até"
-          type="date"
-          value={dateTo}
-          onChange={(e) => setDateTo(e.target.value)}
-          InputLabelProps={{ shrink: true }}
-          sx={{ width: 160, '& .MuiOutlinedInput-root': { height: 32, fontSize: 12 }, '& .MuiInputLabel-root': { fontSize: 12 } }}
-        />
+        <Grid container >
+          <Grid xs={11}>
+            <TextField
+              size="small"
+              label="De"
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+              sx={{ width: 160, '& .MuiOutlinedInput-root': { height: 32, fontSize: 12 }, '& .MuiInputLabel-root': { fontSize: 12 } }}
+            />
+            <TextField
+              size="small"
+              label="Até"
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+              sx={{ width: 160, '& .MuiOutlinedInput-root': { height: 32, fontSize: 12 }, '& .MuiInputLabel-root': { fontSize: 12 } }}
+            />
+          </Grid>
+        </Grid>
       </Box>
       <Box sx={{ flex: '1 1 0', minHeight: 0 }}>
       {loading ? (
