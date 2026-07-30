@@ -1,6 +1,20 @@
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Box, Typography, LinearProgress, Checkbox, TextField, IconButton, Stack } from "@mui/material";
+import {
+  Box,
+  Typography,
+  LinearProgress,
+  Checkbox,
+  TextField,
+  IconButton,
+  Stack,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
@@ -16,6 +30,7 @@ const OpportunityAlinhamentoList = ({ CODOS }: OpportunityAlinhamentoListProps) 
   const dispatch = useDispatch();
   const [itens, setItens] = useState<OpportunityAlinhamento[]>([]);
   const [novoItem, setNovoItem] = useState("");
+  const [addingItem, setAddingItem] = useState(false);
 
   const fetchData = useCallback(async () => {
     try {
@@ -53,6 +68,7 @@ const OpportunityAlinhamentoList = ({ CODOS }: OpportunityAlinhamentoListProps) 
       const item = await OpportunityAlinhamentoService.create({ CODOS, descricao, ordem });
       setItens((prev) => [...prev, item]);
       setNovoItem("");
+      setAddingItem(false);
     } catch {
       dispatch(setFeedback({ type: "error", message: "Erro ao adicionar item" }));
     }
@@ -89,13 +105,28 @@ const OpportunityAlinhamentoList = ({ CODOS }: OpportunityAlinhamentoListProps) 
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
-      <Typography variant="subtitle1" color="primary.main" fontWeight="bold" sx={{ mb: 1 }}>
-        Alinhamento
-      </Typography>
+    <Box sx={{ width: "100%", height: "100%", minHeight: 0, display: "flex", flexDirection: "column" }}>
+      <Stack direction="row" alignItems="center" gap={1} sx={{ mb: 1, flexShrink: 0 }}>
+        <Typography variant="subtitle1" color="primary.main" fontWeight="bold">
+          Alinhamento
+        </Typography>
+        <IconButton
+          size="small"
+          onClick={() => setAddingItem(true)}
+          sx={{
+            backgroundColor: "primary.main",
+            color: "white",
+            height: 24,
+            width: 24,
+            "&:hover": { backgroundColor: "primary.dark" },
+          }}
+        >
+          <AddIcon fontSize="small" />
+        </IconButton>
+      </Stack>
 
       {total > 0 && (
-        <Box sx={{ mb: 1.5 }}>
+        <Box sx={{ mb: 1.5, flexShrink: 0 }}>
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.5 }}>
             <Typography variant="caption" color="text.secondary">
               {done}/{total} concluídos
@@ -108,61 +139,76 @@ const OpportunityAlinhamentoList = ({ CODOS }: OpportunityAlinhamentoListProps) 
         </Box>
       )}
 
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <Droppable droppableId="alinhamento">
-          {(provided) => (
-            <Box ref={provided.innerRef} {...provided.droppableProps}>
-              {itens.map((item, index) => (
-                <Draggable key={item.id_alinhamento} draggableId={String(item.id_alinhamento)} index={index}>
-                  {(dragProvided) => (
-                    <Stack
-                      ref={dragProvided.innerRef}
-                      {...dragProvided.draggableProps}
-                      direction="row"
-                      alignItems="center"
-                      sx={{ backgroundColor: "white", borderRadius: 1, mb: 0.5, pr: 1 }}
-                    >
-                      <Box {...dragProvided.dragHandleProps} sx={{ display: "flex", color: "text.secondary" }}>
-                        <DragIndicatorIcon fontSize="small" />
-                      </Box>
-                      <Checkbox size="small" checked={item.concluido} onChange={() => handleToggle(item)} />
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          flex: 1,
-                          textDecoration: item.concluido ? "line-through" : "none",
-                          color: item.concluido ? "text.secondary" : "text.primary",
-                        }}
+      <Box sx={{ flex: "1 1 0", minHeight: 0, overflowY: "auto" }}>
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="alinhamento">
+            {(provided) => (
+              <Box ref={provided.innerRef} {...provided.droppableProps}>
+                {itens.map((item, index) => (
+                  <Draggable key={item.id_alinhamento} draggableId={String(item.id_alinhamento)} index={index}>
+                    {(dragProvided) => (
+                      <Stack
+                        ref={dragProvided.innerRef}
+                        {...dragProvided.draggableProps}
+                        direction="row"
+                        alignItems="center"
+                        sx={{ backgroundColor: "white", borderRadius: 1, mb: 0.5, pr: 1 }}
                       >
-                        {item.descricao}
-                      </Typography>
-                      <IconButton size="small" onClick={() => handleDelete(item)}>
-                        <DeleteOutlineIcon fontSize="small" />
-                      </IconButton>
-                    </Stack>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </Box>
-          )}
-        </Droppable>
-      </DragDropContext>
+                        <Box {...dragProvided.dragHandleProps} sx={{ display: "flex", color: "text.secondary" }}>
+                          <DragIndicatorIcon fontSize="small" />
+                        </Box>
+                        <Checkbox size="small" checked={item.concluido} onChange={() => handleToggle(item)} />
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            flex: 1,
+                            textDecoration: item.concluido ? "line-through" : "none",
+                            color: item.concluido ? "text.secondary" : "text.primary",
+                          }}
+                        >
+                          {item.descricao}
+                        </Typography>
+                        <IconButton size="small" onClick={() => handleDelete(item)}>
+                          <DeleteOutlineIcon fontSize="small" />
+                        </IconButton>
+                      </Stack>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </Box>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </Box>
 
-      <TextField
-        fullWidth
-        placeholder="Adicionar item..."
-        size="small"
-        value={novoItem}
-        onChange={(e) => setNovoItem(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            handleAdd();
-          }
-        }}
-        sx={{ mt: 1, "& .MuiInputBase-root": { fontSize: 13 } }}
-      />
+      <Dialog open={addingItem} onClose={() => setAddingItem(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>Adicionar item</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            fullWidth
+            multiline
+            size="small"
+            placeholder="Descrição do item"
+            value={novoItem}
+            onChange={(e) => setNovoItem(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleAdd();
+              }
+            }}
+            sx={{ mt: 1 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setAddingItem(false)}>Cancelar</Button>
+          <Button variant="contained" onClick={handleAdd}>
+            Adicionar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

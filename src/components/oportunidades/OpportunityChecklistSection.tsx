@@ -10,7 +10,10 @@ import {
   Stack,
   Button,
   CircularProgress,
-  Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import AddIcon from "@mui/icons-material/Add";
@@ -31,9 +34,8 @@ const OpportunityChecklistSection = ({ CODOS }: OpportunityChecklistSectionProps
   const dispatch = useDispatch();
   const [checklists, setChecklists] = useState<KanbanChecklist[]>([]);
   const [loading, setLoading] = useState(false);
-  const [addingChecklist, setAddingChecklist] = useState(false);
-  const [newChecklistName, setNewChecklistName] = useState("");
-  const [newItemDescricao, setNewItemDescricao] = useState<Record<number, string>>({});
+  const [addingItem, setAddingItem] = useState(false);
+  const [newItemText, setNewItemText] = useState("");
   const [itemToDelete, setItemToDelete] = useState<{ checklist: KanbanChecklist; item: KanbanChecklistItem } | null>(null);
 
   const fetchChecklists = useCallback(async () => {
@@ -75,8 +77,10 @@ const OpportunityChecklistSection = ({ CODOS }: OpportunityChecklistSectionProps
     }
   };
 
-  const handleAddItem = async (checklist: KanbanChecklist) => {
-    const descricao = (newItemDescricao[checklist.id_checklist] || "").trim();
+  const handleAddItem = async () => {
+    const checklist = checklists[0];
+    if (!checklist) return;
+    const descricao = newItemText.trim();
     if (!descricao) return;
     const ordem = checklist.itens.length > 0 ? Math.max(...checklist.itens.map((i) => i.ordem)) + 1 : 1;
     try {
@@ -90,7 +94,8 @@ const OpportunityChecklistSection = ({ CODOS }: OpportunityChecklistSectionProps
           c.id_checklist === checklist.id_checklist ? { ...c, itens: [...c.itens, item] } : c
         )
       );
-      setNewItemDescricao((prev) => ({ ...prev, [checklist.id_checklist]: "" }));
+      setNewItemText("");
+      setAddingItem(false);
     } catch {
       dispatch(setFeedback({ message: "Erro ao adicionar item", type: "error" }));
     }
@@ -111,20 +116,6 @@ const OpportunityChecklistSection = ({ CODOS }: OpportunityChecklistSectionProps
       dispatch(setFeedback({ message: "Erro ao excluir item", type: "error" }));
     } finally {
       setItemToDelete(null);
-    }
-  };
-
-  const handleAddChecklist = async () => {
-    const nome = newChecklistName.trim();
-    if (!nome) return;
-    const ordem = checklists.length > 0 ? Math.max(...checklists.map((c) => c.ordem)) + 1 : 1;
-    try {
-      const checklist = await KanbanChecklistService.create({ CODOS, nome, ordem });
-      setChecklists((prev) => [...prev, { ...checklist, itens: checklist.itens || [] }]);
-      setNewChecklistName("");
-      setAddingChecklist(false);
-    } catch {
-      dispatch(setFeedback({ message: "Erro ao criar checklist", type: "error" }));
     }
   };
 
@@ -166,30 +157,28 @@ const OpportunityChecklistSection = ({ CODOS }: OpportunityChecklistSectionProps
   }
 
   return (
-    <Box sx={{ width: "100%" }}>
-      <Stack direction="row" alignItems="center" gap={1} sx={{ mb: 1 }}>
+    <Box sx={{ width: "100%", height: "100%", minHeight: 0, display: "flex", flexDirection: "column" }}>
+      <Stack direction="row" alignItems="center" gap={1} sx={{ mb: 1, flexShrink: 0 }}>
         <Typography variant="subtitle1" color="primary.main" fontWeight="bold">
-          Checklists
+          Checklist
         </Typography>
-        <Tooltip title="Novo checklist">
-          <IconButton
-            size="small"
-            onClick={() => setAddingChecklist(true)}
-            sx={{
-              backgroundColor: "primary.main",
-              color: "white",
-              height: 24,
-              width: 24,
-              "&:hover": { backgroundColor: "primary.dark" },
-            }}
-          >
-            <AddIcon fontSize="small" />
-          </IconButton>
-        </Tooltip>
+        <IconButton
+          size="small"
+          onClick={() => setAddingItem(true)}
+          sx={{
+            backgroundColor: "primary.main",
+            color: "white",
+            height: 24,
+            width: 24,
+            "&:hover": { backgroundColor: "primary.dark" },
+          }}
+        >
+          <AddIcon fontSize="small" />
+        </IconButton>
       </Stack>
 
       {total > 0 && (
-        <Box sx={{ mb: 2 }}>
+        <Box sx={{ mb: 2, flexShrink: 0 }}>
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.5 }}>
             <Typography variant="caption" color="text.secondary">
               {done}/{total} concluídos
@@ -202,109 +191,92 @@ const OpportunityChecklistSection = ({ CODOS }: OpportunityChecklistSectionProps
         </Box>
       )}
 
-      <DragDropContext onDragEnd={handleDragEnd}>
-        {checklists.map((checklist) => (
-          <Box key={checklist.id_checklist} sx={{ mb: 2 }}>
-            <Droppable droppableId={String(checklist.id_checklist)}>
-              {(provided) => (
-                <Box ref={provided.innerRef} {...provided.droppableProps}>
-                  {checklist.itens.map((item, index) => (
-                    <Draggable key={item.id_item} draggableId={String(item.id_item)} index={index}>
-                      {(dragProvided) => (
-                        <Stack
-                          ref={dragProvided.innerRef}
-                          {...dragProvided.draggableProps}
-                          direction="row"
-                          alignItems="center"
-                          sx={{
-                            backgroundColor: "white",
-                            borderRadius: 1,
-                            mb: 0.5,
-                            pr: 1,
-                          }}
-                        >
-                          <Box {...dragProvided.dragHandleProps} sx={{ display: "flex", color: "text.secondary" }}>
-                            <DragIndicatorIcon fontSize="small" />
-                          </Box>
-                          <Checkbox
-                            size="small"
-                            checked={item.concluido}
-                            onChange={() => handleToggleItem(checklist, item)}
-                          />
-                          <Typography
-                            variant="body2"
+      <Box sx={{ flex: "1 1 0", minHeight: 0, overflowY: "auto" }}>
+        <DragDropContext onDragEnd={handleDragEnd}>
+          {checklists.map((checklist) => (
+            <Box key={checklist.id_checklist} sx={{ mb: 2 }}>
+              <Droppable droppableId={String(checklist.id_checklist)}>
+                {(provided) => (
+                  <Box ref={provided.innerRef} {...provided.droppableProps}>
+                    {checklist.itens.map((item, index) => (
+                      <Draggable key={item.id_item} draggableId={String(item.id_item)} index={index}>
+                        {(dragProvided) => (
+                          <Stack
+                            ref={dragProvided.innerRef}
+                            {...dragProvided.draggableProps}
+                            direction="row"
+                            alignItems="center"
                             sx={{
-                              flex: 1,
-                              textDecoration: item.concluido ? "line-through" : "none",
-                              color: item.concluido ? "text.secondary" : "text.primary",
+                              backgroundColor: "white",
+                              borderRadius: 1,
+                              mb: 0.5,
+                              pr: 1,
                             }}
                           >
-                            {item.descricao}
-                          </Typography>
-                          <IconButton
-                            size="small"
-                            onClick={() => setItemToDelete({ checklist, item })}
-                          >
-                            <DeleteOutlineIcon fontSize="small" />
-                          </IconButton>
-                        </Stack>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </Box>
-              )}
-            </Droppable>
+                            <Box {...dragProvided.dragHandleProps} sx={{ display: "flex", color: "text.secondary" }}>
+                              <DragIndicatorIcon fontSize="small" />
+                            </Box>
+                            <Checkbox
+                              size="small"
+                              checked={item.concluido}
+                              onChange={() => handleToggleItem(checklist, item)}
+                            />
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                flex: 1,
+                                textDecoration: item.concluido ? "line-through" : "none",
+                                color: item.concluido ? "text.secondary" : "text.primary",
+                              }}
+                            >
+                              {item.descricao}
+                            </Typography>
+                            <IconButton
+                              size="small"
+                              onClick={() => setItemToDelete({ checklist, item })}
+                            >
+                              <DeleteOutlineIcon fontSize="small" />
+                            </IconButton>
+                          </Stack>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </Box>
+                )}
+              </Droppable>
+            </Box>
+          ))}
+        </DragDropContext>
+      </Box>
 
-            <TextField
-              fullWidth
-              placeholder="Adicionar item..."
-              size="small"
-              value={newItemDescricao[checklist.id_checklist] || ""}
-              onChange={(e) =>
-                setNewItemDescricao((prev) => ({ ...prev, [checklist.id_checklist]: e.target.value }))
-              }
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleAddItem(checklist);
-                }
-              }}
-              sx={{ mt: 1, "& .MuiInputBase-root": { fontSize: 13 } }}
-            />
-          </Box>
-        ))}
-      </DragDropContext>
-
-      {addingChecklist ? (
-        <Stack direction="row" gap={0.5} alignItems="center">
+      <Dialog open={addingItem} onClose={() => setAddingItem(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>Adicionar item</DialogTitle>
+        <DialogContent>
           <TextField
             autoFocus
+            fullWidth
+            multiline
             size="small"
-            placeholder="Nome do checklist"
-            value={newChecklistName}
-            onChange={(e) => setNewChecklistName(e.target.value)}
+            placeholder="Descrição do item"
+            value={newItemText}
+            onChange={(e) => setNewItemText(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter") {
+              if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
-                handleAddChecklist();
-              }
-              if (e.key === "Escape") {
-                setAddingChecklist(false);
-                setNewChecklistName("");
+                handleAddItem();
               }
             }}
-            sx={{ flex: 1 }}
+            sx={{ mt: 1 }}
           />
-          <Button size="small" variant="contained" onClick={handleAddChecklist}>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setAddingItem(false)}>Cancelar</Button>
+          <Button variant="contained" onClick={handleAddItem}>
             Adicionar
           </Button>
-        </Stack>
-      ) : (
-        <Button size="small" startIcon={<AddIcon />} onClick={() => setAddingChecklist(true)}>
-          Novo checklist
-        </Button>
-      )}
+        </DialogActions>
+      </Dialog>
 
       <BaseDeleteDialog
         open={!!itemToDelete}

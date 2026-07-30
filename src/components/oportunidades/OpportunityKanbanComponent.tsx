@@ -6,6 +6,7 @@ import CloseIcon from "@mui/icons-material/Close"
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline"
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined"
 import { useCallback, useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { ControlledBoard, Column as KanbanColumn, KanbanBoard, OnDragEndNotification, Card as KanbanCard, moveCard } from '@caldwell619/react-kanban'
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../redux/store"
@@ -15,7 +16,6 @@ import OpportunityKanbanService from "../../services/oportunidades/OpportunityKa
 import { Opportunity } from "../../models/oportunidades/Opportunity"
 import OpportunityCard from "./OpportunityCard"
 import BaseDeleteDialog from "../shared/BaseDeleteDialog"
-import OpportunityKanbanCardDialog from "./OpportunityKanbanCardDialog"
 
 interface OpportunityKanbanCardData extends KanbanCard {
   id: number
@@ -95,10 +95,10 @@ const kanbanGlobalStyles = (
 
 const OpportunityKanbanComponent = () => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const user = useSelector((state: RootState) => state.user.user)
   const [board, setBoard] = useState<KanbanBoard<OpportunityKanbanCardData>>({ columns: [] })
   const [loading, setLoading] = useState(false)
-  const [selectedOpportunity, setSelectedOpportunity] = useState<Opportunity | null>(null)
   const [dateFrom, setDateFrom] = useState(getDefaultDateFrom())
   const [dateTo, setDateTo] = useState(getDefaultDateTo())
   const [isAddingColumn, setIsAddingColumn] = useState(false)
@@ -401,7 +401,7 @@ const OpportunityKanbanComponent = () => {
           renderCard={(card) => (
             <OpportunityCard
               row={card.opportunity}
-              onClick={() => setSelectedOpportunity(card.opportunity)}
+              onClick={() => navigate(`/oportunidades/${card.opportunity.CODOS}`)}
               styles={{ width: COLUMN_WIDTH - 24, minHeight: 'auto', maxHeight: 'none', margin: '0 12px 12px 12px' }}
             />
           )}
@@ -416,11 +416,6 @@ const OpportunityKanbanComponent = () => {
         onCancel={() => setColumnToDelete(null)}
         title="Remover coluna"
         message={`Tem certeza de que deseja remover a coluna "${columnToDelete?.title}"?`}
-      />
-      <OpportunityKanbanCardDialog
-        open={!!selectedOpportunity}
-        opportunity={selectedOpportunity}
-        onClose={() => setSelectedOpportunity(null)}
       />
     </Box>
   )

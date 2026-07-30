@@ -13,6 +13,9 @@ import OpportunityAttachmentList from "../../components/oportunidades/Opportunit
 import UpperNavigation from "../../components/shared/UpperNavigation";
 import { useNavigate, useParams } from "react-router-dom";
 import OpportunityFollowerList from "../../components/oportunidades/OpportunityFollowerList";
+import OpportunityChecklistSection from "../../components/oportunidades/OpportunityChecklistSection";
+import OpportunityAlinhamentoList from "../../components/oportunidades/OpportunityAlinhamentoList";
+import OpportunityPendenciasList from "../../components/oportunidades/OpportunityPendenciasList";
 import { useEffect, useState } from "react";
 import OpportunityService from "../../services/oportunidades/OpportunityService";
 import { useDispatch } from "react-redux";
@@ -27,11 +30,12 @@ const OpportunityDetailPage = () => {
 
   const [opportunity, setOpportunity] = useState<Opportunity | undefined>(undefined);
   const [observation, setObservation] = useState<string>("");
+  const [actionsContainer, setActionsContainer] = useState<HTMLDivElement | null>(null);
 
   const handleBack = () => {
     navigate("/oportunidades");
   };
-  
+
   const saveObservation = async () => {
     if (!opportunity) return;
     try {
@@ -77,25 +81,35 @@ const OpportunityDetailPage = () => {
   return (
     <Box
       sx={{
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
         p: { xs: 1, sm: 1 },
         backgroundColor: theme.palette.background.default,
-        minHeight: "100vh",
       }}
     >
-      <UpperNavigation handleBack={handleBack}>
-        <Stack direction="row" alignItems="center">
-          <Typography
-            variant="subtitle1"
-            color="primary.main"
-            fontWeight="bold"
-          >
-            {`${opportunity?.projeto.ID}.${opportunity?.adicional.NUMERO} - ${opportunity?.cliente.NOMEFANTASIA}`}
-          </Typography>
-        </Stack>
-      </UpperNavigation>
-      <Grid container direction="row" gap={1} wrap="wrap">
+      <Box sx={{ flexShrink: 0 }}>
+        <UpperNavigation handleBack={handleBack}>
+          <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ flex: 1 }}>
+            <Typography
+              variant="subtitle1"
+              color="primary.main"
+              fontWeight="bold"
+            >
+              {`${opportunity?.projeto.ID}.${opportunity?.adicional.NUMERO} - ${opportunity?.cliente.NOMEFANTASIA}`}
+            </Typography>
+            <Box ref={setActionsContainer} sx={{ display: "flex", alignItems: "center", gap: 1 }} />
+          </Stack>
+        </UpperNavigation>
+      </Box>
+
+      <Box sx={{ flexShrink: 0 }}>
         {/* Seção de Campos de Cadastro */}
-        <OpportunityDetailedForm />
+        <OpportunityDetailedForm actionsContainer={actionsContainer} />
+      </Box>
+
+      <Box sx={{ flexShrink: 0, mt: 1 }}>
         <Grid
           container
           direction={{ xs: "column", md: "row" }}
@@ -110,6 +124,8 @@ const OpportunityDetailPage = () => {
                 p: 2,
                 borderRadius: 1,
                 height: "100%",
+                maxHeight: 400,
+                overflowY: "auto",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "start",
@@ -144,9 +160,23 @@ const OpportunityDetailPage = () => {
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <Paper elevation={3} sx={{ p: 2, borderRadius: 1, height: "100%" }}>
+            <Paper
+              elevation={3}
+              sx={{
+                p: 2,
+                borderRadius: 1,
+                height: "100%",
+                maxHeight: 400,
+                overflowY: "auto",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "start",
+                gap: 1,
+                justifyContent: "flex-start",
+              }}
+            >
               {/* Lista de seguidores */}
-              <Box sx={{ minHeight: 100 }}>
+              <Box sx={{ width: "100%" }}>
                 <OpportunityFollowerList CODOS={Number(CODOS)} />
               </Box>
             </Paper>
@@ -154,14 +184,66 @@ const OpportunityDetailPage = () => {
 
           {/* Seção de Anexos */}
           <Grid item xs={12} md={4}>
-            <Paper elevation={3} sx={{ p: 2, borderRadius: 1, height: "100%" }}>
-              <Box sx={{ minHeight: 100 }}>
+            <Paper
+              elevation={3}
+              sx={{
+                p: 2,
+                borderRadius: 1,
+                height: "100%",
+                maxHeight: 400,
+                overflowY: "auto",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "start",
+                gap: 1,
+                justifyContent: "flex-start",
+              }}
+            >
+              <Box sx={{ width: "100%" }}>
                 <OpportunityAttachmentList />
               </Box>
             </Paper>
           </Grid>
 
           {/* Seção de Seguidores */}
+        </Grid>
+      </Box>
+
+      <Grid
+        container
+        direction={{ xs: "column", md: "row" }}
+        gap={1}
+        wrap="nowrap"
+        sx={{ flex: "1 1 0", minHeight: 0, mt: 1 }}
+      >
+        {/* Seção de Checklist */}
+        <Grid item xs={12} md={4} sx={{ minHeight: 0 }}>
+          <Paper
+            elevation={3}
+            sx={{ p: 2, borderRadius: 1, height: "100%", display: "flex", flexDirection: "column", overflow: "hidden" }}
+          >
+            <OpportunityChecklistSection CODOS={Number(CODOS)} />
+          </Paper>
+        </Grid>
+
+        {/* Seção de Alinhamento */}
+        <Grid item xs={12} md={4} sx={{ minHeight: 0 }}>
+          <Paper
+            elevation={3}
+            sx={{ p: 2, borderRadius: 1, height: "100%", display: "flex", flexDirection: "column", overflow: "hidden" }}
+          >
+            <OpportunityAlinhamentoList CODOS={Number(CODOS)} />
+          </Paper>
+        </Grid>
+
+        {/* Seção de Checklists Pendências */}
+        <Grid item xs={12} md={4} sx={{ minHeight: 0 }}>
+          <Paper
+            elevation={3}
+            sx={{ p: 2, borderRadius: 1, height: "100%", display: "flex", flexDirection: "column", overflow: "hidden" }}
+          >
+            <OpportunityPendenciasList CODOS={Number(CODOS)} />
+          </Paper>
         </Grid>
       </Grid>
     </Box>
