@@ -15,7 +15,6 @@ import {
   DialogActions,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
 import { Opportunity } from "../../models/oportunidades/Opportunity";
 import { FieldConfig, Option } from "../../types";
 import { useDispatch, useSelector } from "react-redux";
@@ -34,11 +33,7 @@ import BaseDeleteDialog from "../shared/BaseDeleteDialog";
 import CurrencyInput from "../shared/ui/CurrencyInput";
 import EmailIcon from "@mui/icons-material/Email";
 
-interface OpportunityDetailedFormProps {
-  actionsContainer?: HTMLDivElement | null;
-}
-
-const OpportunityDetailedForm = ({ actionsContainer }: OpportunityDetailedFormProps) => {
+const OpportunityDetailedForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -566,24 +561,30 @@ const OpportunityDetailedForm = ({ actionsContainer }: OpportunityDetailedFormPr
           </Grid>
         </Paper>
       </Grid>
-      {verifyStatus() &&
-        actionsContainer &&
-        createPortal(
-          <>
-            <Button
-              variant="contained"
-              color="error"
-              size="small"
-              onClick={() => setDeletingOpp(opportunity)}
-            >
-              Excluir Proposta
-            </Button>
-            <Button onClick={() => saveOpp()} variant="contained" size="small">
-              Salvar
-            </Button>
-          </>,
-          actionsContainer
-        )}
+      {verifyStatus() && (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            width: "100%",
+            mt: 1,
+            borderRadius: 1,
+            px: 2,
+            gap: 2,
+          }}
+        >
+          <Button onClick={() => saveOpp()} variant="contained">
+            Salvar
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => setDeletingOpp(opportunity)}
+          >
+            Excluir Proposta
+          </Button>
+        </Box>
+      )}
 
       <BaseDeleteDialog
         open={Boolean(deletingOpp)}

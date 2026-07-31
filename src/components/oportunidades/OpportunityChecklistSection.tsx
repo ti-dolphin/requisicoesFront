@@ -8,12 +8,12 @@ import {
   TextField,
   IconButton,
   Stack,
-  Button,
   CircularProgress,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
+  Button,
 } from "@mui/material";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import AddIcon from "@mui/icons-material/Add";
@@ -157,10 +157,10 @@ const OpportunityChecklistSection = ({ CODOS }: OpportunityChecklistSectionProps
   }
 
   return (
-    <Box sx={{ width: "100%", height: "100%", minHeight: 0, display: "flex", flexDirection: "column" }}>
-      <Stack direction="row" alignItems="center" gap={1} sx={{ mb: 1, flexShrink: 0 }}>
+    <Box sx={{ width: "100%" }}>
+      <Stack direction="row" alignItems="center" gap={1} sx={{ mb: 1 }}>
         <Typography variant="subtitle1" color="primary.main" fontWeight="bold">
-          Checklist
+          Checklists
         </Typography>
         <IconButton
           size="small"
@@ -191,7 +191,7 @@ const OpportunityChecklistSection = ({ CODOS }: OpportunityChecklistSectionProps
         </Box>
       )}
 
-      <Box sx={{ flex: "1 1 0", minHeight: 0, overflowY: "auto" }}>
+      <Box>
         <DragDropContext onDragEnd={handleDragEnd}>
           {checklists.map((checklist) => (
             <Box key={checklist.id_checklist} sx={{ mb: 2 }}>
