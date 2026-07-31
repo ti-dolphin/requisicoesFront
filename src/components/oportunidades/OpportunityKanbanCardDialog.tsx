@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Dialog, DialogContent, DialogTitle, IconButton, Stack, Typography, Divider, Box } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { Opportunity } from "../../models/oportunidades/Opportunity";
@@ -13,6 +14,8 @@ interface OpportunityKanbanCardDialogProps {
 }
 
 const OpportunityKanbanCardDialog = ({ open, opportunity, onClose }: OpportunityKanbanCardDialogProps) => {
+  const [followersVersion, setFollowersVersion] = useState(0);
+
   if (!opportunity) return null;
 
   return (
@@ -27,7 +30,10 @@ const OpportunityKanbanCardDialog = ({ open, opportunity, onClose }: Opportunity
       </DialogTitle>
       <DialogContent dividers>
         <Stack gap={3}>
-          <OpportunityFollowerList CODOS={opportunity.CODOS} />
+          <OpportunityFollowerList
+            CODOS={opportunity.CODOS}
+            onChange={() => setFollowersVersion((v) => v + 1)}
+          />
 
           <Divider />
 
@@ -37,7 +43,7 @@ const OpportunityKanbanCardDialog = ({ open, opportunity, onClose }: Opportunity
 
           <Divider />
 
-          <OpportunityAlinhamentoList CODOS={opportunity.CODOS} />
+          <OpportunityAlinhamentoList key={followersVersion} CODOS={opportunity.CODOS} />
 
           <Divider />
 
