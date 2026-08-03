@@ -31,7 +31,7 @@ const CrmConfigList = () => {
   const [loading, setLoading] = useState(false);
   const [addingItemFor, setAddingItemFor] = useState<AlinhamentoConfigPessoa | null>(null);
   const [newItemText, setNewItemText] = useState("");
-  const [itemToDelete, setItemToDelete] = useState<{ pessoa: AlinhamentoConfigPessoa; item: AlinhamentoItem } | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<{ pessoaConfig: AlinhamentoConfigPessoa; item: AlinhamentoItem } | null>(null);
 
   const fetchConfig = useCallback(async () => {
     setLoading(true);
@@ -76,7 +76,7 @@ const CrmConfigList = () => {
       await AlinhamentoConfigService.deleteItem(itemToDelete.item.id_item);
       setPessoas((prev) =>
         prev.map((p) =>
-          p.pessoa.CODPESSOA === itemToDelete.pessoa.CODPESSOA
+          p.pessoa.CODPESSOA === itemToDelete.pessoaConfig.pessoa.CODPESSOA
             ? { ...p, itens: p.itens.filter((i) => i.id_item !== itemToDelete.item.id_item) }
             : p
         )
@@ -168,7 +168,7 @@ const CrmConfigList = () => {
                               <Typography variant="body2" sx={{ flex: 1, py: 0.5 }}>
                                 {item.descricao}
                               </Typography>
-                              <IconButton size="small" onClick={() => setItemToDelete({ pessoa: pessoaConfig, item })}>
+                              <IconButton size="small" onClick={() => setItemToDelete({ pessoaConfig, item })}>
                                 <DeleteOutlineIcon fontSize="small" />
                               </IconButton>
                             </Stack>

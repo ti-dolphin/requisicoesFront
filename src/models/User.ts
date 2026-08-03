@@ -45,6 +45,7 @@ export interface User {
   PERM_ESTOQUE: number | null;
   PERM_COMPRADOR_OPERACIONAL: number | null;
   PERM_MOVIMENTAR: number | null;
+  PERM_CRM: number | null;
 }
 
 export interface ReducedUser {
