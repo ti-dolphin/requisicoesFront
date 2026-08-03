@@ -33,13 +33,13 @@ const OpportunityFollowerList = ({CODOS, ID_PROJETO, onChange}: props) => {
     
     const {userOptions} = useCrmUserOptions();
   
-  const handleDeleteFollower = () => {
+  const handleDeleteFollower = async () => {
     if (!user) return;
     if (!followerBeingDeleted) return;
     const { PERM_ADMINISTRADOR } = user;
     try {
       if (PERM_ADMINISTRADOR === 1) {
-        ProjectService.deleteFollower(followerBeingDeleted.id_seguidor_projeto, followerBeingDeleted.id_projeto);
+        await ProjectService.deleteFollower(followerBeingDeleted.id_seguidor_projeto, followerBeingDeleted.id_projeto);
         setFollowers(
           followers.filter(
             (follower) =>
