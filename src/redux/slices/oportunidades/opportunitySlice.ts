@@ -42,6 +42,9 @@ const opportunitySlice = createSlice({
     setOpportunity(state, action: PayloadAction<Partial<Opportunity> | null>) {
       state.opportunity = action.payload;
     },
+    updateOpportunityFields(state, action: PayloadAction<Partial<Opportunity>>) {
+      state.opportunity = { ...(state.opportunity ?? {}), ...action.payload };
+    },
   },
 });
 
@@ -51,5 +54,6 @@ export const {
   setEditing,
   setDeleting,
   setOpportunity,
+  updateOpportunityFields,
 } = opportunitySlice.actions;
 export default opportunitySlice.reducer;
