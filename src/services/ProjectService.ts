@@ -1,4 +1,5 @@
 import api from '../api';
+import { Client } from '../models/oportunidades/Client';
 import { ProjectFollower } from '../models/oportunidades/ProjectFollower';
 import { Project } from '../models/Project';
 
@@ -30,6 +31,13 @@ export const ProjectService = {
         codpessoa: id_seguidor,
         id_projeto: id_projeto,
       }
+    );
+    return response.data;
+  },
+
+  async getClient(id: number): Promise<Client | null> {
+    const response = await api.get<Client | null>(
+      `/${API_ENDPOINT}/${id}/cliente`
     );
     return response.data;
   },
