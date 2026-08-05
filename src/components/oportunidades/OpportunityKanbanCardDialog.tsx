@@ -1,17 +1,11 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTitle, IconButton, Stack, Typography, Divider, Box } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { Opportunity } from "../../models/oportunidades/Opportunity";
+import { OpportunityKanbanCardDialogProps } from "../../models/oportunidades/Opportunity";
 import OpportunityFollowerList from "./OpportunityFollowerList";
 import OpportunityChecklistSection from "./OpportunityChecklistSection";
 import OpportunityAlinhamentoList from "./OpportunityAlinhamentoList";
 import OpportunityPendenciasList from "./OpportunityPendenciasList";
-
-interface OpportunityKanbanCardDialogProps {
-  open: boolean;
-  opportunity: Opportunity | null;
-  onClose: () => void;
-}
 
 const OpportunityKanbanCardDialog = ({ open, opportunity, onClose }: OpportunityKanbanCardDialogProps) => {
   const [followersVersion, setFollowersVersion] = useState(0);

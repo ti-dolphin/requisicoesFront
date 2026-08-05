@@ -59,3 +59,14 @@ export interface Opportunity {
     projeto: Project;
     gerente: ReducedUser;
 }
+
+export interface OpportunityKanbanCardDialogProps {
+  open: boolean;
+  opportunity: Opportunity | null;
+  onClose: () => void;
+}
+
+export interface OpportunityKanbanArchivedCardsDialogProps {
+  open: boolean;
+  onClose: () => void;
+}

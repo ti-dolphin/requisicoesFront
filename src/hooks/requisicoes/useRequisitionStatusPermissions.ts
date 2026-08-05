@@ -4,7 +4,6 @@ import { User } from "../../models/User";
 import RequisitionStatusService from "../../services/requisicoes/RequisitionStatusService";
 import { useDispatch } from "react-redux";
 import { setFeedback } from "../../redux/slices/feedBackSlice";
-import { permission } from "process";
 
 export interface RequisitionStatusPermissions{ 
     permissionToChangeStatus: boolean;

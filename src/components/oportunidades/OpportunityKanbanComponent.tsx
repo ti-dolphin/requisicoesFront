@@ -1,4 +1,4 @@
-import { Box, Chip, CircularProgress, GlobalStyles, IconButton, TextField, Tooltip, Typography, Button, } from "@mui/material"
+import { Box, Chip, CircularProgress, IconButton, TextField, Tooltip, Typography, Button, } from "@mui/material"
 import Grid from '@mui/material/Grid';
 import AddIcon from "@mui/icons-material/Add"
 import CheckIcon from "@mui/icons-material/Check"
@@ -6,23 +6,19 @@ import CloseIcon from "@mui/icons-material/Close"
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline"
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined"
 import { useCallback, useEffect, useState } from "react"
-import { ControlledBoard, Column as KanbanColumn, KanbanBoard, OnDragEndNotification, Card as KanbanCard, moveCard } from '@caldwell619/react-kanban'
+import { ControlledBoard, Column as KanbanColumn, KanbanBoard, OnDragEndNotification, moveCard } from '@caldwell619/react-kanban'
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../redux/store"
 import { setFeedback } from "../../redux/slices/feedBackSlice"
 import OpportunityService from "../../services/oportunidades/OpportunityService"
 import OpportunityKanbanService from "../../services/oportunidades/OpportunityKanbanService"
 import { Opportunity } from "../../models/oportunidades/Opportunity"
+import { OpportunityKanbanCardData } from "../../models/oportunidades/OpportunityKanbanColumn"
 import OpportunityCard from "./OpportunityCard"
 import BaseDeleteDialog from "../shared/BaseDeleteDialog"
 import OpportunityKanbanCardDialog from "./OpportunityKanbanCardDialog"
-
-interface OpportunityKanbanCardData extends KanbanCard {
-  id: number
-  opportunity: Opportunity
-}
-
-const COLUMN_WIDTH = 300
+import OpportunityKanbanArchivedCardsDialog from "./OpportunityKanbanArchivedCardsDialog";
+import { kanbanGlobalStyles, KANBAN_COLUMN_WIDTH } from "../../styles/oportunidades/kanbanGlobalStyles"
 
 const formatDateInput = (date: Date) => {
   const year = date.getFullYear()
@@ -33,65 +29,6 @@ const formatDateInput = (date: Date) => {
 
 const getDefaultDateFrom = () => `${new Date().getFullYear()}-01-01`
 const getDefaultDateTo = () => formatDateInput(new Date())
-
-const kanbanGlobalStyles = (
-  <GlobalStyles
-    styles={{
-      '.react-kanban-board': {
-        display: 'flex',
-        overflowX: 'auto',
-        overflowY: 'hidden',
-        height: '100%',
-        minHeight: 0,
-        padding: '16px',
-        boxSizing: 'border-box',
-        // "safe center": centraliza quando cabe tudo, mas evita o bug de
-        // justify-content:center cortar a primeira coluna e deixá-la inacessível
-        // via scroll quando as colunas não cabem na largura da tela.
-        justifyContent: 'safe center',
-      },
-      // O wrapper do Droppable (@hello-pangea/dnd) não tem classe própria, só esse
-      // data-attribute fixo da lib. Ele precisa de altura explícita porque a coluna
-      // usa height:100% — sem isso, o pai fica em auto e o 100% da coluna também
-      // vira auto (trap clássico de percentage height), impedindo o scroll interno.
-      '[data-rfd-droppable-id="board-droppable"]': {
-        height: '100%',
-        minHeight: 0,
-      },
-      // O cabeçalho "sticky" não funciona de forma confiável dentro de uma coluna que
-      // rola inteira (a coluna usa o layout inline-block/nowrap legado da lib). Em vez
-      // disso, só a lista de cards rola: a coluna vira flex-column, o cabeçalho fica
-      // fora da área de scroll (não precisa de sticky) e só o Droppable dos cards cresce
-      // e rola. O seletor abaixo pega o Droppable de cards (droppableId = id da coluna,
-      // ex: "1", "2") como descendente de .react-kanban-column — diferente do Droppable
-      // do board inteiro (droppableId fixo "board-droppable"), que é ancestral dela.
-      '.react-kanban-column': {
-        width: COLUMN_WIDTH,
-        minWidth: COLUMN_WIDTH,
-        maxWidth: COLUMN_WIDTH,
-        height: '100%',
-        minHeight: 0,
-        marginRight: 20,
-        backgroundColor: '#ffffff',
-        borderRadius: 12,
-        borderTop: '4px solid #2B3990',
-        boxShadow: '0 2px 8px rgba(43, 57, 144, 0.15)',
-        boxSizing: 'border-box',
-        overflow: 'hidden',
-        display: 'inline-flex !important',
-        flexDirection: 'column !important',
-        verticalAlign: 'top',
-      },
-      '.react-kanban-column [data-rfd-droppable-id]': {
-        flex: '1 1 0',
-        minHeight: 0,
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        paddingBottom: 8,
-      },
-    }}
-  />
-)
 
 const OpportunityKanbanComponent = () => {
   const dispatch = useDispatch()
@@ -106,6 +43,7 @@ const OpportunityKanbanComponent = () => {
   const [columnToDelete, setColumnToDelete] = useState<KanbanColumn<OpportunityKanbanCardData> | null>(null)
   const [editingColumnId, setEditingColumnId] = useState<number | null>(null)
   const [editingColumnName, setEditingColumnName] = useState("")
+  const [openArchiveDialog, setOpenArchiveDialog] = useState(false)
 
   const fetchBoard = useCallback(async () => {
     if (!user) return
@@ -248,6 +186,14 @@ const OpportunityKanbanComponent = () => {
               sx={{ width: 160, '& .MuiOutlinedInput-root': { height: 32, fontSize: 12 }, '& .MuiInputLabel-root': { fontSize: 12 } }}
             />
           </Grid>
+          <Grid xs={1}>
+            <Button 
+              variant="outlined"
+              onClick={() => setOpenArchiveDialog(true)}
+            >
+              Arquivados
+            </Button>
+          </Grid>
         </Grid>
       </Box>
       <Box sx={{ flex: '1 1 0', minHeight: 0 }}>
@@ -338,9 +284,9 @@ const OpportunityKanbanComponent = () => {
           renderColumnAdder={() => (
             <Box
               sx={{
-                width: COLUMN_WIDTH,
-                minWidth: COLUMN_WIDTH,
-                maxWidth: COLUMN_WIDTH,
+                width: KANBAN_COLUMN_WIDTH,
+                minWidth: KANBAN_COLUMN_WIDTH,
+                maxWidth: KANBAN_COLUMN_WIDTH,
                 height: 'fit-content',
                 backgroundColor: 'rgba(255,255,255,0.6)',
                 borderRadius: 3,
@@ -402,7 +348,7 @@ const OpportunityKanbanComponent = () => {
             <OpportunityCard
               row={card.opportunity}
               onClick={() => setSelectedOpportunity(card.opportunity)}
-              styles={{ width: COLUMN_WIDTH - 24, minHeight: 'auto', maxHeight: 'none', margin: '0 12px 12px 12px' }}
+              styles={{ width: KANBAN_COLUMN_WIDTH - 24, minHeight: 'auto', maxHeight: 'none', margin: '0 12px 12px 12px' }}
             />
           )}
         >
@@ -421,6 +367,10 @@ const OpportunityKanbanComponent = () => {
         open={!!selectedOpportunity}
         opportunity={selectedOpportunity}
         onClose={() => setSelectedOpportunity(null)}
+      />
+      <OpportunityKanbanArchivedCardsDialog
+        open={openArchiveDialog}
+        onClose={() => setOpenArchiveDialog(false)}
       />
     </Box>
   )
