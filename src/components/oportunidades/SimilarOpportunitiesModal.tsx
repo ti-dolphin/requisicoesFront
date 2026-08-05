@@ -16,35 +16,8 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import LinkIcon from "@mui/icons-material/Link";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
-import { SimilarOpportunity } from "../../services/oportunidades/OpportunityService";
-
-const modalStyle = {
-  position: "absolute" as const,
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  display: "flex",
-  flexDirection: "column",
-  p: 3,
-  borderRadius: 2,
-  minWidth: {
-    xs: 320,
-    sm: 500,
-  },
-  maxWidth: 600,
-  maxHeight: "80vh",
-  zIndex: 1400,
-};
-
-interface SimilarOpportunitiesModalProps {
-  open: boolean;
-  opportunities: SimilarOpportunity[];
-  onClose: () => void;
-  onCreateNew: () => void;
-  onLinkTo: (codos: number) => void;
-}
+import { SimilarOpportunitiesModalProps } from "../../models/oportunidades/Opportunity";
+import { similarOpportunitiesModalStyle } from "../../styles/oportunidades/similarOpportunitiesModalStyle";
 
 const SimilarOpportunitiesModal: React.FC<SimilarOpportunitiesModalProps> = ({
   open,
@@ -56,7 +29,7 @@ const SimilarOpportunitiesModal: React.FC<SimilarOpportunitiesModalProps> = ({
 
   return (
     <Modal open={open} onClose={onClose}>
-      <Box sx={modalStyle}>
+      <Box sx={similarOpportunitiesModalStyle}>
         <IconButton
           onClick={onClose}
           sx={{ position: "absolute", top: 8, right: 8 }}

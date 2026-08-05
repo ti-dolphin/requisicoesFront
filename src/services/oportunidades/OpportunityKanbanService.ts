@@ -23,6 +23,10 @@ const OpportunityKanbanService = {
     const response = await api.put(`${API_ENDPOINT}/colunas/${id}`, { name });
     return response.data;
   },
+  getArchivedCards: async () => {
+    const response = await api.get(`${API_ENDPOINT}/arquivados`)
+    return response.data
+  }
 };
 
 export default OpportunityKanbanService;

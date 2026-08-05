@@ -4,7 +4,6 @@ import { Opportunity } from "./Opportunity";
 export interface OpportunityKanbanColumn {
   id: number;
   name: string;
-  board: string;
 }
 
 export interface OpportunityKanbanCardData extends KanbanCard {
