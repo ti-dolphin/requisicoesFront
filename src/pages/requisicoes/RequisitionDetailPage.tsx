@@ -126,8 +126,8 @@ const RequisitionDetailPage = () => {
     }
   }
 
-  const concludeReplaceItemProduct = async () =>   {
-    if(!itemBeingReplaced || !productSelected) return;
+  const concludeReplaceItemProduct = async () => {
+    if (!itemBeingReplaced || !productSelected) return; 
     try { 
       await RequisitionItemService.update(itemBeingReplaced, {id_produto: productSelected});
       dispatch(setFeedback({
