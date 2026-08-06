@@ -19,6 +19,11 @@ import BaseDeleteDialog from "../shared/BaseDeleteDialog"
 import OpportunityKanbanCardDialog from "./OpportunityKanbanCardDialog"
 import OpportunityKanbanArchivedCardsDialog from "./OpportunityKanbanArchivedCardsDialog";
 import { kanbanGlobalStyles, KANBAN_COLUMN_WIDTH } from "../../styles/oportunidades/kanbanGlobalStyles"
+import { KanbanBoardName, isManualMoveAllowed } from "../../utils/kanbanFlowRules"
+
+interface OpportunityKanbanComponentProps {
+  board: KanbanBoardName
+}
 
 const formatDateInput = (date: Date) => {
   const year = date.getFullYear()
@@ -30,10 +35,11 @@ const formatDateInput = (date: Date) => {
 const getDefaultDateFrom = () => `${new Date().getFullYear()}-01-01`
 const getDefaultDateTo = () => formatDateInput(new Date())
 
-const OpportunityKanbanComponent = () => {
+const OpportunityKanbanComponent = ({ board }: OpportunityKanbanComponentProps) => {
   const dispatch = useDispatch()
   const user = useSelector((state: RootState) => state.user.user)
-  const [board, setBoard] = useState<KanbanBoard<OpportunityKanbanCardData>>({ columns: [] })
+  const columnField = board === "Comercial" ? "kanban_column_id" : "kanban_column_id_orcamento"
+  const [kanbanBoardData, setKanbanBoardData] = useState<KanbanBoard<OpportunityKanbanCardData>>({ columns: [] })
   const [loading, setLoading] = useState(false)
   const [selectedOpportunity, setSelectedOpportunity] = useState<Opportunity | null>(null)
   const [dateFrom, setDateFrom] = useState(getDefaultDateFrom())
@@ -50,7 +56,7 @@ const OpportunityKanbanComponent = () => {
     setLoading(true)
     try {
       const [columns, { opps }] = await Promise.all([
-        OpportunityKanbanService.getColumns(),
+        OpportunityKanbanService.getColumns(board),
         OpportunityService.getMany({
           user,
           searchTerm: "",
@@ -61,12 +67,12 @@ const OpportunityKanbanComponent = () => {
           finalizados: false,
         }),
       ])
-      setBoard({
+      setKanbanBoardData({
         columns: columns.map((column) => ({
           id: column.id,
           title: column.name,
           cards: opps
-            .filter((opportunity: Opportunity) => opportunity.kanban_column_id === column.id)
+            .filter((opportunity: Opportunity) => opportunity[columnField] === column.id)
             .map((opportunity: Opportunity) => ({
               id: opportunity.CODOS,
               opportunity,
@@ -78,7 +84,7 @@ const OpportunityKanbanComponent = () => {
     } finally {
       setLoading(false)
     }
-  }, [user, dispatch, dateFrom, dateTo])
+  }, [user, dispatch, dateFrom, dateTo, board, columnField])
 
   useEffect(() => {
     fetchBoard()
@@ -86,12 +92,20 @@ const OpportunityKanbanComponent = () => {
 
   const handleCardDragEnd: OnDragEndNotification<OpportunityKanbanCardData> = async (card, source, destination) => {
     if (!source || !destination || destination.toColumnId === undefined) return
-    setBoard((previousBoard) => moveCard(previousBoard, source, destination))
+    const targetColumnId = Number(destination.toColumnId)
+    if (destination.toColumnId !== source.fromColumnId) {
+      const moveCheck = isManualMoveAllowed(targetColumnId, card.opportunity)
+      if (!moveCheck.allowed) {
+        dispatch(setFeedback({ message: moveCheck.message, type: "error" }))
+        return
+      }
+    }
+    setKanbanBoardData((previousBoard) => moveCard(previousBoard, source, destination))
     if (destination.toColumnId !== source.fromColumnId) {
       try {
-        await OpportunityKanbanService.updateCardColumn(card.id, Number(destination.toColumnId))
-      } catch (error) {
-        dispatch(setFeedback({ message: "Erro ao mover oportunidade", type: "error" }))
+        await OpportunityKanbanService.updateCardColumn(card.id, board, targetColumnId)
+      } catch (error: any) {
+        dispatch(setFeedback({ message: error?.response?.data?.error || "Erro ao mover oportunidade", type: "error" }))
         fetchBoard()
       }
     }
@@ -101,7 +115,7 @@ const OpportunityKanbanComponent = () => {
     const trimmedName = newColumnName.trim()
     if (!trimmedName) return
     try {
-      await OpportunityKanbanService.createColumn(trimmedName)
+      await OpportunityKanbanService.createColumn(trimmedName, board)
       setNewColumnName("")
       setIsAddingColumn(false)
       fetchBoard()
@@ -186,14 +200,16 @@ const OpportunityKanbanComponent = () => {
               sx={{ width: 160, '& .MuiOutlinedInput-root': { height: 32, fontSize: 12 }, '& .MuiInputLabel-root': { fontSize: 12 } }}
             />
           </Grid>
-          <Grid xs={1}>
-            <Button 
-              variant="outlined"
-              onClick={() => setOpenArchiveDialog(true)}
-            >
-              Arquivados
-            </Button>
-          </Grid>
+          {board === "Comercial" && (
+            <Grid xs={1}>
+              <Button
+                variant="outlined"
+                onClick={() => setOpenArchiveDialog(true)}
+              >
+                Arquivados
+              </Button>
+            </Grid>
+          )}
         </Grid>
       </Box>
       <Box sx={{ flex: '1 1 0', minHeight: 0 }}>
@@ -352,7 +368,7 @@ const OpportunityKanbanComponent = () => {
             />
           )}
         >
-          {board}
+          {kanbanBoardData}
         </ControlledBoard>
       )}
       </Box>
@@ -368,10 +384,12 @@ const OpportunityKanbanComponent = () => {
         opportunity={selectedOpportunity}
         onClose={() => setSelectedOpportunity(null)}
       />
-      <OpportunityKanbanArchivedCardsDialog
-        open={openArchiveDialog}
-        onClose={() => setOpenArchiveDialog(false)}
-      />
+      {board === "Comercial" && (
+        <OpportunityKanbanArchivedCardsDialog
+          open={openArchiveDialog}
+          onClose={() => setOpenArchiveDialog(false)}
+        />
+      )}
     </Box>
   )
 }

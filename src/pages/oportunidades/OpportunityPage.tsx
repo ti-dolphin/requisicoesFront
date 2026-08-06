@@ -52,14 +52,16 @@ const OpportunityListPage = () => {
             }}
           >
             <Tab label="Tabela" />
-            <Tab label="Kanban" />
+            <Tab label="Comercial" />
+            <Tab label="Orçamento" />
             {podeConfigurar && <Tab label="Config" />}
           </Tabs>
         </Box>
 
         {activeTab === 0 && <OpportunityTableComponent />}
-        {activeTab === 1 && <OpportunityKanbanComponent />}
-        {activeTab === 2 && podeConfigurar && <CrmConfigList />}
+        {activeTab === 1 && <OpportunityKanbanComponent board="Comercial" />}
+        {activeTab === 2 && <OpportunityKanbanComponent board="Orçamento" />}
+        {activeTab === 3 && podeConfigurar && <CrmConfigList />}
       </Box>
     </Box>
 

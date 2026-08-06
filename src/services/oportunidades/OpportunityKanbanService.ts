@@ -1,19 +1,20 @@
 import api from "../../api";
 import { OpportunityKanbanColumn } from "../../models/oportunidades/OpportunityKanbanColumn";
+import { KanbanBoardName } from "../../utils/kanbanFlowRules";
 
 const API_ENDPOINT = "/kanban_oportunidades";
 
 const OpportunityKanbanService = {
-  getColumns: async (): Promise<OpportunityKanbanColumn[]> => {
-    const response = await api.get(API_ENDPOINT);
+  getColumns: async (board: KanbanBoardName): Promise<OpportunityKanbanColumn[]> => {
+    const response = await api.get(API_ENDPOINT, { params: { board } });
     return response.data;
   },
-  updateCardColumn: async (CODOS: number, kanban_column_id: number) => {
-    const response = await api.put(`${API_ENDPOINT}/${CODOS}`, { kanban_column_id });
+  updateCardColumn: async (CODOS: number, board: KanbanBoardName, kanban_column_id: number) => {
+    const response = await api.put(`${API_ENDPOINT}/${CODOS}`, { board, kanban_column_id });
     return response.data;
   },
-  createColumn: async (name: string): Promise<OpportunityKanbanColumn> => {
-    const response = await api.post(API_ENDPOINT, { name });
+  createColumn: async (name: string, board: KanbanBoardName): Promise<OpportunityKanbanColumn> => {
+    const response = await api.post(API_ENDPOINT, { name, board });
     return response.data;
   },
   deleteColumn: async (id: number): Promise<void> => {
