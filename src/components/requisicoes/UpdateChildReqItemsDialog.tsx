@@ -44,9 +44,6 @@ const UpdateChildReqItemsDialog = ({
 }: UpdateChildReqItemsDialogProps) => {
   const [rows, setRows] = useState(items);
   const [cellModesModel, setCellModesModel] = useState<GridCellModesModel>({});
-  const [triggerFunction, setTriggerFunction] = useState<
-    "createParcialReq" | "none"
-  >("none");
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -154,7 +151,7 @@ const UpdateChildReqItemsDialog = ({
     }
   }
 
-  const createParcialReq = useCallback(async () => {
+  async function createParcialReq() {
     setLoading(true);
     try {
       validateItems()
@@ -162,11 +159,8 @@ const UpdateChildReqItemsDialog = ({
       if (newRequisition) {
         navigate(`/requisicoes/${newRequisition.ID_REQUISICAO}`);
       }
-      setTriggerFunction("none");
       onClose();
     } catch (e : any) {
-       setTriggerFunction("none");
-      console.error(e);
       dispatch(
         setFeedback({
           message: `Erro ao criar requisição parcial: ${e.message}`,
@@ -176,31 +170,8 @@ const UpdateChildReqItemsDialog = ({
     } finally {
       setLoading(false);
     }
-  }, [triggerFunction]);
+  }
 
-  const handleCreateButtonClick = async () => {
-    // Stop editing any cell to trigger processRowUpdate
-    try {
-      apiRef.current.stopCellEditMode({
-        id: Object.keys(cellModesModel)[0],
-        field: Object.keys(cellModesModel[Object.keys(cellModesModel)[0]])[0],
-        ignoreModifications: false,
-      });
-    } catch (e) {
-      console.error(e);
-    }
-
-    setTimeout(() => {
-      setTriggerFunction("createParcialReq");
-    }, 1000);
-    // Wait for state to update (optional: small delay to ensure state propagation)
-  };
-
-  useEffect(() => {
-    if(triggerFunction === "createParcialReq") {
-      createParcialReq();
-    }
-  }, [triggerFunction]);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg">
@@ -247,7 +218,7 @@ const UpdateChildReqItemsDialog = ({
           Cancelar
         </Button>
         <Button
-          onClick={handleCreateButtonClick}
+          onClick={createParcialReq}
           color="primary"
           variant="contained"
           disabled={loading}

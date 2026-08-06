@@ -92,6 +92,17 @@ export const useRequisitionItemColumns = (
     [items]
   );
 
+  const targetPriceTotal = useMemo(
+    () =>
+      items.reduce((total, item) => {
+        if (item.target_price === null || item.target_price === undefined) {
+          return total;
+        }
+        return total + Number(item.target_price) * Number(item.quantidade || 0);
+      }, 0),
+    [items]
+  );
+
   // O anexo de NF só deve ficar disponível a partir da etapa "Lançar NF"
   // (a etapa seguinte/final é "Concluído").
   const canViewNfAttachment = useMemo(() => {
@@ -317,6 +328,37 @@ export const useRequisitionItemColumns = (
       headerAlign: "right",
       sortComparator: (a: any, b: any) => Number(a || 0) - Number(b || 0),
       renderEditCell: renderInstantEditCell,
+      renderHeader: () => (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-end",
+            justifyContent: "center",
+            width: "100%",
+          }}
+        >
+          <Typography
+            fontSize="12px"
+            fontWeight="bold"
+            color="primary"
+            lineHeight={1.2}
+            noWrap
+          >
+            Valor alvo unitário
+          </Typography>
+          {targetPriceTotal > 0 && (
+            <Typography
+              fontSize="0.7rem"
+              color="primary"
+              lineHeight={1.2}
+              noWrap
+            >
+              (R$ {formatDecimalPtBr(targetPriceTotal)})
+            </Typography>
+          )}
+        </Box>
+      ),
       renderCell: (params: any) =>
         params.value !== null && params.value !== undefined && params.value !== ""
           ? formatDecimalPtBr(Number(params.value))
@@ -693,6 +735,7 @@ export const useRequisitionItemColumns = (
   ], [
     descriptionColumnWidth,
     observacaoColumnWidth,
+    targetPriceTotal,
     attendingItems,
     hasStockToPurchaseSplit,
     canViewNfAttachment,
