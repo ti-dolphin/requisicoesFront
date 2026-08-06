@@ -64,7 +64,7 @@ const RequisitionCommentList = ({ fullScreen = false }: RequisitionCommentListPr
 
 
   const permToEditOrDelete = (comment: RequisitionComment) => { 
-    return  user?.CODPESSOA === comment.pessoa_criado_por?.CODPESSOA || !!user?.PERM_ADMINISTRADOR;
+    return !!user?.PERM_ADMINISTRADOR;
   }
   
 
@@ -155,15 +155,6 @@ const RequisitionCommentList = ({ fullScreen = false }: RequisitionCommentListPr
             secondaryAction={
               permToEditOrDelete(comment) && (
                 <>
-                  {/* <IconButton
-                    size="small"
-                    onClick={() => {
-                      setEditingComment(comment);
-                      setEditDialogOpen(true);
-                    }}
-                  >
-                    <EditIcon fontSize="small" />
-                  </IconButton> */}
                   <IconButton
                     size="small"
                     color="error"
