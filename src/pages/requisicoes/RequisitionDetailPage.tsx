@@ -228,9 +228,16 @@ const RequisitionDetailPage = () => {
 
   const shouldShowAddItemsButton = () => { 
     return (
-      user?.PERM_COMPRADOR ||
-      (Number(requisition?.ID_RESPONSAVEL) === Number(user?.CODPESSOA) &&
+      ( 
+        user?.PERM_COMPRADOR || (Number(requisition?.ID_RESPONSAVEL) === Number(user?.CODPESSOA) && 
         requisition.status?.nome === "Em edição")
+      ) ||
+      (
+        requisition.status?.nome === 'Validação' && (Number(user?.CODPESSOA) === Number(requisition.responsavel_projeto?.CODPESSOA))
+      ) ||
+      (
+        requisition.status?.nome === 'Aprovação Gerente' && (Number(user?.CODPESSOA) === Number(requisition.gerente?.CODPESSOA))
+      )
     );
   }
 
@@ -653,7 +660,7 @@ const RequisitionDetailPage = () => {
         open={
           (addingProducts || replacingItemProduct) &&
           requisition?.tipo_faturamento != null
-        } //o modal será aberto se estiver sendo feita substituição ou adição de produtos E se o tipo de faturamento já foi carregado
+        }
         onClose={handleClose}
         maxWidth="lg"
         fullWidth
