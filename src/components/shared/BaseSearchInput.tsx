@@ -5,7 +5,7 @@ import React from 'react'
 
 interface BaseSearchInput {
   onChange: DebouncedFunc<(event: React.ChangeEvent<HTMLInputElement>) => void>;
-  value?: string;
+  defaultValue?: string;
   label? : string;
   placeholder? : string;
   showIcon? : boolean;
@@ -13,7 +13,7 @@ interface BaseSearchInput {
   styles? : any;
 }
 
-const BaseSearchInput = ({ onChange, value, showIcon, label, placeholder, styles} : BaseSearchInput) => {
+const BaseSearchInput = ({ onChange, defaultValue, showIcon, label, placeholder, styles} : BaseSearchInput) => {
   return (
     <Box
       component="form"
@@ -37,7 +37,7 @@ const BaseSearchInput = ({ onChange, value, showIcon, label, placeholder, styles
         placeholder={placeholder || "Pesquisar..."}
         aria-label={label && label}
         onChange={onChange}
-        value={value}
+        defaultValue={defaultValue}
         onKeyDown={(e) => e.key === "Enter" && e.preventDefault()}
         className="bg-gray-50"
         style={{
