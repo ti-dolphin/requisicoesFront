@@ -7,7 +7,7 @@ interface BaseTableToolBar {
   handleChangeSearchTerm: DebouncedFunc<
     (event: React.ChangeEvent<HTMLInputElement>) => void
   >;
-  searchTerm?: string;
+  searchValue?: string;
   data?: any;
   columns?: string[];
   children?: React.ReactNode;
@@ -17,10 +17,11 @@ interface BaseTableToolBar {
 
 const BaseTableToolBar = ({
   handleChangeSearchTerm,
-  searchTerm,
+  searchValue,
   children,
   searchInputStyles,
 }: BaseTableToolBar) => {
+  const resolvedValue = typeof searchValue === "string" ? searchValue : undefined;
 
   return (
     <Box
@@ -41,7 +42,7 @@ const BaseTableToolBar = ({
       <BaseSearchInput
         showIcon={true}
         onChange={handleChangeSearchTerm}
-        value={searchTerm}
+        value={resolvedValue}
         styles={searchInputStyles}
       />
       {children}

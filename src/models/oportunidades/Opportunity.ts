@@ -4,6 +4,7 @@ import { ReducedUser } from "../User";
 import { Client } from "./Client";
 import { OpportunityStatus } from "./OpportunityStatus";
 import { ProjectAdicional } from "./ProjectAdicional";
+import { SimilarOpportunity } from "../../services/oportunidades/OpportunityService";
 
 export interface Opportunity {
   CODOS: number;
@@ -51,10 +52,30 @@ export interface Opportunity {
     observacoes: string;
     DESCRICAO_VENDA: string;
     EMAIL_VENDA_ENVIADO: boolean;
+    kanban_column_id: number;
+    kanban_column_id_orcamento: number | null;
     responsavel: ReducedUser;
     adicional: ProjectAdicional;
     status: OpportunityStatus;
     cliente: Client;
     projeto: Project;
-    gerente: ReducedUser;
+}
+
+export interface OpportunityKanbanCardDialogProps {
+  open: boolean;
+  opportunity: Opportunity | null;
+  onClose: () => void;
+}
+
+export interface OpportunityKanbanArchivedCardsDialogProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+export interface SimilarOpportunitiesModalProps {
+  open: boolean;
+  opportunities: SimilarOpportunity[];
+  onClose: () => void;
+  onCreateNew: () => void;
+  onLinkTo: (codos: number) => void;
 }

@@ -17,6 +17,7 @@ import notesTableReducer from './slices/apontamentos/notesTableSlice';
 import pontoTableReducer from './slices/apontamentos/pontoTableSlice';
 import problemaTableReducer from './slices/apontamentos/problemaTableSlice';
 import commonFiltersReducer from './slices/apontamentos/commonFiltersSlice';
+import ordemCompraTableReducer from './slices/ordensCompra/ordemCompraTableSlice';
 
 export const store = configureStore({
   reducer: {
@@ -38,6 +39,7 @@ export const store = configureStore({
     pontoTable: pontoTableReducer,
     problemaTable: problemaTableReducer,
     commonFilters: commonFiltersReducer,
+    ordemCompraTable: ordemCompraTableReducer,
   },
 });
 

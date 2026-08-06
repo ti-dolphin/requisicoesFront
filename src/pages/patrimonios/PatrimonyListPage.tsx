@@ -82,8 +82,6 @@ const PatrimonyListPage = () => {
     setColumnOrderDialogOpen(false)
   }
   
-
-
   const navigateToPatrimonyDetail = (params: any) => {
     if (params.field === "actions") return;
     navigate(`/patrimonios/${params.row.id_patrimonio}`);

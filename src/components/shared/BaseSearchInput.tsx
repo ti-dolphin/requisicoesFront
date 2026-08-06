@@ -36,8 +36,8 @@ const BaseSearchInput = ({ onChange, value, showIcon, label, placeholder, styles
         type="text"
         placeholder={placeholder || "Pesquisar..."}
         aria-label={label && label}
-        defaultValue={value}
         onChange={onChange}
+        value={value}
         onKeyDown={(e) => e.key === "Enter" && e.preventDefault()}
         className="bg-gray-50"
         style={{

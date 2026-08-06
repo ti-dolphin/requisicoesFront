@@ -1,4 +1,4 @@
-import OpportunityListPage from './OpportunityListPage';
+import OpportunityListPage from './OpportunityPage';
 
 const OpportunityHomePage = () => {
   return (

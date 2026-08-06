@@ -50,237 +50,230 @@ import { Requisition } from "../../../models/requisicoes/Requisition";
 const REQUISITION_TABLE_KEY = "requisition-list";
 
 const RequisitionListPage = () => {
-    useRequisitionKanban();
-    const [triggerFetch, setTriggerFetch] = useState(0);
-    const [columnOrderDialogOpen, setColumnOrderDialogOpen] = useState(false);
-    const dispatch = useDispatch();
-    const theme = useTheme();
-    const user = useSelector((state: RootState) => state.user.user);
-    const { rows } = useSelector((state: RootState) => state.requisitionTable);
-    const navigate = useNavigate();
-    const gridContainerRef = React.useRef<HTMLDivElement>(null);
-    const latestRequestIdRef = React.useRef(0);
-    const {
-      searchTerm,
-      filters,
-      loading,
-      selectedRow,
-      kanbans,
-      selectedKanban,
-      requisitionBeingDeletedId,
-      doneReqFilter,
-      cancelledReqFilter,
-    } = useSelector((state: RootState) => state.requisitionTable);
+  useRequisitionKanban();
+  const [triggerFetch, setTriggerFetch] = useState(0);
+  const [columnOrderDialogOpen, setColumnOrderDialogOpen] = useState(false);
+  const dispatch = useDispatch();
+  const theme = useTheme();
+  const user = useSelector((state: RootState) => state.user.user);
+  const { rows } = useSelector((state: RootState) => state.requisitionTable);
+  const navigate = useNavigate();
+  const gridContainerRef = React.useRef<HTMLDivElement>(null);
+  const latestRequestIdRef = React.useRef(0);
+  const {
+    searchTerm,
+    filters,
+    loading,
+    selectedRow,
+    kanbans,
+    selectedKanban,
+    requisitionBeingDeletedId,
+    doneReqFilter,
+    cancelledReqFilter,
+  } = useSelector((state: RootState) => state.requisitionTable);
 
-    const {isMobile } = useIsMobile();
-    const {viewingProducts} = useSelector((state: RootState) => state.productSlice);
-    const changeSelectedRow = (row: any) => {
-      dispatch(setSelectedRow(row));
-    };
-    const gridRef = useGridApiRef();
+  const {isMobile } = useIsMobile();
+  const {viewingProducts} = useSelector((state: RootState) => state.productSlice);
+  const changeSelectedRow = (row: any) => {
+    dispatch(setSelectedRow(row));
+  };
+  const gridRef = useGridApiRef();
 
-    const handleChangeFilters = React.useCallback(
-      (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-        field: string
-      ) => {
-        let value: any = e.target.value;
-        if (!isNaN(Number(value)) && value.trim() !== "") {
-          value = Number(value);
-        }
-        dispatch(setFilters({ ...filters, [field]: value }));
-      },
-      [dispatch, filters]
-    );
-
-    const { columns: rawColumns } = useRequisitionColumns(
-      handleChangeFilters,
-      changeSelectedRow,
-      gridRef,
-      rows
-    );
-
-    const { orderedColumns: columns, columnVisibilityModel, saveColumnOrder, removeColumnOrder } = usePersistedColumnOrder(
-      REQUISITION_TABLE_KEY,
-      user!,
-      rawColumns
-    );
-
-    const handleChangeKanban = React.useCallback(
-      (event: SelectChangeEvent<unknown>) => {
-        const selectedKanban = kanbans.find(
-          (kanban: RequisitionKanban) =>
-            kanban.id_kanban_requisicao === Number(event.target.value)
-        );
-        if (selectedKanban) {
-          dispatch(setSelectedKanban(selectedKanban));
-          return;
-        }
-      },
-      [kanbans, dispatch]
-    );
-
-    const handleChangeSearchTerm = React.useCallback(
-      (event: React.ChangeEvent<HTMLInputElement>) => {
-        const value = event.target.value;
-        dispatch(setSearchTerm(value.toLowerCase()));
-      },
-      [dispatch]
-    );
-
-    const getRowClassName = React.useCallback(
-      (params: any) => {
-        if (selectedKanban?.id_kanban_requisicao !== 1) {
-          return '';
-        }
-
-        const requisition = params.row as Requisition;
-        const urgencyLevel = getRequisitionUrgencyLevel(
-          requisition.id_status_requisicao,
-          requisition.data_ultima_alteracao_status
-        );
-
-        if (urgencyLevel === 'critical') {
-          return 'requisition-critical';
-        } else if (urgencyLevel === 'warning') {
-          return 'requisition-warning';
-        }
-
-        return '';
-      },
-      [selectedKanban]
-    );
-
-    const handleDeleteRequisition = async () => {
-      if (!requisitionBeingDeletedId) return;
-      try {
-        await RequisitionService.delete(requisitionBeingDeletedId);
-        dispatch(setRequisitionBeingDeletedId(null));
-        dispatch(removeRow(requisitionBeingDeletedId));
-        dispatch(
-          setFeedback({
-            message: "Requisição deletada com sucesso",
-            type: "success",
-          })
-        );
-      } catch (e) {
-        dispatch(
-          setFeedback({
-            message: "Houve um erro ao deletar a requisição",
-            type: "error",
-          })
-        );
+  const handleChangeFilters = React.useCallback(
+    (
+      e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+      field: string
+    ) => {
+      let value: any = e.target.value;
+      if (!isNaN(Number(value)) && value.trim() !== "") {
+        value = Number(value);
       }
-    };
+      dispatch(setFilters({ ...filters, [field]: value }));
+    },
+    [dispatch, filters]
+  );
 
-    const handleBack = () => {
-      navigate("/");
-    };
+  const { columns: rawColumns } = useRequisitionColumns(
+    handleChangeFilters,
+    changeSelectedRow,
+    gridRef,
+    rows
+  );
 
-    const handleCleanFilter = () => { 
-      dispatch(clearfilters());
-    };
+  const { orderedColumns: columns, columnVisibilityModel, saveColumnOrder, removeColumnOrder } = usePersistedColumnOrder(
+    REQUISITION_TABLE_KEY,
+    user!,
+    rawColumns
+  );
+  const handleChangeKanban = React.useCallback(
+    (event: SelectChangeEvent<unknown>) => {
+      const selectedKanban = kanbans.find(
+        (kanban: RequisitionKanban) =>
+          kanban.id_kanban_requisicao === Number(event.target.value)
+      );
+      if (selectedKanban) {
+        dispatch(setSelectedKanban(selectedKanban));
+        return;
+      }
+    },
+    [kanbans, dispatch]
+  );
 
-    const handleApplyColumnOrder = (preferences: ColumnPreference[]) => {
-      saveColumnOrder(preferences);
-    };
+  const handleChangeSearchTerm = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      dispatch(setSearchTerm(value.toLowerCase()));
+    },
+    [dispatch]
+  );
 
-    const removeSavedColumnOrder = async () => {
-      await removeColumnOrder()
-      setColumnOrderDialogOpen(false)
+  const getRowClassName = React.useCallback((params: any) => {
+    if (selectedKanban?.id_kanban_requisicao !== 1) {
+      return '';
     }
 
-    const handleFilterConcluidos = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const checked = e.target.checked;
-      dispatch(setDoneReqFilter(checked));
-    };
-
-    const handleFilterCancelados = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const checked = e.target.checked;
-      dispatch(setCancelledReqFilter(checked));
-    };
-
-    const debouncedHandleChangeSearchTerm = useMemo(() => { 
-      return debounce(handleChangeSearchTerm, 500);
-    }, [handleChangeSearchTerm]);
-
-    const goToRequisitionDetails = React.useCallback(
-      (id: number) => {
-        // Mantém a pesquisa global salva ao abrir uma requisição: ao voltar,
-        // a lista reexibe o mesmo texto e o mesmo resultado (igual aos filtros).
-        // flush() grava no Redux o termo digitado que ainda esteja pendente no debounce.
-        debouncedHandleChangeSearchTerm.flush();
-        navigate(`/requisicoes/${id}`);
-      },
-      [debouncedHandleChangeSearchTerm, navigate]
+    const requisition = params.row as Requisition;
+    const urgencyLevel = getRequisitionUrgencyLevel(
+      requisition.id_status_requisicao,
+      requisition.data_ultima_alteracao_status
     );
 
-    const navigateToRequisitionDetails = (params: any) => {
-      if (params.field === "actions") return;
-      const { id } = params;
-      goToRequisitionDetails(Number(id));
-    };
+    if (urgencyLevel === 'critical') {
+      return 'requisition-critical';
+    } else if (urgencyLevel === 'warning') {
+      return 'requisition-warning';
+    }
 
-    const fetchData = React.useCallback(async () => {
-      const requestId = ++latestRequestIdRef.current;
-      dispatch(setLoading(true));
+    return '';
+  },[selectedKanban]);
 
-      try {
-        const data = await RequisitionService.getMany(user as User, {
-          id_kanban_requisicao: selectedKanban?.id_kanban_requisicao,
-          searchTerm,
-          filters,
-          doneReqFilter,
-          cancelledReqFilter,
-          removeAdmView: true,
-        });
+  const handleDeleteRequisition = async () => {
+    if (!requisitionBeingDeletedId) return;
+    try {
+      await RequisitionService.delete(requisitionBeingDeletedId);
+      dispatch(setRequisitionBeingDeletedId(null));
+      dispatch(removeRow(requisitionBeingDeletedId));
+      dispatch(
+        setFeedback({
+          message: "Requisição deletada com sucesso",
+          type: "success",
+        })
+      );
+    } catch (e) {
+      dispatch(
+        setFeedback({
+          message: "Houve um erro ao deletar a requisição",
+          type: "error",
+        })
+      );
+    }
+  };
 
-        if (requestId !== latestRequestIdRef.current) {
-          return;
-        }
+  const handleBack = () => {
+    navigate("/");
+  };
 
-        dispatch(setRows(data));
-      } catch (e: any) {
-        if (requestId !== latestRequestIdRef.current) {
-          return;
-        }
+  const handleCleanFilter = () => { 
+    dispatch(clearfilters());
+  };
 
-        dispatch(
-          setFeedback({
-            message: "Houve um erro ao buscar requisições",
-            type: "error",
-          })
-        );
-      } finally {
-        if (requestId === latestRequestIdRef.current) {
-          dispatch(setLoading(false));
-        }
+  const handleApplyColumnOrder = (preferences: ColumnPreference[]) => {
+    saveColumnOrder(preferences);
+  };
+
+  const removeSavedColumnOrder = async () => {
+    await removeColumnOrder()
+    setColumnOrderDialogOpen(false)
+  }
+
+  const handleFilterConcluidos = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = e.target.checked;
+    dispatch(setDoneReqFilter(checked));
+  };
+
+  const handleFilterCancelados = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = e.target.checked;
+    dispatch(setCancelledReqFilter(checked));
+  };
+
+  const debouncedHandleChangeSearchTerm = useMemo(() => { 
+    return debounce(handleChangeSearchTerm, 500);
+  }, [handleChangeSearchTerm]);
+
+  const goToRequisitionDetails = React.useCallback(
+    (id: number) => {
+      // Mantém a pesquisa global salva ao abrir uma requisição: ao voltar,
+      // a lista reexibe o mesmo texto e o mesmo resultado (igual aos filtros).
+      // flush() grava no Redux o termo digitado que ainda esteja pendente no debounce.
+      debouncedHandleChangeSearchTerm.flush();
+      navigate(`/requisicoes/${id}`);
+    },
+    [debouncedHandleChangeSearchTerm, navigate]
+  );
+
+  const navigateToRequisitionDetails = (params: any) => {
+    if (params.field === "actions") return;
+    const { id } = params;
+    goToRequisitionDetails(Number(id));
+  };
+
+  const fetchData = React.useCallback(async () => {
+    const requestId = ++latestRequestIdRef.current;
+    dispatch(setLoading(true));
+
+    try {
+      const data = await RequisitionService.getMany(user as User, {
+        id_kanban_requisicao: selectedKanban?.id_kanban_requisicao,
+        searchTerm,
+        filters,
+        doneReqFilter,
+        cancelledReqFilter,
+        removeAdmView: true,
+      });
+
+      if (requestId !== latestRequestIdRef.current) {
+        return;
       }
-    }, [
-      dispatch,
-      user,
-      selectedKanban,
-      searchTerm,
-      filters,
-      triggerFetch,
-      doneReqFilter,
-      cancelledReqFilter 
-    ]);
 
-    useEffect(() => {
-
-      if (selectedKanban && user) {
-        fetchData();
+      dispatch(setRows(data));
+    } catch (e: any) {
+      if (requestId !== latestRequestIdRef.current) {
+        return;
       }
-    }, [
-      selectedKanban,
-      searchTerm,
-      filters,
-      fetchData,
-      user,
-      doneReqFilter,
-      cancelledReqFilter,
-    ]);
+
+      dispatch(
+        setFeedback({
+          message: "Houve um erro ao buscar requisições",
+          type: "error",
+        })
+      );
+    } finally {
+      if (requestId === latestRequestIdRef.current) {
+        dispatch(setLoading(false));
+      }
+    }
+  }, [
+    dispatch,
+    user,
+    selectedKanban,
+    searchTerm,
+    filters,
+    triggerFetch,
+    doneReqFilter,
+    cancelledReqFilter 
+  ])
+
+  useEffect(() => {
+    if (selectedKanban && user) fetchData()
+  }, [
+    selectedKanban,
+    searchTerm,
+    filters,
+    fetchData,
+    user,
+    doneReqFilter,
+    cancelledReqFilter,
+  ])
 
   return (
     <Box sx={{ height: "100vh", width: "100%" }}>
@@ -365,7 +358,7 @@ const RequisitionListPage = () => {
         </BaseToolBar>
         <BaseTableToolBar
           handleChangeSearchTerm={debouncedHandleChangeSearchTerm}
-          searchTerm={searchTerm}
+          searchValue={searchTerm}
           searchInputStyles={{ width: 400 }}
         >
           {!isMobile && selectedKanban?.id_kanban_requisicao === 5 && (

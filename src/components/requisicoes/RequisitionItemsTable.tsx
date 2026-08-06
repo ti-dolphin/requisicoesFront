@@ -1376,6 +1376,12 @@ const RequisitionItemsTable = ({
             height: effectiveMaxHeight ? effectiveMaxHeight : "auto",
             overflowX: "auto",
             overflowY: shouldUseAutoHeight ? "visible" : "auto",
+            "& .MuiDataGrid-scrollbar--horizontal": {
+              position: "sticky",
+              bottom: 0,
+              zIndex: 3,
+              backgroundColor: (theme) => theme.palette.background.paper,
+            },
             '& .item-without-quote': {
               backgroundColor: '#ffebee !important',
               '&:hover': {

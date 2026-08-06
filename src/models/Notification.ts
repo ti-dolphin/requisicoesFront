@@ -1,6 +1,6 @@
 export interface NotificationRemetente {
   CODPESSOA: number;
-  nome: string; // Minúsculo
+  nome: string;
 }
 
 export interface Notification {
@@ -11,5 +11,4 @@ export interface Notification {
   data_criacao: string;
   visto: boolean;
   remetente?: NotificationRemetente;
-  // ...existing fields...
 }

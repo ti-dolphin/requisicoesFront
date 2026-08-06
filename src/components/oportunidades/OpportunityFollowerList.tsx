@@ -12,15 +12,16 @@ import BaseDeleteDialog from '../shared/BaseDeleteDialog';
 import { RootState } from '../../redux/store';
 import { setFeedback } from '../../redux/slices/feedBackSlice';
 import AddIcon from '@mui/icons-material/Add';
-import { useUserOptions } from '../../hooks/useUserOptions';
+import { useCrmUserOptions } from '../../hooks/oportunidades/useCrmUserOptions';
 import CloseIcon from '@mui/icons-material/Close';
 import { Option } from '../../types';
 
-interface props { 
+interface props {
     CODOS? : number;
-    ID_PROJETO? : number
+    ID_PROJETO? : number;
+    onChange?: () => void;
 }
-const OpportunityFollowerList = ({CODOS, ID_PROJETO}: props) => {
+const OpportunityFollowerList = ({CODOS, ID_PROJETO, onChange}: props) => {
 
     const dispatch = useDispatch();
     const user = useSelector((state: RootState) => state.user.user);
@@ -30,15 +31,15 @@ const OpportunityFollowerList = ({CODOS, ID_PROJETO}: props) => {
     const [selectedFollower, setSelectedFollower] = React.useState<Option | null>(null);
     const [opp, setOpp] = useState<Partial<Opportunity>>();
     
-    const {userOptions} = useUserOptions();
+    const {userOptions} = useCrmUserOptions();
   
-  const handleDeleteFollower = () => {
+  const handleDeleteFollower = async () => {
     if (!user) return;
     if (!followerBeingDeleted) return;
     const { PERM_ADMINISTRADOR } = user;
     try {
       if (PERM_ADMINISTRADOR === 1) {
-        ProjectService.deleteFollower(followerBeingDeleted.id_seguidor_projeto, followerBeingDeleted.id_projeto);
+        await ProjectService.deleteFollower(followerBeingDeleted.id_seguidor_projeto, followerBeingDeleted.id_projeto);
         setFollowers(
           followers.filter(
             (follower) =>
@@ -54,6 +55,7 @@ const OpportunityFollowerList = ({CODOS, ID_PROJETO}: props) => {
             type: "success",
           })
         );
+        onChange?.();
       }
     } catch (err: any) {
       dispatch(
@@ -75,6 +77,7 @@ const OpportunityFollowerList = ({CODOS, ID_PROJETO}: props) => {
       setFollowers([...followers, follower]);
       setSelectedFollower(null);
       setAddingFollower(false);
+      onChange?.();
     } catch (err: any) {
       dispatch(
         setFeedback({

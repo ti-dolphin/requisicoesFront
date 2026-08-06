@@ -7,11 +7,19 @@ import { PatrimonyFilters } from "../redux/slices/patrimonios/PatrimonyTableSlic
 import { NotesFilters } from "../redux/slices/apontamentos/notesTableSlice";
 import { PontoFilters } from "../redux/slices/apontamentos/pontoTableSlice";
 import { ProblemaFilters } from "../redux/slices/apontamentos/problemaTableSlice";
+import { OrdemCompraFilters } from "../redux/slices/ordensCompra/ordemCompraTableSlice";
 
 interface TextHeaderProps {
   label: string;
   field: string;
-  filters: OpportunityFilters | RequisitionFilters | PatrimonyFilters | NotesFilters | PontoFilters | ProblemaFilters; 
+  filters:
+    | OpportunityFilters
+    | RequisitionFilters
+    | PatrimonyFilters
+    | NotesFilters
+    | PontoFilters
+    | ProblemaFilters
+    | OrdemCompraFilters; 
   handleChangeFilters: (
     event: React.ChangeEvent<HTMLInputElement>,
     field: string
