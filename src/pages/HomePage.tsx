@@ -47,13 +47,13 @@ const modules: HomeModule[] = [
     description:
       "Controle de contratos de experiência, férias, apontamentos e folgas.",
   },
-  {
-    name: "Ordem de Compra",
-    image: ordemCompra,
-    path: "/ordens-compra",
-    description:
-      "Consulta e acompanhamento de ordens de compra com filtros e paginação.",
-  },
+  // {
+  //   name: "Ordem de Compra",
+  //   image: ordemCompra,
+  //   path: "/ordens-compra",
+  //   description:
+  //     "Consulta e acompanhamento de ordens de compra com filtros e paginação.",
+  // },
   {
     name: "Gestão Adm",
     path: "/gestao-adm",
