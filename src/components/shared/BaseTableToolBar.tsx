@@ -42,7 +42,7 @@ const BaseTableToolBar = ({
       <BaseSearchInput
         showIcon={true}
         onChange={handleChangeSearchTerm}
-        value={resolvedValue}
+        defaultValue={resolvedValue}
         styles={searchInputStyles}
       />
       {children}
