@@ -20,6 +20,7 @@ import OpportunityKanbanCardDialog from "./OpportunityKanbanCardDialog"
 import OpportunityKanbanArchivedCardsDialog from "./OpportunityKanbanArchivedCardsDialog";
 import { kanbanGlobalStyles, KANBAN_COLUMN_WIDTH } from "../../styles/oportunidades/kanbanGlobalStyles"
 import { KanbanBoardName, isManualMoveAllowed } from "../../utils/kanbanFlowRules"
+import { useKanbanEdgeAutoScroll } from "../../hooks/oportunidades/useKanbanEdgeAutoScroll"
 
 interface OpportunityKanbanComponentProps {
   board: KanbanBoardName
@@ -50,6 +51,8 @@ const OpportunityKanbanComponent = ({ board }: OpportunityKanbanComponentProps) 
   const [editingColumnId, setEditingColumnId] = useState<number | null>(null)
   const [editingColumnName, setEditingColumnName] = useState("")
   const [openArchiveDialog, setOpenArchiveDialog] = useState(false)
+
+  useKanbanEdgeAutoScroll(".react-kanban-board")
 
   const fetchBoard = useCallback(async () => {
     if (!user) return
