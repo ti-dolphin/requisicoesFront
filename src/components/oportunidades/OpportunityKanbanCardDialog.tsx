@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogTitle, IconButton, Stack, Typography, Divider, Box } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { Dialog, DialogContent, DialogTitle, IconButton, Stack, Typography, Divider, Box, Tooltip } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { OpportunityKanbanCardDialogProps } from "../../models/oportunidades/Opportunity";
 import OpportunityFollowerList from "./OpportunityFollowerList";
 import OpportunityChecklistSection from "./OpportunityChecklistSection";
@@ -9,15 +11,24 @@ import OpportunityPendenciasList from "./OpportunityPendenciasList";
 
 const OpportunityKanbanCardDialog = ({ open, opportunity, onClose }: OpportunityKanbanCardDialogProps) => {
   const [followersVersion, setFollowersVersion] = useState(0);
+  const navigate = useNavigate();
 
   if (!opportunity) return null;
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth scroll="paper">
-      <DialogTitle sx={{ pr: 6 }}>
+      <DialogTitle sx={{ pr: 10 }}>
         <Typography component="div" variant="subtitle1" color="primary.main" fontWeight="bold">
           {`${opportunity.projeto?.ID}.${opportunity.adicional?.NUMERO} - ${opportunity.cliente?.NOMEFANTASIA}`}
         </Typography>
+        <Tooltip title="Ver detalhe da oportunidade">
+          <IconButton
+            onClick={() => navigate(`/oportunidades/${opportunity.CODOS}`)}
+            sx={{ position: "absolute", top: 8, right: 48 }}
+          >
+            <OpenInNewIcon />
+          </IconButton>
+        </Tooltip>
         <IconButton onClick={onClose} sx={{ position: "absolute", top: 8, right: 8 }}>
           <CloseIcon />
         </IconButton>
