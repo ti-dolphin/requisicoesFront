@@ -9,3 +9,8 @@ export interface Project {
 
   responsavel? : ReducedUser
 }
+
+export interface ProjectResponsaveisPayload {
+  CODGERENTE: number | null;
+  ID_RESPONSAVEL: number | null;
+}

@@ -1,7 +1,7 @@
 import api from '../api';
 import { Client } from '../models/oportunidades/Client';
 import { ProjectFollower } from '../models/oportunidades/ProjectFollower';
-import { Project } from '../models/Project';
+import { Project, ProjectResponsaveisPayload } from '../models/Project';
 
 const API_ENDPOINT = 'projetos';
 
@@ -16,6 +16,22 @@ export const ProjectService = {
 
   async getById(id: number): Promise<Project> {
     const response = await api.get<Project>(`/${API_ENDPOINT}/${id}`);
+    return response.data;
+  },
+
+  async getAllForAdmin(): Promise<Project[]> {
+    const response = await api.get<Project[]>(`/${API_ENDPOINT}/admin/all`);
+    return response.data;
+  },
+
+  async updateResponsaveisByAdmin(
+    id: number,
+    payload: ProjectResponsaveisPayload
+  ): Promise<Project> {
+    const response = await api.put<Project>(
+      `/${API_ENDPOINT}/admin/${id}/responsaveis`,
+      payload
+    );
     return response.data;
   },
 
