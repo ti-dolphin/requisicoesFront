@@ -1,19 +1,17 @@
 import { Box, Chip, CircularProgress, IconButton, TextField, Tooltip, Typography, Button, } from "@mui/material"
-import Grid from '@mui/material/Grid';
 import AddIcon from "@mui/icons-material/Add"
 import CheckIcon from "@mui/icons-material/Check"
 import CloseIcon from "@mui/icons-material/Close"
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline"
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined"
+import ArchiveOutlinedIcon from "@mui/icons-material/ArchiveOutlined"
 import { useCallback, useEffect, useState } from "react"
 import { ControlledBoard, Column as KanbanColumn, KanbanBoard, OnDragEndNotification, moveCard } from '@caldwell619/react-kanban'
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../redux/store"
 import { setFeedback } from "../../redux/slices/feedBackSlice"
-import OpportunityService from "../../services/oportunidades/OpportunityService"
 import OpportunityKanbanService from "../../services/oportunidades/OpportunityKanbanService"
-import { Opportunity } from "../../models/oportunidades/Opportunity"
-import { OpportunityKanbanCardData } from "../../models/oportunidades/OpportunityKanbanColumn"
+import { KanbanCardOpportunity, OpportunityKanbanCardData } from "../../models/oportunidades/OpportunityKanbanColumn"
 import OpportunityCard from "./OpportunityCard"
 import BaseDeleteDialog from "../shared/BaseDeleteDialog"
 import OpportunityKanbanCardDialog from "./OpportunityKanbanCardDialog"
@@ -26,15 +24,7 @@ interface OpportunityKanbanComponentProps {
   board: KanbanBoardName
 }
 
-const formatDateInput = (date: Date) => {
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, "0")
-  const day = String(date.getDate()).padStart(2, "0")
-  return `${year}-${month}-${day}`
-}
-
-const getDefaultDateFrom = () => `${new Date().getFullYear()}-01-01`
-const getDefaultDateTo = () => formatDateInput(new Date())
+const ARCHIVED_COLUMN_ID = 100
 
 const OpportunityKanbanComponent = ({ board }: OpportunityKanbanComponentProps) => {
   const dispatch = useDispatch()
@@ -42,9 +32,7 @@ const OpportunityKanbanComponent = ({ board }: OpportunityKanbanComponentProps) 
   const columnField = board === "Comercial" ? "kanban_column_id" : "kanban_column_id_orcamento"
   const [kanbanBoardData, setKanbanBoardData] = useState<KanbanBoard<OpportunityKanbanCardData>>({ columns: [] })
   const [loading, setLoading] = useState(false)
-  const [selectedOpportunity, setSelectedOpportunity] = useState<Opportunity | null>(null)
-  const [dateFrom, setDateFrom] = useState(getDefaultDateFrom())
-  const [dateTo, setDateTo] = useState(getDefaultDateTo())
+  const [selectedOpportunity, setSelectedOpportunity] = useState<KanbanCardOpportunity | null>(null)
   const [isAddingColumn, setIsAddingColumn] = useState(false)
   const [newColumnName, setNewColumnName] = useState("")
   const [columnToDelete, setColumnToDelete] = useState<KanbanColumn<OpportunityKanbanCardData> | null>(null)
@@ -58,25 +46,17 @@ const OpportunityKanbanComponent = ({ board }: OpportunityKanbanComponentProps) 
     if (!user) return
     setLoading(true)
     try {
-      const [columns, { opps }] = await Promise.all([
+      const [columns, opps] = await Promise.all([
         OpportunityKanbanService.getColumns(board),
-        OpportunityService.getMany({
-          user,
-          searchTerm: "",
-          filters: {
-            DATASOLICITACAO_FROM: dateFrom ? `${dateFrom}T00:00:00.000Z` : null,
-            DATASOLICITACAO_TO: dateTo ? `${dateTo}T23:59:59.999Z` : null,
-          },
-          finalizados: false,
-        }),
+        OpportunityKanbanService.getCards(user, board),
       ])
       setKanbanBoardData({
         columns: columns.map((column) => ({
           id: column.id,
           title: column.name,
           cards: opps
-            .filter((opportunity: Opportunity) => opportunity[columnField] === column.id)
-            .map((opportunity: Opportunity) => ({
+            .filter((opportunity) => opportunity[columnField] === column.id)
+            .map((opportunity) => ({
               id: opportunity.CODOS,
               opportunity,
             })),
@@ -87,11 +67,21 @@ const OpportunityKanbanComponent = ({ board }: OpportunityKanbanComponentProps) 
     } finally {
       setLoading(false)
     }
-  }, [user, dispatch, dateFrom, dateTo, board, columnField])
+  }, [user, dispatch, board, columnField])
 
   useEffect(() => {
     fetchBoard()
   }, [fetchBoard])
+
+  const handleArchiveCard = async (CODOS: number) => {
+    try {
+      await OpportunityKanbanService.updateCardColumn(CODOS, board, ARCHIVED_COLUMN_ID)
+      dispatch(setFeedback({ message: "Oportunidade arquivada com sucesso", type: "success" }))
+      fetchBoard()
+    } catch (error: any) {
+      dispatch(setFeedback({ message: error?.response?.data?.error || "Erro ao arquivar oportunidade", type: "error" }))
+    }
+  }
 
   const handleCardDragEnd: OnDragEndNotification<OpportunityKanbanCardData> = async (card, source, destination) => {
     if (!source || !destination || destination.toColumnId === undefined) return
@@ -176,44 +166,19 @@ const OpportunityKanbanComponent = ({ board }: OpportunityKanbanComponentProps) 
         sx={{
           display: 'flex',
           alignItems: 'center',
+          justifyContent: 'flex-end',
           gap: 2,
           padding: '10px 16px',
           backgroundColor: 'white',
           borderBottom: '1px solid rgba(0,0,0,0.1)',
         }}
       >
-        <Grid container >
-          <Grid xs={11}>
-            <TextField
-              size="small"
-              label="De"
-              type="date"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-              InputLabelProps={{ shrink: true }}
-              sx={{ width: 160, '& .MuiOutlinedInput-root': { height: 32, fontSize: 12 }, '& .MuiInputLabel-root': { fontSize: 12 } }}
-            />
-            <TextField
-              size="small"
-              label="Até"
-              type="date"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-              InputLabelProps={{ shrink: true }}
-              sx={{ width: 160, '& .MuiOutlinedInput-root': { height: 32, fontSize: 12 }, '& .MuiInputLabel-root': { fontSize: 12 } }}
-            />
-          </Grid>
-          {board === "Comercial" && (
-            <Grid xs={1}>
-              <Button
-                variant="outlined"
-                onClick={() => setOpenArchiveDialog(true)}
-              >
-                Arquivados
-              </Button>
-            </Grid>
-          )}
-        </Grid>
+        <Button
+          variant="outlined"
+          onClick={() => setOpenArchiveDialog(true)}
+        >
+          Arquivados
+        </Button>
       </Box>
       <Box sx={{ flex: '1 1 0', minHeight: 0 }}>
       {loading ? (
@@ -368,6 +333,19 @@ const OpportunityKanbanComponent = ({ board }: OpportunityKanbanComponentProps) 
               row={card.opportunity}
               onClick={() => setSelectedOpportunity(card.opportunity)}
               styles={{ width: KANBAN_COLUMN_WIDTH - 24, minHeight: 'auto', maxHeight: 'none', margin: '0 12px 12px 12px' }}
+              actions={
+                <Tooltip title="Arquivar">
+                  <IconButton
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleArchiveCard(card.opportunity.CODOS)
+                    }}
+                  >
+                    <ArchiveOutlinedIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              }
             />
           )}
         >
@@ -387,12 +365,15 @@ const OpportunityKanbanComponent = ({ board }: OpportunityKanbanComponentProps) 
         opportunity={selectedOpportunity}
         onClose={() => setSelectedOpportunity(null)}
       />
-      {board === "Comercial" && (
-        <OpportunityKanbanArchivedCardsDialog
-          open={openArchiveDialog}
-          onClose={() => setOpenArchiveDialog(false)}
-        />
-      )}
+      <OpportunityKanbanArchivedCardsDialog
+        open={openArchiveDialog}
+        board={board}
+        onClose={() => setOpenArchiveDialog(false)}
+        onUnarchive={() => {
+          setOpenArchiveDialog(false)
+          fetchBoard()
+        }}
+      />
     </Box>
   )
 }
