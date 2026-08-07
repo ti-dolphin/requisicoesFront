@@ -1,7 +1,7 @@
 import api from '../api';
 import { Client } from '../models/oportunidades/Client';
 import { ProjectFollower } from '../models/oportunidades/ProjectFollower';
-import { Project, ProjectResponsaveisPayload } from '../models/Project';
+import { Project, ProjectResponsavelPayload } from '../models/Project';
 
 const API_ENDPOINT = 'projetos';
 
@@ -24,12 +24,12 @@ export const ProjectService = {
     return response.data;
   },
 
-  async updateResponsaveisByAdmin(
+  async updateResponsavelByAdmin(
     id: number,
-    payload: ProjectResponsaveisPayload
+    payload: ProjectResponsavelPayload
   ): Promise<Project> {
     const response = await api.put<Project>(
-      `/${API_ENDPOINT}/admin/${id}/responsaveis`,
+      `/${API_ENDPOINT}/admin/${id}/responsavel`,
       payload
     );
     return response.data;

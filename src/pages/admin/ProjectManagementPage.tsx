@@ -69,16 +69,6 @@ const ProjectManagementPage = () => {
     return map;
   }, [users]);
 
-  const userByCodGerente = useMemo(() => {
-    const map = new Map<number, User>();
-    users.forEach((user) => {
-      if (user.CODGERENTE !== null) {
-        map.set(user.CODGERENTE, user);
-      }
-    });
-    return map;
-  }, [users]);
-
   const handleSearch = useMemo(
     () =>
       debounce((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,16 +83,15 @@ const ProjectManagementPage = () => {
         ...project,
         responsavel_nome:
           userByCodPessoa.get(Number(project.ID_RESPONSAVEL))?.NOME ?? "",
-        gerente_nome: userByCodGerente.get(Number(project.CODGERENTE))?.NOME ?? "",
       })),
-    [projects, userByCodPessoa, userByCodGerente]
+    [projects, userByCodPessoa]
   );
 
   const filteredRows = useMemo(() => {
     const query = search.trim().toLowerCase();
     if (!query) return rows;
     return rows.filter((row) =>
-      [row.ID, row.DESCRICAO, row.responsavel_nome, row.gerente_nome]
+      [row.ID, row.DESCRICAO, row.responsavel_nome]
         .filter(Boolean)
         .some((value) => String(value).toLowerCase().includes(query))
     );
@@ -117,13 +106,6 @@ const ProjectManagementPage = () => {
       flex: 1.5,
       minWidth: 180,
       renderCell: (params) => params.row.responsavel_nome || "—",
-    },
-    {
-      field: "gerente_nome",
-      headerName: "Gerente",
-      flex: 1.5,
-      minWidth: 180,
-      renderCell: (params) => params.row.gerente_nome || "—",
     },
   ];
 
@@ -156,7 +138,7 @@ const ProjectManagementPage = () => {
           <BaseSearchInput
             onChange={handleSearch}
             showIcon
-            placeholder="Buscar por projeto, responsável ou gerente"
+            placeholder="Buscar por projeto ou responsável"
             styles={{ width: 320 }}
           />
         </Stack>

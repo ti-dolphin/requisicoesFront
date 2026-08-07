@@ -48,8 +48,7 @@ const AdminManagementHomePage = () => {
     },
     {
       title: "Projetos",
-      description:
-        "Listar projetos e alterar o responsável e o gerente de cada um.",
+      description: "Listar projetos e alterar o responsável de cada um.",
       icon: <FolderSharedIcon color="primary" fontSize="large" />,
       action: () => navigate("/admin/projetos"),
     },
