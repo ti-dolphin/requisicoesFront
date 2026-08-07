@@ -1,12 +1,23 @@
 import { Card as KanbanCard } from "@caldwell619/react-kanban";
-import { Opportunity } from "./Opportunity";
 
 export interface OpportunityKanbanColumn {
   id: number;
   name: string;
 }
 
+export interface ArchivedOpportunity {
+  CODOS: number;
+  projeto: { ID: number };
+  adicional: { NUMERO: number };
+  cliente: { NOMEFANTASIA: string };
+}
+
+export interface KanbanCardOpportunity extends ArchivedOpportunity {
+  kanban_column_id: number;
+  kanban_column_id_orcamento: number | null;
+}
+
 export interface OpportunityKanbanCardData extends KanbanCard {
   id: number;
-  opportunity: Opportunity;
+  opportunity: KanbanCardOpportunity;
 }

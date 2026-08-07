@@ -1,4 +1,4 @@
-import { Opportunity } from "../models/oportunidades/Opportunity";
+import { KanbanCardOpportunity } from "../models/oportunidades/OpportunityKanbanColumn";
 
 export type KanbanBoardName = "Comercial" | "Orçamento";
 
@@ -17,7 +17,7 @@ const GATED_COLUMNS: Record<number, { field: "kanban_column_id"; value: number }
 
 export function isManualMoveAllowed(
   columnId: number,
-  opportunity: Pick<Opportunity, "kanban_column_id" | "kanban_column_id_orcamento">
+  opportunity: Pick<KanbanCardOpportunity, "kanban_column_id" | "kanban_column_id_orcamento">
 ): { allowed: true } | { allowed: false; message: string } {
   if (columnId === BLOCKED_COLUMN_ID) return { allowed: true };
 

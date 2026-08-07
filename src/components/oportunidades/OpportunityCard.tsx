@@ -5,12 +5,14 @@ interface OpportunityCardProps {
   row: any;
   styles?: React.CSSProperties;
   onClick?: () => void;
+  actions?: React.ReactNode;
 }
 
 const OpportunityCard: React.FC<OpportunityCardProps> = ({
   row,
   styles,
   onClick,
+  actions,
 }) => {
   return (
     <Card
@@ -38,9 +40,10 @@ const OpportunityCard: React.FC<OpportunityCardProps> = ({
         }}
       >
         <Typography color="primary">
-          {`${row?.projeto.ID}.${row?.adicional.NUMERO} - ${row?.cliente.NOMEFANTASIA}`}
+          {`${row?.projeto?.ID ?? "-"}.${row?.adicional?.NUMERO ?? "-"} - ${row?.cliente?.NOMEFANTASIA ?? "-"}`}
         </Typography>
       </CardContent>
+      {actions && <CardActions>{actions}</CardActions>}
     </Card>
   );
 };
