@@ -1,4 +1,4 @@
-import { Box, Chip, CircularProgress, IconButton, TextField, Tooltip, Typography, Button, } from "@mui/material"
+import { Box, Chip, CircularProgress, IconButton, Stack, TextField, Tooltip, Typography, Button, } from "@mui/material"
 import AddIcon from "@mui/icons-material/Add"
 import CheckIcon from "@mui/icons-material/Check"
 import CloseIcon from "@mui/icons-material/Close"
@@ -25,6 +25,7 @@ interface OpportunityKanbanComponentProps {
 }
 
 const ARCHIVED_COLUMN_ID = 100
+const DELETED_COLUMN_ID = 99
 
 const OpportunityKanbanComponent = ({ board }: OpportunityKanbanComponentProps) => {
   const dispatch = useDispatch()
@@ -39,6 +40,8 @@ const OpportunityKanbanComponent = ({ board }: OpportunityKanbanComponentProps) 
   const [editingColumnId, setEditingColumnId] = useState<number | null>(null)
   const [editingColumnName, setEditingColumnName] = useState("")
   const [openArchiveDialog, setOpenArchiveDialog] = useState(false)
+  const [cardToArchive, setCardToArchive] = useState<KanbanCardOpportunity | null>(null)
+  const [cardToDelete, setCardToDelete] = useState<KanbanCardOpportunity | null>(null)
 
   useKanbanEdgeAutoScroll(".react-kanban-board")
 
@@ -73,13 +76,29 @@ const OpportunityKanbanComponent = ({ board }: OpportunityKanbanComponentProps) 
     fetchBoard()
   }, [fetchBoard])
 
-  const handleArchiveCard = async (CODOS: number) => {
+  const handleConfirmArchiveCard = async () => {
+    if (!cardToArchive) return
     try {
-      await OpportunityKanbanService.updateCardColumn(CODOS, board, ARCHIVED_COLUMN_ID)
+      await OpportunityKanbanService.updateCardColumn(cardToArchive.CODOS, board, ARCHIVED_COLUMN_ID)
       dispatch(setFeedback({ message: "Oportunidade arquivada com sucesso", type: "success" }))
+      setCardToArchive(null)
       fetchBoard()
     } catch (error: any) {
+      setCardToArchive(null)
       dispatch(setFeedback({ message: error?.response?.data?.error || "Erro ao arquivar oportunidade", type: "error" }))
+    }
+  }
+
+  const handleConfirmDeleteCard = async () => {
+    if (!cardToDelete) return
+    try {
+      await OpportunityKanbanService.updateCardColumn(cardToDelete.CODOS, board, DELETED_COLUMN_ID)
+      dispatch(setFeedback({ message: "Oportunidade excluída com sucesso", type: "success" }))
+      setCardToDelete(null)
+      fetchBoard()
+    } catch (error: any) {
+      setCardToDelete(null)
+      dispatch(setFeedback({ message: error?.response?.data?.error || "Erro ao excluir oportunidade", type: "error" }))
     }
   }
 
@@ -334,17 +353,30 @@ const OpportunityKanbanComponent = ({ board }: OpportunityKanbanComponentProps) 
               onClick={() => setSelectedOpportunity(card.opportunity)}
               styles={{ width: KANBAN_COLUMN_WIDTH - 24, minHeight: 'auto', maxHeight: 'none', margin: '0 12px 12px 12px' }}
               actions={
-                <Tooltip title="Arquivar">
-                  <IconButton
-                    size="small"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleArchiveCard(card.opportunity.CODOS)
-                    }}
-                  >
-                    <ArchiveOutlinedIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
+                <Stack direction="row" gap={0.5}>
+                  <Tooltip title="Arquivar">
+                    <IconButton
+                      size="small"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setCardToArchive(card.opportunity)
+                      }}
+                    >
+                      <ArchiveOutlinedIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Excluir">
+                    <IconButton
+                      size="small"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setCardToDelete(card.opportunity)
+                      }}
+                    >
+                      <DeleteOutlineIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                </Stack>
               }
             />
           )}
@@ -359,6 +391,20 @@ const OpportunityKanbanComponent = ({ board }: OpportunityKanbanComponentProps) 
         onCancel={() => setColumnToDelete(null)}
         title="Remover coluna"
         message={`Tem certeza de que deseja remover a coluna "${columnToDelete?.title}"?`}
+      />
+      <BaseDeleteDialog
+        open={!!cardToArchive}
+        onConfirm={handleConfirmArchiveCard}
+        onCancel={() => setCardToArchive(null)}
+        title="Arquivar oportunidade"
+        message="Tem certeza de que deseja arquivar essa oportunidade?"
+      />
+      <BaseDeleteDialog
+        open={!!cardToDelete}
+        onConfirm={handleConfirmDeleteCard}
+        onCancel={() => setCardToDelete(null)}
+        title="Excluir oportunidade"
+        message="Tem certeza de que deseja excluir essa oportunidade?"
       />
       <OpportunityKanbanCardDialog
         open={!!selectedOpportunity}
