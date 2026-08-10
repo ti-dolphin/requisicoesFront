@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogTitle, IconButton, Stack, Typography, Divider, Box, Tooltip } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
@@ -10,7 +9,6 @@ import OpportunityAlinhamentoList from "./OpportunityAlinhamentoList";
 import OpportunityPendenciasList from "./OpportunityPendenciasList";
 
 const OpportunityKanbanCardDialog = ({ open, opportunity, onClose }: OpportunityKanbanCardDialogProps) => {
-  const [followersVersion, setFollowersVersion] = useState(0);
   const navigate = useNavigate();
 
   if (!opportunity) return null;
@@ -35,10 +33,7 @@ const OpportunityKanbanCardDialog = ({ open, opportunity, onClose }: Opportunity
       </DialogTitle>
       <DialogContent dividers>
         <Stack gap={3}>
-          <OpportunityFollowerList
-            CODOS={opportunity.CODOS}
-            onChange={() => setFollowersVersion((v) => v + 1)}
-          />
+          <OpportunityFollowerList CODOS={opportunity.CODOS} />
 
           <Divider />
 
@@ -48,7 +43,7 @@ const OpportunityKanbanCardDialog = ({ open, opportunity, onClose }: Opportunity
 
           <Divider />
 
-          <OpportunityAlinhamentoList key={followersVersion} CODOS={opportunity.CODOS} />
+          <OpportunityAlinhamentoList CODOS={opportunity.CODOS} />
 
           <Divider />
 
