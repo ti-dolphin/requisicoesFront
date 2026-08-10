@@ -151,11 +151,27 @@ const UpdateChildReqItemsDialog = ({
     }
   }
 
+  const buildItemsPayload = () =>
+    rows.map((row: any) => {
+      const {
+        produto,
+        produto_descricao,
+        produto_codigo,
+        produto_unidade,
+        produto_quantidade_estoque,
+        produto_quantidade_disponivel,
+        items_cotacao,
+        anexos,
+        ...item
+      } = row;
+      return item;
+    });
+
   async function createParcialReq() {
     setLoading(true);
     try {
       validateItems()
-      const newRequisition = await RequisitionService.createFromOther(id_requisicao, rows);
+      const newRequisition = await RequisitionService.createFromOther(id_requisicao, buildItemsPayload());
       if (newRequisition) {
         navigate(`/requisicoes/${newRequisition.ID_REQUISICAO}`);
       }
