@@ -1,135 +1,65 @@
-import { Box, Chip, CircularProgress, GlobalStyles, IconButton, TextField, Tooltip, Typography, Button, } from "@mui/material"
-import Grid from '@mui/material/Grid';
+import { Box, Chip, CircularProgress, IconButton, Stack, TextField, Tooltip, Typography, Button, } from "@mui/material"
 import AddIcon from "@mui/icons-material/Add"
 import CheckIcon from "@mui/icons-material/Check"
 import CloseIcon from "@mui/icons-material/Close"
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline"
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined"
+import ArchiveOutlinedIcon from "@mui/icons-material/ArchiveOutlined"
 import { useCallback, useEffect, useState } from "react"
-import { ControlledBoard, Column as KanbanColumn, KanbanBoard, OnDragEndNotification, Card as KanbanCard, moveCard } from '@caldwell619/react-kanban'
+import { ControlledBoard, Column as KanbanColumn, KanbanBoard, OnDragEndNotification, moveCard } from '@caldwell619/react-kanban'
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../redux/store"
 import { setFeedback } from "../../redux/slices/feedBackSlice"
-import OpportunityService from "../../services/oportunidades/OpportunityService"
 import OpportunityKanbanService from "../../services/oportunidades/OpportunityKanbanService"
-import { Opportunity } from "../../models/oportunidades/Opportunity"
+import { KanbanCardOpportunity, OpportunityKanbanCardData } from "../../models/oportunidades/OpportunityKanbanColumn"
 import OpportunityCard from "./OpportunityCard"
 import BaseDeleteDialog from "../shared/BaseDeleteDialog"
 import OpportunityKanbanCardDialog from "./OpportunityKanbanCardDialog"
+import OpportunityKanbanArchivedCardsDialog from "./OpportunityKanbanArchivedCardsDialog";
+import { kanbanGlobalStyles, KANBAN_COLUMN_WIDTH } from "../../styles/oportunidades/kanbanGlobalStyles"
+import { KanbanBoardName, isManualMoveAllowed } from "../../utils/kanbanFlowRules"
+import { useKanbanEdgeAutoScroll } from "../../hooks/oportunidades/useKanbanEdgeAutoScroll"
 
-interface OpportunityKanbanCardData extends KanbanCard {
-  id: number
-  opportunity: Opportunity
+interface OpportunityKanbanComponentProps {
+  board: KanbanBoardName
 }
 
-const COLUMN_WIDTH = 300
+const ARCHIVED_COLUMN_ID = 100
+const DELETED_COLUMN_ID = 99
 
-const formatDateInput = (date: Date) => {
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, "0")
-  const day = String(date.getDate()).padStart(2, "0")
-  return `${year}-${month}-${day}`
-}
-
-const getDefaultDateFrom = () => `${new Date().getFullYear()}-01-01`
-const getDefaultDateTo = () => formatDateInput(new Date())
-
-const kanbanGlobalStyles = (
-  <GlobalStyles
-    styles={{
-      '.react-kanban-board': {
-        display: 'flex',
-        overflowX: 'auto',
-        overflowY: 'hidden',
-        height: '100%',
-        minHeight: 0,
-        padding: '16px',
-        boxSizing: 'border-box',
-        // "safe center": centraliza quando cabe tudo, mas evita o bug de
-        // justify-content:center cortar a primeira coluna e deixá-la inacessível
-        // via scroll quando as colunas não cabem na largura da tela.
-        justifyContent: 'safe center',
-      },
-      // O wrapper do Droppable (@hello-pangea/dnd) não tem classe própria, só esse
-      // data-attribute fixo da lib. Ele precisa de altura explícita porque a coluna
-      // usa height:100% — sem isso, o pai fica em auto e o 100% da coluna também
-      // vira auto (trap clássico de percentage height), impedindo o scroll interno.
-      '[data-rfd-droppable-id="board-droppable"]': {
-        height: '100%',
-        minHeight: 0,
-      },
-      // O cabeçalho "sticky" não funciona de forma confiável dentro de uma coluna que
-      // rola inteira (a coluna usa o layout inline-block/nowrap legado da lib). Em vez
-      // disso, só a lista de cards rola: a coluna vira flex-column, o cabeçalho fica
-      // fora da área de scroll (não precisa de sticky) e só o Droppable dos cards cresce
-      // e rola. O seletor abaixo pega o Droppable de cards (droppableId = id da coluna,
-      // ex: "1", "2") como descendente de .react-kanban-column — diferente do Droppable
-      // do board inteiro (droppableId fixo "board-droppable"), que é ancestral dela.
-      '.react-kanban-column': {
-        width: COLUMN_WIDTH,
-        minWidth: COLUMN_WIDTH,
-        maxWidth: COLUMN_WIDTH,
-        height: '100%',
-        minHeight: 0,
-        marginRight: 20,
-        backgroundColor: '#ffffff',
-        borderRadius: 12,
-        borderTop: '4px solid #2B3990',
-        boxShadow: '0 2px 8px rgba(43, 57, 144, 0.15)',
-        boxSizing: 'border-box',
-        overflow: 'hidden',
-        display: 'inline-flex !important',
-        flexDirection: 'column !important',
-        verticalAlign: 'top',
-      },
-      '.react-kanban-column [data-rfd-droppable-id]': {
-        flex: '1 1 0',
-        minHeight: 0,
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        paddingBottom: 8,
-      },
-    }}
-  />
-)
-
-const OpportunityKanbanComponent = () => {
+const OpportunityKanbanComponent = ({ board }: OpportunityKanbanComponentProps) => {
   const dispatch = useDispatch()
   const user = useSelector((state: RootState) => state.user.user)
-  const [board, setBoard] = useState<KanbanBoard<OpportunityKanbanCardData>>({ columns: [] })
+  const columnField = board === "Comercial" ? "kanban_column_id" : "kanban_column_id_orcamento"
+  const [kanbanBoardData, setKanbanBoardData] = useState<KanbanBoard<OpportunityKanbanCardData>>({ columns: [] })
   const [loading, setLoading] = useState(false)
-  const [selectedOpportunity, setSelectedOpportunity] = useState<Opportunity | null>(null)
-  const [dateFrom, setDateFrom] = useState(getDefaultDateFrom())
-  const [dateTo, setDateTo] = useState(getDefaultDateTo())
+  const [selectedOpportunity, setSelectedOpportunity] = useState<KanbanCardOpportunity | null>(null)
   const [isAddingColumn, setIsAddingColumn] = useState(false)
   const [newColumnName, setNewColumnName] = useState("")
   const [columnToDelete, setColumnToDelete] = useState<KanbanColumn<OpportunityKanbanCardData> | null>(null)
   const [editingColumnId, setEditingColumnId] = useState<number | null>(null)
   const [editingColumnName, setEditingColumnName] = useState("")
+  const [openArchiveDialog, setOpenArchiveDialog] = useState(false)
+  const [cardToArchive, setCardToArchive] = useState<KanbanCardOpportunity | null>(null)
+  const [cardToDelete, setCardToDelete] = useState<KanbanCardOpportunity | null>(null)
+
+  useKanbanEdgeAutoScroll(".react-kanban-board")
 
   const fetchBoard = useCallback(async () => {
     if (!user) return
     setLoading(true)
     try {
-      const [columns, { opps }] = await Promise.all([
-        OpportunityKanbanService.getColumns(),
-        OpportunityService.getMany({
-          user,
-          searchTerm: "",
-          filters: {
-            DATASOLICITACAO_FROM: dateFrom ? `${dateFrom}T00:00:00.000Z` : null,
-            DATASOLICITACAO_TO: dateTo ? `${dateTo}T23:59:59.999Z` : null,
-          },
-          finalizados: false,
-        }),
+      const [columns, opps] = await Promise.all([
+        OpportunityKanbanService.getColumns(board),
+        OpportunityKanbanService.getCards(user, board),
       ])
-      setBoard({
+      setKanbanBoardData({
         columns: columns.map((column) => ({
           id: column.id,
           title: column.name,
           cards: opps
-            .filter((opportunity: Opportunity) => opportunity.kanban_column_id === column.id)
-            .map((opportunity: Opportunity) => ({
+            .filter((opportunity) => opportunity[columnField] === column.id)
+            .map((opportunity) => ({
               id: opportunity.CODOS,
               opportunity,
             })),
@@ -140,20 +70,54 @@ const OpportunityKanbanComponent = () => {
     } finally {
       setLoading(false)
     }
-  }, [user, dispatch, dateFrom, dateTo])
+  }, [user, dispatch, board, columnField])
 
   useEffect(() => {
     fetchBoard()
   }, [fetchBoard])
 
+  const handleConfirmArchiveCard = async () => {
+    if (!cardToArchive) return
+    try {
+      await OpportunityKanbanService.updateCardColumn(cardToArchive.CODOS, board, ARCHIVED_COLUMN_ID)
+      dispatch(setFeedback({ message: "Oportunidade arquivada com sucesso", type: "success" }))
+      setCardToArchive(null)
+      fetchBoard()
+    } catch (error: any) {
+      setCardToArchive(null)
+      dispatch(setFeedback({ message: error?.response?.data?.error || "Erro ao arquivar oportunidade", type: "error" }))
+    }
+  }
+
+  const handleConfirmDeleteCard = async () => {
+    if (!cardToDelete) return
+    try {
+      await OpportunityKanbanService.updateCardColumn(cardToDelete.CODOS, board, DELETED_COLUMN_ID)
+      dispatch(setFeedback({ message: "Oportunidade excluída com sucesso", type: "success" }))
+      setCardToDelete(null)
+      fetchBoard()
+    } catch (error: any) {
+      setCardToDelete(null)
+      dispatch(setFeedback({ message: error?.response?.data?.error || "Erro ao excluir oportunidade", type: "error" }))
+    }
+  }
+
   const handleCardDragEnd: OnDragEndNotification<OpportunityKanbanCardData> = async (card, source, destination) => {
     if (!source || !destination || destination.toColumnId === undefined) return
-    setBoard((previousBoard) => moveCard(previousBoard, source, destination))
+    const targetColumnId = Number(destination.toColumnId)
+    if (destination.toColumnId !== source.fromColumnId) {
+      const moveCheck = isManualMoveAllowed(targetColumnId, card.opportunity)
+      if (!moveCheck.allowed) {
+        dispatch(setFeedback({ message: moveCheck.message, type: "error" }))
+        return
+      }
+    }
+    setKanbanBoardData((previousBoard) => moveCard(previousBoard, source, destination))
     if (destination.toColumnId !== source.fromColumnId) {
       try {
-        await OpportunityKanbanService.updateCardColumn(card.id, Number(destination.toColumnId))
-      } catch (error) {
-        dispatch(setFeedback({ message: "Erro ao mover oportunidade", type: "error" }))
+        await OpportunityKanbanService.updateCardColumn(card.id, board, targetColumnId)
+      } catch (error: any) {
+        dispatch(setFeedback({ message: error?.response?.data?.error || "Erro ao mover oportunidade", type: "error" }))
         fetchBoard()
       }
     }
@@ -163,7 +127,7 @@ const OpportunityKanbanComponent = () => {
     const trimmedName = newColumnName.trim()
     if (!trimmedName) return
     try {
-      await OpportunityKanbanService.createColumn(trimmedName)
+      await OpportunityKanbanService.createColumn(trimmedName, board)
       setNewColumnName("")
       setIsAddingColumn(false)
       fetchBoard()
@@ -221,34 +185,19 @@ const OpportunityKanbanComponent = () => {
         sx={{
           display: 'flex',
           alignItems: 'center',
+          justifyContent: 'flex-end',
           gap: 2,
           padding: '10px 16px',
           backgroundColor: 'white',
           borderBottom: '1px solid rgba(0,0,0,0.1)',
         }}
       >
-        <Grid container >
-          <Grid xs={11}>
-            <TextField
-              size="small"
-              label="De"
-              type="date"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-              InputLabelProps={{ shrink: true }}
-              sx={{ width: 160, '& .MuiOutlinedInput-root': { height: 32, fontSize: 12 }, '& .MuiInputLabel-root': { fontSize: 12 } }}
-            />
-            <TextField
-              size="small"
-              label="Até"
-              type="date"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-              InputLabelProps={{ shrink: true }}
-              sx={{ width: 160, '& .MuiOutlinedInput-root': { height: 32, fontSize: 12 }, '& .MuiInputLabel-root': { fontSize: 12 } }}
-            />
-          </Grid>
-        </Grid>
+        <Button
+          variant="outlined"
+          onClick={() => setOpenArchiveDialog(true)}
+        >
+          Arquivados
+        </Button>
       </Box>
       <Box sx={{ flex: '1 1 0', minHeight: 0 }}>
       {loading ? (
@@ -338,9 +287,9 @@ const OpportunityKanbanComponent = () => {
           renderColumnAdder={() => (
             <Box
               sx={{
-                width: COLUMN_WIDTH,
-                minWidth: COLUMN_WIDTH,
-                maxWidth: COLUMN_WIDTH,
+                width: KANBAN_COLUMN_WIDTH,
+                minWidth: KANBAN_COLUMN_WIDTH,
+                maxWidth: KANBAN_COLUMN_WIDTH,
                 height: 'fit-content',
                 backgroundColor: 'rgba(255,255,255,0.6)',
                 borderRadius: 3,
@@ -402,11 +351,37 @@ const OpportunityKanbanComponent = () => {
             <OpportunityCard
               row={card.opportunity}
               onClick={() => setSelectedOpportunity(card.opportunity)}
-              styles={{ width: COLUMN_WIDTH - 24, minHeight: 'auto', maxHeight: 'none', margin: '0 12px 12px 12px' }}
+              styles={{ width: KANBAN_COLUMN_WIDTH - 24, minHeight: 'auto', maxHeight: 'none', margin: '0 12px 12px 12px' }}
+              actions={
+                <Stack direction="row" gap={0.5}>
+                  <Tooltip title="Arquivar">
+                    <IconButton
+                      size="small"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setCardToArchive(card.opportunity)
+                      }}
+                    >
+                      <ArchiveOutlinedIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Excluir">
+                    <IconButton
+                      size="small"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setCardToDelete(card.opportunity)
+                      }}
+                    >
+                      <DeleteOutlineIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                </Stack>
+              }
             />
           )}
         >
-          {board}
+          {kanbanBoardData}
         </ControlledBoard>
       )}
       </Box>
@@ -417,10 +392,33 @@ const OpportunityKanbanComponent = () => {
         title="Remover coluna"
         message={`Tem certeza de que deseja remover a coluna "${columnToDelete?.title}"?`}
       />
+      <BaseDeleteDialog
+        open={!!cardToArchive}
+        onConfirm={handleConfirmArchiveCard}
+        onCancel={() => setCardToArchive(null)}
+        title="Arquivar oportunidade"
+        message="Tem certeza de que deseja arquivar essa oportunidade?"
+      />
+      <BaseDeleteDialog
+        open={!!cardToDelete}
+        onConfirm={handleConfirmDeleteCard}
+        onCancel={() => setCardToDelete(null)}
+        title="Excluir oportunidade"
+        message="Tem certeza de que deseja excluir essa oportunidade?"
+      />
       <OpportunityKanbanCardDialog
         open={!!selectedOpportunity}
         opportunity={selectedOpportunity}
         onClose={() => setSelectedOpportunity(null)}
+      />
+      <OpportunityKanbanArchivedCardsDialog
+        open={openArchiveDialog}
+        board={board}
+        onClose={() => setOpenArchiveDialog(false)}
+        onUnarchive={() => {
+          setOpenArchiveDialog(false)
+          fetchBoard()
+        }}
       />
     </Box>
   )

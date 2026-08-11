@@ -126,8 +126,8 @@ const RequisitionDetailPage = () => {
     }
   }
 
-  const concludeReplaceItemProduct = async () =>   {
-    if(!itemBeingReplaced || !productSelected) return;
+  const concludeReplaceItemProduct = async () => {
+    if (!itemBeingReplaced || !productSelected) return; 
     try { 
       await RequisitionItemService.update(itemBeingReplaced, {id_produto: productSelected});
       dispatch(setFeedback({
@@ -228,9 +228,16 @@ const RequisitionDetailPage = () => {
 
   const shouldShowAddItemsButton = () => { 
     return (
-      user?.PERM_COMPRADOR ||
-      (Number(requisition?.ID_RESPONSAVEL) === Number(user?.CODPESSOA) &&
+      ( 
+        user?.PERM_COMPRADOR || (Number(requisition?.ID_RESPONSAVEL) === Number(user?.CODPESSOA) && 
         requisition.status?.nome === "Em edição")
+      ) ||
+      (
+        requisition.status?.nome === 'Validação' && (Number(user?.CODPESSOA) === Number(requisition.responsavel_projeto?.CODPESSOA))
+      ) ||
+      (
+        requisition.status?.nome === 'Aprovação Gerente' && (Number(user?.CODPESSOA) === Number(requisition.gerente?.CODPESSOA))
+      )
     );
   }
 
@@ -653,7 +660,7 @@ const RequisitionDetailPage = () => {
         open={
           (addingProducts || replacingItemProduct) &&
           requisition?.tipo_faturamento != null
-        } //o modal será aberto se estiver sendo feita substituição ou adição de produtos E se o tipo de faturamento já foi carregado
+        }
         onClose={handleClose}
         maxWidth="lg"
         fullWidth
@@ -736,7 +743,8 @@ const RequisitionDetailPage = () => {
         open={selectedItemsDialogOpen}
         onClose={() => setSelectedItemsDialogOpen(false)}
         idRequisicao={requisition?.ID_REQUISICAO}
-        requisitionTitle={`${requisition?.ID_REQUISICAO || ""} | ${requisition?.DESCRIPTION || ""} | ${requisition?.projeto?.DESCRICAO || ""}`}
+        requisitionDescription={requisition?.DESCRIPTION}
+        requisitionProject={requisition?.projeto?.DESCRICAO}
       />
 
       {/* Dialog da lista de cotações */}

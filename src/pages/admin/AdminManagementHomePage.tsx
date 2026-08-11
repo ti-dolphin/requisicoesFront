@@ -9,6 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import FolderSharedIcon from "@mui/icons-material/FolderShared";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
@@ -44,6 +45,12 @@ const AdminManagementHomePage = () => {
         "Listar, cadastrar, editar permissões e ativar/desativar usuários do sistema.",
       icon: <ManageAccountsIcon color="primary" fontSize="large" />,
       action: () => navigate("/admin/usuarios"),
+    },
+    {
+      title: "Projetos",
+      description: "Listar projetos e alterar o responsável de cada um.",
+      icon: <FolderSharedIcon color="primary" fontSize="large" />,
+      action: () => navigate("/admin/projetos"),
     },
   ];
 

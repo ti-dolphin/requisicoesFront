@@ -3,7 +3,7 @@ import { GridColDef } from "@mui/x-data-grid";
 import { ChangeEvent } from "react";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import { calculateQuoteSubtotal, formatDecimalPtBr2To3 } from "../../utils";
+import { calculateQuoteSubtotal, formatDecimalPtBr2To3, formatQuantidade } from "../../utils";
 
 export const useQuoteItemColumns = (
   handleUpdateUnavailable: (params: ChangeEvent<HTMLInputElement>, itemId : number) => void,
@@ -46,6 +46,35 @@ export const useQuoteItemColumns = (
       ),
     },
     {
+      field: "observacao",
+      headerName: "Observação",
+      flex: 1,
+      editable: true,
+      valueGetter: (observacao: string) => observacao || "N/A",
+      renderCell: (params: any) => (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 0.5,
+            height: "100%",
+          }}
+        >
+          <Tooltip title="Copiar observação">
+            <IconButton
+              onClick={() => navigator.clipboard.writeText(String(params.value || ""))}
+              sx={{ padding: 0, flexShrink: 0 }}
+            >
+              <ContentCopyIcon sx={{ fontSize: 14 }} />
+            </IconButton>
+          </Tooltip>
+          <Typography fontSize="small" fontWeight="bold">
+            {params.value}
+          </Typography>
+        </Box>
+      ),
+    },
+    {
       field: "produto_unidade",
       headerName: "Unidade",
       flex: 0.5,
@@ -79,6 +108,7 @@ export const useQuoteItemColumns = (
       type: "number",
       flex: 0.7,
       editable: false,
+      renderCell: (params: any) => formatQuantidade(params.value),
     },
     {
       field: "quantidade_cotada",
@@ -86,6 +116,7 @@ export const useQuoteItemColumns = (
       type: "number",
       flex: 0.7,
       editable: true,
+      renderCell: (params: any) => formatQuantidade(params.value),
     },
     {
       field: "ICMS",
@@ -166,35 +197,6 @@ export const useQuoteItemColumns = (
           </Box>
         );
       },
-    },
-    {
-      field: "observacao",
-      headerName: "Observação",
-      flex: 1,
-      editable: true,
-      valueGetter: (observacao: string) => observacao || "N/A",
-      renderCell: (params: any) => (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 0.5,
-            height: "100%",
-          }}
-        >
-          <Tooltip title="Copiar observação">
-            <IconButton
-              onClick={() => navigator.clipboard.writeText(String(params.value || ""))}
-              sx={{ padding: 0, flexShrink: 0 }}
-            >
-              <ContentCopyIcon sx={{ fontSize: 14 }} />
-            </IconButton>
-          </Tooltip>
-          <Typography fontSize="small" fontWeight="bold">
-            {params.value}
-          </Typography>
-        </Box>
-      ),
     },
     {
       field: "indisponivel",

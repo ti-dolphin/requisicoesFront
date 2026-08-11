@@ -26,6 +26,7 @@ import { useTheme } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import { set } from "lodash";
 import CircularProgress from "@mui/material/CircularProgress";
+import { formatQuantidade } from "../../utils";
 
 interface UpdateChildReqItemsDialogProps {
   open: boolean;
@@ -44,9 +45,6 @@ const UpdateChildReqItemsDialog = ({
 }: UpdateChildReqItemsDialogProps) => {
   const [rows, setRows] = useState(items);
   const [cellModesModel, setCellModesModel] = useState<GridCellModesModel>({});
-  const [triggerFunction, setTriggerFunction] = useState<
-    "createParcialReq" | "none"
-  >("none");
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -77,6 +75,10 @@ const UpdateChildReqItemsDialog = ({
       headerName: "Quantidade",
       width: 100,
       editable: true,
+      align: "right",
+      headerAlign: "right",
+      sortComparator: (a: any, b: any) => Number(a || 0) - Number(b || 0),
+      renderCell: (params: any) => formatQuantidade(params.value),
     },
   ];
 
@@ -120,21 +122,36 @@ const UpdateChildReqItemsDialog = ({
     setCellModesModel(newModel);
   };
 
+  const parseQuantidade = (value: any, previousValue: any) => {
+    if (value === null || value === undefined || String(value).trim() === "") {
+      return previousValue;
+    }
+    if (typeof value === "number") {
+      return value;
+    }
+    const parsed = Number(String(value).trim().replace(",", "."));
+    return isNaN(parsed) ? previousValue : parsed;
+  };
+
   const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
-    if(newRow.quantidade > oldRow.quantidade){
+    const normalizedRow: GridRowModel = {
+      ...newRow,
+      quantidade: parseQuantidade(newRow.quantidade, oldRow.quantidade),
+    };
+    if(normalizedRow.quantidade > oldRow.quantidade){
       dispatch(setFeedback({ message: "Quantidade nao pode ser maior que original", type: "error" }));
       return oldRow;
     }
-    if(newRow.quantidade < 0){
+    if(normalizedRow.quantidade < 0){
       dispatch(setFeedback({ message: "Quantidade nao pode ser menor que zero", type: "error" }));
       return oldRow;
     }
     setRows((prevRows) =>
       prevRows.map((row) =>
-        row.id_item_requisicao === newRow.id_item_requisicao ? newRow : row
+        row.id_item_requisicao === normalizedRow.id_item_requisicao ? normalizedRow : row
       )
     );
-    return newRow;
+    return normalizedRow;
   };
 
   const validateItems = () => {
@@ -154,19 +171,32 @@ const UpdateChildReqItemsDialog = ({
     }
   }
 
-  const createParcialReq = useCallback(async () => {
+  const buildItemsPayload = () =>
+    rows.map((row: any) => {
+      const {
+        produto,
+        produto_descricao,
+        produto_codigo,
+        produto_unidade,
+        produto_quantidade_estoque,
+        produto_quantidade_disponivel,
+        items_cotacao,
+        anexos,
+        ...item
+      } = row;
+      return item;
+    });
+
+  async function createParcialReq() {
     setLoading(true);
     try {
       validateItems()
-      const newRequisition = await RequisitionService.createFromOther(id_requisicao, rows);
+      const newRequisition = await RequisitionService.createFromOther(id_requisicao, buildItemsPayload());
       if (newRequisition) {
         navigate(`/requisicoes/${newRequisition.ID_REQUISICAO}`);
       }
-      setTriggerFunction("none");
       onClose();
     } catch (e : any) {
-       setTriggerFunction("none");
-      console.error(e);
       dispatch(
         setFeedback({
           message: `Erro ao criar requisição parcial: ${e.message}`,
@@ -176,31 +206,8 @@ const UpdateChildReqItemsDialog = ({
     } finally {
       setLoading(false);
     }
-  }, [triggerFunction]);
+  }
 
-  const handleCreateButtonClick = async () => {
-    // Stop editing any cell to trigger processRowUpdate
-    try {
-      apiRef.current.stopCellEditMode({
-        id: Object.keys(cellModesModel)[0],
-        field: Object.keys(cellModesModel[Object.keys(cellModesModel)[0]])[0],
-        ignoreModifications: false,
-      });
-    } catch (e) {
-      console.error(e);
-    }
-
-    setTimeout(() => {
-      setTriggerFunction("createParcialReq");
-    }, 1000);
-    // Wait for state to update (optional: small delay to ensure state propagation)
-  };
-
-  useEffect(() => {
-    if(triggerFunction === "createParcialReq") {
-      createParcialReq();
-    }
-  }, [triggerFunction]);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg">
@@ -247,7 +254,7 @@ const UpdateChildReqItemsDialog = ({
           Cancelar
         </Button>
         <Button
-          onClick={handleCreateButtonClick}
+          onClick={createParcialReq}
           color="primary"
           variant="contained"
           disabled={loading}

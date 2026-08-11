@@ -54,6 +54,11 @@ export class UserService {
     return data;
   }
 
+  static async resetPasswordByAdmin(CODPESSOA: number, SENHA: string): Promise<User> {
+    const { data } = await api.patch<User>(`${API_URL}/admin/${CODPESSOA}/password`, { SENHA });
+    return data;
+  }
+
   static async setActive(CODPESSOA: number, ATIVO: boolean): Promise<User> {
     const { data } = await api.patch<User>(`${API_URL}/admin/${CODPESSOA}/active`, { ATIVO });
     return data;

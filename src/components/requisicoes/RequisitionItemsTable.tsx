@@ -69,8 +69,6 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import RequisitionService from "../../services/requisicoes/RequisitionService";
 import UpdateChildReqItemsDialog from "./UpdateChildReqItemsDialog";
 import { useIsMobile } from "../../hooks/useIsMobile";
-import { FixedSizeGrid } from "react-window";
-import RequisitionItemCard from "./RequisitionItemCard";
 import RequisitionItemAttachmentList from "./RequisitionItemAttachmentList";
 import {
   setItemsToAttend,
@@ -667,6 +665,17 @@ const RequisitionItemsTable = ({
     return isNaN(parsed) ? previousValue ?? null : parsed;
   };
 
+  const parseQuantidade = (value: any, previousValue: any) => {
+    if (value === null || value === undefined || String(value).trim() === "") {
+      return previousValue;
+    }
+    if (typeof value === "number") {
+      return value;
+    }
+    const parsed = Number(String(value).trim().replace(",", "."));
+    return isNaN(parsed) ? previousValue : parsed;
+  };
+
   const processRowUpdate = React.useCallback(
     async (newRow: GridRowModel, oldRow: GridRowModel) => {
       if (!attendingItems) {
@@ -675,6 +684,7 @@ const RequisitionItemsTable = ({
         // como texto (editor livre para aceitar vírgula) e vira número aqui.
         const normalizedRow: GridRowModel = {
           ...newRow,
+          quantidade: parseQuantidade(newRow.quantidade, oldRow.quantidade),
           target_price: parseTargetPrice(newRow.target_price, oldRow.target_price),
           data_necessidade:
             newRow.data_necessidade instanceof Date
@@ -963,11 +973,12 @@ const RequisitionItemsTable = ({
         })
       );
       handleClosePatrimonyDialog();
-    } catch (_error) {
+    } catch (error: any) {
       dispatch(
         setFeedback({
           type: "error",
-          message: "Erro ao criar patrimônio.",
+          message:
+            error?.response?.data?.mensagem ?? "Erro ao criar patrimônio.",
         })
       );
     } finally {
@@ -1338,159 +1349,127 @@ const RequisitionItemsTable = ({
         ref={toolbarRef}
         handleChangeSearchTerm={debouncedHandleChangeSearchTerm}
       />
-      {false ? (
-        <Box
-          sx={{
-            width: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            mt: 2,
-          }}
-        >
-          <FixedSizeGrid
-            columnCount={1}
-            columnWidth={300}
-            height={tableMaxHeight || 600}
-            rowCount={items.length}
-            rowHeight={200}
-            width={300}
-          >
-            {({ columnIndex, rowIndex, style }) => {
-              const item = items[rowIndex];
-              return (
-                <RequisitionItemCard
-                  key={item.id_item_requisicao}
-                  item={item}
-                  style={style}
-                />
-              );
-            }}
-          </FixedSizeGrid>
-        </Box>
-      ) : (
-        <Box
-          ref={tableWrapperRef}
-          sx={{
-            height: effectiveMaxHeight ? effectiveMaxHeight : "auto",
-            overflowX: "auto",
-            overflowY: shouldUseAutoHeight ? "visible" : "auto",
-            "& .MuiDataGrid-scrollbar--horizontal": {
+      <Box
+        ref={tableWrapperRef}
+        sx={{
+          height: effectiveMaxHeight ? effectiveMaxHeight : "auto",
+          overflowX: "auto",
+          overflowY: shouldUseAutoHeight ? "visible" : "auto",
+          "& .MuiDataGrid-scrollbar--horizontal": {
+            position: "sticky",
+            bottom: 0,
+            zIndex: 3,
+            backgroundColor: (theme) => theme.palette.background.paper,
+          },
+          '& .item-without-quote': {
+            backgroundColor: '#ffebee !important',
+            '&:hover': {
+              backgroundColor: '#ffcdd2 !important',
+            },
+          },
+          '& .item-patrimonio-blue': {
+            backgroundColor: '#cfe8ff !important',
+            '&:hover': {
+              backgroundColor: '#b7dcff !important',
+            },
+          },
+          '& .item-patrimonio-green': {
+            backgroundColor: '#d8f5d0 !important',
+            '&:hover': {
+              backgroundColor: '#c5ecb9 !important',
+            },
+          },
+          '& .item-quantity-changed': {
+            backgroundColor: '#fff3cc !important',
+            '&:hover': {
+              backgroundColor: '#ffe9a8 !important',
+            },
+          },
+        }}
+      >
+        {dinamicColumns.length > 0 && (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              px: 1,
+              py: 0.5,
+              flexWrap: "wrap",
               position: "sticky",
-              bottom: 0,
-              zIndex: 3,
-              backgroundColor: (theme) => theme.palette.background.paper,
-            },
-            '& .item-without-quote': {
-              backgroundColor: '#ffebee !important',
-              '&:hover': {
-                backgroundColor: '#ffcdd2 !important',
-              },
-            },
-            '& .item-patrimonio-blue': {
-              backgroundColor: '#cfe8ff !important',
-              '&:hover': {
-                backgroundColor: '#b7dcff !important',
-              },
-            },
-            '& .item-patrimonio-green': {
-              backgroundColor: '#d8f5d0 !important',
-              '&:hover': {
-                backgroundColor: '#c5ecb9 !important',
-              },
-            },
-            '& .item-quantity-changed': {
-              backgroundColor: '#fff3cc !important',
-              '&:hover': {
-                backgroundColor: '#ffe9a8 !important',
-              },
-            },
-          }}
-        >
-          {dinamicColumns.length > 0 && (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 1,
-                px: 1,
-                py: 0.5,
-                flexWrap: "wrap",
-                position: "sticky",
-                top: 0,
-                zIndex: 2,
-                bgcolor: "background.paper",
-                borderBottom: "1px solid",
-                borderColor: "divider",
-              }}
-            >
-              {dinamicColumns.map((col) => {
-                const isSelected = supplierFilter === (col.field as string);
-                return (
-                  <Box
-                    key={col.field as string}
-                    onClick={() =>
-                      setSupplierFilter(isSelected ? null : (col.field as string))
-                    }
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 0.5,
-                      cursor: "pointer",
-                      border: "1px solid",
-                      borderColor: isSelected ? "primary.main" : "divider",
-                      borderRadius: 1,
-                      px: 1,
-                      py: 0.25,
-                      bgcolor: isSelected ? "primary.50" : "transparent",
-                      "&:hover": { bgcolor: "action.hover" },
-                    }}
+              top: 0,
+              zIndex: 2,
+              bgcolor: "background.paper",
+              borderBottom: "1px solid",
+              borderColor: "divider",
+            }}
+          >
+            {dinamicColumns.map((col) => {
+              const isSelected = supplierFilter === (col.field as string);
+              return (
+                <Box
+                  key={col.field as string}
+                  onClick={() =>
+                    setSupplierFilter(isSelected ? null : (col.field as string))
+                  }
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 0.5,
+                    cursor: "pointer",
+                    border: "1px solid",
+                    borderColor: isSelected ? "primary.main" : "divider",
+                    borderRadius: 1,
+                    px: 1,
+                    py: 0.25,
+                    bgcolor: isSelected ? "primary.50" : "transparent",
+                    "&:hover": { bgcolor: "action.hover" },
+                  }}
+                >
+                  {isSelected ? (
+                    <CheckCircleIcon sx={{ fontSize: 14, color: "primary.main" }} />
+                  ) : (
+                    <RadioButtonUncheckedIcon sx={{ fontSize: 14, color: "primary.main" }} />
+                  )}
+                  <Typography
+                    fontSize="0.7rem"
+                    color="primary.main"
+                    fontWeight={isSelected ? "bold" : "normal"}
                   >
-                    {isSelected ? (
-                      <CheckCircleIcon sx={{ fontSize: 14, color: "primary.main" }} />
-                    ) : (
-                      <RadioButtonUncheckedIcon sx={{ fontSize: 14, color: "primary.main" }} />
-                    )}
-                    <Typography
-                      fontSize="0.7rem"
-                      color="primary.main"
-                      fontWeight={isSelected ? "bold" : "normal"}
-                    >
-                      {col.headerName}
-                    </Typography>
-                  </Box>
-                );
-              })}
-            </Box>
-          )}
-          <BaseDataTable
-            apiRef={gridApiRef}
-            density="compact"
-            getRowId={(row: any) => row.id_item_requisicao}
-            loading={loading || blockFields}
-            theme={theme}
-            disableColumnMenu
-            rowHeight={60}
-            rows={filteredItems}
-            checkboxSelection
-            onRowSelectionModelChange={handleChangeSelection}
-            rowSelectionModel={selectionModel}
-            disableRowSelectionOnClick
-            columns={isMobile ? mobileColumns() : columns}
-            isCellEditable={isCellEditable}
-            cellModesModel={cellModesModel}
-            onCellModesModelChange={handleCellModesModelChange}
-            onCellClick={handleCellClick}
-            processRowUpdate={processRowUpdate}
-            hideFooter={hideFooter}
-            autoHeight={shouldUseAutoHeight}
-            onCellKeyDown={handleCellKeyDown}
-            getRowClassName={getRowClassName}
-            onRowClick={handleRowClick}
-            showCellVerticalBorder
-          />
-        </Box>
-      )}
+                    {col.headerName}
+                  </Typography>
+                </Box>
+              );
+            })}
+          </Box>
+        )}
+        <BaseDataTable
+          apiRef={gridApiRef}
+          density="compact"
+          getRowId={(row: any) => row.id_item_requisicao}
+          loading={loading || blockFields}
+          theme={theme}
+          disableColumnMenu
+          rowHeight={60}
+          rows={filteredItems}
+          checkboxSelection
+          onRowSelectionModelChange={handleChangeSelection}
+          rowSelectionModel={selectionModel}
+          disableRowSelectionOnClick
+          columns={isMobile ? mobileColumns() : columns}
+          isCellEditable={isCellEditable}
+          cellModesModel={cellModesModel}
+          onCellModesModelChange={handleCellModesModelChange}
+          onCellClick={handleCellClick}
+          processRowUpdate={processRowUpdate}
+          hideFooter={hideFooter}
+          autoHeight={shouldUseAutoHeight}
+          onCellKeyDown={handleCellKeyDown}
+          getRowClassName={getRowClassName}
+          onRowClick={handleRowClick}
+          showCellVerticalBorder
+        />
+      </Box>
       <StickyHorizontalScrollbar wrapperRef={tableWrapperRef} />
       {addingReqItems && (
         <Box sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}>

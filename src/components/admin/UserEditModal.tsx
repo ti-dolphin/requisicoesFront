@@ -11,11 +11,14 @@ import {
   FormControlLabel,
   Grid,
   IconButton,
+  InputAdornment,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { useDispatch } from "react-redux";
 import { setFeedback } from "../../redux/slices/feedBackSlice";
 import { UserService } from "../../services/UserService";
@@ -48,11 +51,17 @@ const UserEditModal = ({ open, user, onClose, onSaved }: UserEditModalProps) => 
   const [form, setForm] = useState<UserEditFormState | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [senha, setSenha] = useState("");
+  const [confirmarSenha, setConfirmarSenha] = useState("");
+  const [showSenha, setShowSenha] = useState(false);
 
   useEffect(() => {
     if (user) {
       setForm(mapUserToEditForm(user));
       setError("");
+      setSenha("");
+      setConfirmarSenha("");
+      setShowSenha(false);
     }
   }, [user]);
 
@@ -80,11 +89,35 @@ const UserEditModal = ({ open, user, onClose, onSaved }: UserEditModalProps) => 
       return;
     }
 
+    const alterandoSenha = Boolean(senha || confirmarSenha);
+
+    if (alterandoSenha) {
+      if (senha.length < 6) {
+        setError("A senha deve ter no mínimo 6 caracteres");
+        return;
+      }
+
+      if (senha !== confirmarSenha) {
+        setError("Senha e confirmação não conferem");
+        return;
+      }
+    }
+
     try {
       setLoading(true);
       await UserService.updateByAdmin(user.CODPESSOA, buildEditPayload(form));
+
+      if (alterandoSenha) {
+        await UserService.resetPasswordByAdmin(user.CODPESSOA, senha);
+      }
+
       dispatch(
-        setFeedback({ message: "Usuário atualizado com sucesso", type: "success" })
+        setFeedback({
+          message: alterandoSenha
+            ? "Usuário e senha atualizados com sucesso"
+            : "Usuário atualizado com sucesso",
+          type: "success",
+        })
       );
       onSaved();
       onClose();
@@ -141,6 +174,52 @@ const UserEditModal = ({ open, user, onClose, onSaved }: UserEditModalProps) => 
                 label="E-mail"
                 value={form.EMAIL}
                 onChange={handleText("EMAIL")}
+              />
+            </Grid>
+          </Grid>
+
+          <Divider />
+
+          <Typography variant="subtitle1" fontWeight={600}>
+            Senha
+          </Typography>
+
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                type={showSenha ? "text" : "password"}
+                label="Nova senha"
+                value={senha}
+                autoComplete="new-password"
+                onChange={(event) => setSenha(event.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        edge="end"
+                        onClick={() => setShowSenha((prev) => !prev)}
+                        aria-label={showSenha ? "Ocultar senha" : "Mostrar senha"}
+                      >
+                        {showSenha ? (
+                          <VisibilityOffIcon fontSize="small" />
+                        ) : (
+                          <VisibilityIcon fontSize="small" />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                type={showSenha ? "text" : "password"}
+                label="Confirmar nova senha"
+                value={confirmarSenha}
+                autoComplete="new-password"
+                onChange={(event) => setConfirmarSenha(event.target.value)}
               />
             </Grid>
           </Grid>

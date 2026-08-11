@@ -9,6 +9,7 @@ import {
   calculateUnitPriceWithTaxes,
   formatCurrency2To3,
   formatDecimalPtBr,
+  formatQuantidade,
   getDateFromISOstring,
 } from "../../utils";
 import { useDispatch, useSelector } from "react-redux";
@@ -89,6 +90,17 @@ export const useRequisitionItemColumns = (
       items.some(
         (item) => item.quantidade_solicitada != null || item.quantidade_estoque != null
       ),
+    [items]
+  );
+
+  const targetPriceTotal = useMemo(
+    () =>
+      items.reduce((total, item) => {
+        if (item.target_price === null || item.target_price === undefined) {
+          return total;
+        }
+        return total + Number(item.target_price) * Number(item.quantidade || 0);
+      }, 0),
     [items]
   );
 
@@ -228,6 +240,44 @@ export const useRequisitionItemColumns = (
       ),
     },
     {
+      field: "observacao",
+      headerName: "Observação",
+      type: "string",
+      editable: true,
+      renderEditCell: renderInstantEditCell,
+      valueGetter: (observacao: string) => observacao ?? "",
+      width: observacaoColumnWidth,
+      flex: 0,
+      minWidth: 100,
+      renderCell: (params) => (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 0.5,
+            height: "100%",
+          }}
+        >
+          <Tooltip title="Copiar observação">
+            <IconButton
+              onClick={() => navigator.clipboard.writeText(params.value)}
+              sx={{ padding: 0, flexShrink: 0 }}
+            >
+              <ContentCopyIcon sx={{ fontSize: 11 }} />
+            </IconButton>
+          </Tooltip>
+          <Typography 
+            sx={{
+              whiteSpace: 'normal',
+              fontSize: '12px'
+            }}
+          >
+            {String(params?.value ?? '')}
+          </Typography>
+        </Box>
+      ),
+    },
+    {
       field: "quantidade_atendida",
       headerName: "Atender",
       type: "number",
@@ -242,8 +292,10 @@ export const useRequisitionItemColumns = (
         : hasStockToPurchaseSplit
           ? "Comprar"
           : "QTD",
-      type: "number",
       editable: attendingItems ? false : true,
+      align: "right",
+      headerAlign: "right",
+      sortComparator: (a: any, b: any) => Number(a || 0) - Number(b || 0),
       renderEditCell: renderInstantEditCell,
       width: attendingItems ? 200 : 100,
       renderCell: (params: any) => (
@@ -256,16 +308,27 @@ export const useRequisitionItemColumns = (
           }}
         >
           <Typography fontSize="small" fontWeight="bold">
-            {params.value}
+            {params.value !== null &&
+            params.value !== undefined &&
+            params.value !== ""
+              ? formatDecimalPtBr(Number(params.value), {
+                  minimumFractionDigits: 0,
+                })
+              : ""}
           </Typography>
         </Box>
       ),
     },
     {
-      // Sem type "number" de propósito: o editor numérico do DataGrid rejeita
-      // vírgula como separador decimal (padrão pt-BR). A conversão para número
-      // acontece só no commit (processRowUpdate), senão o separador some
-      // enquanto o usuário digita.
+      field: "produto_unidade",
+      headerName: "Unidade",
+      type: "string",
+      editable: true,
+      renderEditCell: renderInstantEditCell,
+      sortable: false,
+      minWidth: 70,
+    },
+    {
       field: "target_price",
       headerName: "Valor alvo unitário",
       width: 120,
@@ -274,6 +337,37 @@ export const useRequisitionItemColumns = (
       headerAlign: "right",
       sortComparator: (a: any, b: any) => Number(a || 0) - Number(b || 0),
       renderEditCell: renderInstantEditCell,
+      renderHeader: () => (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-end",
+            justifyContent: "center",
+            width: "100%",
+          }}
+        >
+          <Typography
+            fontSize="12px"
+            fontWeight="bold"
+            color="primary"
+            lineHeight={1.2}
+            noWrap
+          >
+            Valor alvo unitário
+          </Typography>
+          {targetPriceTotal > 0 && (
+            <Typography
+              fontSize="0.7rem"
+              color="primary"
+              lineHeight={1.2}
+              noWrap
+            >
+              (R$ {formatDecimalPtBr(targetPriceTotal)})
+            </Typography>
+          )}
+        </Box>
+      ),
       renderCell: (params: any) =>
         params.value !== null && params.value !== undefined && params.value !== ""
           ? formatDecimalPtBr(Number(params.value))
@@ -307,12 +401,12 @@ export const useRequisitionItemColumns = (
               width: "100%",
             }}
           >
-            <Typography 
-              fontSize="small" 
+            <Typography
+              fontSize="small"
               fontWeight="bold"
               color={hasStock ? "success.main" : "error.main"}
             >
-              {value || 0}
+              {formatQuantidade(value || 0)}
             </Typography>
           </Box>
         );
@@ -343,7 +437,7 @@ export const useRequisitionItemColumns = (
           }}
         >
           <Typography fontSize="small" fontWeight="bold">
-            {params.value ?? 0}
+            {formatQuantidade(params.value ?? 0)}
           </Typography>
         </Box>
       ),
@@ -366,7 +460,7 @@ export const useRequisitionItemColumns = (
           }}
         >
           <Typography fontSize="small" fontWeight="bold" color="success.main">
-            {params.value || 0}
+            {formatQuantidade(params.value || 0)}
           </Typography>
         </Box>
       ),
@@ -419,15 +513,6 @@ export const useRequisitionItemColumns = (
       ),
     },
     {
-      field: "produto_unidade",
-      headerName: "Unidade",
-      type: "string",
-      editable: true,
-      renderEditCell: renderInstantEditCell,
-      sortable: false,
-      minWidth: 70,
-    },
-    {
       field: "oc",
       headerName: "OC",
       editable: true,
@@ -474,46 +559,6 @@ export const useRequisitionItemColumns = (
               title="Digite o valor desejado para preencher todos os itens"
             />
           )}
-        </Box>
-      ),
-    },
-    {
-      field: "observacao",
-      headerName: "Observação",
-      type: "string",
-      editable: true,
-      renderEditCell: renderInstantEditCell,
-      // O "N/A" é só exibição (renderCell); no valueGetter ele contaminava o
-      // valor de edição e clicar/sair da célula gravava "N/A" no banco.
-      valueGetter: (observacao: string) => observacao ?? "",
-      width: observacaoColumnWidth,
-      flex: 0,
-      minWidth: 100,
-      renderCell: (params) => (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 0.5,
-            height: "100%",
-          }}
-        >
-          <Tooltip title="Copiar observação">
-            <IconButton
-              onClick={() => navigator.clipboard.writeText(params.value)}
-              sx={{ padding: 0, flexShrink: 0 }}
-            >
-              <ContentCopyIcon sx={{ fontSize: 11 }} />
-            </IconButton>
-          </Tooltip>
-          <Typography 
-            sx={{
-              whiteSpace: 'normal',
-              fontSize: '12px'
-            }}
-          >
-            {String(params?.value ?? '')}
-          </Typography>
         </Box>
       ),
     },
@@ -699,6 +744,7 @@ export const useRequisitionItemColumns = (
   ], [
     descriptionColumnWidth,
     observacaoColumnWidth,
+    targetPriceTotal,
     attendingItems,
     hasStockToPurchaseSplit,
     canViewNfAttachment,

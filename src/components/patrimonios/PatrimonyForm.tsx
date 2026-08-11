@@ -170,10 +170,11 @@ const PatrimonyForm = () => {
           })
         );
       }
-    } catch (error) {
+    } catch (error: any) {
       dispatch(
         setFeedback({
-          message: "Erro ao criar patrimônio",
+          message:
+            error?.response?.data?.mensagem ?? "Erro ao criar patrimônio",
           type: "error",
         })
       );

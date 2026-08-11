@@ -73,11 +73,6 @@ const OpportunityService = {
 export interface SimilarOpportunity {
     CODOS: number;
     NOME: string;
-    DATASOLICITACAO: string;
-    CODOS_ORIGINAL: number | null;
-    numeroAdicional: number;
-    status: string;
-    cliente: string;
     isVinculada: boolean;
 }
 

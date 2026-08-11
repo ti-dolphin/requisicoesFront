@@ -37,6 +37,8 @@ import DataCard from "../../../components/shared/DataCard";
 import RequisitionCard from "../../../components/requisicoes/RequisitionCard";
 import { User, ReducedUser } from "../../../models/User";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import TrackingDialog from "../../../components/mercadoLivre/TrackingDialog";
 import { setViewingProducts } from "../../../redux/slices/productSlice";
 import ProductsTable from "../../../components/requisicoes/ProductsTable";
 import CloseIcon from "@mui/icons-material/Close";
@@ -53,6 +55,7 @@ const RequisitionListPage = () => {
   useRequisitionKanban();
   const [triggerFetch, setTriggerFetch] = useState(0);
   const [columnOrderDialogOpen, setColumnOrderDialogOpen] = useState(false);
+  const [trackingDialogOpen, setTrackingDialogOpen] = useState(false);
   const dispatch = useDispatch();
   const theme = useTheme();
   const user = useSelector((state: RootState) => state.user.user);
@@ -348,6 +351,20 @@ const RequisitionListPage = () => {
                   borderRadius: 0,
                   height: 26,
                 }}
+                startIcon={<LocalShippingIcon />}
+                onClick={() => setTrackingDialogOpen(true)}
+              >
+                Rastreio
+              </Button>
+            )}
+            {!isMobile && (
+              <Button
+                sx={{
+                  color: "white",
+                  textTransform: "capitalize",
+                  borderRadius: 0,
+                  height: 26,
+                }}
                 startIcon={<Inventory2Icon />}
                 onClick={() => dispatch(setViewingProducts(true))}
               >
@@ -475,6 +492,11 @@ const RequisitionListPage = () => {
         open={requisitionBeingDeletedId !== null}
         onConfirm={handleDeleteRequisition}
         onCancel={() => dispatch(setRequisitionBeingDeletedId(null))}
+      />
+
+      <TrackingDialog
+        open={trackingDialogOpen}
+        onClose={() => setTrackingDialogOpen(false)}
       />
 
       <ColumnReorderDialog

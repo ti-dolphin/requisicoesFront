@@ -82,6 +82,17 @@ export function formatDecimalPtBr2To3(value: number): string {
   return formatDecimalPtBr(value, MONEY_2_TO_3_FORMAT);
 }
 
+export function formatQuantidade(value: any): string {
+  if (value === null || value === undefined || value === "") {
+    return "";
+  }
+  const parsed = Number(value);
+  if (isNaN(parsed)) {
+    return String(value);
+  }
+  return formatDecimalPtBr(parsed, { minimumFractionDigits: 0 });
+}
+
 export function calculateQuoteSubtotal(
   precoUnitario: number,
   quantidadeCotada: number,
@@ -186,6 +197,37 @@ export function getDateInputValue(dateStr?: string | null): string {
   // Aceita formatos "YYYY-MM-DD" ou "YYYY-MM-DD HH:mm:ss"
   const match = dateStr.match(/^(\d{4}-\d{2}-\d{2})/);
   return match ? match[1] : "";
+}
+
+export const NON_REGISTERED_PRODUCT_CODE = "06.001.04.0002";
+
+/**
+ * Observação a ser exibida junto da descrição do produto em telas de cotação.
+ * Itens do produto genérico "não cadastrado" já usam a observação como
+ * descrição, então repeti-la ao lado só duplicaria o texto.
+ */
+export function getQuoteItemObservation(item: {
+  observacao?: string | null;
+  produto_codigo?: string | null;
+  produto_descricao?: string | null;
+}): string {
+  const observacao = String(item?.observacao ?? "").trim();
+
+  if (!observacao) {
+    return "";
+  }
+
+  const productCode = String(item?.produto_codigo ?? "").trim();
+  if (productCode === NON_REGISTERED_PRODUCT_CODE) {
+    return "";
+  }
+
+  const descricao = String(item?.produto_descricao ?? "").trim();
+  if (descricao.toUpperCase() === observacao.toUpperCase()) {
+    return "";
+  }
+
+  return observacao;
 }
 
 /**

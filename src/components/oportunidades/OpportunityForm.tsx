@@ -10,7 +10,8 @@ import OpportunityService, { SimilarOpportunity } from '../../services/oportunid
 import { useNavigate } from 'react-router-dom';
 import { Opportunity } from '../../models/oportunidades/Opportunity';
 import { setFeedback } from '../../redux/slices/feedBackSlice';
-import { setCreating, setOpportunity } from '../../redux/slices/oportunidades/opportunitySlice';
+import { setCreating, setOpportunity, updateOpportunityFields } from '../../redux/slices/oportunidades/opportunitySlice';
+import { ProjectService } from '../../services/ProjectService';
 import { useClientOptions } from '../../hooks/oportunidades/useClientOptions';
 import { useComercialResponsableOptions } from '../../hooks/oportunidades/useComercialResponsableOptions';
 import { useOpportunityMandatoryFields } from '../../hooks/oportunidades/useOpportunityMandatoryFields';
@@ -46,6 +47,9 @@ const OpportunityForm = () => {
 
     // Busca propostas semelhantes com debounce pelo nome
     const searchSimilarOpportunities = useCallback(async () => {
+      
+      if (isAdicional) return
+
       if (!opportunity?.NOME) {
         setSimilarOpportunities([]);
         return;
@@ -84,6 +88,41 @@ const OpportunityForm = () => {
         }
       };
     }, [searchSimilarOpportunities]);
+
+    const projectId = opportunity?.ID_PROJETO;
+    useEffect(() => {
+      if (!isAdicional || !projectId) return;
+
+      let cancelled = false;
+
+      const fillClientFromProject = async () => {
+        try {
+          const client = await ProjectService.getClient(Number(projectId));
+          if (cancelled) return;
+          if (!client) {
+            dispatch(setFeedback({
+              message: 'Não foi possível identificar o cliente do projeto. Selecione manualmente.',
+              type: 'error',
+            }));
+            return;
+          }
+          dispatch(updateOpportunityFields({ FK_CODCLIENTE: client.CODCLIENTE }));
+        } catch (error) {
+          if (cancelled) return;
+          dispatch(setFeedback({
+            message: 'Erro ao buscar o cliente do projeto',
+            type: 'error',
+          }));
+          console.error(error);
+        }
+      };
+
+      fillClientFromProject();
+
+      return () => {
+        cancelled = true;
+      };
+    }, [isAdicional, projectId, dispatch]);
 
     const handleChangeTextField = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
@@ -190,7 +229,6 @@ const OpportunityForm = () => {
         {projectOptions.length > 0 && oppStatusOptions.length > 0 && (
           <Grid
             container
-           
             sx={{
               gap: 1,
               maxHeight: 300,

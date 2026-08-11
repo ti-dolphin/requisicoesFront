@@ -4,7 +4,6 @@ import { User } from "../../models/User";
 import RequisitionStatusService from "../../services/requisicoes/RequisitionStatusService";
 import { useDispatch } from "react-redux";
 import { setFeedback } from "../../redux/slices/feedBackSlice";
-import { permission } from "process";
 
 export interface RequisitionStatusPermissions{ 
     permissionToChangeStatus: boolean;
@@ -29,18 +28,18 @@ export const useRequisitionStatusPermissions = (user: User | null, requisition: 
       setPermissionToActivate(false);
       setPermissionToChangeStatus(false);
       setPermissionToRevertStatus(false);
-      const admOrBuyer = user?.PERM_ADMINISTRADOR === 1 || user?.PERM_COMPRADOR === 1;
+      const adm = user?.PERM_ADMINISTRADOR === 1 
       const notCancelled = requisition.status?.nome !== "Cancelado";
       const cancelled = requisition.status?.nome === "Cancelado";
       const stockUser = requisition.id_escopo_requisicao === 1 && user?.PERM_ESTOQUE === 1;
       const gerente = requisition.gerente?.CODPESSOA === user?.CODPESSOA;
       const director = user?.PERM_DIRETOR === 1;
 
-      if(admOrBuyer && cancelled) { 
+      if (adm && cancelled) { 
         setPermissionToActivate(true);
       }
 
-      if ((admOrBuyer || gerente || director) && notCancelled) {
+      if (adm && notCancelled) {
         setPermissionToCancel(true);
       }
       if (user && requisition.ID_REQUISICAO > 0) {

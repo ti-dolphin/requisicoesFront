@@ -9,3 +9,7 @@ export interface Project {
 
   responsavel? : ReducedUser
 }
+
+export interface ProjectResponsavelPayload {
+  ID_RESPONSAVEL: number | null;
+}

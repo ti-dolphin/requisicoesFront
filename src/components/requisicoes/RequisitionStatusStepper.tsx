@@ -245,11 +245,15 @@ const RequisitionStatusStepper = ({
     if (newStatus.nome === "Validação") {
       await Promise.all(
         items.map(async (item) => {
-          console.log("item", item);
           if (item.quantidade === 0) {
             throw new Error(
               `O item ${item.produto_descricao} possui quantidade igual a zero.`
             );
+          }
+          if (item.produto_codigo === "06.001.04.0002" && !(item.observacao || item.anexos?.length)) {
+            throw new Error(
+              `Materiais ou serviços não cadastrados devem ter observação ou anexos/link.`
+            )
           }
         })
       );
@@ -349,7 +353,6 @@ const RequisitionStatusStepper = ({
 
     if (type === "acao_posterior") {
       const newStatus = getAdjacentVisibleStatus("next");
-      console.log("newStatus", newStatus);
 
       if (newStatus) {
         try {
@@ -774,10 +777,8 @@ const RequisitionStatusStepper = ({
   };
 
   const confirmValidationStatusChange = async () => {
-    console.log("confirmValidationStatusChange");
     setShowValidationDialog(false);
     if (pendingStatusChange) {
-      console.log("pendingStatusChange", pendingStatusChange);
       await handleChangeStatus(pendingStatusChange, true);
     }
     setPendingStatusChange(null);

@@ -14,6 +14,7 @@ import CircleIcon from '@mui/icons-material/Circle';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useProductPermissions } from "./productPermissionsHook";
 import { ProductPatrimonyType } from "../models/Product";
+import { formatQuantidade } from "../utils";
 
 const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -111,7 +112,7 @@ export const useProductColumns = ({ patrimonyTypes, onUpdatePatrimonyType, disab
             }}
           >
             <Typography fontSize="12px" fontWeight={"bold"}>
-              {params.value}
+              {formatQuantidade(params.value)}
             </Typography>
           </Box>
         );
@@ -223,7 +224,7 @@ export const useProductColumns = ({ patrimonyTypes, onUpdatePatrimonyType, disab
             }}
           >
             <Typography fontSize="12px" fontWeight={"bold"}>
-              {params.value}
+              {formatQuantidade(params.value)}
             </Typography>
           </Box>
         );
@@ -296,6 +297,7 @@ export const useProductColumns = ({ patrimonyTypes, onUpdatePatrimonyType, disab
       flex: 0.15,
       editable: editProductFieldsPermitted || hasStockPermission,
       valueGetter: (value) => value || 0,
+      renderCell: (params: GridRenderCellParams) => formatQuantidade(params.value),
     },
     {
       field: "quantidade_reservada",
@@ -304,6 +306,7 @@ export const useProductColumns = ({ patrimonyTypes, onUpdatePatrimonyType, disab
       flex: 0.15,
       editable: false,
       valueGetter: (value) => value || 0,
+      renderCell: (params: GridRenderCellParams) => formatQuantidade(params.value),
     },
     {
       field: "quantidade_disponivel",
@@ -325,7 +328,7 @@ export const useProductColumns = ({ patrimonyTypes, onUpdatePatrimonyType, disab
             }}
           >
             <Typography fontSize="12px" color={params.value > 0 ? green[600] : red[600]} fontWeight={"bold"}>
-              {params.value}
+              {formatQuantidade(params.value)}
             </Typography>
           </Box>
         );

@@ -1,6 +1,7 @@
 import api from '../api';
+import { Client } from '../models/oportunidades/Client';
 import { ProjectFollower } from '../models/oportunidades/ProjectFollower';
-import { Project } from '../models/Project';
+import { Project, ProjectResponsavelPayload } from '../models/Project';
 
 const API_ENDPOINT = 'projetos';
 
@@ -18,6 +19,22 @@ export const ProjectService = {
     return response.data;
   },
 
+  async getAllForAdmin(): Promise<Project[]> {
+    const response = await api.get<Project[]>(`/${API_ENDPOINT}/admin/all`);
+    return response.data;
+  },
+
+  async updateResponsavelByAdmin(
+    id: number,
+    payload: ProjectResponsavelPayload
+  ): Promise<Project> {
+    const response = await api.put<Project>(
+      `/${API_ENDPOINT}/admin/${id}/responsavel`,
+      payload
+    );
+    return response.data;
+  },
+
   async create(project: Omit<Project, "id">): Promise<Project> {
     const response = await api.post<Project>(`/${API_ENDPOINT}`, project);
     return response.data;
@@ -30,6 +47,13 @@ export const ProjectService = {
         codpessoa: id_seguidor,
         id_projeto: id_projeto,
       }
+    );
+    return response.data;
+  },
+
+  async getClient(id: number): Promise<Client | null> {
+    const response = await api.get<Client | null>(
+      `/${API_ENDPOINT}/${id}/cliente`
     );
     return response.data;
   },
