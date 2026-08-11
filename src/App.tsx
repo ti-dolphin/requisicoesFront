@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import { store } from "./redux/store";
 import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
 import SnackBar from "./components/shared/SnackBar";
+import MercadoLivreCallback from "./components/mercadoLivre/MercadoLivreCallback";
 import { ptBR } from "@mui/material/locale";
 import { green } from "@mui/material/colors";
 
@@ -90,8 +91,9 @@ const App = () => {
       <CssBaseline />
       <Provider store={store}>
         <BrowserRouter>
-         
+
           <SnackBar />
+          <MercadoLivreCallback />
           <AppRoutes />
         </BrowserRouter>
       </Provider>
