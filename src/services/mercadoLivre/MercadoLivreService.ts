@@ -6,6 +6,8 @@ import {
 
 const API_ENDPOINT = "/mercado_livre";
 
+export const ML_CALLBACK_STATE = "mercado_livre";
+
 export default class MercadoLivreService {
   static async getStatus(): Promise<MercadoLivreStatus> {
     const response = await api.get<MercadoLivreStatus>(`${API_ENDPOINT}/status`);
@@ -13,7 +15,17 @@ export default class MercadoLivreService {
   }
 
   static async getAuthorizationUrl(): Promise<{ url: string }> {
-    const response = await api.get<{ url: string }>(`${API_ENDPOINT}/auth`);
+    const response = await api.get<{ url: string }>(`${API_ENDPOINT}/auth`, {
+      params: { state: ML_CALLBACK_STATE },
+    });
+    return response.data;
+  }
+
+  static async connect(code: string): Promise<{ message: string; user_id: number }> {
+    const response = await api.get<{ message: string; user_id: number }>(
+      `${API_ENDPOINT}/callback`,
+      { params: { code } }
+    );
     return response.data;
   }
 
