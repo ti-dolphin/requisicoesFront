@@ -9,6 +9,7 @@ import {
   calculateUnitPriceWithTaxes,
   formatCurrency2To3,
   formatDecimalPtBr,
+  formatQuantidade,
   getDateFromISOstring,
 } from "../../utils";
 import { useDispatch, useSelector } from "react-redux";
@@ -291,8 +292,10 @@ export const useRequisitionItemColumns = (
         : hasStockToPurchaseSplit
           ? "Comprar"
           : "QTD",
-      type: "number",
       editable: attendingItems ? false : true,
+      align: "right",
+      headerAlign: "right",
+      sortComparator: (a: any, b: any) => Number(a || 0) - Number(b || 0),
       renderEditCell: renderInstantEditCell,
       width: attendingItems ? 200 : 100,
       renderCell: (params: any) => (
@@ -305,7 +308,13 @@ export const useRequisitionItemColumns = (
           }}
         >
           <Typography fontSize="small" fontWeight="bold">
-            {params.value}
+            {params.value !== null &&
+            params.value !== undefined &&
+            params.value !== ""
+              ? formatDecimalPtBr(Number(params.value), {
+                  minimumFractionDigits: 0,
+                })
+              : ""}
           </Typography>
         </Box>
       ),
@@ -392,12 +401,12 @@ export const useRequisitionItemColumns = (
               width: "100%",
             }}
           >
-            <Typography 
-              fontSize="small" 
+            <Typography
+              fontSize="small"
               fontWeight="bold"
               color={hasStock ? "success.main" : "error.main"}
             >
-              {value || 0}
+              {formatQuantidade(value || 0)}
             </Typography>
           </Box>
         );
@@ -428,7 +437,7 @@ export const useRequisitionItemColumns = (
           }}
         >
           <Typography fontSize="small" fontWeight="bold">
-            {params.value ?? 0}
+            {formatQuantidade(params.value ?? 0)}
           </Typography>
         </Box>
       ),
@@ -451,7 +460,7 @@ export const useRequisitionItemColumns = (
           }}
         >
           <Typography fontSize="small" fontWeight="bold" color="success.main">
-            {params.value || 0}
+            {formatQuantidade(params.value || 0)}
           </Typography>
         </Box>
       ),

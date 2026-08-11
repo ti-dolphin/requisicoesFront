@@ -3,7 +3,7 @@ import { GridColDef } from "@mui/x-data-grid";
 import { ChangeEvent } from "react";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import { calculateQuoteSubtotal, formatDecimalPtBr2To3 } from "../../utils";
+import { calculateQuoteSubtotal, formatDecimalPtBr2To3, formatQuantidade } from "../../utils";
 
 export const useQuoteItemColumns = (
   handleUpdateUnavailable: (params: ChangeEvent<HTMLInputElement>, itemId : number) => void,
@@ -108,6 +108,7 @@ export const useQuoteItemColumns = (
       type: "number",
       flex: 0.7,
       editable: false,
+      renderCell: (params: any) => formatQuantidade(params.value),
     },
     {
       field: "quantidade_cotada",
@@ -115,6 +116,7 @@ export const useQuoteItemColumns = (
       type: "number",
       flex: 0.7,
       editable: true,
+      renderCell: (params: any) => formatQuantidade(params.value),
     },
     {
       field: "ICMS",

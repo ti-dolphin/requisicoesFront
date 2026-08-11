@@ -82,6 +82,17 @@ export function formatDecimalPtBr2To3(value: number): string {
   return formatDecimalPtBr(value, MONEY_2_TO_3_FORMAT);
 }
 
+export function formatQuantidade(value: any): string {
+  if (value === null || value === undefined || value === "") {
+    return "";
+  }
+  const parsed = Number(value);
+  if (isNaN(parsed)) {
+    return String(value);
+  }
+  return formatDecimalPtBr(parsed, { minimumFractionDigits: 0 });
+}
+
 export function calculateQuoteSubtotal(
   precoUnitario: number,
   quantidadeCotada: number,

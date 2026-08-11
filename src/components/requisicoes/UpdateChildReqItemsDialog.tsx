@@ -26,6 +26,7 @@ import { useTheme } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import { set } from "lodash";
 import CircularProgress from "@mui/material/CircularProgress";
+import { formatQuantidade } from "../../utils";
 
 interface UpdateChildReqItemsDialogProps {
   open: boolean;
@@ -74,6 +75,10 @@ const UpdateChildReqItemsDialog = ({
       headerName: "Quantidade",
       width: 100,
       editable: true,
+      align: "right",
+      headerAlign: "right",
+      sortComparator: (a: any, b: any) => Number(a || 0) - Number(b || 0),
+      renderCell: (params: any) => formatQuantidade(params.value),
     },
   ];
 
@@ -117,21 +122,36 @@ const UpdateChildReqItemsDialog = ({
     setCellModesModel(newModel);
   };
 
+  const parseQuantidade = (value: any, previousValue: any) => {
+    if (value === null || value === undefined || String(value).trim() === "") {
+      return previousValue;
+    }
+    if (typeof value === "number") {
+      return value;
+    }
+    const parsed = Number(String(value).trim().replace(",", "."));
+    return isNaN(parsed) ? previousValue : parsed;
+  };
+
   const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
-    if(newRow.quantidade > oldRow.quantidade){
+    const normalizedRow: GridRowModel = {
+      ...newRow,
+      quantidade: parseQuantidade(newRow.quantidade, oldRow.quantidade),
+    };
+    if(normalizedRow.quantidade > oldRow.quantidade){
       dispatch(setFeedback({ message: "Quantidade nao pode ser maior que original", type: "error" }));
       return oldRow;
     }
-    if(newRow.quantidade < 0){
+    if(normalizedRow.quantidade < 0){
       dispatch(setFeedback({ message: "Quantidade nao pode ser menor que zero", type: "error" }));
       return oldRow;
     }
     setRows((prevRows) =>
       prevRows.map((row) =>
-        row.id_item_requisicao === newRow.id_item_requisicao ? newRow : row
+        row.id_item_requisicao === normalizedRow.id_item_requisicao ? normalizedRow : row
       )
     );
-    return newRow;
+    return normalizedRow;
   };
 
   const validateItems = () => {

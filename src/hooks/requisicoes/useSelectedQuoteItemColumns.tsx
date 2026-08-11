@@ -3,6 +3,7 @@ import { GridColDef } from "@mui/x-data-grid";
 import {
   calculateQuoteSubtotal,
   formatCurrency2To3,
+  formatQuantidade,
   getQuoteItemObservation,
 } from "../../utils";
 
@@ -78,6 +79,7 @@ export const useSelectedQuoteItemColumns = (): GridColDef[] => {
       minWidth: 100,
       editable: false,
       type: "number",
+      renderCell: (params) => formatQuantidade(params.value),
     },
     {
       field: "preco_unitario",

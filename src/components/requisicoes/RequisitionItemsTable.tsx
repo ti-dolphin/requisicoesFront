@@ -665,6 +665,17 @@ const RequisitionItemsTable = ({
     return isNaN(parsed) ? previousValue ?? null : parsed;
   };
 
+  const parseQuantidade = (value: any, previousValue: any) => {
+    if (value === null || value === undefined || String(value).trim() === "") {
+      return previousValue;
+    }
+    if (typeof value === "number") {
+      return value;
+    }
+    const parsed = Number(String(value).trim().replace(",", "."));
+    return isNaN(parsed) ? previousValue : parsed;
+  };
+
   const processRowUpdate = React.useCallback(
     async (newRow: GridRowModel, oldRow: GridRowModel) => {
       if (!attendingItems) {
@@ -673,6 +684,7 @@ const RequisitionItemsTable = ({
         // como texto (editor livre para aceitar vírgula) e vira número aqui.
         const normalizedRow: GridRowModel = {
           ...newRow,
+          quantidade: parseQuantidade(newRow.quantidade, oldRow.quantidade),
           target_price: parseTargetPrice(newRow.target_price, oldRow.target_price),
           data_necessidade:
             newRow.data_necessidade instanceof Date
