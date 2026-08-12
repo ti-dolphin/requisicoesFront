@@ -17,15 +17,12 @@ import BaseDeleteDialog from "../shared/BaseDeleteDialog"
 import OpportunityKanbanCardDialog from "./OpportunityKanbanCardDialog"
 import OpportunityKanbanArchivedCardsDialog from "./OpportunityKanbanArchivedCardsDialog";
 import { kanbanGlobalStyles, KANBAN_COLUMN_WIDTH } from "../../styles/oportunidades/kanbanGlobalStyles"
-import { KanbanBoardName, isManualMoveAllowed } from "../../utils/kanbanFlowRules"
+import { ARCHIVED_COLUMN_ID, DELETED_COLUMN_ID, KanbanBoardName, isManualMoveAllowed } from "../../utils/kanbanFlowRules"
 import { useKanbanEdgeAutoScroll } from "../../hooks/oportunidades/useKanbanEdgeAutoScroll"
 
 interface OpportunityKanbanComponentProps {
   board: KanbanBoardName
 }
-
-const ARCHIVED_COLUMN_ID = 100
-const DELETED_COLUMN_ID = 99
 
 const OpportunityKanbanComponent = ({ board }: OpportunityKanbanComponentProps) => {
   const dispatch = useDispatch()
@@ -106,7 +103,7 @@ const OpportunityKanbanComponent = ({ board }: OpportunityKanbanComponentProps) 
     if (!source || !destination || destination.toColumnId === undefined) return
     const targetColumnId = Number(destination.toColumnId)
     if (destination.toColumnId !== source.fromColumnId) {
-      const moveCheck = isManualMoveAllowed(targetColumnId, card.opportunity)
+      const moveCheck = isManualMoveAllowed(targetColumnId)
       if (!moveCheck.allowed) {
         dispatch(setFeedback({ message: moveCheck.message, type: "error" }))
         return
