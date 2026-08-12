@@ -1,5 +1,6 @@
 import api from "../../api";
 import {
+  MercadoLivreShipmentDetail,
   MercadoLivreStatus,
   MercadoLivreTrackingResponse,
 } from "../../models/mercadoLivre/MercadoLivreOrder";
@@ -33,6 +34,15 @@ export default class MercadoLivreService {
     const response = await api.get<MercadoLivreTrackingResponse>(
       `${API_ENDPOINT}/rastreio`,
       { params: { limit } }
+    );
+    return response.data;
+  }
+
+  static async getShipmentDetail(
+    idEnvio: number
+  ): Promise<MercadoLivreShipmentDetail> {
+    const response = await api.get<MercadoLivreShipmentDetail>(
+      `${API_ENDPOINT}/rastreio/${idEnvio}`
     );
     return response.data;
   }
