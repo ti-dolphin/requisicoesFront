@@ -15,6 +15,8 @@ export interface ArchivedOpportunity {
 export interface KanbanCardOpportunity extends ArchivedOpportunity {
   kanban_column_id: number;
   kanban_column_id_orcamento: number | null;
+  data_planejada: string | null;
+  seguidores: { NOME: string }[];
 }
 
 export interface OpportunityKanbanCardData extends KanbanCard {
