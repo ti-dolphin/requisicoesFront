@@ -66,6 +66,8 @@ import {
   normalizeText,
 } from "../../utils";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import RequisitionTrackingDialog from "../mercadoLivre/RequisitionTrackingDialog";
 import RequisitionService from "../../services/requisicoes/RequisitionService";
 import UpdateChildReqItemsDialog from "./UpdateChildReqItemsDialog";
 import { useIsMobile } from "../../hooks/useIsMobile";
@@ -152,6 +154,19 @@ const RequisitionItemsTable = ({
     responsavel: undefined,
     projeto: undefined,
   });
+
+  const [trackingDialogOpen, setTrackingDialogOpen] = useState(false);
+
+  const codigosMl = useMemo(
+    () => [
+      ...new Set(
+        items
+          .map((item: any) => String(item.codigo_ml ?? "").trim())
+          .filter((codigo: string) => codigo !== "")
+      ),
+    ],
+    [items]
+  );
 
   const itemsRef = React.useRef(items);
   const pendingRowUpdates = React.useRef<Map<number, number>>(new Map());
@@ -708,6 +723,9 @@ const RequisitionItemsTable = ({
         const ocChanged = normalizeOcValue(normalizedRow.oc) !== normalizeOcValue(oldRow.oc);
         const observacaoChanged =
           String(normalizedRow.observacao ?? "") !== String(oldRow.observacao ?? "");
+        const codigoMlChanged =
+          String(normalizedRow.codigo_ml ?? "").trim() !==
+          String(oldRow.codigo_ml ?? "").trim();
         const produtoUnidadeChanged =
           productCode === "06.001.04.0002" &&
           normalizedRow.produto_unidade !== oldRow.produto_unidade;
@@ -729,7 +747,8 @@ const RequisitionItemsTable = ({
           dataEntregaChanged ||
           ocChanged ||
           observacaoChanged ||
-          produtoUnidadeChanged;
+          produtoUnidadeChanged ||
+          codigoMlChanged;
         if (!hasChanges) {
           return oldRow;
         }
@@ -749,6 +768,9 @@ const RequisitionItemsTable = ({
         if (ocChanged) payload.oc = normalizedRow.oc;
         if (observacaoChanged) payload.observacao = normalizedRow.observacao;
         if (produtoUnidadeChanged) payload.produto_unidade = normalizedRow.produto_unidade;
+        if (codigoMlChanged) {
+          payload.codigo_ml = String(normalizedRow.codigo_ml ?? "").trim() || null;
+        }
 
         if (quantidadeChanged) {
           // Sem estado otimista: a quantidade dispara recálculo de cotação e
@@ -1345,6 +1367,17 @@ const RequisitionItemsTable = ({
           </Button>
         </Box>
       )}
+      {codigosMl.length > 0 && (
+        <Box sx={{ display: "flex", justifyContent: "flex-end", px: 1, pb: 1 }}>
+          <Button
+            variant="outlined"
+            startIcon={<LocalShippingIcon />}
+            onClick={() => setTrackingDialogOpen(true)}
+          >
+            Rastrear compras ({codigosMl.length})
+          </Button>
+        </Box>
+      )}
       <BaseTableToolBar
         ref={toolbarRef}
         handleChangeSearchTerm={debouncedHandleChangeSearchTerm}
@@ -1478,6 +1511,12 @@ const RequisitionItemsTable = ({
           </Button>
         </Box>
       )}
+
+      <RequisitionTrackingDialog
+        open={trackingDialogOpen}
+        onClose={() => setTrackingDialogOpen(false)}
+        codigos={codigosMl}
+      />
 
       {updatingChildReqItems && (
         <UpdateChildReqItemsDialog
