@@ -1,5 +1,4 @@
 import { Box, Chip, CircularProgress, IconButton, Stack, TextField, Tooltip, Typography, Button, } from "@mui/material"
-import AddIcon from "@mui/icons-material/Add"
 import CheckIcon from "@mui/icons-material/Check"
 import CloseIcon from "@mui/icons-material/Close"
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline"
@@ -31,8 +30,6 @@ const OpportunityKanbanComponent = ({ board }: OpportunityKanbanComponentProps) 
   const [kanbanBoardData, setKanbanBoardData] = useState<KanbanBoard<OpportunityKanbanCardData>>({ columns: [] })
   const [loading, setLoading] = useState(false)
   const [selectedOpportunity, setSelectedOpportunity] = useState<KanbanCardOpportunity | null>(null)
-  const [isAddingColumn, setIsAddingColumn] = useState(false)
-  const [newColumnName, setNewColumnName] = useState("")
   const [columnToDelete, setColumnToDelete] = useState<KanbanColumn<OpportunityKanbanCardData> | null>(null)
   const [editingColumnId, setEditingColumnId] = useState<number | null>(null)
   const [editingColumnName, setEditingColumnName] = useState("")
@@ -120,24 +117,6 @@ const OpportunityKanbanComponent = ({ board }: OpportunityKanbanComponentProps) 
     }
   }
 
-  const handleCreateColumn = async () => {
-    const trimmedName = newColumnName.trim()
-    if (!trimmedName) return
-    try {
-      await OpportunityKanbanService.createColumn(trimmedName, board)
-      setNewColumnName("")
-      setIsAddingColumn(false)
-      fetchBoard()
-    } catch (error: any) {
-      dispatch(setFeedback({ message: error?.response?.data?.error || "Erro ao criar coluna", type: "error" }))
-    }
-  }
-
-  const handleCancelCreateColumn = () => {
-    setNewColumnName("")
-    setIsAddingColumn(false)
-  }
-
   const handleStartEditColumn = (column: KanbanColumn<OpportunityKanbanCardData>) => {
     setEditingColumnId(Number(column.id))
     setEditingColumnName(column.title)
@@ -204,7 +183,7 @@ const OpportunityKanbanComponent = ({ board }: OpportunityKanbanComponentProps) 
       ) : (
         <ControlledBoard
           disableColumnDrag
-          allowAddColumn
+          allowAddColumn={false}
           allowAddCard={false}
           allowRemoveCard={false}
           onCardDragEnd={handleCardDragEnd}
@@ -281,69 +260,6 @@ const OpportunityKanbanComponent = ({ board }: OpportunityKanbanComponentProps) 
               </Box>
             </Box>
           )}
-          renderColumnAdder={() => (
-            <Box
-              sx={{
-                width: KANBAN_COLUMN_WIDTH,
-                minWidth: KANBAN_COLUMN_WIDTH,
-                maxWidth: KANBAN_COLUMN_WIDTH,
-                height: 'fit-content',
-                backgroundColor: 'rgba(255,255,255,0.6)',
-                borderRadius: 3,
-                boxSizing: 'border-box',
-                padding: 1.5,
-              }}
-            >
-              {isAddingColumn ? (
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <TextField
-                    size="small"
-                    autoFocus
-                    placeholder="Nome da coluna"
-                    value={newColumnName}
-                    onChange={(e) => setNewColumnName(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        handleCreateColumn()
-                      }
-                      if (e.key === 'Escape') {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        handleCancelCreateColumn()
-                      }
-                    }}
-                    sx={{ backgroundColor: 'white', borderRadius: 1, flex: 1, '& .MuiOutlinedInput-root': { height: 36, fontSize: 13 } }}
-                  />
-                  <IconButton size="small" onClick={handleCreateColumn} sx={{ color: 'primary.main' }}>
-                    <CheckIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton size="small" onClick={handleCancelCreateColumn}>
-                    <CloseIcon fontSize="small" />
-                  </IconButton>
-                </Box>
-              ) : (
-                <Box
-                  onClick={() => setIsAddingColumn(true)}
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 0.5,
-                    color: 'primary.main',
-                    fontWeight: 600,
-                    fontSize: 13,
-                    cursor: 'pointer',
-                    padding: '6px 8px',
-                    borderRadius: 1,
-                    '&:hover': { backgroundColor: 'rgba(255,255,255,0.9)' },
-                  }}
-                >
-                  <AddIcon fontSize="small" /> Adicionar coluna
-                </Box>
-              )}
-            </Box>
-          )}
           renderCard={(card) => (
             <OpportunityCard
               row={card.opportunity}
@@ -406,7 +322,10 @@ const OpportunityKanbanComponent = ({ board }: OpportunityKanbanComponentProps) 
       <OpportunityKanbanCardDialog
         open={!!selectedOpportunity}
         opportunity={selectedOpportunity}
-        onClose={() => setSelectedOpportunity(null)}
+        onClose={() => {
+          setSelectedOpportunity(null)
+          fetchBoard()
+        }}
       />
       <OpportunityKanbanArchivedCardsDialog
         open={openArchiveDialog}
