@@ -5,6 +5,7 @@ import {
   Button,
   Chip,
   CircularProgress,
+  Collapse,
   Dialog,
   DialogActions,
   DialogContent,
@@ -17,10 +18,14 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useDispatch } from "react-redux";
 import { setFeedback } from "../../redux/slices/feedBackSlice";
 import MercadoLivreService from "../../services/mercadoLivre/MercadoLivreService";
-import { MercadoLivreOrder } from "../../models/mercadoLivre/MercadoLivreOrder";
+import {
+  MercadoLivreOrder,
+  MercadoLivreShipmentDetail,
+} from "../../models/mercadoLivre/MercadoLivreOrder";
 import { TrackingDialogProps } from "../../models/mercadoLivre/TrackingDialog";
 import { getDateStringFromISOstring, formatCurrency } from "../../utils";
 
@@ -41,6 +46,15 @@ const SUBSTATUS_LABELS: Record<string, string> = {
   bad_address: "Endereço incorreto",
   unauthorized_receiver: "Pessoa não autorizada",
   returning_to_sender: "Em devolução ao vendedor",
+  printed: "Etiqueta impressa",
+  waiting_for_label_generation: "Aguardando etiqueta",
+  picked_up: "Coletado pela transportadora",
+  authorized_by_carrier: "Autorizado pela transportadora",
+  in_hub: "Recebido no centro de distribuição",
+  waiting_for_payment: "Aguardando pagamento do frete",
+  shipment_paid: "Frete pago",
+  creating_route: "Rota criada",
+  under_review: "Em revisão",
 };
 
 const STATUS_COLORS: Record<string, "default" | "info" | "success" | "error" | "warning"> = {
@@ -58,6 +72,41 @@ const TrackingDialog = ({ open, onClose }: TrackingDialogProps) => {
   const [orders, setOrders] = useState<MercadoLivreOrder[]>([]);
   const [loading, setLoading] = useState(false);
   const [notConnected, setNotConnected] = useState(false);
+  const [expanded, setExpanded] = useState<number | null>(null);
+  const [details, setDetails] = useState<
+    Record<number, MercadoLivreShipmentDetail | "loading">
+  >({});
+
+  const toggleDetail = async (order: MercadoLivreOrder) => {
+    if (!order.id_envio) return;
+
+    if (expanded === order.id_pedido) {
+      setExpanded(null);
+      return;
+    }
+
+    setExpanded(order.id_pedido);
+
+    if (details[order.id_pedido]) return;
+
+    setDetails((prev) => ({ ...prev, [order.id_pedido]: "loading" }));
+    try {
+      const detail = await MercadoLivreService.getShipmentDetail(order.id_envio);
+      setDetails((prev) => ({ ...prev, [order.id_pedido]: detail }));
+    } catch (err: any) {
+      setDetails((prev) => {
+        const next = { ...prev };
+        delete next[order.id_pedido];
+        return next;
+      });
+      dispatch(
+        setFeedback({
+          message: err?.response?.data?.error || "Erro ao buscar as etapas do envio",
+          type: "error",
+        })
+      );
+    }
+  };
 
   const loadTracking = useCallback(async () => {
     try {
@@ -145,6 +194,69 @@ const TrackingDialog = ({ open, onClose }: TrackingDialogProps) => {
     );
   };
 
+  const renderDetail = (order: MercadoLivreOrder) => {
+    const detail = details[order.id_pedido];
+
+    if (detail === "loading") {
+      return (
+        <Stack alignItems="center" sx={{ py: 2 }}>
+          <CircularProgress size={20} />
+        </Stack>
+      );
+    }
+
+    if (!detail) return null;
+
+    return (
+      <Box sx={{ mt: 1, pl: 2, borderLeft: "2px solid", borderColor: "divider" }}>
+        {detail.transportadora?.nome && (
+          <Typography fontSize="0.75rem" sx={{ mb: 1 }}>
+            Transportadora: <strong>{detail.transportadora.nome}</strong>
+            {detail.transportadora.url && (
+              <>
+                {" — "}
+                <Link
+                  href={detail.transportadora.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  rastrear no site da transportadora
+                </Link>
+              </>
+            )}
+          </Typography>
+        )}
+
+        {detail.historico.length === 0 ? (
+          <Typography fontSize="0.75rem" color="text.secondary">
+            Sem etapas registradas.
+          </Typography>
+        ) : (
+          <Stack spacing={0.5}>
+            {detail.historico.map((event, index) => (
+              <Stack
+                key={`${event.status}-${event.data}-${index}`}
+                direction="row"
+                spacing={1}
+                alignItems="baseline"
+              >
+                <Typography fontSize="0.7rem" color="text.secondary" sx={{ minWidth: 130 }}>
+                  {event.data ? getDateStringFromISOstring(event.data) : "—"}
+                </Typography>
+                <Typography fontSize="0.75rem">
+                  {STATUS_LABELS[event.status] || event.status}
+                  {event.substatus
+                    ? ` — ${SUBSTATUS_LABELS[event.substatus] || event.substatus}`
+                    : ""}
+                </Typography>
+              </Stack>
+            ))}
+          </Stack>
+        )}
+      </Box>
+    );
+  };
+
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
       <DialogTitle
@@ -212,8 +324,34 @@ const TrackingDialog = ({ open, onClose }: TrackingDialogProps) => {
                       Pedido {order.id_pedido}
                     </Link>
                   </Box>
-                  <Box sx={{ minWidth: 220 }}>{renderTracking(order)}</Box>
+                  <Box sx={{ minWidth: 220 }}>
+                    {renderTracking(order)}
+                    {order.id_envio && (
+                      <Button
+                        size="small"
+                        variant="text"
+                        endIcon={
+                          <ExpandMoreIcon
+                            sx={{
+                              transform:
+                                expanded === order.id_pedido
+                                  ? "rotate(180deg)"
+                                  : "none",
+                            }}
+                          />
+                        }
+                        sx={{ backgroundColor: "transparent", color: "primary.main", p: 0, mt: 0.5 }}
+                        onClick={() => toggleDetail(order)}
+                      >
+                        Etapas
+                      </Button>
+                    )}
+                  </Box>
                 </Stack>
+
+                <Collapse in={expanded === order.id_pedido} unmountOnExit>
+                  {renderDetail(order)}
+                </Collapse>
               </Box>
             ))}
           </Stack>

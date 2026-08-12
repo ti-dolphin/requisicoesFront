@@ -32,6 +32,22 @@ export interface MercadoLivreTrackingResponse {
   results: MercadoLivreOrder[];
 }
 
+export interface MercadoLivreShipmentEvent {
+  status: string;
+  substatus: string | null;
+  data: string | null;
+}
+
+export interface MercadoLivreCarrier {
+  nome: string | null;
+  url: string | null;
+}
+
+export interface MercadoLivreShipmentDetail {
+  historico: MercadoLivreShipmentEvent[];
+  transportadora: MercadoLivreCarrier | null;
+}
+
 export interface MercadoLivreStatus {
   conectado: boolean;
   user_id?: number;
