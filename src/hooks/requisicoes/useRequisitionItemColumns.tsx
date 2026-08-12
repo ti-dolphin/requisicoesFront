@@ -329,6 +329,17 @@ export const useRequisitionItemColumns = (
       minWidth: 70,
     },
     {
+      field: "codigo_ml",
+      headerName: "Código ML",
+      type: "string",
+      width: 150,
+      editable: attendingItems ? false : true,
+      renderEditCell: renderInstantEditCell,
+      renderCell: (params: any) => (
+        <Typography fontSize="small">{params.value || ""}</Typography>
+      ),
+    },
+    {
       field: "target_price",
       headerName: "Valor alvo unitário",
       width: 120,

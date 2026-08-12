@@ -18,20 +18,33 @@ import { useDispatch } from "react-redux";
 import { setFeedback } from "../../redux/slices/feedBackSlice";
 import MercadoLivreService from "../../services/mercadoLivre/MercadoLivreService";
 import { MercadoLivreOrder } from "../../models/mercadoLivre/MercadoLivreOrder";
-import { TrackingDialogProps } from "../../models/mercadoLivre/TrackingDialog";
+import { RequisitionTrackingDialogProps } from "../../models/mercadoLivre/RequisitionTrackingDialog";
 import TrackingList from "./TrackingList";
 
-const TrackingDialog = ({ open, onClose }: TrackingDialogProps) => {
+const RequisitionTrackingDialog = ({
+  open,
+  onClose,
+  codigos,
+}: RequisitionTrackingDialogProps) => {
   const dispatch = useDispatch();
   const [orders, setOrders] = useState<MercadoLivreOrder[]>([]);
   const [loading, setLoading] = useState(false);
   const [notConnected, setNotConnected] = useState(false);
 
+  const codigosKey = codigos.join(",");
+
   const loadTracking = useCallback(async () => {
+    if (!codigosKey) {
+      setOrders([]);
+      return;
+    }
+
     try {
       setLoading(true);
       setNotConnected(false);
-      const data = await MercadoLivreService.getTracking(10);
+      const data = await MercadoLivreService.getTrackingByCodes(
+        codigosKey.split(",")
+      );
       setOrders(data.results);
     } catch (err: any) {
       const message = err?.response?.data?.error || "Erro ao buscar rastreio";
@@ -43,7 +56,7 @@ const TrackingDialog = ({ open, onClose }: TrackingDialogProps) => {
     } finally {
       setLoading(false);
     }
-  }, [dispatch]);
+  }, [codigosKey, dispatch]);
 
   useEffect(() => {
     if (open) {
@@ -76,7 +89,7 @@ const TrackingDialog = ({ open, onClose }: TrackingDialogProps) => {
           fontWeight: 600,
         }}
       >
-        Rastreio das compras
+        Rastreio dos itens da requisição
         <Box>
           <IconButton onClick={loadTracking} disabled={loading}>
             <RefreshIcon />
@@ -104,7 +117,9 @@ const TrackingDialog = ({ open, onClose }: TrackingDialogProps) => {
             Conta do Mercado Livre não conectada.
           </Alert>
         ) : orders.length === 0 ? (
-          <Typography color="text.secondary">Nenhuma compra encontrada.</Typography>
+          <Typography color="text.secondary">
+            Nenhum item desta requisição tem código do Mercado Livre preenchido.
+          </Typography>
         ) : (
           <TrackingList orders={orders} />
         )}
@@ -119,4 +134,4 @@ const TrackingDialog = ({ open, onClose }: TrackingDialogProps) => {
   );
 };
 
-export default TrackingDialog;
+export default RequisitionTrackingDialog;

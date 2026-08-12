@@ -38,6 +38,16 @@ export default class MercadoLivreService {
     return response.data;
   }
 
+  static async getTrackingByCodes(
+    codigos: string[]
+  ): Promise<MercadoLivreTrackingResponse> {
+    const response = await api.get<MercadoLivreTrackingResponse>(
+      `${API_ENDPOINT}/rastreio/codigos`,
+      { params: { codigos: codigos.join(",") } }
+    );
+    return response.data;
+  }
+
   static async getShipmentDetail(
     idEnvio: number
   ): Promise<MercadoLivreShipmentDetail> {
