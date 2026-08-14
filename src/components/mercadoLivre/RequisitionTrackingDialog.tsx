@@ -20,7 +20,6 @@ import MercadoLivreService from "../../services/mercadoLivre/MercadoLivreService
 import { MercadoLivreOrder } from "../../models/mercadoLivre/MercadoLivreOrder";
 import { RequisitionTrackingDialogProps } from "../../models/mercadoLivre/RequisitionTrackingDialog";
 import TrackingList from "./TrackingList";
-import ConnectAccountsAlert from "./ConnectAccountsAlert";
 
 const RequisitionTrackingDialog = ({
   open,
@@ -89,12 +88,15 @@ const RequisitionTrackingDialog = ({
       </DialogTitle>
 
       <DialogContent dividers>
-        <ConnectAccountsAlert />
         {loading ? (
           <Stack alignItems="center" justifyContent="center" sx={{ height: 200 }}>
             <CircularProgress />
           </Stack>
-        ) : notConnected ? null : orders.length === 0 ? (
+        ) : notConnected ? (
+          <Typography color="text.secondary">
+            Nenhuma conta do Mercado Livre conectada. Conecte em Gestão Adm &gt; Contas Mercado Livre.
+          </Typography>
+        ) : orders.length === 0 ? (
           <Typography color="text.secondary">
             Nenhum item desta requisição tem código do Mercado Livre preenchido.
           </Typography>
