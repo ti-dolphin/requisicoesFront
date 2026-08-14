@@ -226,14 +226,6 @@ const TrackingList = ({ orders }: TrackingListProps) => {
                   sx={{ mt: 0.5, height: 18, fontSize: "0.65rem" }}
                 />
               )}
-              <Link
-                href={`https://www.mercadolivre.com.br/vendas/${order.id_pedido}/detalhe`}
-                target="_blank"
-                rel="noopener noreferrer"
-                fontSize="0.7rem"
-              >
-                Pedido {order.id_pedido}
-              </Link>
             </Box>
             <Box sx={{ minWidth: 220 }}>{renderTracking(order)}</Box>
           </Stack>
