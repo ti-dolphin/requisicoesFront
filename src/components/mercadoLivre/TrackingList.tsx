@@ -1,18 +1,13 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Box,
-  Button,
   Chip,
   CircularProgress,
-  Collapse,
   Divider,
   Link,
   Stack,
   Typography,
 } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useDispatch } from "react-redux";
-import { setFeedback } from "../../redux/slices/feedBackSlice";
 import MercadoLivreService from "../../services/mercadoLivre/MercadoLivreService";
 import {
   MercadoLivreOrder,
@@ -65,44 +60,52 @@ const STATUS_COLORS: Record<
 };
 
 const TrackingList = ({ orders }: TrackingListProps) => {
-  const dispatch = useDispatch();
-  const [expanded, setExpanded] = useState<number | string | null>(null);
   const [details, setDetails] = useState<
-    Record<string, MercadoLivreShipmentDetail | "loading">
+    Record<string, MercadoLivreShipmentDetail | "loading" | null>
   >({});
+  const requestedRef = useRef<Set<string>>(new Set());
 
-  const toggleDetail = async (order: MercadoLivreOrder) => {
-    const key = String(order.id_pedido);
+  useEffect(() => {
+    const pendentes = orders.filter(
+      (order) =>
+        order.id_envio && !requestedRef.current.has(String(order.id_pedido))
+    );
 
-    if (!order.id_envio) return;
+    if (!pendentes.length) return;
 
-    if (expanded === key) {
-      setExpanded(null);
-      return;
-    }
+    pendentes.forEach((order) =>
+      requestedRef.current.add(String(order.id_pedido))
+    );
 
-    setExpanded(key);
-    if (details[key]) return;
+    setDetails((prev) => {
+      const next = { ...prev };
+      pendentes.forEach((order) => {
+        next[String(order.id_pedido)] = "loading";
+      });
+      return next;
+    });
 
-    setDetails((prev) => ({ ...prev, [key]: "loading" }));
-    try {
-      const detail = await MercadoLivreService.getShipmentDetail(order.id_envio);
-      setDetails((prev) => ({ ...prev, [key]: detail }));
-    } catch (err: any) {
+    Promise.all(
+      pendentes.map(async (order) => {
+        try {
+          const detail = await MercadoLivreService.getShipmentDetail(
+            Number(order.id_envio)
+          );
+          return [String(order.id_pedido), detail] as const;
+        } catch {
+          return [String(order.id_pedido), null] as const;
+        }
+      })
+    ).then((pares) => {
       setDetails((prev) => {
         const next = { ...prev };
-        delete next[key];
+        pares.forEach(([key, detail]) => {
+          next[key] = detail;
+        });
         return next;
       });
-      dispatch(
-        setFeedback({
-          message:
-            err?.response?.data?.error || "Erro ao buscar as etapas do envio",
-          type: "error",
-        })
-      );
-    }
-  };
+    });
+  }, [orders]);
 
   const renderTracking = (order: MercadoLivreOrder) => {
     if (order.rastreio) {
@@ -232,40 +235,10 @@ const TrackingList = ({ orders }: TrackingListProps) => {
                 Pedido {order.id_pedido}
               </Link>
             </Box>
-            <Box sx={{ minWidth: 220 }}>
-              {renderTracking(order)}
-              {order.id_envio && (
-                <Button
-                  size="small"
-                  variant="text"
-                  endIcon={
-                    <ExpandMoreIcon
-                      sx={{
-                        transform:
-                          expanded === String(order.id_pedido)
-                            ? "rotate(180deg)"
-                            : "none",
-                      }}
-                    />
-                  }
-                  sx={{
-                    backgroundColor: "transparent",
-                    color: "primary.main",
-                    p: 0,
-                    mt: 0.5,
-                    "&:hover": { backgroundColor: "transparent" },
-                  }}
-                  onClick={() => toggleDetail(order)}
-                >
-                  Etapas
-                </Button>
-              )}
-            </Box>
+            <Box sx={{ minWidth: 220 }}>{renderTracking(order)}</Box>
           </Stack>
 
-          <Collapse in={expanded === String(order.id_pedido)} unmountOnExit>
-            {renderDetail(order)}
-          </Collapse>
+          {renderDetail(order)}
         </Box>
       ))}
     </Stack>
