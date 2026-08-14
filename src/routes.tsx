@@ -17,6 +17,7 @@ import OrdemCompraHomePage from "./pages/ordensCompra/OrdemCompraHomePage";
 import UserManagementPage from "./pages/admin/UserManagementPage";
 import AdminManagementHomePage from "./pages/admin/AdminManagementHomePage";
 import ProjectManagementPage from "./pages/admin/ProjectManagementPage";
+import MercadoLivreAccountsPage from "./pages/admin/MercadoLivreAccountsPage";
 // Exemplo de páginas
 const AppRoutes = () => { 
   return (
@@ -30,6 +31,7 @@ const AppRoutes = () => {
       <Route path="/admin/usuarios" element={<UserManagementPage />} />
       <Route path="/admin/usuarios/novo" element={<UserCreationPage />} />
       <Route path="/admin/projetos" element={<ProjectManagementPage />} />
+      <Route path="/admin/mercado-livre" element={<MercadoLivreAccountsPage />} />
 
       <Route path="/requisicoes" element={<RequisitionHomePage />} />
       {/* <Route path="/requisicoes/lista" element={<RequisitionListPage />} /> */}

@@ -42,6 +42,13 @@ export default class MercadoLivreService {
     return response.data;
   }
 
+  static async disconnect(mlUserId: string): Promise<{ message: string }> {
+    const response = await api.delete<{ message: string }>(
+      `${API_ENDPOINT}/contas/${mlUserId}`
+    );
+    return response.data;
+  }
+
   static async getTrackingByCodes(
     codigos: string[]
   ): Promise<MercadoLivreTrackingResponse> {

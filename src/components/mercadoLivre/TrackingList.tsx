@@ -19,6 +19,7 @@ import {
   MercadoLivreShipmentDetail,
 } from "../../models/mercadoLivre/MercadoLivreOrder";
 import { TrackingListProps } from "../../models/mercadoLivre/TrackingList";
+import ShipmentStepper from "./ShipmentStepper";
 import { getDateStringFromISOstring, formatCurrency } from "../../utils";
 
 export const STATUS_LABELS: Record<string, string> = {
@@ -184,36 +185,10 @@ const TrackingList = ({ orders }: TrackingListProps) => {
           </Typography>
         )}
 
-        {detail.historico.length === 0 ? (
-          <Typography fontSize="0.75rem" color="text.secondary">
-            Sem etapas registradas.
-          </Typography>
-        ) : (
-          <Stack spacing={0.5}>
-            {detail.historico.map((event, index) => (
-              <Stack
-                key={`${event.status}-${event.data}-${index}`}
-                direction="row"
-                spacing={1}
-                alignItems="baseline"
-              >
-                <Typography
-                  fontSize="0.7rem"
-                  color="text.secondary"
-                  sx={{ minWidth: 130 }}
-                >
-                  {event.data ? getDateStringFromISOstring(event.data) : "—"}
-                </Typography>
-                <Typography fontSize="0.75rem">
-                  {STATUS_LABELS[event.status] || event.status}
-                  {event.substatus
-                    ? ` — ${SUBSTATUS_LABELS[event.substatus] || event.substatus}`
-                    : ""}
-                </Typography>
-              </Stack>
-            ))}
-          </Stack>
-        )}
+        <ShipmentStepper
+          rastreio={order.rastreio}
+          historico={detail.historico}
+        />
       </Box>
     );
   };
