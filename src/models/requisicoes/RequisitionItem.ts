@@ -19,6 +19,7 @@ export interface RequisitionItem {
     id_item_cotacao?: number;
     items_cotacao ? : Partial<QuoteItem[]>;
     quantidade_atendida?: number;
+    codigo_ml?: string | null;
     anexos? : RequisitionItemAttachment[];
     produto?: Product
     produto_descricao?: string;

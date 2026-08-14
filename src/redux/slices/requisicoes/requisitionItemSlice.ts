@@ -19,6 +19,7 @@ interface RequisitionItemState {
   viewingItemAttachment: number | null;
   // 1 = anexo comum, 2 = nota fiscal
   viewingItemAttachmentType: number;
+  itemSettingMlCode: number | null;
 }
 const initialState: RequisitionItemState = {
   addingProducts: false,
@@ -36,6 +37,7 @@ const initialState: RequisitionItemState = {
   updatingChildReqItems: false,
   viewingItemAttachment: null,
   viewingItemAttachmentType: 1,
+  itemSettingMlCode: null,
 };
 
 const requisitionItemSlice = createSlice({
@@ -113,6 +115,9 @@ const requisitionItemSlice = createSlice({
     },
     setViewingItemAttachmentType(state, action: PayloadAction<number>) {
       state.viewingItemAttachmentType = action.payload;
+    },
+    setItemSettingMlCode(state, action: PayloadAction<number | null>) {
+      state.itemSettingMlCode = action.payload;
     }
   },
 });
@@ -135,6 +140,7 @@ export const {
   setUpdatingChildReqItems,
   setViewingItemAttachment,
   setViewingItemAttachmentType,
+  setItemSettingMlCode,
   replaceItem,
   setItems,
   removeItem,

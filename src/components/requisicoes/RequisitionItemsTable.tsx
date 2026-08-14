@@ -42,6 +42,7 @@ import {
   setUpdatingChildReqItems,
   setUpdatingRecentProductsQuantity,
   setViewingItemAttachment,
+  setItemSettingMlCode,
 } from "../../redux/slices/requisicoes/requisitionItemSlice";
 import QuoteService from "../../services/requisicoes/QuoteService";
 import { useNavigate, useParams } from "react-router-dom";
@@ -66,6 +67,9 @@ import {
   normalizeText,
 } from "../../utils";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import RequisitionTrackingDialog from "../mercadoLivre/RequisitionTrackingDialog";
+import MlCodeDialog from "../mercadoLivre/MlCodeDialog";
 import RequisitionService from "../../services/requisicoes/RequisitionService";
 import UpdateChildReqItemsDialog from "./UpdateChildReqItemsDialog";
 import { useIsMobile } from "../../hooks/useIsMobile";
@@ -120,6 +124,7 @@ const RequisitionItemsTable = ({
     updatingChildReqItems,
     viewingItemAttachment,
     viewingItemAttachmentType,
+    itemSettingMlCode,
   } = useSelector((state: RootState) => state.requisitionItem);
 
   const { isMobile } = useIsMobile();
@@ -152,6 +157,19 @@ const RequisitionItemsTable = ({
     responsavel: undefined,
     projeto: undefined,
   });
+
+  const [trackingDialogOpen, setTrackingDialogOpen] = useState(false);
+
+  const codigosMl = useMemo(
+    () => [
+      ...new Set(
+        items
+          .map((item: any) => String(item.codigo_ml ?? "").trim())
+          .filter((codigo: string) => codigo !== "")
+      ),
+    ],
+    [items]
+  );
 
   const itemsRef = React.useRef(items);
   const pendingRowUpdates = React.useRef<Map<number, number>>(new Map());
@@ -1345,6 +1363,17 @@ const RequisitionItemsTable = ({
           </Button>
         </Box>
       )}
+      {codigosMl.length > 0 && (
+        <Box sx={{ display: "flex", justifyContent: "flex-end", px: 1, pb: 1 }}>
+          <Button
+            variant="outlined"
+            startIcon={<LocalShippingIcon />}
+            onClick={() => setTrackingDialogOpen(true)}
+          >
+            Rastrear compras ({codigosMl.length})
+          </Button>
+        </Box>
+      )}
       <BaseTableToolBar
         ref={toolbarRef}
         handleChangeSearchTerm={debouncedHandleChangeSearchTerm}
@@ -1478,6 +1507,30 @@ const RequisitionItemsTable = ({
           </Button>
         </Box>
       )}
+
+      <RequisitionTrackingDialog
+        open={trackingDialogOpen}
+        onClose={() => setTrackingDialogOpen(false)}
+        codigos={codigosMl}
+      />
+
+      <MlCodeDialog
+        item={
+          items.find(
+            (item: RequisitionItem) =>
+              item.id_item_requisicao === itemSettingMlCode
+          ) || null
+        }
+        onClose={() => dispatch(setItemSettingMlCode(null))}
+        onSaved={(atualizado) =>
+          dispatch(
+            replaceItem({
+              id_item_requisicao: atualizado.id_item_requisicao,
+              updatedItem: atualizado,
+            })
+          )
+        }
+      />
 
       {updatingChildReqItems && (
         <UpdateChildReqItemsDialog

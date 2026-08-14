@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import FolderSharedIcon from "@mui/icons-material/FolderShared";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
@@ -51,6 +52,13 @@ const AdminManagementHomePage = () => {
       description: "Listar projetos e alterar o responsável de cada um.",
       icon: <FolderSharedIcon color="primary" fontSize="large" />,
       action: () => navigate("/admin/projetos"),
+    },
+    {
+      title: "Contas Mercado Livre",
+      description:
+        "Conectar e desconectar as contas usadas no rastreio das compras.",
+      icon: <LocalShippingIcon color="primary" fontSize="large" />,
+      action: () => navigate("/admin/mercado-livre"),
     },
   ];
 

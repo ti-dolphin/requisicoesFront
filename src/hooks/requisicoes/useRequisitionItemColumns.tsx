@@ -20,6 +20,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import {
   setCurrentQuoteIdSelected,
   setItemBeingReplaced,
+  setItemSettingMlCode,
   setReplacingItemProduct,
   setViewingItemAttachment,
   setViewingItemAttachmentType,
@@ -36,6 +37,7 @@ import ErrorIcon from "@mui/icons-material/Error";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import FileIcon from '@mui/icons-material/FilePresent';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { calculateColumnWidth } from "../../utils/calculateColumnWidth";
 
 const StyledBadge = styled(Badge)<BadgeProps>(() => ({
@@ -693,6 +695,25 @@ export const useRequisitionItemColumns = (
                 </IconButton>
               </Tooltip>
             )}
+            <Tooltip
+              title={
+                row.row.codigo_ml
+                  ? `Código ML: ${row.row.codigo_ml}`
+                  : "Informar código da compra no Mercado Livre"
+              }
+            >
+              <IconButton
+                disabled={blockFields || attendingItems}
+                onClick={() => dispatch(setItemSettingMlCode(Number(id)))}
+                sx={{
+                  height: 24,
+                  width: 24,
+                  color: row.row.codigo_ml ? "success.main" : "primary.main",
+                }}
+              >
+                <ShoppingCartIcon sx={{ fontSize: 14 }} />
+              </IconButton>
+            </Tooltip>
             <Tooltip title="Anexos">
               <IconButton
                 onClick={() => {
