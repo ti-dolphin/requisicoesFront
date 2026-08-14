@@ -89,13 +89,12 @@ const RequisitionTrackingDialog = ({
       </DialogTitle>
 
       <DialogContent dividers>
+        <ConnectAccountsAlert />
         {loading ? (
           <Stack alignItems="center" justifyContent="center" sx={{ height: 200 }}>
             <CircularProgress />
           </Stack>
-        ) : notConnected ? (
-          <ConnectAccountsAlert />
-        ) : orders.length === 0 ? (
+        ) : notConnected ? null : orders.length === 0 ? (
           <Typography color="text.secondary">
             Nenhum item desta requisição tem código do Mercado Livre preenchido.
           </Typography>
