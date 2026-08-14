@@ -20,6 +20,7 @@ import MercadoLivreService from "../../services/mercadoLivre/MercadoLivreService
 import { MercadoLivreOrder } from "../../models/mercadoLivre/MercadoLivreOrder";
 import { TrackingDialogProps } from "../../models/mercadoLivre/TrackingDialog";
 import TrackingList from "./TrackingList";
+import ConnectAccountsAlert from "./ConnectAccountsAlert";
 
 const TrackingDialog = ({ open, onClose }: TrackingDialogProps) => {
   const dispatch = useDispatch();
@@ -51,19 +52,6 @@ const TrackingDialog = ({ open, onClose }: TrackingDialogProps) => {
     }
   }, [open, loadTracking]);
 
-  const handleConnect = async () => {
-    try {
-      const { url } = await MercadoLivreService.getAuthorizationUrl();
-      window.open(url, "_blank", "noopener,noreferrer");
-    } catch (err: any) {
-      dispatch(
-        setFeedback({
-          message: err?.response?.data?.error || "Erro ao gerar link de conexão",
-          type: "error",
-        })
-      );
-    }
-  };
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
@@ -93,16 +81,7 @@ const TrackingDialog = ({ open, onClose }: TrackingDialogProps) => {
             <CircularProgress />
           </Stack>
         ) : notConnected ? (
-          <Alert
-            severity="info"
-            action={
-              <Button color="inherit" size="small" onClick={handleConnect}>
-                Conectar
-              </Button>
-            }
-          >
-            Conta do Mercado Livre não conectada.
-          </Alert>
+          <ConnectAccountsAlert />
         ) : orders.length === 0 ? (
           <Typography color="text.secondary">Nenhuma compra encontrada.</Typography>
         ) : (

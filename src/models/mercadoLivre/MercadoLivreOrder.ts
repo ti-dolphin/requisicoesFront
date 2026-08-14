@@ -14,8 +14,22 @@ export interface MercadoLivreTracking {
   data_estimada: string | null;
 }
 
+export interface MercadoLivreAccount {
+  ml_user_id: string;
+  apelido: string | null;
+  client_id?: string | null;
+}
+
+export interface MercadoLivreApp {
+  indice: number;
+  conectado: boolean;
+  apelido: string | null;
+}
+
 export interface MercadoLivreOrder {
   id_pedido: number;
+  conta?: MercadoLivreAccount | null;
+  codigo_ml?: string;
   data_criacao: string;
   status: string;
   total: number;
@@ -50,7 +64,6 @@ export interface MercadoLivreShipmentDetail {
 
 export interface MercadoLivreStatus {
   conectado: boolean;
-  user_id?: number;
-  nickname?: string;
-  email?: string;
+  contas: MercadoLivreAccount[];
+  apps: MercadoLivreApp[];
 }

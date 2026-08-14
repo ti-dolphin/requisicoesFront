@@ -15,18 +15,22 @@ export default class MercadoLivreService {
     return response.data;
   }
 
-  static async getAuthorizationUrl(): Promise<{ url: string }> {
+  static async getAuthorizationUrl(app = 1): Promise<{ url: string }> {
     const response = await api.get<{ url: string }>(`${API_ENDPOINT}/auth`, {
-      params: { state: ML_CALLBACK_STATE },
+      params: { state: ML_CALLBACK_STATE, app },
     });
     return response.data;
   }
 
-  static async connect(code: string): Promise<{ message: string; user_id: number }> {
-    const response = await api.get<{ message: string; user_id: number }>(
-      `${API_ENDPOINT}/callback`,
-      { params: { code } }
-    );
+  static async connect(
+    code: string,
+    state?: string
+  ): Promise<{ message: string; ml_user_id: string; apelido: string | null }> {
+    const response = await api.get<{
+      message: string;
+      ml_user_id: string;
+      apelido: string | null;
+    }>(`${API_ENDPOINT}/callback`, { params: { code, state } });
     return response.data;
   }
 

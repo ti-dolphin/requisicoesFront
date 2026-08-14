@@ -15,7 +15,12 @@ const MercadoLivreCallback = () => {
     const code = searchParams.get("code");
     const state = searchParams.get("state");
 
-    if (!code || state !== ML_CALLBACK_STATE || processedRef.current) {
+    if (
+      !code ||
+      !state ||
+      !state.startsWith(ML_CALLBACK_STATE) ||
+      processedRef.current
+    ) {
       return;
     }
 
@@ -28,7 +33,7 @@ const MercadoLivreCallback = () => {
       setSearchParams(params, { replace: true });
     };
 
-    MercadoLivreService.connect(code)
+    MercadoLivreService.connect(code, state)
       .then(() => {
         dispatch(
           setFeedback({

@@ -240,6 +240,14 @@ const TrackingList = ({ orders }: TrackingListProps) => {
                 {order.vendedor ? ` — ${order.vendedor}` : ""}
                 {order.total ? ` — ${formatCurrency(Number(order.total))}` : ""}
               </Typography>
+              {order.conta && (
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  label={`Conta: ${order.conta.apelido || order.conta.ml_user_id}`}
+                  sx={{ mt: 0.5, height: 18, fontSize: "0.65rem" }}
+                />
+              )}
               <Link
                 href={`https://www.mercadolivre.com.br/vendas/${order.id_pedido}/detalhe`}
                 target="_blank"

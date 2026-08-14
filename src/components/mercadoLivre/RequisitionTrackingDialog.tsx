@@ -20,6 +20,7 @@ import MercadoLivreService from "../../services/mercadoLivre/MercadoLivreService
 import { MercadoLivreOrder } from "../../models/mercadoLivre/MercadoLivreOrder";
 import { RequisitionTrackingDialogProps } from "../../models/mercadoLivre/RequisitionTrackingDialog";
 import TrackingList from "./TrackingList";
+import ConnectAccountsAlert from "./ConnectAccountsAlert";
 
 const RequisitionTrackingDialog = ({
   open,
@@ -64,19 +65,6 @@ const RequisitionTrackingDialog = ({
     }
   }, [open, loadTracking]);
 
-  const handleConnect = async () => {
-    try {
-      const { url } = await MercadoLivreService.getAuthorizationUrl();
-      window.open(url, "_blank", "noopener,noreferrer");
-    } catch (err: any) {
-      dispatch(
-        setFeedback({
-          message: err?.response?.data?.error || "Erro ao gerar link de conexão",
-          type: "error",
-        })
-      );
-    }
-  };
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
@@ -106,16 +94,7 @@ const RequisitionTrackingDialog = ({
             <CircularProgress />
           </Stack>
         ) : notConnected ? (
-          <Alert
-            severity="info"
-            action={
-              <Button color="inherit" size="small" onClick={handleConnect}>
-                Conectar
-              </Button>
-            }
-          >
-            Conta do Mercado Livre não conectada.
-          </Alert>
+          <ConnectAccountsAlert />
         ) : orders.length === 0 ? (
           <Typography color="text.secondary">
             Nenhum item desta requisição tem código do Mercado Livre preenchido.
