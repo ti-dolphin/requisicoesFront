@@ -36,13 +36,19 @@ const ConnectAccountsAlert = () => {
     }
   };
 
+  const pendentes = apps.filter((app) => !app.conectado);
+
+  if (!apps.length || !pendentes.length) {
+    return null;
+  }
+
   return (
     <Alert severity="info">
       <Stack spacing={1}>
         <span>
-          Conecte as contas do Mercado Livre. Saia da conta atual no site do
-          Mercado Livre antes de conectar a segunda, senão a autorização repete a
-          mesma conta.
+          {pendentes.length === apps.length
+            ? "Conecte as contas do Mercado Livre para ver o rastreio."
+            : "Falta conectar uma conta. Saia da conta já conectada no site do Mercado Livre antes de autorizar a próxima, senão a autorização repete a mesma."}
         </span>
         <Stack direction="row" spacing={1} flexWrap="wrap">
           {apps.map((app) => (

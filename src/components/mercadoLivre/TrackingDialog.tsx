@@ -76,13 +76,12 @@ const TrackingDialog = ({ open, onClose }: TrackingDialogProps) => {
       </DialogTitle>
 
       <DialogContent dividers>
+        <ConnectAccountsAlert />
         {loading ? (
           <Stack alignItems="center" justifyContent="center" sx={{ height: 200 }}>
             <CircularProgress />
           </Stack>
-        ) : notConnected ? (
-          <ConnectAccountsAlert />
-        ) : orders.length === 0 ? (
+        ) : notConnected ? null : orders.length === 0 ? (
           <Typography color="text.secondary">Nenhuma compra encontrada.</Typography>
         ) : (
           <TrackingList orders={orders} />
