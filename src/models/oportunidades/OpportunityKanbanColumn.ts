@@ -7,6 +7,7 @@ export interface OpportunityKanbanColumn {
 
 export interface ArchivedOpportunity {
   CODOS: number;
+  NOME: string;
   projeto: { ID: number };
   adicional: { NUMERO: number };
   cliente: { NOMEFANTASIA: string };

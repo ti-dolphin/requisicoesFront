@@ -32,18 +32,17 @@ const formatDataPlanejada = (data: string) => {
 const DSE_CODE_PATTERN = /-?\s*DSE\s*(\d+)\s*$/i;
 
 const formatCardTitle = (row: any) => {
-  const projetoId = row?.projeto?.ID ?? "-";
-  const numero = row?.adicional?.NUMERO ?? "-";
+  const numero = row?.adicional?.NUMERO ?? 0;
+  const projetoId = numero ? `${row?.projeto?.ID ?? "-"}.${numero}` : row?.projeto?.ID ?? "-";
   const nomeFantasia: string = row?.cliente?.NOMEFANTASIA ?? "-";
 
   const dseMatch = nomeFantasia.match(DSE_CODE_PATTERN);
   if (dseMatch) {
     const dseCode = dseMatch[1];
-    const restName = nomeFantasia.slice(0, dseMatch.index).replace(/[\s-]+$/, "");
-    return `DSE${dseCode}-${projetoId} ${restName}`;
+    return `DSE${dseCode}-${projetoId} - ${row?.NOME ?? "-"}`;
   }
 
-  return `${projetoId}.${numero} - ${nomeFantasia}`;
+  return `${projetoId} - ${nomeFantasia}`;
 };
 
 const OpportunityCard: React.FC<OpportunityCardProps> = ({
