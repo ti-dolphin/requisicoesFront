@@ -29,6 +29,23 @@ const formatDataPlanejada = (data: string) => {
   return date ? date.toLocaleDateString("pt-BR", { day: "numeric", month: "short" }) : "";
 };
 
+const DSE_CODE_PATTERN = /-?\s*DSE\s*(\d+)\s*$/i;
+
+const formatCardTitle = (row: any) => {
+  const projetoId = row?.projeto?.ID ?? "-";
+  const numero = row?.adicional?.NUMERO ?? "-";
+  const nomeFantasia: string = row?.cliente?.NOMEFANTASIA ?? "-";
+
+  const dseMatch = nomeFantasia.match(DSE_CODE_PATTERN);
+  if (dseMatch) {
+    const dseCode = dseMatch[1];
+    const restName = nomeFantasia.slice(0, dseMatch.index).replace(/[\s-]+$/, "");
+    return `DSE${dseCode}-${projetoId} ${restName}`;
+  }
+
+  return `${projetoId}.${numero} - ${nomeFantasia}`;
+};
+
 const OpportunityCard: React.FC<OpportunityCardProps> = ({
   row,
   styles,
@@ -63,7 +80,7 @@ const OpportunityCard: React.FC<OpportunityCardProps> = ({
         }}
       >
         <Typography color="primary">
-          {`${row?.projeto?.ID ?? "-"}.${row?.adicional?.NUMERO ?? "-"} - ${row?.cliente?.NOMEFANTASIA ?? "-"}`}
+          {formatCardTitle(row)}
         </Typography>
 
         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ width: "100%", mt: 1.5 }}>
