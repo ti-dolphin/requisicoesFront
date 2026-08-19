@@ -170,7 +170,9 @@ const MlCodeDialog = ({ item, onClose }: MlCodeDialogProps) => {
         title="Adicionar código"
         inputLabel="Código do Mercado Livre"
         inputValue={codeInput}
-        onInputChange={(event) => setCodeInput(event.target.value)}
+        onInputChange={(event) =>
+          setCodeInput(event.target.value.replace(/\D/g, ""))
+        }
       />
 
       <BaseDeleteDialog
