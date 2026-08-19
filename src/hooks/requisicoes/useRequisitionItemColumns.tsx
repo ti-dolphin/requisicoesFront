@@ -656,6 +656,8 @@ export const useRequisitionItemColumns = (
         const { id } = row;
         const anexos = row.row.anexos ?? [];
         const codigosMl = row.row.codigos_ml ?? [];
+        const palavrasChaveMl = row.row.palavras_chave_ml ?? [];
+        const identificacoesMlCount = codigosMl.length + palavrasChaveMl.length;
         const normalAttachmentsCount = anexos.filter(
           (anexo: any) => (anexo.tipo ?? 1) !== 2
         ).length;
@@ -698,11 +700,22 @@ export const useRequisitionItemColumns = (
             )}
             <Tooltip
               title={
-                codigosMl.length > 0
-                  ? `Códigos ML: ${codigosMl
-                      .map((codigo: any) => codigo.codigo_ml)
-                      .join(", ")}`
-                  : "Informar código da compra no Mercado Livre"
+                identificacoesMlCount > 0
+                  ? [
+                      codigosMl.length > 0
+                        ? `Códigos ML: ${codigosMl
+                            .map((codigo: any) => codigo.codigo_ml)
+                            .join(", ")}`
+                        : null,
+                      palavrasChaveMl.length > 0
+                        ? `Palavras-chave: ${palavrasChaveMl
+                            .map((palavra: any) => palavra.palavra_chave)
+                            .join(", ")}`
+                        : null,
+                    ]
+                      .filter(Boolean)
+                      .join(" | ")
+                  : "Informar código ou palavra-chave da compra no Mercado Livre"
               }
             >
               <IconButton
@@ -711,13 +724,14 @@ export const useRequisitionItemColumns = (
                 sx={{
                   height: 24,
                   width: 24,
-                  color: codigosMl.length > 0 ? "success.main" : "primary.main",
+                  color:
+                    identificacoesMlCount > 0 ? "success.main" : "primary.main",
                 }}
               >
-                {codigosMl.length > 0 ? (
+                {identificacoesMlCount > 0 ? (
                   <StyledBadge
                     variant="standard"
-                    badgeContent={codigosMl.length}
+                    badgeContent={identificacoesMlCount}
                     color="primary"
                   >
                     <ShoppingCartIcon sx={{ fontSize: 14 }} />

@@ -1,5 +1,6 @@
 import { Product } from "../Product";
 import { MlCode } from "../mercadoLivre/MlCode";
+import { PalavraChaveMl } from "../mercadoLivre/PalavraChaveMl";
 import { QuoteItem } from "./QuoteItem";
 import { RequisitionItemAttachment } from "./RequisitionItemAttachment";
 
@@ -22,6 +23,7 @@ export interface RequisitionItem {
     quantidade_atendida?: number;
     codigo_ml?: string | null;
     codigos_ml?: MlCode[];
+    palavras_chave_ml?: PalavraChaveMl[];
     anexos? : RequisitionItemAttachment[];
     produto?: Product
     produto_descricao?: string;
