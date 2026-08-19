@@ -655,6 +655,7 @@ export const useRequisitionItemColumns = (
       renderCell: (row) => {
         const { id } = row;
         const anexos = row.row.anexos ?? [];
+        const codigosMl = row.row.codigos_ml ?? [];
         const normalAttachmentsCount = anexos.filter(
           (anexo: any) => (anexo.tipo ?? 1) !== 2
         ).length;
@@ -697,8 +698,10 @@ export const useRequisitionItemColumns = (
             )}
             <Tooltip
               title={
-                row.row.codigo_ml
-                  ? `Código ML: ${row.row.codigo_ml}`
+                codigosMl.length > 0
+                  ? `Códigos ML: ${codigosMl
+                      .map((codigo: any) => codigo.codigo_ml)
+                      .join(", ")}`
                   : "Informar código da compra no Mercado Livre"
               }
             >
@@ -708,10 +711,20 @@ export const useRequisitionItemColumns = (
                 sx={{
                   height: 24,
                   width: 24,
-                  color: row.row.codigo_ml ? "success.main" : "primary.main",
+                  color: codigosMl.length > 0 ? "success.main" : "primary.main",
                 }}
               >
-                <ShoppingCartIcon sx={{ fontSize: 14 }} />
+                {codigosMl.length > 0 ? (
+                  <StyledBadge
+                    variant="standard"
+                    badgeContent={codigosMl.length}
+                    color="primary"
+                  >
+                    <ShoppingCartIcon sx={{ fontSize: 14 }} />
+                  </StyledBadge>
+                ) : (
+                  <ShoppingCartIcon sx={{ fontSize: 14 }} />
+                )}
               </IconButton>
             </Tooltip>
             <Tooltip title="Anexos">

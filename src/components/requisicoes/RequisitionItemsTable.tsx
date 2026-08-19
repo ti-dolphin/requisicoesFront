@@ -164,7 +164,8 @@ const RequisitionItemsTable = ({
     () => [
       ...new Set(
         items
-          .map((item: any) => String(item.codigo_ml ?? "").trim())
+          .flatMap((item: any) => item.codigos_ml ?? [])
+          .map((codigo: any) => String(codigo.codigo_ml ?? "").trim())
           .filter((codigo: string) => codigo !== "")
       ),
     ],
@@ -1522,14 +1523,6 @@ const RequisitionItemsTable = ({
           ) || null
         }
         onClose={() => dispatch(setItemSettingMlCode(null))}
-        onSaved={(atualizado) =>
-          dispatch(
-            replaceItem({
-              id_item_requisicao: atualizado.id_item_requisicao,
-              updatedItem: atualizado,
-            })
-          )
-        }
       />
 
       {updatingChildReqItems && (
