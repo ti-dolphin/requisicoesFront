@@ -172,6 +172,39 @@ const RequisitionItemsTable = ({
     [items]
   );
 
+  const palavrasChavePorCodigo = useMemo(() => {
+    const map: Record<string, string[]> = {};
+    items.forEach((item: any) => {
+      const codigosPorId: Record<number, string> = {};
+      (item.codigos_ml ?? []).forEach((codigo: any) => {
+        codigosPorId[codigo.id_codigo_ml] = String(codigo.codigo_ml ?? "").trim();
+      });
+      (item.palavras_chave_ml ?? []).forEach((palavra: any) => {
+        if (palavra.id_codigo_ml === null || palavra.id_codigo_ml === undefined)
+          return;
+        const key = codigosPorId[palavra.id_codigo_ml];
+        if (!key) return;
+        map[key] = [...(map[key] || []), palavra.palavra_chave];
+      });
+    });
+    return map;
+  }, [items]);
+
+  const itensComPalavraChave = useMemo(
+    () =>
+      items
+        .filter(
+          (item: any) =>
+            (item.palavras_chave_ml ?? []).length > 0 &&
+            (item.codigos_ml ?? []).length === 0
+        )
+        .map((item: any) => ({
+          produto_descricao: item.produto_descricao || "",
+          palavras: item.palavras_chave_ml.map((p: any) => p.palavra_chave),
+        })),
+    [items]
+  );
+
   const itemsRef = React.useRef(items);
   const pendingRowUpdates = React.useRef<Map<number, number>>(new Map());
   const fetchSeqRef = React.useRef(0);
@@ -1364,14 +1397,14 @@ const RequisitionItemsTable = ({
           </Button>
         </Box>
       )}
-      {codigosMl.length > 0 && (
+      {(codigosMl.length > 0 || itensComPalavraChave.length > 0) && (
         <Box sx={{ display: "flex", justifyContent: "flex-end", px: 1, pb: 1 }}>
           <Button
             variant="outlined"
             startIcon={<LocalShippingIcon />}
             onClick={() => setTrackingDialogOpen(true)}
           >
-            Rastrear compras ({codigosMl.length})
+            Rastrear compras ({codigosMl.length + itensComPalavraChave.length})
           </Button>
         </Box>
       )}
@@ -1513,6 +1546,8 @@ const RequisitionItemsTable = ({
         open={trackingDialogOpen}
         onClose={() => setTrackingDialogOpen(false)}
         codigos={codigosMl}
+        itensComPalavraChave={itensComPalavraChave}
+        palavrasChavePorCodigo={palavrasChavePorCodigo}
       />
 
       <MlCodeDialog

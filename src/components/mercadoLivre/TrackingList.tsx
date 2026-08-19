@@ -59,7 +59,7 @@ const STATUS_COLORS: Record<
   cancelled: "error",
 };
 
-const TrackingList = ({ orders }: TrackingListProps) => {
+const TrackingList = ({ orders, palavrasChavePorCodigo = {} }: TrackingListProps) => {
   const [details, setDetails] = useState<
     Record<string, MercadoLivreShipmentDetail | "loading" | null>
   >({});
@@ -109,7 +109,7 @@ const TrackingList = ({ orders }: TrackingListProps) => {
 
   const renderTracking = (order: MercadoLivreOrder) => {
     if (order.rastreio) {
-      const { status, substatus, codigo_rastreio, transportadora, data_estimada } =
+      const { status, substatus, codigo_rastreio, transportadora } =
         order.rastreio;
       return (
         <Stack spacing={0.5}>
@@ -119,21 +119,11 @@ const TrackingList = ({ orders }: TrackingListProps) => {
               label={STATUS_LABELS[status] || status}
               color={STATUS_COLORS[status] || "default"}
             />
-            {substatus && (
-              <Typography fontSize="0.75rem" color="text.secondary">
-                {SUBSTATUS_LABELS[substatus] || substatus}
-              </Typography>
-            )}
           </Stack>
           {codigo_rastreio && (
             <Typography fontSize="0.75rem">
               Código: <strong>{codigo_rastreio}</strong>
               {transportadora ? ` — ${transportadora}` : ""}
-            </Typography>
-          )}
-          {data_estimada && (
-            <Typography fontSize="0.75rem" color="text.secondary">
-              Previsão: {getDateStringFromISOstring(data_estimada)}
             </Typography>
           )}
         </Stack>
@@ -198,41 +188,59 @@ const TrackingList = ({ orders }: TrackingListProps) => {
 
   return (
     <Stack spacing={1} divider={<Divider />}>
-      {orders.map((order) => (
-        <Box key={order.id_pedido} sx={{ py: 1 }}>
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            justifyContent="space-between"
-            spacing={1}
-          >
-            <Box sx={{ flex: 1 }}>
-              <Typography fontSize="0.85rem" fontWeight={600}>
-                {order.itens.length
-                  ? order.itens.map((item) => item.titulo).join(", ")
-                  : `Compra ${order.id_pedido}`}
-              </Typography>
-              <Typography fontSize="0.75rem" color="text.secondary">
-                {order.data_criacao
-                  ? getDateStringFromISOstring(order.data_criacao)
-                  : ""}
-                {order.vendedor ? ` — ${order.vendedor}` : ""}
-                {order.total ? ` — ${formatCurrency(Number(order.total))}` : ""}
-              </Typography>
-              {order.conta && (
-                <Chip
-                  size="small"
-                  variant="outlined"
-                  label={`Conta: ${order.conta.apelido || order.conta.ml_user_id}`}
-                  sx={{ mt: 0.5, height: 18, fontSize: "0.65rem" }}
-                />
-              )}
-            </Box>
-            <Box sx={{ minWidth: 220 }}>{renderTracking(order)}</Box>
-          </Stack>
+      {orders.map((order) => {
+        const palavrasChave = palavrasChavePorCodigo[order.codigo_ml || ""] || [];
+        const previsaoLabel = order.rastreio?.data_estimada
+          ? `Previsão de entrega: ${getDateStringFromISOstring(order.rastreio.data_estimada)}`
+          : "";
+        const palavraChaveLabel = palavrasChave.length
+          ? `Palavra-chave: ${palavrasChave.join(", ")}`
+          : "";
+        const headerLabel = [previsaoLabel, palavraChaveLabel]
+          .filter(Boolean)
+          .join(" | ");
 
-          {renderDetail(order)}
-        </Box>
-      ))}
+        return (
+          <Box key={order.id_pedido} sx={{ py: 1 }}>
+            {headerLabel && (
+              <Typography fontSize="1.15rem" fontWeight={700} color="primary.main">
+                {headerLabel}
+              </Typography>
+            )}
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              justifyContent="space-between"
+              spacing={1}
+            >
+              <Box sx={{ flex: 1 }}>
+                <Typography fontSize="0.85rem" fontWeight={600}>
+                  {order.itens.length
+                    ? order.itens.map((item) => item.titulo).join(", ")
+                    : `Compra ${order.id_pedido}`}
+                </Typography>
+                <Typography fontSize="0.75rem" color="text.secondary">
+                  {order.data_criacao
+                    ? getDateStringFromISOstring(order.data_criacao)
+                    : ""}
+                  {order.vendedor ? ` — ${order.vendedor}` : ""}
+                  {order.total ? ` — ${formatCurrency(Number(order.total))}` : ""}
+                </Typography>
+                {order.conta && (
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    label={`Conta: ${order.conta.apelido || order.conta.ml_user_id}`}
+                    sx={{ mt: 0.5, height: 18, fontSize: "0.65rem" }}
+                  />
+                )}
+              </Box>
+              <Box sx={{ minWidth: 220 }}>{renderTracking(order)}</Box>
+            </Stack>
+
+            {renderDetail(order)}
+          </Box>
+        );
+      })}
     </Stack>
   );
 };

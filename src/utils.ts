@@ -144,7 +144,7 @@ export function parseCurrency(value: string): number {
 export const getDateStringFromISOstring = (isoDate: string | undefined | null): string => {
   if (!isoDate) return "";
   const dt = DateTime.fromISO(isoDate, { zone: "utc" });
-  return dt.isValid ? dt.toFormat("dd/MM/yyyy HH:mm") : "";
+  return dt.isValid ? dt.toFormat("dd/MM/yyyy") : "";
 };
 
 export function getDateStringFromDateObject(date: Date): string {
