@@ -1,49 +1,81 @@
 import { useEffect, useState } from "react";
 import {
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   IconButton,
-  Stack,
-  TextField,
+  List,
+  ListItem,
+  ListItemSecondaryAction,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { setFeedback } from "../../redux/slices/feedBackSlice";
-import RequisitionItemService from "../../services/requisicoes/RequisitionItemService";
+import { setRefresh } from "../../redux/slices/requisicoes/requisitionItemSlice";
+import { MlCodeService } from "../../services/mercadoLivre/MlCodeService";
+import { MlCode } from "../../models/mercadoLivre/MlCode";
 import { MlCodeDialogProps } from "../../models/mercadoLivre/MlCodeDialog";
+import BaseDeleteDialog from "../shared/BaseDeleteDialog";
+import BaseInputDialog from "../shared/BaseInputDialog";
 
-const MlCodeDialog = ({ item, onClose, onSaved }: MlCodeDialogProps) => {
+const MlCodeDialog = ({ item, onClose }: MlCodeDialogProps) => {
   const dispatch = useDispatch();
-  const user = useSelector((state: RootState) => state.user.user);
-  const [codigo, setCodigo] = useState("");
+  const { refresh } = useSelector((state: RootState) => state.requisitionItem);
+  const [codes, setCodes] = useState<MlCode[]>([]);
   const [loading, setLoading] = useState(false);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [codeInput, setCodeInput] = useState("");
+  const [deletingCode, setDeletingCode] = useState<MlCode | null>(null);
+
+  const fetchCodes = async () => {
+    if (!item) return;
+    setLoading(true);
+    try {
+      const result = await MlCodeService.getByRequisitionItem(
+        item.id_item_requisicao
+      );
+      setCodes(result);
+    } catch (err: any) {
+      dispatch(
+        setFeedback({ message: "Erro ao buscar códigos.", type: "error" })
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    setCodigo(String(item?.codigo_ml ?? ""));
+    if (item) {
+      fetchCodes();
+    } else {
+      setCodes([]);
+    }
   }, [item]);
 
-  const handleSave = async () => {
-    if (!item) return;
+  const openAddDialog = () => setAddDialogOpen(true);
+  const closeAddDialog = () => {
+    setAddDialogOpen(false);
+    setCodeInput("");
+  };
 
+  const handleAddCode = async () => {
+    if (!item || !codeInput.trim()) return;
     try {
-      setLoading(true);
-      const atualizado = await RequisitionItemService.update(
-        item.id_item_requisicao,
-        {
-          codigo_ml: codigo.trim() || null,
-          alterado_por: user?.CODPESSOA,
-        } as any
-      );
-      dispatch(
-        setFeedback({ message: "Código do Mercado Livre salvo", type: "success" })
-      );
-      onSaved(atualizado);
-      onClose();
+      const created = await MlCodeService.create({
+        id_item_requisicao: item.id_item_requisicao,
+        codigo_ml: codeInput.trim(),
+      });
+      setCodes((prev) => [...prev, created]);
+      closeAddDialog();
+      dispatch(setRefresh(!refresh));
     } catch (err: any) {
       dispatch(
         setFeedback({
@@ -51,8 +83,22 @@ const MlCodeDialog = ({ item, onClose, onSaved }: MlCodeDialogProps) => {
           type: "error",
         })
       );
-    } finally {
-      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!deletingCode) return;
+    try {
+      await MlCodeService.delete(deletingCode.id_codigo_ml);
+      setCodes((prev) =>
+        prev.filter((code) => code.id_codigo_ml !== deletingCode.id_codigo_ml)
+      );
+      setDeletingCode(null);
+      dispatch(setRefresh(!refresh));
+    } catch (err: any) {
+      dispatch(
+        setFeedback({ message: "Erro ao excluir código.", type: "error" })
+      );
     }
   };
 
@@ -67,44 +113,71 @@ const MlCodeDialog = ({ item, onClose, onSaved }: MlCodeDialogProps) => {
           fontWeight: 600,
         }}
       >
-        Código da compra
+        Códigos da compra
         <IconButton onClick={onClose}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>
 
       <DialogContent dividers>
-        <Stack spacing={2}>
-          <Typography fontSize="0.8rem" color="text.secondary">
-            {item?.produto_descricao || ""}
-          </Typography>
-          <TextField
-            fullWidth
-            autoFocus
-            label="Código do Mercado Livre"
-            value={codigo}
-            onChange={(event) => setCodigo(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") handleSave();
-            }}
-            helperText="Número do pedido no Mercado Livre. Deixe vazio para remover."
-          />
-        </Stack>
+        <Typography fontSize="0.8rem" color="text.secondary" mb={1}>
+          {item?.produto_descricao || ""}
+        </Typography>
+        {loading ? (
+          <CircularProgress size={24} />
+        ) : (
+          <List sx={{ maxHeight: 300, overflow: "auto" }}>
+            {codes.length === 0 && (
+              <Typography variant="body2" color="text.secondary">
+                Nenhum código cadastrado.
+              </Typography>
+            )}
+            {codes.map((code) => (
+              <ListItem key={code.id_codigo_ml} divider>
+                <Typography fontSize="0.9rem">{code.codigo_ml}</Typography>
+                <ListItemSecondaryAction>
+                  <Tooltip title="Excluir">
+                    <IconButton
+                      edge="end"
+                      color="error"
+                      onClick={() => setDeletingCode(code)}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))}
+          </List>
+        )}
       </DialogContent>
 
       <DialogActions sx={{ p: 2, gap: 1 }}>
         <Button
           variant="contained"
-          color="error"
-          onClick={onClose}
+          startIcon={<AddIcon />}
           disabled={loading}
+          onClick={openAddDialog}
         >
-          Cancelar
-        </Button>
-        <Button variant="contained" onClick={handleSave} disabled={loading}>
-          {loading ? "Salvando..." : "Salvar"}
+          Adicionar código
         </Button>
       </DialogActions>
+
+      <BaseInputDialog
+        open={addDialogOpen}
+        onClose={closeAddDialog}
+        onConfirm={handleAddCode}
+        title="Adicionar código"
+        inputLabel="Código do Mercado Livre"
+        inputValue={codeInput}
+        onInputChange={(event) => setCodeInput(event.target.value)}
+      />
+
+      <BaseDeleteDialog
+        open={deletingCode !== null}
+        onConfirm={handleDelete}
+        onCancel={() => setDeletingCode(null)}
+      />
     </Dialog>
   );
 };

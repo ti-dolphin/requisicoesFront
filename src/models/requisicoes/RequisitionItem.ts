@@ -1,4 +1,5 @@
 import { Product } from "../Product";
+import { MlCode } from "../mercadoLivre/MlCode";
 import { QuoteItem } from "./QuoteItem";
 import { RequisitionItemAttachment } from "./RequisitionItemAttachment";
 
@@ -20,6 +21,7 @@ export interface RequisitionItem {
     items_cotacao ? : Partial<QuoteItem[]>;
     quantidade_atendida?: number;
     codigo_ml?: string | null;
+    codigos_ml?: MlCode[];
     anexos? : RequisitionItemAttachment[];
     produto?: Product
     produto_descricao?: string;
