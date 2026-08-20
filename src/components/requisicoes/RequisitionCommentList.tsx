@@ -35,7 +35,6 @@ interface RequisitionCommentListProps {
 const RequisitionCommentList = ({ fullScreen = false }: RequisitionCommentListProps) => {
   const dispatch = useDispatch();
   const { id_requisicao } = useParams<{ id_requisicao: string }>();
-  const  refreshRequisition  = useSelector((state: RootState) => state.requisition.refreshRequisition);
   const refreshReqComments = useSelector((state: RootState) => state.requisitionComment.refreshReqComments);
   const user = useSelector((state: RootState) => state.user.user);
   const [newComment, setNewComment] = useState("");
@@ -56,7 +55,7 @@ const RequisitionCommentList = ({ fullScreen = false }: RequisitionCommentListPr
         setFeedback({ type: "error", message: "Falha ao carregar comentários" })
       );
     }
-  }, [dispatch, id_requisicao, refreshRequisition, refreshReqComments]);
+  }, [dispatch, id_requisicao, refreshReqComments]);
 
   useEffect(() => {
     fetchData();

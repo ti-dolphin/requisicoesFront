@@ -1,5 +1,3 @@
-import { Product } from "../Product";
-
 export interface QuoteItem {
   id_item_cotacao: number;
   id_cotacao: number;
@@ -15,7 +13,6 @@ export interface QuoteItem {
   quantidade_cotada: number;
   indisponivel: number;
   id_produto: number | null;
-  produto?: Product;
   produto_descricao?: string;
   produto_codigo?: string;
   produto_unidade?: string;

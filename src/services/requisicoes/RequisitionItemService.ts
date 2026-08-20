@@ -39,12 +39,23 @@ export class RequisitionItemService {
   static async update(
     id: number,
     data: Partial<Omit<RequisitionItem, "id_item_requisicao">>
-  ): Promise<RequisitionItem> {
-    const response = await api.put<RequisitionItem>(
+  ): Promise<{ quantidade_alterada: number }> {
+    const response = await api.put<{ quantidade_alterada: number }>(
       `${API_ENDPOINT}/${id}`,
       data
     );
     return response.data;
+  }
+
+  static async updateProduct(id: number, id_produto: number): Promise<void> {
+    await api.put(`${API_ENDPOINT}/${id}/produto`, { id_produto });
+  }
+
+  static async updateFields(
+    id: number,
+    data: Partial<Omit<RequisitionItem, "id_item_requisicao">>
+  ): Promise<void> {
+    await api.put(`${API_ENDPOINT}/${id}/campos`, data);
   }
 
   static async updateQuoteItemsSelected(
@@ -71,26 +82,18 @@ export class RequisitionItemService {
     return response.data;
   }
 
-  static async updateOCS(
-    ids: number[],
-    oc: number
-  ): Promise<RequisitionItem[]> {
-    const response = await api.put<RequisitionItem[]>(
-      `${API_ENDPOINT}/ocs/update`,
-      {
-        ids,
-        oc: Number(oc),
-      }
-    );
-    return response.data;
+  static async updateOCS(ids: number[], oc: number): Promise<void> {
+    await api.put(`${API_ENDPOINT}/ocs/update`, {
+      ids,
+      oc: Number(oc),
+    });
   }
 
-  static updateShippingDate = async (ids: number[], date: string) => {
-    const response = await api.put(`${API_ENDPOINT}/shipping_date/update`, {
+  static updateShippingDate = async (ids: number[], date: string): Promise<void> => {
+    await api.put(`${API_ENDPOINT}/shipping_date/update`, {
       ids,
       date,
     });
-    return response.data;
   };
 
   static async delete(id: number): Promise<void> {

@@ -22,8 +22,15 @@ export const useRequisitionStatusPermissions = (user: User | null, requisition: 
       requisitionRef.current = requisition;
     }, [requisition]);
 
-    const fetchPermission = useCallback(async () => {
-      const requisition = requisitionRef.current;
+    const lastFetchedKeyRef = useRef<string | null>(null);
+
+    const fetchPermission = useCallback(async (overrideRequisition?: Requisition) => {
+      const requisition = overrideRequisition ?? requisitionRef.current;
+      const key = `${user?.CODPESSOA}:${requisition.ID_REQUISICAO}:${requisition.id_status_requisicao}`;
+      if (lastFetchedKeyRef.current === key) {
+        return undefined;
+      }
+      lastFetchedKeyRef.current = key;
       setPermissionToCancel(false);
       setPermissionToActivate(false);
       setPermissionToChangeStatus(false);
@@ -57,6 +64,7 @@ export const useRequisitionStatusPermissions = (user: User | null, requisition: 
               if (director && requisition.status?.nome?.toLowerCase() === 'validação') {
                 setPermissionToChangeStatus(true);
               }
+          return permissions;
         } catch (error: any) {
           dispatch(
           setFeedback({
@@ -66,6 +74,7 @@ export const useRequisitionStatusPermissions = (user: User | null, requisition: 
           );
         }
       }
+      return undefined;
     }, [
       user,
       requisition.ID_REQUISICAO,
@@ -87,6 +96,7 @@ export const useRequisitionStatusPermissions = (user: User | null, requisition: 
       permissionToCancel,
       permissionToActivate,
       permissionToRevertStatus,
+      fetchPermission,
     };
 
 };

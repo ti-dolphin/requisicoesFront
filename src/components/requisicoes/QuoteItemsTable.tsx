@@ -59,28 +59,30 @@ const QuoteItemsTable = ({
     const item = quoteItems.find((item) => item.id_item_cotacao === itemId);
     if (!item) return;
     try {
-      const payload = {
-        quantidade_cotada: item.quantidade_cotada,
-        ICMS: Number(item.ICMS),
-        IPI: Number(item.IPI),
-        ST: Number(item.ST),
-        observacao: item.observacao,
-        preco_unitario: item.preco_unitario,
-        subtotal: item.subtotal,
+      const indisponivel = e.target.checked ? 1 : 0;
+      // Indisponível=1 zera o subtotal sem olhar preço/quantidade/IPI/ST no
+      // servidor; só ao reabilitar o item é que eles entram no recálculo.
+      const payload: any = {
+        indisponivel,
         id_cotacao: Number(item.id_cotacao),
-        indisponivel: e.target.checked ? 1 : 0,
-        id_item_requisicao: Number(item.id_item_requisicao),
       };
+      if (!e.target.checked) {
+        payload.preco_unitario = item.preco_unitario;
+        payload.quantidade_cotada = item.quantidade_cotada;
+        payload.IPI = Number(item.IPI);
+        payload.ST = Number(item.ST);
+      }
       const updatedItem: QuoteItem = {
         ...item,
-        ...payload,
+        indisponivel,
         subtotal: e.target.checked ? 0 : item.subtotal,
       };
       if (!e.target.checked) {
-        // Caso o item seja desmarcado, o backend recalcula subtotal e totais.
+        // Caso o item seja desmarcado, o backend recalcula subtotal e totais;
+        // o resto do item já é conhecido localmente e não muda nessa operação.
         try {
-          const updatedItem = await updateQuoteItem(itemId, payload);
-          dispatch(setSingleQuoteItem(updatedItem));
+          const { subtotal } = await updateQuoteItem(itemId, payload);
+          dispatch(setSingleQuoteItem({ ...item, ...payload, subtotal }));
         } finally {
           setBlockFields(false);
           setLoading(false);
@@ -243,8 +245,8 @@ const QuoteItemsTable = ({
           throw new Error(validation.message);
         }
       });
-      const updatedItem = await updateQuoteItem(id_item_cotacao, payload);
-      dispatch(setSingleQuoteItem(updatedItem));
+      const { subtotal } = await updateQuoteItem(id_item_cotacao, payload);
+      dispatch(setSingleQuoteItem({ ...previousItem, ...payload, subtotal }));
     } catch (e: any) {
       dispatch(setSingleQuoteItem({ ...previousItem }));
       dispatch(
@@ -273,16 +275,52 @@ const QuoteItemsTable = ({
         Number(oldRow.preco_unitario || 0)
       );
 
+      const precoChanged = normalizedPrecoUnitario !== Number(oldRow.preco_unitario || 0);
+      const quantidadeChanged = Number(newRow.quantidade_cotada) !== Number(oldRow.quantidade_cotada);
+      const icmsChanged = Number(newRow.ICMS) !== Number(oldRow.ICMS);
+      const ipiChanged = Number(newRow.IPI) !== Number(oldRow.IPI);
+      const stChanged = Number(newRow.ST) !== Number(oldRow.ST);
+      const observacaoChanged = (newRow.observacao || "") !== (oldRow.observacao || "");
+
       const hasChanges =
-        normalizedPrecoUnitario !== Number(oldRow.preco_unitario || 0) ||
-        Number(newRow.quantidade_cotada) !== Number(oldRow.quantidade_cotada) ||
-        Number(newRow.ICMS) !== Number(oldRow.ICMS) ||
-        Number(newRow.IPI) !== Number(oldRow.IPI) ||
-        Number(newRow.ST) !== Number(oldRow.ST) ||
-        (newRow.observacao || "") !== (oldRow.observacao || "");
+        precoChanged || quantidadeChanged || icmsChanged || ipiChanged || stChanged || observacaoChanged;
 
       if (!hasChanges) {
         return oldRow;
+      }
+
+      // ICMS e observação não entram no cálculo de subtotal/total (a fórmula
+      // só usa preço, quantidade, IPI e ST): se só eles mudaram, não precisa
+      // do fluxo completo de recálculo no servidor.
+      const onlyNonCalcFieldsChanged =
+        (observacaoChanged || icmsChanged) &&
+        !precoChanged && !quantidadeChanged && !ipiChanged && !stChanged;
+
+      if (onlyNonCalcFieldsChanged) {
+        const fields: { observacao?: string; ICMS?: number } = {};
+        if (observacaoChanged) fields.observacao = newRow.observacao;
+        if (icmsChanged) fields.ICMS = Number(newRow.ICMS);
+        try {
+          setBlockFields(true);
+          setLoading(true);
+          if (token) {
+            await QuoteItemService.updateFields(newRow.id_item_cotacao, fields, token);
+          } else {
+            await QuoteItemService.updateFields(newRow.id_item_cotacao, fields);
+          }
+          return newRow;
+        } catch (e: any) {
+          dispatch(
+            setFeedback({
+              message: `Erro ao atualizar item da cotação: ${e.message}`,
+              type: "error",
+            })
+          );
+          return oldRow;
+        } finally {
+          setBlockFields(false);
+          setLoading(false);
+        }
       }
 
       if(normalizedPrecoUnitario < 0){
@@ -315,16 +353,19 @@ const QuoteItemsTable = ({
         return oldRow;
       }
 
-      const payload = {
+      // Preço, quantidade, IPI e ST viajam sempre juntos porque o subtotal no
+      // servidor é calculado a partir dos quatro de uma vez; ICMS e observação
+      // só entram se também tiverem mudado nesta mesma edição (raro, mas
+      // possível). id_item_requisicao nunca é lido pelo update no servidor.
+      const payload: any = {
         quantidade_cotada: newRow.quantidade_cotada,
-        ICMS: Number(newRow.ICMS),
         IPI: Number(newRow.IPI),
         ST: Number(newRow.ST),
-        observacao: newRow.observacao,
         preco_unitario: normalizedPrecoUnitario,
         id_cotacao: Number(newRow.id_cotacao),
-        id_item_requisicao: Number(newRow.id_item_requisicao),
       };
+      if (icmsChanged) payload.ICMS = Number(newRow.ICMS);
+      if (observacaoChanged) payload.observacao = newRow.observacao;
       try {
         setBlockFields(true);
         setLoading(true);
@@ -345,7 +386,7 @@ const QuoteItemsTable = ({
         return oldRow;
       }
     },
-    [dispatch]
+    [dispatch, token]
   );
 
   const changeSearchTerm = (e: React.ChangeEvent<HTMLInputElement>) => {

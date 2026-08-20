@@ -55,9 +55,8 @@ export default class RequisitionService {
     return response.data;
   }
 
-  static async update(id_requisicao: number, data: any) {
-    const response = await api.put(`${API_ENDPOINT}/${id_requisicao}`, data);
-    return response.data;
+  static async update(id_requisicao: number, data: any): Promise<void> {
+    await api.put(`${API_ENDPOINT}/${id_requisicao}`, data);
   }
 
   static async updateStatus(

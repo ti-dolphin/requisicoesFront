@@ -8,7 +8,6 @@ import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import { Stepper, Step, StepLabel, StepConnector, stepConnectorClasses, styled, Box, Typography, Stack, Button, Dialog, DialogTitle, DialogContent, DialogActions, Radio, RadioGroup, FormControlLabel, FormLabel } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import RequisitionService from "../../services/requisicoes/RequisitionService";
-import RequisitionStatusService from "../../services/requisicoes/RequisitionStatusService";
 import { setRefreshRequisition, setRequisition } from "../../redux/slices/requisicoes/requisitionSlice";
 import { setFeedback } from "../../redux/slices/feedBackSlice";
 import { useRequisitionStatusPermissions } from "../../hooks/requisicoes/useRequisitionStatusPermissions";
@@ -25,7 +24,6 @@ import { addComment } from "../../redux/slices/requisicoes/requisitionCommentSli
 import { startAttendingItems, stopAttendingItems } from "../../redux/slices/requisicoes/attenItemsSlice";
 import RequisitionItemsTable from "./RequisitionItemsTable";
 import { set } from "lodash";
-import { RequisitionItemAttachmentService } from "../../services/requisicoes/RequisitionItemAttachmentService";
 import { RequisitionFileService } from "../../services/requisicoes/RequisitionFileService";
 import { normalizeText } from "../../utils";
 
@@ -95,6 +93,7 @@ const RequisitionStatusStepper = ({
     permissionToCancel,
     permissionToActivate,
     permissionToRevertStatus,
+    fetchPermission,
   } = useRequisitionStatusPermissions(user, requisition);
   const { statusList } = useRequisitionStatus(id_requisicao);
   const { refresh } = useSelector((state: RootState) => state.requisitionItem);
@@ -213,20 +212,7 @@ const RequisitionStatusStepper = ({
       }
 
       const items = await RequisitionItemService.getMany({ id_requisicao });
-      let hasItemAttachments = false;
-
-      for (const item of items) {
-        const attachments =
-          await RequisitionItemAttachmentService.getByRequisitionItem(
-            item.id_item_requisicao
-          );
-        if (attachments.length > 0) {
-          hasItemAttachments = true;
-          break;
-        }
-      }
-
-      return hasItemAttachments;
+      return items.some((item) => (item.anexos?.length || 0) > 0);
     } catch (error) {
       console.error("Erro ao verificar anexos:", error);
       return false;
@@ -411,14 +397,13 @@ const RequisitionStatusStepper = ({
         );
 
         dispatch(setRequisition(updatedRequisition));
-        dispatch(setRefresh(!refresh));
+        if (newStatus.nome !== "Validação") {
+          dispatch(setRefresh(!refresh));
+        }
         dispatch(setRefreshRequisition(!refreshRequisition));
 
         try {
-          const newPermissions = await RequisitionStatusService.getStatusPermissions(
-            user!,
-            updatedRequisition
-          );
+          const newPermissions = await fetchPermission(updatedRequisition);
           const updatedStatusName = normalizeText(
             updatedRequisition.status?.nome ?? newStatus?.nome
           );
@@ -428,6 +413,7 @@ const RequisitionStatusStepper = ({
             updatedStatusName === "aprovacao gerente";
 
           if (
+            newPermissions &&
             !newPermissions.permissionToChangeStatus &&
             !newPermissions.permissionToRevertStatus
           ) {
@@ -604,12 +590,10 @@ const RequisitionStatusStepper = ({
       dispatch(setRefresh(!refresh));
 
       try {
-        const newPermissions = await RequisitionStatusService.getStatusPermissions(
-          user!,
-          updatedRequisition
-        );
+        const newPermissions = await fetchPermission(updatedRequisition);
 
         if (
+          newPermissions &&
           !newPermissions.permissionToChangeStatus &&
           !newPermissions.permissionToRevertStatus
         ) {
@@ -695,12 +679,10 @@ const RequisitionStatusStepper = ({
     dispatch(setRefresh(!refresh));
 
     try {
-      const newPermissions = await RequisitionStatusService.getStatusPermissions(
-        user!,
-        requisition
-      );
+      const newPermissions = await fetchPermission(requisition);
 
       if (
+        newPermissions &&
         !newPermissions.permissionToChangeStatus &&
         !newPermissions.permissionToRevertStatus
       ) {
