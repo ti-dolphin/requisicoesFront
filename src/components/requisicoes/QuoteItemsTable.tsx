@@ -55,6 +55,7 @@ const QuoteItemsTable = ({
     itemId: number
   ) => {
     setBlockFields(true);
+    setLoading(true);
     const item = quoteItems.find((item) => item.id_item_cotacao === itemId);
     if (!item) return;
     try {
@@ -77,9 +78,13 @@ const QuoteItemsTable = ({
       };
       if (!e.target.checked) {
         // Caso o item seja desmarcado, o backend recalcula subtotal e totais.
-        const updatedItem = await updateQuoteItem(itemId, payload);
-        dispatch(setSingleQuoteItem(updatedItem));
-        setBlockFields(false);
+        try {
+          const updatedItem = await updateQuoteItem(itemId, payload);
+          dispatch(setSingleQuoteItem(updatedItem));
+        } finally {
+          setBlockFields(false);
+          setLoading(false);
+        }
         return;
       }
       dispatch(setSingleQuoteItem(updatedItem));
@@ -251,6 +256,7 @@ const QuoteItemsTable = ({
       return;
     } finally {
       setBlockFields(false);
+      setLoading(false);
     }
   }, [dispatch, updateQuoteItem]);
 
@@ -266,6 +272,18 @@ const QuoteItemsTable = ({
         newRow.preco_unitario,
         Number(oldRow.preco_unitario || 0)
       );
+
+      const hasChanges =
+        normalizedPrecoUnitario !== Number(oldRow.preco_unitario || 0) ||
+        Number(newRow.quantidade_cotada) !== Number(oldRow.quantidade_cotada) ||
+        Number(newRow.ICMS) !== Number(oldRow.ICMS) ||
+        Number(newRow.IPI) !== Number(oldRow.IPI) ||
+        Number(newRow.ST) !== Number(oldRow.ST) ||
+        (newRow.observacao || "") !== (oldRow.observacao || "");
+
+      if (!hasChanges) {
+        return oldRow;
+      }
 
       if(normalizedPrecoUnitario < 0){
         dispatch(
@@ -308,12 +326,16 @@ const QuoteItemsTable = ({
         id_item_requisicao: Number(newRow.id_item_requisicao),
       };
       try {
+        setBlockFields(true);
+        setLoading(true);
         debouncedSave(payload, newRow.id_item_cotacao, oldRow);
         return {
           ...newRow,
           preco_unitario: normalizedPrecoUnitario,
         };
       } catch (e: any) {
+        setBlockFields(false);
+        setLoading(false);
         dispatch(
           setFeedback({
             message: `Erro ao atualizar item da cotação: ${e.message}`,
