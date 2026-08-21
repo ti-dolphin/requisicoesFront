@@ -147,6 +147,12 @@ export const getDateStringFromISOstring = (isoDate: string | undefined | null): 
   return dt.isValid ? dt.toFormat("dd/MM/yyyy") : "";
 };
 
+export const getDateTimeStringFromISOstring = (isoDate: string | undefined | null): string => {
+  if (!isoDate) return "";
+  const dt = DateTime.fromISO(isoDate, { zone: "utc" });
+  return dt.isValid ? dt.toFormat("dd/MM/yyyy HH:mm") : "";
+};
+
 export function getDateStringFromDateObject(date: Date): string {
   const dt = DateTime.fromJSDate(date, { zone: "utc" });
   return dt.toFormat("dd/MM/yyyy"); // ou .toLocaleString(DateTime.DATE_SHORT) para pt-BR
