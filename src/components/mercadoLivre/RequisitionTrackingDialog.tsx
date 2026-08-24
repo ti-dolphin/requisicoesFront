@@ -8,6 +8,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Divider,
   IconButton,
   Stack,
   Typography,
@@ -25,6 +26,8 @@ const RequisitionTrackingDialog = ({
   open,
   onClose,
   codigos,
+  itensComPalavraChave = [],
+  palavrasChavePorCodigo = {},
 }: RequisitionTrackingDialogProps) => {
   const dispatch = useDispatch();
   const [orders, setOrders] = useState<MercadoLivreOrder[]>([]);
@@ -96,12 +99,39 @@ const RequisitionTrackingDialog = ({
           <Typography color="text.secondary">
             Nenhuma conta do Mercado Livre conectada. Conecte em Gestão Adm &gt; Contas Mercado Livre.
           </Typography>
-        ) : orders.length === 0 ? (
+        ) : orders.length === 0 && itensComPalavraChave.length === 0 ? (
           <Typography color="text.secondary">
-            Nenhum item desta requisição tem código do Mercado Livre preenchido.
+            Nenhum item desta requisição tem código ou palavra-chave do Mercado Livre preenchido.
           </Typography>
         ) : (
-          <TrackingList orders={orders} />
+          <>
+            {itensComPalavraChave.length > 0 && (
+              <Box sx={{ mb: orders.length > 0 ? 2 : 0 }}>
+                <Typography fontSize="0.85rem" fontWeight={600} mb={1}>
+                  Compras identificadas por palavra-chave
+                </Typography>
+                <Stack spacing={1.5}>
+                  {itensComPalavraChave.map((entry, index) => (
+                    <Box key={index}>
+                      <Typography fontSize="0.85rem" fontWeight={600}>
+                        {entry.produto_descricao || "Item sem descrição"}
+                      </Typography>
+                      <Typography fontSize="0.75rem" color="text.secondary">
+                        Palavra-chave: {entry.palavras.join(", ")}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Stack>
+                {orders.length > 0 && <Divider sx={{ mt: 2 }} />}
+              </Box>
+            )}
+            {orders.length > 0 && (
+              <TrackingList
+                orders={orders}
+                palavrasChavePorCodigo={palavrasChavePorCodigo}
+              />
+            )}
+          </>
         )}
       </DialogContent>
 

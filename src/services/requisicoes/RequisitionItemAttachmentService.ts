@@ -22,14 +22,6 @@ export class RequisitionItemAttachmentService {
     return response.data;
   }
 
-  static async update(
-    id: number,
-    attachment: RequisitionItemAttachment
-  ): Promise<RequisitionItemAttachment> {
-    const response = await api.put(`${API_ENDPOINT}/${id}`, attachment);
-    return response.data;
-  }
-
   static async delete(id: number): Promise<void> {
     await api.delete(`${API_ENDPOINT}/${id}`);
   }

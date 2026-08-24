@@ -22,8 +22,7 @@ import { useDispatch } from "react-redux";
 import { setFeedback } from "../../redux/slices/feedBackSlice";
 import OpportunityCard from "./OpportunityCard"
 import BaseDeleteDialog from "../shared/BaseDeleteDialog"
-
-const DELETED_COLUMN_ID = 99
+import { DELETED_COLUMN_ID } from "../../utils/kanbanFlowRules"
 
 const OpportunityKanbanArchivedCardsDialog = ({ open, board, onClose, onUnarchive }: OpportunityKanbanArchivedCardsDialogProps) => {
   const [cards, setCards] = useState<ArchivedOpportunity[]>([]);

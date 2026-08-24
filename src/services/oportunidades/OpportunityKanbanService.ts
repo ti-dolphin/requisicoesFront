@@ -1,13 +1,12 @@
 import api from "../../api";
 import { ArchivedOpportunity, KanbanCardOpportunity, OpportunityKanbanColumn } from "../../models/oportunidades/OpportunityKanbanColumn";
 import { KanbanBoardName } from "../../utils/kanbanFlowRules";
-import { User } from "../../models/User";
 
 const API_ENDPOINT = "/kanban_oportunidades";
 
 const OpportunityKanbanService = {
-  getCards: async (user: User, board: KanbanBoardName): Promise<KanbanCardOpportunity[]> => {
-    const response = await api.get(`${API_ENDPOINT}/cards`, { params: { user, board } });
+  getCards: async (board: KanbanBoardName): Promise<KanbanCardOpportunity[]> => {
+    const response = await api.get(`${API_ENDPOINT}/cards`, { params: { board } });
     return response.data;
   },
   getColumns: async (board: KanbanBoardName): Promise<OpportunityKanbanColumn[]> => {

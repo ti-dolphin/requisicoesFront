@@ -1,5 +1,7 @@
 import React from "react";
-import { Box, Typography, Paper, Stack, Button, Card, CardContent, CardActions } from "@mui/material";
+import { Box, Typography, Stack, Avatar, Tooltip, Chip, Card, CardContent, CardActions } from "@mui/material";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import { getDateFromISOstring } from "../../utils";
 
 interface OpportunityCardProps {
   row: any;
@@ -8,12 +10,49 @@ interface OpportunityCardProps {
   actions?: React.ReactNode;
 }
 
+const AVATAR_COLORS = ["#e57373", "#f06292", "#ba68c8", "#9575cd", "#7986cb", "#64b5f6", "#4db6ac", "#81c784", "#ffb74d"];
+
+const getInitials = (nome: string) => {
+  const partes = nome.trim().split(/\s+/);
+  if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase();
+  return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+};
+
+const getAvatarColor = (nome: string) => {
+  let hash = 0;
+  for (let i = 0; i < nome.length; i++) hash = nome.charCodeAt(i) + ((hash << 5) - hash);
+  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+};
+
+const formatDataPlanejada = (data: string) => {
+  const date = getDateFromISOstring(data);
+  return date ? date.toLocaleDateString("pt-BR", { day: "numeric", month: "short" }) : "";
+};
+
+const DSE_CODE_PATTERN = /-?\s*DSE\s*(\d+)\s*$/i;
+
+const formatCardTitle = (row: any) => {
+  const numero = row?.adicional?.NUMERO ?? 0;
+  const projetoId = numero ? `${row?.projeto?.ID ?? "-"}.${numero}` : row?.projeto?.ID ?? "-";
+  const nomeFantasia: string = row?.cliente?.NOMEFANTASIA ?? "-";
+
+  const dseMatch = nomeFantasia.match(DSE_CODE_PATTERN);
+  if (dseMatch) {
+    const dseCode = dseMatch[1];
+    return `DSE${dseCode}-${projetoId} - ${row?.NOME ?? "-"}`;
+  }
+
+  return `${projetoId} - ${nomeFantasia}`;
+};
+
 const OpportunityCard: React.FC<OpportunityCardProps> = ({
   row,
   styles,
   onClick,
   actions,
 }) => {
+  const seguidores: { NOME: string }[] = row?.seguidores ?? [];
+
   return (
     <Card
       elevation={3}
@@ -40,8 +79,42 @@ const OpportunityCard: React.FC<OpportunityCardProps> = ({
         }}
       >
         <Typography color="primary">
-          {`${row?.projeto?.ID ?? "-"}.${row?.adicional?.NUMERO ?? "-"} - ${row?.cliente?.NOMEFANTASIA ?? "-"}`}
+          {formatCardTitle(row)}
         </Typography>
+
+        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ width: "100%", mt: 1.5 }}>
+          {row?.data_planejada ? (
+            <Chip
+              size="small"
+              icon={<AccessTimeIcon sx={{ fontSize: 14 }} />}
+              label={formatDataPlanejada(row.data_planejada)}
+              sx={{ height: 22, fontSize: 11 }}
+            />
+          ) : (
+            <Box />
+          )}
+
+          {seguidores.length > 0 && (
+            <Stack direction="row" sx={{ ml: "auto" }}>
+              {seguidores.map((seguidor, index) => (
+                <Tooltip key={seguidor.NOME + index} title={seguidor.NOME}>
+                  <Avatar
+                    sx={{
+                      width: 24,
+                      height: 24,
+                      fontSize: 11,
+                      bgcolor: getAvatarColor(seguidor.NOME),
+                      border: "2px solid white",
+                      marginLeft: index === 0 ? 0 : "-8px",
+                    }}
+                  >
+                    {getInitials(seguidor.NOME)}
+                  </Avatar>
+                </Tooltip>
+              ))}
+            </Stack>
+          )}
+        </Stack>
       </CardContent>
       {actions && <CardActions>{actions}</CardActions>}
     </Card>

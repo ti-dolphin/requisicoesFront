@@ -28,14 +28,27 @@ export class QuoteItemService {
     id_item_cotacao: number,
     data: any,
     token?: string
-  ) => {
+  ): Promise<{ subtotal: number }> => {
     const config = token ? { headers: { Authorization: token } } : {};
-    const response = await api.put(
+    const response = await api.put<{ subtotal: number }>(
       `${API_ENPOINT}/${id_item_cotacao}`,
       data,
       config
     );
     return response.data;
+  };
+
+  static updateFields = async (
+    id_item_cotacao: number,
+    data: { observacao?: string | null; ICMS?: number },
+    token?: string
+  ): Promise<void> => {
+    const config = token ? { headers: { Authorization: token } } : {};
+    await api.put(
+      `${API_ENPOINT}/${id_item_cotacao}/campos`,
+      data,
+      config
+    );
   };
 
   static delete = async (id_item_cotacao: number) => {

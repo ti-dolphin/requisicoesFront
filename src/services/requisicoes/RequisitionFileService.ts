@@ -19,11 +19,6 @@ export class RequisitionFileService {
         return response.data;
     }
 
-    static async update(id: number, data: Partial<Omit<RequisitionFile, 'id' | 'pessoa_criado_por' | 'criado_em'>>): Promise<RequisitionFile> {
-        const response = await api.put<RequisitionFile>(`${API_ENDPOINT}/${id}`, data);
-        return response.data;
-    }
-
     static async delete(id: number): Promise<void> {
         await api.delete(`${API_ENDPOINT}/${id}`);
     }
