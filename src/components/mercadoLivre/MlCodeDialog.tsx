@@ -53,14 +53,15 @@ const MlCodeDialog = ({ item, onClose }: MlCodeDialogProps) => {
   const [deletingKeyword, setDeletingKeyword] = useState<PalavraChaveMl | null>(null);
 
   const fetchTracking = async (codesList: MlCode[]) => {
-    if (!codesList.length) {
+    const trackableCodes = codesList.filter((code) => Boolean(code.codigo_ml));
+    if (!trackableCodes.length) {
       setTracking({});
       return;
     }
     setLoadingTracking(true);
     try {
       const response = await MercadoLivreService.getTrackingByCodes(
-        codesList.map((code) => code.codigo_ml)
+        trackableCodes.map((code) => code.codigo_ml as string)
       );
       const grouped: Record<string, MercadoLivreOrder[]> = {};
       response.results.forEach((order) => {
@@ -132,7 +133,7 @@ const MlCodeDialog = ({ item, onClose }: MlCodeDialogProps) => {
     try {
       const created = await MlCodeService.create({
         id_item_requisicao: item.id_item_requisicao,
-        codigo_ml: codeInput.trim(),
+        link: codeInput.trim(),
       });
       const updatedCodes = [...codes, created];
       setCodes(updatedCodes);
@@ -142,7 +143,7 @@ const MlCodeDialog = ({ item, onClose }: MlCodeDialogProps) => {
     } catch (err: any) {
       dispatch(
         setFeedback({
-          message: err?.response?.data?.error || "Erro ao salvar o código",
+          message: err?.response?.data?.error || "Erro ao salvar o link",
           type: "error",
         })
       );
@@ -157,6 +158,7 @@ const MlCodeDialog = ({ item, onClose }: MlCodeDialogProps) => {
         prev.filter((code) => code.id_codigo_ml !== deletingCode.id_codigo_ml)
       );
       setTracking((prev) => {
+        if (!deletingCode.codigo_ml) return prev;
         const next = { ...prev };
         delete next[deletingCode.codigo_ml];
         return next;
@@ -256,10 +258,13 @@ const MlCodeDialog = ({ item, onClose }: MlCodeDialogProps) => {
               </Typography>
             )}
             {codes.map((code) => {
-              const codeTracking = tracking[code.codigo_ml] || [];
+              const codeTracking = code.codigo_ml
+                ? tracking[code.codigo_ml] || []
+                : [];
               const codeKeywords = keywords.filter(
                 (k) => k.id_codigo_ml === code.id_codigo_ml
               );
+              const isUrl = /^https?:\/\//i.test(code.link || "");
               return (
                 <ListItem
                   key={code.id_codigo_ml}
@@ -267,8 +272,27 @@ const MlCodeDialog = ({ item, onClose }: MlCodeDialogProps) => {
                   sx={{ alignItems: "flex-start" }}
                 >
                   <Stack spacing={0.5} sx={{ pr: 4, width: "100%" }}>
-                    <Typography fontSize="0.9rem">{code.codigo_ml}</Typography>
-                    {loadingTracking ? (
+                    {isUrl ? (
+                      <Typography
+                        component="a"
+                        href={code.link as string}
+                        target="_blank"
+                        rel="noreferrer"
+                        fontSize="0.9rem"
+                        sx={{ color: "primary.main", wordBreak: "break-all" }}
+                      >
+                        {code.link}
+                      </Typography>
+                    ) : (
+                      <Typography fontSize="0.9rem" sx={{ wordBreak: "break-all" }}>
+                        {code.link || code.codigo_ml}
+                      </Typography>
+                    )}
+                    {!code.codigo_ml ? (
+                      <Typography fontSize="0.7rem" color="text.secondary">
+                        Sem orderId identificado no link — rastreio indisponível
+                      </Typography>
+                    ) : loadingTracking ? (
                       <Typography fontSize="0.7rem" color="text.secondary">
                         Buscando previsão de entrega...
                       </Typography>
@@ -368,7 +392,7 @@ const MlCodeDialog = ({ item, onClose }: MlCodeDialogProps) => {
             disabled={loadingCodes}
             onClick={openAddCodeDialog}
           >
-            Adicionar código
+            Adicionar link
           </Button>
           {codes.length === 0 && (
             <Button
@@ -387,12 +411,10 @@ const MlCodeDialog = ({ item, onClose }: MlCodeDialogProps) => {
         open={addCodeDialogOpen}
         onClose={closeAddCodeDialog}
         onConfirm={handleAddCode}
-        title="Adicionar código"
-        inputLabel="Código do Mercado Livre"
+        title="Adicionar link"
+        inputLabel="Link da compra no Mercado Livre"
         inputValue={codeInput}
-        onInputChange={(event) =>
-          setCodeInput(event.target.value.replace(/\D/g, ""))
-        }
+        onInputChange={(event) => setCodeInput(event.target.value)}
       />
 
       <BaseDeleteDialog

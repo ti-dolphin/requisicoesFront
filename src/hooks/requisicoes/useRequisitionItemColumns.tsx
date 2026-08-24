@@ -703,9 +703,12 @@ export const useRequisitionItemColumns = (
                 identificacoesMlCount > 0
                   ? [
                       codigosMl.length > 0
-                        ? `Códigos ML: ${codigosMl
-                            .map((codigo: any) => codigo.codigo_ml)
-                            .join(", ")}`
+                        ? `Códigos ML: ${
+                            codigosMl
+                              .map((codigo: any) => codigo.codigo_ml)
+                              .filter(Boolean)
+                              .join(", ") || "link salvo sem orderId"
+                          }`
                         : null,
                       palavrasChaveMl.length > 0
                         ? `Palavras-chave: ${palavrasChaveMl
