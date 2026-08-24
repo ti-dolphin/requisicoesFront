@@ -264,14 +264,12 @@ const RequisitionItemsTable = ({
   const handleFillOCS = useCallback(
     async (ocValue: number) => {
       try {
-        const itemsWithOC = await RequisitionItemService.updateOCS(
+        await RequisitionItemService.updateOCS(
           selectionModel as number[],
           ocValue
         );
-        if (itemsWithOC) {
-          setSelectionModel([]);
-          dispatch(setRefresh(!refresh));
-        }
+        setSelectionModel([]);
+        dispatch(setRefresh(!refresh));
       } catch (e: any) {
         dispatch(
           setFeedback({ message: "Erro ao preencher OC", type: "error" })
@@ -295,15 +293,12 @@ const RequisitionItemsTable = ({
       if (date) {
         const isoDate = formatDateStringtoISOstring(date);
         try {
-          const itemsWithShippingDate =
-            await RequisitionItemService.updateShippingDate(
-              selectionModel as number[],
-              isoDate
-            );
-          if (itemsWithShippingDate) {
-            setSelectionModel([]);
-            dispatch(setRefresh(!refresh));
-          }
+          await RequisitionItemService.updateShippingDate(
+            selectionModel as number[],
+            isoDate
+          );
+          setSelectionModel([]);
+          dispatch(setRefresh(!refresh));
         } catch (e) {
           dispatch(
             setFeedback({
@@ -670,13 +665,13 @@ const RequisitionItemsTable = ({
       const pending = pendingRowUpdates.current;
       pending.set(rowId, (pending.get(rowId) || 0) + 1);
       try {
-        const updatedItem = await RequisitionItemService.update(rowId, payload);
+        // Nenhum desses campos é recalculado no servidor: o valor otimista
+        // já despachado em processRowUpdate já está correto, sem precisar
+        // do item de volta.
+        await RequisitionItemService.updateFields(rowId, payload);
         const remaining = (pending.get(rowId) || 1) - 1;
         if (remaining <= 0) {
           pending.delete(rowId);
-          // Só sincroniza com a resposta do servidor se esta for a última
-          // edição em voo da linha, senão sobrescreveria um valor mais novo.
-          dispatch(replaceItem({ id_item_requisicao: rowId, updatedItem }));
         } else {
           pending.set(rowId, remaining);
         }
@@ -787,8 +782,8 @@ const RequisitionItemsTable = ({
         }
 
         // Manda só os campos que mudaram nesta edição, não a linha inteira.
+        // id_item_requisicao já vai na URL, não precisa duplicar no corpo.
         const payload: any = {
-          id_item_requisicao: normalizedRow.id_item_requisicao,
           alterado_por: user?.CODPESSOA,
         };
         if (quantidadeChanged) {
@@ -808,10 +803,17 @@ const RequisitionItemsTable = ({
           // confirma. A tabela já fica travada (blockFields) nesse meio tempo.
           setBlockFields(true);
           try {
-            const updatedItem = await RequisitionItemService.update(
+            // O servidor só devolve o que ele mesmo decide (quantidade_alterada,
+            // dependente do status da requisição); o resto da linha já é
+            // conhecido localmente e não muda com uma edição de quantidade.
+            const { quantidade_alterada } = await RequisitionItemService.update(
               normalizedRow.id_item_requisicao,
               payload
             );
+            const updatedItem: RequisitionItem = {
+              ...normalizedRow,
+              quantidade_alterada,
+            } as RequisitionItem;
             dispatch(
               replaceItem({
                 id_item_requisicao: normalizedRow.id_item_requisicao,

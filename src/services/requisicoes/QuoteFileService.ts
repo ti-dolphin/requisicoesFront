@@ -28,20 +28,6 @@ export class QuoteFileService {
     return response.data;
   };
 
-  static update = async (
-    id_anexo_cotacao: number,
-    data: any,
-    token?: string
-  ) => {
-    const config = token ? { headers: { Authorization: token } } : {};
-    const response = await api.put(
-      `${API_ENDPOINT}/${id_anexo_cotacao}`,
-      data,
-      config
-    );
-    return response.data;
-  };
-
   static delete = async (id_anexo_cotacao: number, token?: string) => {
     const config = token ? { headers: { Authorization: token } } : {};
     const response = await api.delete(
