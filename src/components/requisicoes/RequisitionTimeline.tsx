@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
 import { setFeedback } from "../../redux/slices/feedBackSlice";
-import { getDateStringFromISOstring } from "../../utils";
+import { getDateTimeStringFromISOstring } from "../../utils";
 
 interface RequisitionTimelineProps {
   fullScreen?: boolean;
@@ -154,7 +154,7 @@ const RequisitionTimeline = ({ fullScreen = false }: RequisitionTimelineProps) =
                     secondary={
                       <Box>
                         <Typography fontSize="small">
-                          {getDateStringFromISOstring(alteration.data_alteracao)}
+                          {getDateTimeStringFromISOstring(alteration.data_alteracao)}
                         </Typography>
                         {!buyerChangeData && alteration.justificativa && (
                           <Typography

@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, Grid, IconButton, Paper, Stack, Typography } from "@mui/material";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import * as XLSX from "xlsx";
 import QuoteService from "../../services/requisicoes/QuoteService";
 import QuoteForm from "../../components/requisicoes/QuoteForm";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,11 +14,17 @@ import { Requisition } from "../../models/requisicoes/Requisition";
 import { setRequisition } from "../../redux/slices/requisicoes/requisitionSlice";
 import RequisitionService from "../../services/requisicoes/RequisitionService";
 import { UserService } from "../../services/UserService";
+import { QuoteItemService } from "../../services/requisicoes/QuoteItemService";
+import { setSingleQuoteItem } from "../../redux/slices/requisicoes/quoteItemSlice";
 import { RootState } from "../../redux/store";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
+import DownloadIcon from "@mui/icons-material/Download";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
 import UpperNavigation from "../../components/shared/UpperNavigation";
 import { QuoteFileService } from "../../services/requisicoes/QuoteFileService";
 import { formatCurrency } from "../../utils";
+import { exportToExcel } from "../../utils/excelExport";
+import { buildQuoteItemsExcelRows, parseQuoteItemsExcelRows } from "../../utils/quoteItemsExcel";
 
 const QuoteDetailPage = () => {
   const dispatch = useDispatch();
@@ -30,8 +37,11 @@ const QuoteDetailPage = () => {
   
   const accesType = useSelector((state : RootState) => state.quote.accessType);
   const requisition = useSelector((state : RootState) => state.requisition.requisition);
+  const quoteItems = useSelector((state: RootState) => state.quoteItem.quoteItems);
   const [fullScreenItems, setFullScreenItems] = React.useState(false);
   const [showAttachmentDialog, setShowAttachmentDialog] = useState<boolean>(false);
+  const [importingExcel, setImportingExcel] = useState(false);
+  const importInputRef = useRef<HTMLInputElement>(null);
 
   const checkIfQuoteHasAttachments = async (): Promise<boolean> => {
     try {
@@ -116,6 +126,83 @@ const QuoteDetailPage = () => {
       }
   };
 
+  const handleExportExcel = () => {
+    if (!quoteItems || quoteItems.length === 0) {
+      dispatch(setFeedback({ message: `Não há itens para exportar`, type: 'error' }));
+      return;
+    }
+    exportToExcel(
+      buildQuoteItemsExcelRows(quoteItems),
+      `cotacao_${id_cotacao}_itens`,
+      "Itens"
+    );
+  };
+
+  const handleImportClick = () => {
+    importInputRef.current?.click();
+  };
+
+  const handleImportExcel = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+
+    setImportingExcel(true);
+    try {
+      const buffer = await file.arrayBuffer();
+      const workbook = XLSX.read(buffer, { type: "array" });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json<Record<string, any>>(sheet, { defval: "" });
+
+      if (rows.length === 0) {
+        dispatch(setFeedback({ message: `A planilha importada está vazia`, type: 'error' }));
+        return;
+      }
+
+      const { updates, errors } = parseQuoteItemsExcelRows(rows, quoteItems);
+
+      for (const update of updates) {
+        try {
+          const { subtotal } = token
+            ? await QuoteItemService.update(update.id_item_cotacao, update.payload, token)
+            : await QuoteItemService.update(update.id_item_cotacao, update.payload);
+          const currentItem = quoteItems.find(
+            (item) => item.id_item_cotacao === update.id_item_cotacao
+          );
+          if (currentItem) {
+            dispatch(setSingleQuoteItem({ ...currentItem, ...update.payload, subtotal }));
+          }
+        } catch (e: any) {
+          errors.push(`Item ${update.id_item_cotacao}: ${e.message}`);
+        }
+      }
+
+      if (updates.length > 0) {
+        const updatedQuote = await QuoteService.getById(Number(id_cotacao));
+        dispatch(setQuote(updatedQuote));
+        dispatch(
+          setFeedback({
+            message: `${updates.length} ${updates.length === 1 ? "item atualizado" : "itens atualizados"} com sucesso!`,
+            type: 'success',
+          })
+        );
+      }
+
+      if (errors.length > 0) {
+        dispatch(
+          setFeedback({
+            message: `${errors.length} ${errors.length === 1 ? "linha não pôde" : "linhas não puderam"} ser importada(s): ${errors.slice(0, 3).join(" | ")}${errors.length > 3 ? "…" : ""}`,
+            type: 'error',
+          })
+        );
+      }
+    } catch (e: any) {
+      dispatch(setFeedback({ message: `Erro ao ler o arquivo Excel: ${e.message}`, type: 'error' }));
+    } finally {
+      setImportingExcel(false);
+    }
+  };
+
   const fetchData = useCallback(async () => {
     try {
       if (token) { 
@@ -185,10 +272,34 @@ const QuoteDetailPage = () => {
             }}
           >
             <QuoteForm onSubmit={handleSubmitQuote} />
-            {accesType !== "supplier" && (
-              <Button size="small" onClick={hanldeCreateSupplierAccess}>
-                Link de fornecedor
-              </Button>
+            {accesType !== "supplier" && !token && (
+              <Stack direction="row" spacing={1} flexWrap="wrap">
+                <Button size="small" onClick={hanldeCreateSupplierAccess}>
+                  Link de fornecedor
+                </Button>
+                <Button
+                  size="small"
+                  startIcon={<DownloadIcon />}
+                  onClick={handleExportExcel}
+                >
+                  Exportar Excel
+                </Button>
+                <Button
+                  size="small"
+                  startIcon={<UploadFileIcon />}
+                  onClick={handleImportClick}
+                  disabled={importingExcel}
+                >
+                  {importingExcel ? "Importando..." : "Importar Excel"}
+                </Button>
+                <input
+                  type="file"
+                  accept=".xlsx,.xls"
+                  ref={importInputRef}
+                  style={{ display: "none" }}
+                  onChange={handleImportExcel}
+                />
+              </Stack>
             )}
           </Paper>
         </Grid>
