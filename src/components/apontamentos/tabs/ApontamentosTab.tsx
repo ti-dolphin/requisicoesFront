@@ -124,6 +124,21 @@ const ApontamentosTab: React.FC<ApontamentosTabProps> = ({
     dispatch(clearCommonFilters());
   }, [dispatch]);
 
+  const handleColumnFilterEnter = useCallback((field: string, value: string) => {
+    const nextFilters = { ...filters, [field]: value };
+    dispatch(setFilters(nextFilters));
+    dispatch(setPage(0));
+    setAppliedQuery({
+      filters: {
+        ...nextFilters,
+        DATA_DE: commonFilters.DATA_DE,
+        DATA_ATE: commonFilters.DATA_ATE,
+        ATIVOS: commonFilters.ATIVOS,
+      },
+      searchTerm: commonFilters.searchTerm,
+    });
+  }, [dispatch, filters, commonFilters]);
+
   const openStatusMenu = (event: React.MouseEvent<HTMLElement>) => {
     setStatusMenuAnchorEl(event.currentTarget);
   };
@@ -162,7 +177,7 @@ const ApontamentosTab: React.FC<ApontamentosTabProps> = ({
   }, []);
 
   const canEditFolgaCampo = !!(user?.PERM_APONT || user?.PERM_ADMINISTRADOR);
-  const { columns: rawColumns } = useNotesColumns(handleChangeFilters, handleCommentClick, canEditFolgaCampo);
+  const { columns: rawColumns } = useNotesColumns(handleChangeFilters, handleCommentClick, canEditFolgaCampo, handleColumnFilterEnter);
 
   const { orderedColumns: columns, columnVisibilityModel, saveColumnOrder, removeColumnOrder } = usePersistedColumnOrder(
     TABLE_KEY,

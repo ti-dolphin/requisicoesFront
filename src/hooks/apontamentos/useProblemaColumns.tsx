@@ -21,7 +21,8 @@ const BooleanCell = ({ value }: { value: boolean }) => {
 };
 
 export const useProblemaColumns = (
-  handleChangeFilters: (event: React.ChangeEvent<HTMLInputElement>, field: string) => void
+  handleChangeFilters: (event: React.ChangeEvent<HTMLInputElement>, field: string) => void,
+  onEnter?: (field: string, value: string) => void
 ) => {
   const { filters } = useSelector((state: RootState) => state.problemaTable);
 
@@ -47,6 +48,7 @@ export const useProblemaColumns = (
             field="CHAPA"
             filters={filters}
             handleChangeFilters={handleChangeFilters}
+            onEnter={onEnter}
           />
         ),
       },
@@ -61,6 +63,7 @@ export const useProblemaColumns = (
             field="NOME_FUNCIONARIO"
             filters={filters}
             handleChangeFilters={handleChangeFilters}
+            onEnter={onEnter}
           />
         ),
       },
@@ -75,6 +78,7 @@ export const useProblemaColumns = (
             field="NOME_CENTRO_CUSTO"
             filters={filters}
             handleChangeFilters={handleChangeFilters}
+            onEnter={onEnter}
           />
         ),
       },
@@ -96,6 +100,7 @@ export const useProblemaColumns = (
             field="MOTIVO_PROBLEMA"
             filters={filters}
             handleChangeFilters={handleChangeFilters}
+            onEnter={onEnter}
           />
         ),
       },
@@ -110,6 +115,7 @@ export const useProblemaColumns = (
             field="JUSTIFICATIVA"
             filters={filters}
             handleChangeFilters={handleChangeFilters}
+            onEnter={onEnter}
           />
         ),
       },
@@ -124,6 +130,7 @@ export const useProblemaColumns = (
             field="DESCRICAO_STATUS"
             filters={filters}
             handleChangeFilters={handleChangeFilters}
+            onEnter={onEnter}
           />
         ),
       },
@@ -138,6 +145,7 @@ export const useProblemaColumns = (
             field="NOME_GERENTE"
             filters={filters}
             handleChangeFilters={handleChangeFilters}
+            onEnter={onEnter}
           />
         ),
       },
@@ -152,11 +160,12 @@ export const useProblemaColumns = (
             field="NOME_LIDER"
             filters={filters}
             handleChangeFilters={handleChangeFilters}
+            onEnter={onEnter}
           />
         ),
       },
     ],
-    [filters, handleChangeFilters]
+    [filters, handleChangeFilters, onEnter]
   );
 
   return { columns };
