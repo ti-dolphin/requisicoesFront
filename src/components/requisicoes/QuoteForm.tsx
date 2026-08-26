@@ -68,7 +68,7 @@ const QuoteForm = ({ onSubmit }: QuoteFormProps) => {
     const { value } = e.target;
 
     if (quote) {
-      const codeFields = ["cnpj_fornecedor", "cnpj_faturamento"];
+      const codeFields = ["cnpj_fornecedor", "cnpj_faturamento", "descricao", "observacao", "fornecedor"];
       const normalizedValue = value.replace(",", ".");
       
       const isIncompleteDecimal = normalizedValue.endsWith(".") || /\.\d*$/.test(normalizedValue);
