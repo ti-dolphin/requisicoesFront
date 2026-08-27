@@ -74,18 +74,33 @@ const ProblemasTab: React.FC = () => {
     [dispatch]
   );
 
-  const { columns: rawColumns } = useProblemaColumns(handleChangeProblemaFilters);
+  const handleColumnFilterEnter = useCallback((field: string, value: string) => {
+    const nextFilters = { ...problemaFilters, [field]: value };
+    dispatch(setProblemaFilters(nextFilters));
+    dispatch(setProblemaPage(0));
+    setAppliedQuery({
+      filters: {
+        ...nextFilters,
+        DATA_DE: commonFilters.DATA_DE,
+        DATA_ATE: commonFilters.DATA_ATE,
+        ATIVOS: commonFilters.ATIVOS,
+      },
+      searchTerm: commonFilters.searchTerm,
+    });
+  }, [dispatch, problemaFilters, commonFilters]);
+
+  const { columns: rawColumns } = useProblemaColumns(handleChangeProblemaFilters, handleColumnFilterEnter);
 
   const { orderedColumns: columns, columnVisibilityModel, saveColumnOrder, removeColumnOrder } = usePersistedColumnOrder(
       TABLE_KEY,
       user!,
       rawColumns
     );
-  
+
     const handleApplyColumnOrder = (preferences: ColumnPreference[]) => {
       saveColumnOrder(preferences);
     };
-  
+
     const removeSavedColumnOrder = async () => {
       await removeColumnOrder()
       setColumnOrderDialogOpen(false)

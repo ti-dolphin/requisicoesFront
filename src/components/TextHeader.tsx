@@ -24,6 +24,7 @@ interface TextHeaderProps {
     event: React.ChangeEvent<HTMLInputElement>,
     field: string
   ) => void;
+  onEnter?: (field: string, value: string) => void;
 }
 
 export const TextHeader: React.FC<TextHeaderProps> = ({
@@ -31,6 +32,7 @@ export const TextHeader: React.FC<TextHeaderProps> = ({
   field,
   filters,
   handleChangeFilters,
+  onEnter,
 }) => {
   const filterValue = filters[field as keyof typeof filters] ? String(filters[field as keyof typeof filters]) : "";
   const [localValue, setLocalValue] = useState<string>();
@@ -68,6 +70,15 @@ export const TextHeader: React.FC<TextHeaderProps> = ({
           isTypingRef.current = true;
           setLocalValue(value);
           debouncedSync(value);
+        }}
+        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            e.stopPropagation();
+            debouncedSync.cancel();
+            isTypingRef.current = false;
+            onEnter?.(field, localValue || "");
+          }
         }}
         InputProps={{
           sx: { fontSize: "12px" },

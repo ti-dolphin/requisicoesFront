@@ -41,6 +41,7 @@ interface ApontarDialogProps {
   onSuccess: () => void;
   userName?: string;
   selectedNote?: Note;
+  selectedNotes?: Note[];
 }
 
 const ApontarDialog: React.FC<ApontarDialogProps> = ({
@@ -50,6 +51,7 @@ const ApontarDialog: React.FC<ApontarDialogProps> = ({
   onSuccess,
   userName,
   selectedNote,
+  selectedNotes,
 }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -161,6 +163,11 @@ const ApontarDialog: React.FC<ApontarDialogProps> = ({
         updateOnlyEmptyCentroCusto,
         updateOnlyEmptyLider,
         updateOnlyEmptyStatus,
+        apontamentosInfo: (selectedNotes || []).map((note) => ({
+          CODAPONT: note.CODAPONT,
+          DATA: note.DATA,
+          CHAPA: note.CHAPA,
+        })),
       });
 
       dispatch(

@@ -44,7 +44,8 @@ export const usePontoColumns = (
   handleChangeFilters: (event: React.ChangeEvent<HTMLInputElement>, field: string) => void,
   onToggleField?: (codapont: number, field: string, nextValue: boolean) => void,
   hasPermission?: boolean,
-  hasJustificativaPermission?: boolean
+  hasJustificativaPermission?: boolean,
+  onEnter?: (field: string, value: string) => void
 ) => {
   const { filters, rows } = useSelector((state: RootState) => state.pontoTable);
 
@@ -73,6 +74,7 @@ export const usePontoColumns = (
             field="CHAPA"
             filters={filters}
             handleChangeFilters={handleChangeFilters}
+            onEnter={onEnter}
           />
         ),
       },
@@ -87,6 +89,7 @@ export const usePontoColumns = (
             field="NOME_FUNCIONARIO"
             filters={filters}
             handleChangeFilters={handleChangeFilters}
+            onEnter={onEnter}
           />
         ),
       },
@@ -108,6 +111,7 @@ export const usePontoColumns = (
             field="DESCRICAO_STATUS"
             filters={filters}
             handleChangeFilters={handleChangeFilters}
+            onEnter={onEnter}
           />
         ),
       },
@@ -122,6 +126,7 @@ export const usePontoColumns = (
             field="NOME_CENTRO_CUSTO"
             filters={filters}
             handleChangeFilters={handleChangeFilters}
+            onEnter={onEnter}
           />
         ),
       },
@@ -136,6 +141,7 @@ export const usePontoColumns = (
             field="NOME_LIDER"
             filters={filters}
             handleChangeFilters={handleChangeFilters}
+            onEnter={onEnter}
           />
         ),
       },
@@ -236,6 +242,7 @@ export const usePontoColumns = (
             field="MOTIVO_PROBLEMA"
             filters={filters}
             handleChangeFilters={handleChangeFilters}
+            onEnter={onEnter}
           />
         ),
       },
@@ -261,7 +268,7 @@ export const usePontoColumns = (
         valueGetter: (value: string) => value || "",
       },
     ],
-    [filters, handleChangeFilters, onToggleField, hasPermission, hasJustificativaPermission, columnWidths]
+    [filters, handleChangeFilters, onToggleField, hasPermission, hasJustificativaPermission, columnWidths, onEnter]
   );
 
   return { columns };

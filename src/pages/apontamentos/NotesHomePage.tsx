@@ -30,6 +30,12 @@ const NotesHomePage = () => {
     return undefined;
   }, [selectedApontamentos, rows]);
 
+  // Dados (CODAPONT, DATA, CHAPA) de todos os apontamentos selecionados, para o back verificar apontamentos de hoje
+  const selectedNotes = useMemo(() => {
+    const selectedIds = selectedApontamentos.map((id) => Number(id));
+    return rows.filter((row) => selectedIds.includes(row.CODAPONT));
+  }, [selectedApontamentos, rows]);
+
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
   };
@@ -100,6 +106,7 @@ const NotesHomePage = () => {
         userName={user?.LOGIN || "SISTEMA"}
         onSuccess={handleApontarDialogSuccess}
         selectedNote={selectedNote}
+        selectedNotes={selectedNotes}
       />
     </Box>
   );

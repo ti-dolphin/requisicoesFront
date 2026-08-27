@@ -67,7 +67,8 @@ const getSituacaoLabel = (situacao: string): string => {
 export function useNotesColumns(
   handleChangeFilters: (event: React.ChangeEvent<HTMLInputElement>, field: string) => void,
   onCommentClick?: (codapont: number) => void,
-  hasPermission: boolean = false
+  hasPermission: boolean = false,
+  onEnter?: (field: string, value: string) => void
 ) {
   const { filters, rows } = useSelector((state: RootState) => state.notesTable);
 
@@ -156,6 +157,7 @@ export function useNotesColumns(
             field="CHAPA"
             filters={filters}
             handleChangeFilters={handleChangeFilters}
+            onEnter={onEnter}
           />
         ),
       },
@@ -176,6 +178,7 @@ export function useNotesColumns(
             field="NOME_FUNCIONARIO"
             filters={filters}
             handleChangeFilters={handleChangeFilters}
+            onEnter={onEnter}
           />
         ),
       },
@@ -189,6 +192,7 @@ export function useNotesColumns(
             field="NOME_FUNCAO"
             filters={filters}
             handleChangeFilters={handleChangeFilters}
+            onEnter={onEnter}
           />
         ),
       },
@@ -196,7 +200,12 @@ export function useNotesColumns(
         field: "DATA",
         headerName: "Data",
         width: 100,
-        valueGetter: (value: string) => formatDate(value),
+        type: "date",
+        valueGetter: (value: string) => {
+          const formatted = toDateInputValue(value);
+          return formatted ? new Date(`${formatted}T00:00:00`) : null;
+        },
+        valueFormatter: (value: unknown) => formatDate(toDateInputValue(value) || ""),
       },
       {
         field: "DIA_SEMANA",
@@ -214,6 +223,7 @@ export function useNotesColumns(
             field="NOME_GERENTE"
             filters={filters}
             handleChangeFilters={handleChangeFilters}
+            onEnter={onEnter}
           />
         ),
       },
@@ -227,6 +237,7 @@ export function useNotesColumns(
             field="NOME_CENTRO_CUSTO"
             filters={filters}
             handleChangeFilters={handleChangeFilters}
+            onEnter={onEnter}
           />
         ),
       },
@@ -245,6 +256,7 @@ export function useNotesColumns(
             field="DESCRICAO_STATUS"
             filters={filters}
             handleChangeFilters={handleChangeFilters}
+            onEnter={onEnter}
           />
         ),
       },
@@ -258,6 +270,7 @@ export function useNotesColumns(
             field="NOME_LIDER"
             filters={filters}
             handleChangeFilters={handleChangeFilters}
+            onEnter={onEnter}
           />
         ),
       },
@@ -333,7 +346,7 @@ export function useNotesColumns(
         width: columnWidths.MODIFICADOPOR,
       },
     ],
-    [filters, handleChangeFilters, onCommentClick, columnWidths, hasPermission]
+    [filters, handleChangeFilters, onCommentClick, columnWidths, hasPermission, onEnter]
   );
 
   return { columns };
