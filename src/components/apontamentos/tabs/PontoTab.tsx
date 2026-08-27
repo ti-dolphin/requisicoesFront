@@ -105,11 +105,27 @@ const PontoTab: React.FC = () => {
     [dispatch, pontoRows]
   );
 
+  const handleColumnFilterEnter = useCallback((field: string, value: string) => {
+    const nextFilters = { ...pontoFilters, [field]: value };
+    dispatch(setPontoFilters(nextFilters));
+    dispatch(setPontoPage(0));
+    setAppliedQuery({
+      filters: {
+        ...nextFilters,
+        DATA_DE: commonFilters.DATA_DE,
+        DATA_ATE: commonFilters.DATA_ATE,
+        ATIVOS: commonFilters.ATIVOS,
+      },
+      searchTerm: commonFilters.searchTerm,
+    });
+  }, [dispatch, pontoFilters, commonFilters]);
+
   const { columns: rawColumns } = usePontoColumns(
     handleChangePontoFilters,
     handleTogglePontoField,
     !!(user?.PERM_APONTAMENTO_PONTO || user?.PERM_ADMINISTRADOR),
-    !!(user?.PERM_APONTAMENTO_PONTO_JUSTIFICATIVA || user?.PERM_ADMINISTRADOR)
+    !!(user?.PERM_APONTAMENTO_PONTO_JUSTIFICATIVA || user?.PERM_ADMINISTRADOR),
+    handleColumnFilterEnter
   );
 
   const { orderedColumns: columns, columnVisibilityModel, saveColumnOrder, removeColumnOrder } = usePersistedColumnOrder(

@@ -222,6 +222,7 @@ const NotesService = {
         updateOnlyEmptyCentroCusto?: boolean;
         updateOnlyEmptyLider?: boolean;
         updateOnlyEmptyStatus?: boolean;
+        apontamentosInfo?: { CODAPONT: number; DATA: string; CHAPA: string }[];
     }) => {
         const response = await api.put('/notes/batch', { codaponts, ...data });
         return response.data;

@@ -423,23 +423,15 @@ export function useRequisitionColumns(
         field: "data_requisitado",
         headerName: "Data Requisitado",
         width: columnWidths.data_requisitado,
-        valueGetter: (value: string) => {
-          if (!value) return "";
-          const [datePart] = String(value).split("T");
-          const [year, month, day] = datePart.split("-");
-          return `${day}/${month}/${year}`;
-        },
+        type: "date",
+        valueGetter: (value: string) => (value ? getDateFromISOstring(value) : null),
       },
       {
         field: "data_ultima_alteracao_status",
         headerName: "Data do Status",
         width: columnWidths.data_ultima_alteracao_status,
-        valueGetter: (value: string) => {
-          if (!value) return "";
-          const [datePart] = String(value).split("T");
-          const [year, month, day] = datePart.split("-");
-          return `${day}/${month}/${year}`;
-        },
+        type: "date",
+        valueGetter: (value: string) => (value ? getDateFromISOstring(value) : null),
       },
       {
         field: "actions",
