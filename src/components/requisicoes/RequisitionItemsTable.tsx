@@ -440,19 +440,27 @@ const RequisitionItemsTable = ({
       "Unidade",
       "OC",
     ];
-    const rows = selectedItems.map((item: any) =>
-      [
+    const rows = selectedItems.map((item: any) => {
+      const productCode = String(
+        item.produto_codigo || item.produto?.codigo || ""
+      ).trim();
+      const isNonRegistered = productCode === "06.001.04.0002";
+      const description = isNonRegistered && item.observacao
+        ? item.observacao
+        : item.produto_descricao || item.produto?.descricao;
+
+      return [
         item.id_item_requisicao,
-        sanitize(item.produto_codigo || item.produto?.codigo),
-        sanitize(item.produto_descricao || item.produto?.descricao),
+        sanitize(productCode),
+        sanitize(description),
         formatNumber(item.quantidade),
         formatNumber(item.target_price),
         formatDate(item.data_necessidade),
         formatDate(item.data_entrega),
         sanitize(item.produto_unidade || item.produto?.unidade),
         sanitize(item.oc),
-      ].join("\t")
-    );
+      ].join("\t");
+    });
 
     try {
       await navigator.clipboard.writeText(

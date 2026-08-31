@@ -6,7 +6,7 @@ import { OpportunityStatus } from "./OpportunityStatus";
 import { ProjectAdicional } from "./ProjectAdicional";
 import { SimilarOpportunity } from "../../services/oportunidades/OpportunityService";
 import { KanbanBoardName } from "../../utils/kanbanFlowRules";
-import { KanbanCardOpportunity } from "./OpportunityKanbanColumn";
+import { KanbanCardOpportunity, OpportunityKanbanColumn } from "./OpportunityKanbanColumn";
 
 export interface Opportunity {
   CODOS: number;
@@ -59,6 +59,12 @@ export interface Opportunity {
     status: OpportunityStatus;
     cliente: Client;
     projeto: Project;
+    kanbanStatus: OpportunityKanbanStatus;
+}
+
+export interface OpportunityKanbanStatus {
+  comercial: OpportunityKanbanColumn | null;
+  orcamento: OpportunityKanbanColumn | null;
 }
 
 export interface OpportunityKanbanCardDialogProps {
