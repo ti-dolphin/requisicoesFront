@@ -4,8 +4,11 @@
     "useDefineForClassFields": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
+
     "strict": true,
-    "jsx": "react-jsx", // ou "preserve" dependendo do template
+    "noImplicitAny": false,
+
+    "jsx": "react-jsx",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,
