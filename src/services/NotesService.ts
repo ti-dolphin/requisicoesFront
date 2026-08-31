@@ -47,6 +47,30 @@ export interface PaginatedResponse<T> {
   total: number;
 }
 
+export interface CentroCusto {
+  CODCUSTO: string;
+  NOME: string;
+  CODREDUZIDO: string;
+  ATIVO: boolean;
+}
+
+export interface StatusApontamento {
+  CODSTATUSAPONT: string;
+  DESCRICAO: string;
+}
+
+export interface Lider {
+  CODPESSOA: number;
+  NOME: string;
+}
+
+export interface ApontamentoInfo {
+  CODAPONT: number;
+  DATA: string;
+  CHAPA: string;
+  isUpdatingLastBusinesDay: boolean;
+}
+
 const NotesService = {
     getMany: async (params?: NotesQueryParams) => {
         const queryParams: Record<string, any> = {};
@@ -199,17 +223,17 @@ const NotesService = {
         return response.data;
     },
 
-    getCentroCustos: async (ativos: boolean = true) => {
+    getCentroCustos: async (ativos: boolean = true): Promise<CentroCusto[]> => {
         const response = await api.get('/notes/centro-custos', { params: { ativos } });
         return response.data;
     },
 
-    getStatusApontamento: async () => {
+    getStatusApontamento: async (): Promise<StatusApontamento[]> => {
         const response = await api.get('/notes/status-apontamento');
         return response.data;
     },
 
-    getLideres: async () => {
+    getLideres: async (): Promise<Lider[]> => {
         const response = await api.get('/notes/lideres');
         return response.data;
     },
@@ -222,7 +246,7 @@ const NotesService = {
         updateOnlyEmptyCentroCusto?: boolean;
         updateOnlyEmptyLider?: boolean;
         updateOnlyEmptyStatus?: boolean;
-        apontamentosInfo?: { CODAPONT: number; DATA: string; CHAPA: string }[];
+        apontamentosInfo?: ApontamentoInfo[];
     }) => {
         const response = await api.put('/notes/batch', { codaponts, ...data });
         return response.data;

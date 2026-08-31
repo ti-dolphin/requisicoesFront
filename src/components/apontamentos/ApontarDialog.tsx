@@ -14,25 +14,14 @@ import {
 } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { setFeedback } from "../../redux/slices/feedBackSlice";
-import NotesService from "../../services/NotesService";
+import NotesService, {
+  CentroCusto,
+  StatusApontamento,
+  Lider,
+  ApontamentoInfo,
+} from "../../services/NotesService";
 import { Note } from "../../models/Note";
-
-interface CentroCusto {
-  CODCUSTO: string;
-  NOME: string;
-  CODREDUZIDO: string;
-  ATIVO: boolean;
-}
-
-interface StatusApontamento {
-  CODSTATUSAPONT: string;
-  DESCRICAO: string;
-}
-
-interface Lider {
-  CODPESSOA: number;
-  NOME: string;
-}
+import { isPreviousBusinessDay } from "../../utils/isPreviousBusinessDay";
 
 interface ApontarDialogProps {
   open: boolean;
@@ -56,6 +45,8 @@ const ApontarDialog: React.FC<ApontarDialogProps> = ({
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  const [showDialogShouldUpdateAllFuturesOpen, setShowDialogShouldUpdateAllFuturesOpen] = useState(false)
 
   // Options
   const [centroCustos, setCentroCustos] = useState<CentroCusto[]>([]);
@@ -141,6 +132,16 @@ const ApontarDialog: React.FC<ApontarDialogProps> = ({
       setLoading(false);
     }
   };
+  
+  const getApontamentosInfo = (): ApontamentoInfo[] => {
+    const apontamentosInfo = (selectedNotes || []).map((note) => ({
+      CODAPONT: note.CODAPONT,
+      DATA: note.DATA,
+      CHAPA: note.CHAPA,
+      isUpdatingLastBusinesDay: false
+    }))
+    return apontamentosInfo
+  }
 
   const handleSave = async () => {
     if (!selectedCentroCusto && !selectedLider && !selectedStatus) {
@@ -152,8 +153,39 @@ const ApontarDialog: React.FC<ApontarDialogProps> = ({
       );
       return;
     }
-
     setSaving(true);
+    const apontamentosInfo = getApontamentosInfo()
+    for (let i = 0; i < apontamentosInfo.length; i++) {
+      const apont = apontamentosInfo[i]
+      if (isPreviousBusinessDay(apont.DATA.split("T")[0])) {
+        setSaving(false)
+        setShowDialogShouldUpdateAllFuturesOpen(true)
+        return
+      }
+    }
+    confirmSave(apontamentosInfo)
+  };
+
+  const confirmSaveUpdatingNextaponts = async () => {
+    setSaving(true);
+    const apontamentosInfo = getApontamentosInfo()
+    apontamentosInfo.forEach((apont) => {
+      if (isPreviousBusinessDay(apont.DATA.split("T")[0])) {
+        apont.isUpdatingLastBusinesDay = true
+      }
+    })
+    handleCloseDialogUpdateAllFutures()
+    confirmSave(apontamentosInfo)
+  }
+
+  const confirmSaveWithoutUpdatingNextAponts = async () => {
+    setSaving(true);
+    const apontamentosInfo = getApontamentosInfo()
+    handleCloseDialogUpdateAllFutures()
+    confirmSave(apontamentosInfo)
+  }
+
+  const confirmSave = async (apontamentosInfo: ApontamentoInfo[]) => {
     try {
       await NotesService.updateBatch(selectedCodaponts, {
         CODCCUSTO: selectedCentroCusto?.CODCUSTO,
@@ -163,11 +195,7 @@ const ApontarDialog: React.FC<ApontarDialogProps> = ({
         updateOnlyEmptyCentroCusto,
         updateOnlyEmptyLider,
         updateOnlyEmptyStatus,
-        apontamentosInfo: (selectedNotes || []).map((note) => ({
-          CODAPONT: note.CODAPONT,
-          DATA: note.DATA,
-          CHAPA: note.CHAPA,
-        })),
+        apontamentosInfo
       });
 
       dispatch(
@@ -189,7 +217,11 @@ const ApontarDialog: React.FC<ApontarDialogProps> = ({
     } finally {
       setSaving(false);
     }
-  };
+  }
+
+  const handleCloseDialogUpdateAllFutures = () => {
+    setShowDialogShouldUpdateAllFuturesOpen(false)
+  }
 
   const handleClose = () => {
     setSelectedCentroCusto(null);
@@ -202,6 +234,7 @@ const ApontarDialog: React.FC<ApontarDialogProps> = ({
   };
 
   return (
+    <>
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogTitle>Apontar Colaborador</DialogTitle>
       <DialogContent>
@@ -341,6 +374,17 @@ const ApontarDialog: React.FC<ApontarDialogProps> = ({
         </Button>
       </DialogActions>
     </Dialog>
+    <Dialog 
+      open={showDialogShouldUpdateAllFuturesOpen}
+      onClose={handleCloseDialogUpdateAllFutures}
+    >
+      <DialogTitle>Deseja atualizar o Centro de custo e Líder dos apontamentos futuros?</DialogTitle>
+      <DialogActions sx={{ justifyContent: "center" }}>
+        <Button onClick={confirmSaveWithoutUpdatingNextAponts}>Não</Button>
+        <Button onClick={confirmSaveUpdatingNextaponts}>Sim</Button>
+      </DialogActions>
+    </Dialog>
+    </>
   );
 };
 
