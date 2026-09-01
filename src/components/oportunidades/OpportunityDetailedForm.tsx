@@ -14,7 +14,7 @@ import {
   DialogContentText,
   DialogActions,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Opportunity } from "../../models/oportunidades/Opportunity";
 import { FieldConfig, Option } from "../../types";
 import { useDispatch, useSelector } from "react-redux";
@@ -262,52 +262,95 @@ const OpportunityDetailedForm = () => {
             {fieldsMap?.get("cadastro")?.map((field) => {
               if (field.type === "autocomplete" && field.options) {
                 return (
-                  <Grid item xs={12} key={field.field}>
-                    <Autocomplete
-                      options={field.options}
-                      getOptionLabel={(option) => option?.name || ""}
-                      getOptionKey={(option) => option?.id || ""}
-                      disabled={field.disabled}
-                      aria-required={field.required}
-                      slotProps={{
-                        popper: { sx: { fontSize: 13 } },
-                        paper: { sx: { fontSize: 13, borderRadius: 0 } },
-                      }}
-                      fullWidth
-                      key={field.field}
-                      aria-label={field.label}
-                      value={field.options.find(
-                        (option) =>
-                          option.id ===
-                          opportunity[field.field as keyof Opportunity]
-                      )}
-                      onChange={(_e, value) =>
-                        handleAutocompleteChange(field.field, value, "cadastro")
-                      }
-                      renderInput={(params: AutocompleteRenderInputParams) => (
-                        <TextField
-                          {...params}
-                          InputLabelProps={{
-                            shrink: true,
-                            sx: {
-                              fontSize: 14,
-                              color: "text.secondary",
-                              fontWeight: "bold",
-                            },
-                          }}
-                          InputProps={{
-                            ...params.InputProps,
-                            sx: { borderRadius: 0 },
-                          }}
-                          label={field.label}
-                          variant="outlined"
-                          fullWidth
-                          required={field.required}
-                          size="small"
-                        />
-                      )}
-                    />
-                  </Grid>
+                  <Fragment key={field.field}>
+                    <Grid item xs={12}>
+                      <Autocomplete
+                        options={field.options}
+                        getOptionLabel={(option) => option?.name || ""}
+                        getOptionKey={(option) => option?.id || ""}
+                        disabled={field.disabled}
+                        aria-required={field.required}
+                        slotProps={{
+                          popper: { sx: { fontSize: 13 } },
+                          paper: { sx: { fontSize: 13, borderRadius: 0 } },
+                        }}
+                        fullWidth
+                        aria-label={field.label}
+                        value={field.options.find(
+                          (option) =>
+                            option.id ===
+                            opportunity[field.field as keyof Opportunity]
+                        )}
+                        onChange={(_e, value) =>
+                          handleAutocompleteChange(field.field, value, "cadastro")
+                        }
+                        renderInput={(params: AutocompleteRenderInputParams) => (
+                          <TextField
+                            {...params}
+                            InputLabelProps={{
+                              shrink: true,
+                              sx: {
+                                fontSize: 14,
+                                color: "text.secondary",
+                                fontWeight: "bold",
+                              },
+                            }}
+                            InputProps={{
+                              ...params.InputProps,
+                              sx: { borderRadius: 0 },
+                            }}
+                            label={field.label}
+                            variant="outlined"
+                            fullWidth
+                            required={field.required}
+                            size="small"
+                          />
+                        )}
+                      />
+                    </Grid>
+                    {field.field === "CODSTATUS" && (
+                      <Grid item xs={12} container spacing={2}>
+                        <Grid item xs={6}>
+                          <TextField
+                            fullWidth
+                            disabled
+                            label="Comercial"
+                            InputLabelProps={{
+                              shrink: true,
+                              sx: {
+                                fontSize: 14,
+                                color: "text.secondary",
+                                fontWeight: "bold",
+                              },
+                            }}
+                            InputProps={{ sx: { borderRadius: 0 } }}
+                            variant="outlined"
+                            size="small"
+                            value={opportunity.kanbanStatus?.comercial?.name ?? ""}
+                          />
+                        </Grid>
+                        <Grid item xs={6}>
+                          <TextField
+                            fullWidth
+                            disabled
+                            label="Orçamento"
+                            InputLabelProps={{
+                              shrink: true,
+                              sx: {
+                                fontSize: 14,
+                                color: "text.secondary",
+                                fontWeight: "bold",
+                              },
+                            }}
+                            InputProps={{ sx: { borderRadius: 0 } }}
+                            variant="outlined"
+                            size="small"
+                            value={opportunity.kanbanStatus?.orcamento?.name ?? ""}
+                          />
+                        </Grid>
+                      </Grid>
+                    )}
+                  </Fragment>
                 );
               }
               return (
