@@ -79,6 +79,7 @@ class QuoteService {
     const response = await api.delete(`${API_ENDPOINT}/${id_cotacao}`, config);
     return response.data;
   }
+
 }
 
 export default QuoteService;

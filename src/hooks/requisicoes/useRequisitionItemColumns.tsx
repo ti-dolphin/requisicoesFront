@@ -24,6 +24,7 @@ import {
   setReplacingItemProduct,
   setViewingItemAttachment,
   setViewingItemAttachmentType,
+  setItemLinkingQuote
 } from "../../redux/slices/requisicoes/requisitionItemSlice";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import { setFeedback } from "../../redux/slices/feedBackSlice";
@@ -36,6 +37,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import FileIcon from '@mui/icons-material/FilePresent';
+import AddLinkOutlinedIcon from '@mui/icons-material/AddLinkOutlined';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { calculateColumnWidth } from "../../utils/calculateColumnWidth";
@@ -763,6 +765,16 @@ export const useRequisitionItemColumns = (
                 ) : (
                   <FileIcon sx={{ fontSize: 14 }} />
                 )}
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Vincular na cotação">
+              <IconButton
+                onClick={() => {
+                  dispatch(setItemLinkingQuote(Number(id)));
+                }}
+                sx={{ height: 24, width: 24 }}
+              >
+                <AddLinkOutlinedIcon sx={{ fontSize: 14 }} />
               </IconButton>
             </Tooltip>
             {canViewNfAttachment && (
