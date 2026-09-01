@@ -12,6 +12,8 @@ import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useRequisitionItemColumns } from "../../hooks/requisicoes/useRequisitionItemColumns";
 import { RequisitionItem } from "../../models/requisicoes/RequisitionItem";
+import { formatCurrency } from "../../utils";
+import CloseIcon from '@mui/icons-material/Close';
 import {
   Box,
   Button,
@@ -22,13 +24,16 @@ import {
   IconButton,
   Typography,
   useTheme,
+  ListItem,
+  ListItemButton,
+  Stack
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import RequisitionItemService from "../../services/requisicoes/RequisitionItemService";
 import BaseDataTable from "../shared/BaseDataTable";
 import BaseTableToolBar from "../shared/BaseTableToolBar";
-import { debounce } from "lodash";
+import { debounce, keyBy } from "lodash";
 import { setFeedback } from "../../redux/slices/feedBackSlice";
 import { useRequisitionItemPermissions } from "../../hooks/requisicoes/useRequisitionITemPermissions";
 import {
@@ -43,6 +48,7 @@ import {
   setUpdatingRecentProductsQuantity,
   setViewingItemAttachment,
   setItemSettingMlCode,
+  setItemLinkingQuote,
 } from "../../redux/slices/requisicoes/requisitionItemSlice";
 import QuoteService from "../../services/requisicoes/QuoteService";
 import { useNavigate, useParams } from "react-router-dom";
@@ -127,14 +133,18 @@ const RequisitionItemsTable = ({
     itemSettingMlCode,
   } = useSelector((state: RootState) => state.requisitionItem);
 
+  const itemLinkingQuote = useSelector(
+    (state: RootState) => state.requisitionItem.itemLinkingQuote
+  )
+
   const { isMobile } = useIsMobile();
   const gridApiRef = useGridApiRef();
   const permissionsFromHook = useRequisitionItemPermissions(user, requisition);
   const { userOptions } = useUserOptions();
   const { projectOptions } = useProjectOptions();
   const { patirmonyTypeOptions } = usePatrimonyTypeOptions();
-
-  const [quotesTotal, setQuotesTotal] = useState([]);
+  const [quotes, setQuotes] = useState<Quote[]>([])
+  const [quotesTotal, setQuotesTotal] = useState<Quote[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [cellModesModel, setCellModesModel] = React.useState<GridCellModesModel>({});
   const [selectionModel, setSelectionModel] = React.useState<GridRowSelectionModel>([]);
@@ -346,6 +356,27 @@ const RequisitionItemsTable = ({
     [debouncedRecalculateTotals]
   );
 
+  useEffect(() => {
+    const fetchQuotes = async() => {
+      if (!itemLinkingQuote)  return
+      console.log('entoru aqui')
+      try {
+        const data = await QuoteService.getMany({
+          id_requisicao: requisition.ID_REQUISICAO
+        })
+        setQuotes(data)
+      } catch (error) {
+        dispatch(
+          setFeedback({
+            message: 'Erro ao buscar as cotações',
+            type: 'error'
+          })
+        )
+      }
+    }
+    fetchQuotes()
+  }, [itemLinkingQuote, requisition.ID_REQUISICAO, dispatch])
+
   const handleChangeQuoteItemsSelected = useCallback(
     async (
       e: React.ChangeEvent<HTMLInputElement>,
@@ -497,6 +528,7 @@ const RequisitionItemsTable = ({
   );
 
   const [supplierFilter, setSupplierFilter] = useState<string | null>(null);
+
 
   const filteredItems = useMemo(() => {
     if (!supplierFilter) return items;
@@ -673,9 +705,6 @@ const RequisitionItemsTable = ({
       const pending = pendingRowUpdates.current;
       pending.set(rowId, (pending.get(rowId) || 0) + 1);
       try {
-        // Nenhum desses campos é recalculado no servidor: o valor otimista
-        // já despachado em processRowUpdate já está correto, sem precisar
-        // do item de volta.
         await RequisitionItemService.updateFields(rowId, payload);
         const remaining = (pending.get(rowId) || 1) - 1;
         if (remaining <= 0) {
@@ -1279,6 +1308,39 @@ const RequisitionItemsTable = ({
     setSelectionModel([]);
   }, [currentQuoteIdSelected, quoteItems]);
 
+  const handleLinkItemToQuote = async(quoteId: number) => {
+    if (!itemLinkingQuote) return
+
+    try {
+      await QuoteItemService.linkItemToQuote({
+        id_item_requisicao: itemLinkingQuote,
+        id_cotacao: quoteId
+      })
+
+      dispatch(
+        setFeedback({
+          message: "Item vinculado à cotação com sucesso",
+          type: "success",
+        })
+      );
+      dispatch(setItemLinkingQuote(null));
+      dispatch(setRefresh(!refresh));
+    } catch (err: any) {
+      const message =
+        err.response?.data?.error ||
+        err.message ||
+        "Erro ao vincular o item à cotação";
+    
+      dispatch(
+        setFeedback({
+          message,
+          type: "error",
+        })
+      );
+    }
+
+  }
+
   const shouldShowCreateParcialReqBtn = () => {
     const allowedStatus = ["em cotação", "requisitado", "validação"];
     return (
@@ -1751,6 +1813,81 @@ const RequisitionItemsTable = ({
             {savingPatrimony ? "Salvando..." : "Criar Patrimônio"}
           </Button>
         </DialogActions>
+      </Dialog>
+      <Dialog
+        open={itemLinkingQuote !== null}
+        onClose={() => dispatch(setItemLinkingQuote(null))}
+        maxWidth="md" fullWidth
+      >
+        <DialogTitle color="primary.main">Vincular na cotação</DialogTitle>
+        <DialogContent sx={{
+            backgroundColor: "background.default",
+          }}>
+            <IconButton
+                onClick={() => dispatch(setItemLinkingQuote(null))}
+                color="error"
+                sx={{ position: "absolute", top: 0, right: 0 }}
+              >
+                <CloseIcon />
+            </IconButton>
+          <Box
+            sx={{mt: 1, display: 'flex', flexDirection: 'column', gap: 1}}
+          >
+            {quotes && (
+              quotes.map((q, i) => {
+                return (
+                  <ListItem
+                    key={i}
+                    sx={{
+                      backgroundColor: "white",
+                      borderRadius: 1,
+                      elevation: 1,
+                      padding: 1,
+                      maxWidth: 360
+                    }}
+                  >
+                    <ListItemButton
+                      onClick={() => handleLinkItemToQuote(q.id_cotacao)}
+                    >
+                      <Box
+                        sx={{display: 'flex', flexDirection: 'column', gap: 1}}
+                      >
+                        <Stack direction="column" gap={1}>
+                          <Box>
+                            <Stack direction="row" gap={1}>
+                              <Typography fontFamily="Poppins" fontWeight="bold">
+                                nº da cotação:
+                              </Typography>
+                              <Typography sx={{ color: "text.secondary" }}>
+                                {q.id_cotacao}
+                              </Typography>
+                            </Stack>
+                            <Stack direction="row" gap={1}>
+                              <Typography fontFamily="Poppins" fontWeight="bold">
+                                Fornecedor:
+                              </Typography>
+                              <Typography sx={{ color: "text.secondary" }}>
+                                {q.fornecedor}
+                              </Typography>
+                            </Stack>
+                            <Stack direction="row" gap={1}>
+                              <Typography fontFamily="Poppins" fontWeight="bold">
+                                Valor da cotação:
+                              </Typography>
+                              <Typography color="green">
+                                {formatCurrency(Number(q.valor_total || 0))}
+                              </Typography>
+                            </Stack>
+                          </Box>
+                        </Stack>
+                      </Box>
+                    </ListItemButton>
+                  </ListItem>
+                )
+              })
+            )}
+          </Box>
+        </DialogContent>
       </Dialog>
     </Box>
   );
