@@ -15,7 +15,10 @@ export class QuoteItemService {
 
   static getById = async (id_item_cotacao: number, token?: string) => {
     const config = token ? { headers: { Authorization: token } } : {};
-    const response = await api.get(`${API_ENDPOINT}/${id_item_cotacao}`, config);
+    const response = await api.get(
+      `${API_ENDPOINT}/${id_item_cotacao}`,
+      config,
+    );
     return response.data;
   };
 
@@ -27,13 +30,13 @@ export class QuoteItemService {
   static update = async (
     id_item_cotacao: number,
     data: any,
-    token?: string
+    token?: string,
   ): Promise<{ subtotal: number }> => {
     const config = token ? { headers: { Authorization: token } } : {};
     const response = await api.put<{ subtotal: number }>(
       `${API_ENDPOINT}/${id_item_cotacao}`,
       data,
-      config
+      config,
     );
     return response.data;
   };
@@ -41,23 +44,27 @@ export class QuoteItemService {
   static updateFields = async (
     id_item_cotacao: number,
     data: { observacao?: string | null; ICMS?: number },
-    token?: string
+    token?: string,
   ): Promise<void> => {
     const config = token ? { headers: { Authorization: token } } : {};
-    await api.put(
-      `${API_ENDPOINT}/${id_item_cotacao}/campos`,
-      data,
-      config
-    );
+    await api.put(`${API_ENDPOINT}/${id_item_cotacao}/campos`, data, config);
   };
+
+  static async updateQuoteItens(data: any): Promise<any> {
+    const response = await api.post(`${API_ENDPOINT}/updateQuoteItens`, data);
+    return response.data;
+  }
 
   static delete = async (id_item_cotacao: number) => {
     const response = await api.delete(`${API_ENDPOINT}/${id_item_cotacao}`);
     return response.data;
   };
 
-  static async linkItemToQuote(data : { id_item_requisicao: number,id_cotacao: number } ): Promise<any> {
-    const response = await api.post(`${API_ENDPOINT}/vincular-item`, data)
-    return response.data
+  static async linkItemToQuote(data: {
+    id_item_requisicao: number;
+    id_cotacao: number;
+  }): Promise<any> {
+    const response = await api.post(`${API_ENDPOINT}/vincular-item`, data);
+    return response.data;
   }
 }
