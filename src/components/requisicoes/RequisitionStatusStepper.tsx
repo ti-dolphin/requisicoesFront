@@ -1102,7 +1102,7 @@ const RequisitionStatusStepper = ({
           onClick={sendToReviewStock}
           sx={{ maxHeight: 35, px: { xs: 0.5, sm: 1 } }}
         >
-          <Typography fontSize={12}>Enviar para revisão de estoque</Typography>
+          <Typography fontSize={12}>Verificar Estoque</Typography>
           <SwapHorizIcon fontSize="small" />
         </Button>
         )}
