@@ -142,4 +142,12 @@ export default class RequisitionService {
     );
     return response.data;
   }
+
+  static async sendToReviewStock (id_requisicao: number, user: User | null) {
+    const userId = user?.CODPESSOA || null
+    const body = {id_requisicao, userId}
+
+    const response = await api.post(`${API_ENDPOINT}/sendToReviewStock`, body)
+    return response.data
+  }
 }
