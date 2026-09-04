@@ -20,16 +20,6 @@ const BaseSearchInput = ({ onChange, defaultValue, showIcon, label, placeholder,
       className={`px-3 py-1 rounded-md border text-xs outline-none transition 
           focus:ring-1 border-gray-400 focus:ring-blue-800
           bg-gray-50`}
-      // sx={{
-      //   display: "flex",
-      //   alignItems: "center",
-      //   border: "2px solid",
-      //   borderColor: "lightgray",
-      //   borderRadius: 0,
-      //   paddingX: 2,
-      //   backgroundColor: "white",
-      //   ...styles
-      // }}
     >
       {showIcon && <SearchIcon sx={{ height: 24, width: 24 }} />}
       <input

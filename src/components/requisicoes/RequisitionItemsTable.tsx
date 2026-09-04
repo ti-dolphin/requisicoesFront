@@ -169,6 +169,7 @@ const RequisitionItemsTable = ({
   });
 
   const [trackingDialogOpen, setTrackingDialogOpen] = useState(false);
+  const [dialogSelectQuoteForUpdate, setDialogSelectQuoteForUpdate] = useState(false)
 
   const codigosMl = useMemo(
     () => [
@@ -358,8 +359,7 @@ const RequisitionItemsTable = ({
 
   useEffect(() => {
     const fetchQuotes = async() => {
-      if (!itemLinkingQuote)  return
-      console.log('entoru aqui')
+      if (!itemLinkingQuote && !dialogSelectQuoteForUpdate)  return
       try {
         const data = await QuoteService.getMany({
           id_requisicao: requisition.ID_REQUISICAO
@@ -375,7 +375,7 @@ const RequisitionItemsTable = ({
       }
     }
     fetchQuotes()
-  }, [itemLinkingQuote, requisition.ID_REQUISICAO, dispatch])
+  }, [itemLinkingQuote, dialogSelectQuoteForUpdate, requisition.ID_REQUISICAO, dispatch])
 
   const handleChangeQuoteItemsSelected = useCallback(
     async (
@@ -1151,6 +1151,19 @@ const RequisitionItemsTable = ({
       navigate(`cotacao/${quote.id_cotacao}`);
     }
   };
+
+  const updateQuoteBySelectedItems = async (id_cotacao) => {
+    const data = {
+      id_requisicao: requisition.ID_REQUISICAO,
+      itemIds: selectionModel,
+      id_cotacao: id_cotacao
+    }
+    const updatedQuote = await QuoteItemService.updateQuoteItens(data)
+    if (updatedQuote) {
+      navigate(`cotacao/${updatedQuote.id_cotacao}`)
+    }
+  }
+
   const handleAddItemsToRequisition = async () => {
     if (quote) {
       try {
@@ -1397,6 +1410,16 @@ const RequisitionItemsTable = ({
     [gridApiRef, updatingRecentProductsQuantity]
   );
 
+  const clearDialogSelectQuotes = () => {
+    dispatch(setItemLinkingQuote(null))
+    setDialogSelectQuoteForUpdate(false)
+  }
+
+  const handleDialogSelectQuotes = (id_cotacao) => {
+    if (itemLinkingQuote) handleLinkItemToQuote(id_cotacao)
+    if (dialogSelectQuoteForUpdate) updateQuoteBySelectedItems(id_cotacao)
+  }
+
   useEffect(() => {
     if (requisition) {
       fetchData();
@@ -1442,6 +1465,16 @@ const RequisitionItemsTable = ({
                 onClick={createQuoteFromSelectedItems}
               >
                 Criar cotação
+              </Button>
+            )}
+            {!addingReqItems &&
+            !updatingRecentProductsQuantity &&
+            createQuotePermitted && (
+              <Button
+                variant="contained"
+                onClick={() => setDialogSelectQuoteForUpdate(true)}
+              >
+                Atualizar cotação
               </Button>
             )}
           {shouldShowCreateParcialReqBtn() && (
@@ -1815,16 +1848,22 @@ const RequisitionItemsTable = ({
         </DialogActions>
       </Dialog>
       <Dialog
-        open={itemLinkingQuote !== null}
-        onClose={() => dispatch(setItemLinkingQuote(null))}
+        open={itemLinkingQuote !== null || dialogSelectQuoteForUpdate}
+        onClose={clearDialogSelectQuotes}
         maxWidth="md" fullWidth
       >
-        <DialogTitle color="primary.main">Vincular na cotação</DialogTitle>
+        {itemLinkingQuote && (
+          <DialogTitle color="primary.main">Vincular na cotação</DialogTitle>
+        )}
+
+        {dialogSelectQuoteForUpdate && (
+          <DialogTitle color="primary.main">Escolha a cotação para atualizar os itens</DialogTitle>
+        )}
         <DialogContent sx={{
             backgroundColor: "background.default",
           }}>
             <IconButton
-                onClick={() => dispatch(setItemLinkingQuote(null))}
+                onClick={clearDialogSelectQuotes}
                 color="error"
                 sx={{ position: "absolute", top: 0, right: 0 }}
               >
@@ -1847,7 +1886,7 @@ const RequisitionItemsTable = ({
                     }}
                   >
                     <ListItemButton
-                      onClick={() => handleLinkItemToQuote(q.id_cotacao)}
+                      onClick={() => handleDialogSelectQuotes(q.id_cotacao)}
                     >
                       <Box
                         sx={{display: 'flex', flexDirection: 'column', gap: 1}}
